@@ -12,7 +12,7 @@ export default function Home() {
     
 
       <Image 
-  src="/logo_nexOS.png" 
+  src="/logo_nexOS.jpeg" 
   alt="NexOS Logo" 
   width={150} 
   height={40} 
