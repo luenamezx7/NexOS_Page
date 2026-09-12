@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@theme {
+  --font-mono: var(--font-geist-mono), monospace;
+  --font-pixel: var(--font-vt323), monospace;
+}
+
+
 :root {
   --background: #ffffff;
   --foreground: #171717;

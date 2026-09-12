@@ -8,14 +8,20 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-black text-white font-sans flex flex-col justify-between selection:bg-white selection:text-black">
       {/* Header / Navbar */}
-      <header className="w-full max-w-7xl mx-auto px-6 py-8 flex justify-between items-center border-b border-neutral-800">
-        <div className="flex items-center gap-2">
-          {/* Logo do projeto em public/logo.png */}
-          <span className="text-2xl font-bold tracking-tight">
-            N<span className="text-sm">ex</span><span className="font-mono">OS</span>
-          </span>
-        </div>
-        <nav className="flex items-center gap-6">
+      <header className="w-full mx-auto px-16 py-1 flex justify-start items-center border-b border-neutral-800">
+    
+
+      <Image 
+  src="/logo_nexOS.png" 
+  alt="NexOS Logo" 
+  width={150} 
+  height={40} 
+  priority
+  className="w-50 h-35 object-contain [image-rendering:pixelated] scale-x-145 scale-y-75 origin-left"
+   
+/>
+
+    <nav className="flex items-center gap-6 ml-auto">
           <Link href="#features" className="text-sm text-neutral-400 hover:text-white transition-colors">
             Recursos
           </Link>
@@ -28,6 +34,9 @@ export default function Home() {
           >
             Acessar
           </Link>
+          <div className="flex gap-4">
+          
+        </div>
         </nav>
       </header>
 
@@ -62,7 +71,7 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full max-w-7xl mx-auto px-6 py-8 border-t border-neutral-800 flex flex-col sm:flex-row justify-between items-center text-xs text-neutral-500 gap-4">
+      <footer className="w-full mx-auto px-20 py-6 border-t border-neutral-800 flex flex-col sm:flex-row justify-between items-center text-xs text-neutral-500 gap-4">
         <p>© {new Date().getFullYear()} NexOS. Todos os direitos reservados.</p>
         <div className="flex gap-4">
           <Link href="#" className="hover:text-white transition-colors">Privacidade</Link>
