@@ -1,0 +1,24 @@
+.container {
+    display: justify;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  /* Força o elemento Canvas interno da biblioteca a se alinhar ao centro */
+  .container canvas {
+    display: block;
+    margin: 0 auto;
+  }
+  
+  .label {
+    font-family: var(--font-geist, monospace);
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #a3a3a3;
+    margin-top: 0.75rem;
+  }
