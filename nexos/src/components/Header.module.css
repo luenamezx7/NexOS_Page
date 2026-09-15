@@ -4,16 +4,26 @@
   left: 0;
   right: 0;
   z-index: var(--z-fixed);
-  background-color: rgba(0, 0, 0, 0.85);
-  backdrop-filter: saturate(180%) blur(20px);
-  border-bottom: 1px solid transparent;
+  background: rgba(2, 2, 4, 0.88);
+  backdrop-filter: saturate(180%) blur(16px);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   transition: all var(--transition-base);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.02) inset,
+    0 1px 2px rgba(0, 0, 0, 0.3),
+    0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 .scrolled {
-  border-bottom-color: var(--color-hairline);
-  background-color: rgba(0, 0, 0, 0.95);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.96);
+  backdrop-filter: saturate(200%) blur(20px);
+  -webkit-backdrop-filter: saturate(200%) blur(20px);
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+    0 2px 4px rgba(0, 0, 0, 0.4),
+    0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
 .container {
@@ -33,6 +43,24 @@
   text-decoration: none;
   color: var(--color-ink);
   z-index: var(--z-fixed);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--rounded-lg);
+  transition: all var(--transition-base);
+}
+
+.logo:hover {
+  background: rgba(255, 255, 255, 0.035);
+  backdrop-filter: saturate(180%) blur(16px);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 2px 12px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.logo:focus-visible {
+  outline: 2px solid var(--color-white);
+  outline-offset: 3px;
 }
 
 .logoMark {
@@ -87,11 +115,17 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-xl);
-  background-color: rgba(15, 23, 42, 0.98);
-  backdrop-filter: saturate(180%) blur(20px);
+  background: rgba(0, 0, 0, 0.94);
+  backdrop-filter: saturate(200%) blur(24px);
+  -webkit-backdrop-filter: saturate(200%) blur(24px);
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
   padding: var(--space-xl);
   z-index: calc(var(--z-fixed) - 1);
   animation: slideDown var(--transition-base) ease-out;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.02) inset,
+    0 -2px 8px rgba(0, 0, 0, 0.3),
+    0 -8px 24px rgba(0, 0, 0, 0.2);
 }
 
 @keyframes slideDown {

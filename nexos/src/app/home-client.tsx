@@ -23,8 +23,9 @@ export default function HomeClient() {
   if (loading) {
     return (
       <div 
-        className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black text-white select-none"
+        className="fixed inset-0 z-[9999] flex items-center justify-center bg-black text-white select-none"
         aria-label="Carregando plataforma NexOS"
+        style={{ height: '100vh', width: '100vw' }}
       >
         <ThinkingOrbWrapper state="searching" size={64} label="INITIALIZING NEXOS..." />
       </div>
