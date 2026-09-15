@@ -30,11 +30,18 @@ export function Header() {
       role="banner"
     >
       <div className={styles.container}>
-      <Link
-  href="/"
-  className={styles.logo}
-  aria-label={`${config.brand.name} - Página inicial`}
->
+      <a
+        href="#hero"
+        className={styles.logo}
+        aria-label={`${config.brand.name} - Início`}
+        onClick={(e) => {
+          e.preventDefault();
+          const hero = document.getElementById('hero');
+          if (hero) {
+            hero.scrollIntoView({ behavior: 'smooth' });
+          }
+        }}
+      >
   <Image
     src="/logo_nexOS.png"
     alt="NexOS Logo"
@@ -42,7 +49,7 @@ export function Header() {
     height={120}
     className="w-32 h-32 object-contain"
   />
-</Link>
+</a>
 
         <nav className={`${styles.nav} ${mobileOpen ? styles.navOpen : ''}`} role="navigation" aria-label="Navegação principal">
           <ul className={styles.navList}>

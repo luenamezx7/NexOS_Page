@@ -5,7 +5,7 @@ import styles from "./ThinkingOrbWrapper.module.css";
 
 interface OrbProps {
   state?: OrbState;
-  size?: 20 | 64;
+  size?: number;
   label?: string;
 }
 
@@ -18,7 +18,7 @@ export function ThinkingOrbWrapper({
     <div className={styles.container} aria-live="polite">
       <ThinkingOrb 
         state={state} 
-        size={size} 
+        size={size as 20 | 64} 
         theme="dark" 
       />
 

@@ -291,6 +291,7 @@ const GradualBlur: React.FC<PropsWithChildren<GradualBlurProps>> = props => {
       style={containerStyle}
       onMouseEnter={hoverIntensity ? () => setIsHovered(true) : undefined}
       onMouseLeave={hoverIntensity ? () => setIsHovered(false) : undefined}
+      data-position={config.position}
     >
       <div
         className="gradual-blur-inner"

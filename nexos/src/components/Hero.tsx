@@ -7,7 +7,7 @@ import { SlideUpText } from './SlideUpText';
 
 export function Hero() {
   return (
-    <section className={styles.hero} aria-labelledby="hero-title">
+    <section id="hero" className={styles.hero} aria-labelledby="hero-title">
       <div className={styles.auroraLayer} aria-hidden="true">
         <div style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}>
           <DarkVeil

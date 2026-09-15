@@ -4,6 +4,61 @@
   height: 100%;
 }
 
+.gradual-blur-inner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 40%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.08) 60%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease-out;
+}
+
+.gradual-blur:hover .gradual-blur-inner::before,
+.gradual-blur:focus-within .gradual-blur-inner::before {
+  opacity: 1;
+}
+
+.gradual-blur[data-position="top"] .gradual-blur-inner::before {
+  background: linear-gradient(
+    to top,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 40%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.08) 60%,
+    transparent 100%
+  );
+}
+
+.gradual-blur[data-position="left"] .gradual-blur-inner::before {
+  background: linear-gradient(
+    to left,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 40%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.08) 60%,
+    transparent 100%
+  );
+}
+
+.gradual-blur[data-position="right"] .gradual-blur-inner::before {
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 40%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.08) 60%,
+    transparent 100%
+  );
+}
+
 .gradual-blur-inner > div {
   -webkit-backdrop-filter: inherit;
   backdrop-filter: inherit;

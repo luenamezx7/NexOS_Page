@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useInView, useAnimation } from 'framer-motion';
+import { motion, useInView, useAnimation, type Variants, type Transition } from 'framer-motion';
 import { useRef, useEffect } from 'react';
 
 type SplitType = 'words' | 'characters' | 'lines';
@@ -11,7 +11,7 @@ interface SlideUpTextProps {
   delay?: number;
   stagger?: number;
   from?: 'first' | 'last' | 'center';
-  transition?: { type: string; ease?: number[]; duration?: number };
+  transition?: Transition;
   autoStart?: boolean;
   className?: string;
   wordClass?: string;
@@ -39,8 +39,7 @@ export function SlideUpText({
   split = 'words',
   delay = 0,
   stagger = 0.08,
-  from = 'first',
-  transition = { type: 'tween', ease: [0.625, 0.05, 0, 1], duration: 0.6 },
+  transition,
   autoStart = true,
   className = '',
   wordClass = '',
@@ -66,28 +65,41 @@ export function SlideUpText({
   const textContent = typeof children === 'string' ? children : String(children);
   const items = splitText(textContent, split);
 
-  const variants = {
+  const containerVariantsWithStagger: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: stagger,
+        delayChildren: delay,
+        ...(transition as object)
+      }
+    }
+  };
+
+  const itemVariantsWithTransition: Variants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        ...transition,
-        stagger: {
-          each: stagger,
-          from: from === 'first' ? 0 : from === 'last' ? items.length - 1 : items.length / 2
-        }
+        type: 'tween',
+        ease: [0.625, 0.05, 0, 1],
+        duration: 0.6,
+        ...(transition as object)
       }
     }
   };
 
-  const itemTransition = {
-    ...transition,
-    delay: delay
-  };
-
   return (
-    <div ref={ref} className={className} style={{ display: 'inline-block' }}>
+    <motion.div
+      ref={ref}
+      className={className}
+      style={{ display: 'inline-block' }}
+      initial="hidden"
+      animate={controls}
+      variants={containerVariantsWithStagger}
+    >
       {items.map((item, index) => {
         const isSpace = split === 'words' && /^\s+$/.test(item);
         const classNames = [
@@ -100,16 +112,13 @@ export function SlideUpText({
             key={index}
             className={classNames}
             style={{ display: split === 'words' || split === 'characters' ? 'inline-block' : 'block' }}
-            initial="hidden"
-            animate={controls}
-            variants={variants}
-            transition={itemTransition}
+            variants={itemVariantsWithTransition}
             onAnimationComplete={index === items.length - 1 ? onComplete : undefined}
           >
             {item}
           </motion.span>
         );
       })}
-    </div>
+    </motion.div>
   );
 }
