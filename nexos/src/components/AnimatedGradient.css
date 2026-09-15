@@ -1,0 +1,17 @@
+.animated-gradient-container {
+  width: 100%;
+  height: 100%;
+}
+
+.animated-gradient-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.animated-gradient-noise {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+}

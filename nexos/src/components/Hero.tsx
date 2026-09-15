@@ -4,10 +4,12 @@ import { Button } from './ui/Button';
 import { ArrowRight } from 'lucide-react';
 import DarkVeil from './DarkVeil';
 import { SlideUpText } from './SlideUpText';
+import { forwardRef, type ForwardedRef } from 'react';
 
-export function Hero() {
-  return (
-    <section id="hero" className={styles.hero} aria-labelledby="hero-title">
+export const Hero = forwardRef<HTMLElement, object>(
+  (_props, ref: ForwardedRef<HTMLElement>) => {
+    return (
+      <section ref={ref} id="hero" className={styles.hero} aria-labelledby="hero-title">
       <div className={styles.auroraLayer} aria-hidden="true">
         <div style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}>
           <DarkVeil
@@ -111,4 +113,8 @@ export function Hero() {
       </div>
     </section>
   );
-}
+});
+
+Hero.displayName = 'Hero';
+
+export default Hero;
