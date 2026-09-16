@@ -218,25 +218,26 @@ const presets: Record<string, {
 
 type PresetName = keyof typeof presets;
 
-type Config = 
-  | { preset: PresetName }
-  | { 
-      preset: 'custom';
-      color1: string;
-      color2: string;
-      color3: string;
-      rotation?: number;
-      proportion?: number;
-      scale?: number;
-      speed?: number;
-      distortion?: number;
-      swirl?: number;
-      swirlIterations?: number;
-      softness?: number;
-      offset?: number;
-      shape?: 'Checks' | 'Stripes' | 'Edge';
-      shapeSize?: number;
-    };
+type PresetConfig = { preset: PresetName };
+type CustomConfig = { 
+  preset: 'custom';
+  color1: string;
+  color2: string;
+  color3: string;
+  rotation?: number;
+  proportion?: number;
+  scale?: number;
+  speed?: number;
+  distortion?: number;
+  swirl?: number;
+  swirlIterations?: number;
+  softness?: number;
+  offset?: number;
+  shape?: 'Checks' | 'Stripes' | 'Edge';
+  shapeSize?: number;
+};
+
+type Config = PresetConfig | CustomConfig;
 
 type NoiseConfig = {
   opacity: number;
@@ -262,9 +263,9 @@ export default function AnimatedGradient({
   
   let cfg: typeof presets.Prism;
   
-  if ('preset' in config && config.preset !== 'custom') {
-    cfg = presets[config.preset];
-  } else if (config.preset === 'custom') {
+  const isCustomConfig = (c: Config): c is CustomConfig => c.preset === 'custom';
+  
+  if (isCustomConfig(config)) {
     const shapeMap: Record<string, number> = {
       'Checks': 0.1,
       'Stripes': 0.5,
@@ -286,6 +287,8 @@ export default function AnimatedGradient({
       shape: shapeMap[config.shape ?? 'Checks'] ?? 0.1,
       shapeSize: config.shapeSize ?? 10,
     };
+  } else if (config.preset in presets) {
+    cfg = presets[config.preset];
   } else {
     cfg = presets.Prism;
   }

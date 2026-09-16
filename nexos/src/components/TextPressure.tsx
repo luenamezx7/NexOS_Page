@@ -10,7 +10,6 @@ interface TextPressureProps {
   weight?: boolean;
   italic?: boolean;
   alpha?: boolean;
-  flex?: boolean;
   stroke?: boolean;
   scale?: boolean;
   textColor?: string;
@@ -49,7 +48,6 @@ const TextPressure: React.FC<TextPressureProps> = ({
   weight = true,
   italic = false,
   alpha = false,
-  flex = true,
   stroke = false,
   scale = false,
   textColor = '#FFFFFF',
@@ -66,6 +64,8 @@ const TextPressure: React.FC<TextPressureProps> = ({
   const cursorRef = useRef({ x: 0, y: 0 });
 
   const [fontSize, setFontSize] = useState(minFontSize);
+  const fontSizeRef = useRef(minFontSize);
+  useEffect(() => { fontSizeRef.current = fontSize; }, [fontSize]);
   const [scaleY, setScaleY] = useState(1);
   const [lineHeight, setLineHeight] = useState(1.2);
 
@@ -114,7 +114,7 @@ const TextPressure: React.FC<TextPressureProps> = ({
 
     // Calculate font size based on container width and text length
     const avgWordLength = words.reduce((sum, w) => sum + w.text.length, 0) / words.length;
-    const estimatedCharsPerLine = containerW / (fontSize * 0.6);
+    const estimatedCharsPerLine = containerW / (fontSizeRef.current * 0.6);
     const estimatedLines = Math.ceil(words.length / Math.max(1, estimatedCharsPerLine / avgWordLength));
     
     let newFontSize = containerW / (words.length / 3.5);
@@ -219,7 +219,7 @@ const TextPressure: React.FC<TextPressureProps> = ({
         }
       `}</style>
     );
-  }, [fontFamily, fontUrl, stroke, textColor, strokeColor]);
+  }, [fontUrl, textColor, strokeColor]);
 
   const dynamicClassName = [className, stroke ? 'stroke' : ''].filter(Boolean).join(' ');
 
@@ -261,7 +261,7 @@ const TextPressure: React.FC<TextPressureProps> = ({
           maxWidth: '100%',
         }}
       >
-        {words.map((word, i) => (
+        {words.map((word) => (
           <span
             key={word.id}
             ref={el => {
@@ -269,10 +269,11 @@ const TextPressure: React.FC<TextPressureProps> = ({
             }}
             data-char={word.text}
             style={{
-              display: 'inline',
+              display: 'inline-block',
               color: stroke ? undefined : textColor,
               willChange: 'font-variation-settings, opacity',
               fontVariationSettings: "'wght' 400, 'wdth' 100, 'ital' 0",
+              whiteSpace: word.isSpace ? 'pre' : 'nowrap',
             }}
           >
             {word.text}

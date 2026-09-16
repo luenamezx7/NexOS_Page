@@ -1,120 +1,290 @@
-import styles from './Hero.module.css';
-import { config } from '@/config';
-import { Button } from './ui/Button';
-import { ArrowRight } from 'lucide-react';
-import DarkVeil from './DarkVeil';
-import { SlideUpText } from './SlideUpText';
-import { forwardRef, type ForwardedRef } from 'react';
+'use client';
 
-export const Hero = forwardRef<HTMLElement, object>(
-  (_props, ref: ForwardedRef<HTMLElement>) => {
+import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
+import { motion, useReducedMotion, type Variants } from 'motion/react';
+import { ArrowRight, ArrowUpRight, Zap, Layers, Gauge } from 'lucide-react';
+import DarkVeil from './DarkVeil';
+import { HoldButton } from './HoldButton';
+import { config } from '@/config';
+
+interface HeroProps {
+  className?: string;
+}
+
+interface BentoCardData {
+  id: string;
+  badge: string;
+  title: string;
+  description: string;
+  metricValue: string;
+  metricLabel: string;
+  ctaLabel: string;
+  ctaHref: string;
+  icon: ReactNode;
+  span: string;
+}
+
+const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+
+const ENTER = {
+  initial: { opacity: 0, y: 30, filter: 'blur(6px)' },
+  whileInView: { opacity: 1, y: 0, filter: 'blur(0px)' },
+  transition: { duration: 0.8, ease: FLUID_EASE },
+} as const;
+
+const STAGGER_PARENT: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.1, delayChildren: 0.05 } },
+};
+
+const RELIEF_CHILD: Variants = {
+  hidden: { opacity: 0, y: 40, scale: 0.98 },
+  show: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.8, ease: FLUID_EASE },
+  },
+};
+
+function navigate(href: string): void {
+  if (href.startsWith('#')) {
+    const el: HTMLElement | null = document.getElementById(href.replace('#', ''));
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+  }
+  window.location.href = href;
+}
+
+const BENTO_CARDS: BentoCardData[] = [
+  {
+    id: 'dev',
+    badge: 'Full-Stack',
+    title: 'Desenvolvimento que escala',
+    description: 'Aplicações web e mobile modernas com arquitetura limpa, CI/CD e observabilidade nativa.',
+    metricValue: '40+',
+    metricLabel: 'projetos entregues',
+    ctaLabel: 'Contratar Desenvolvimento',
+    ctaHref: '#services',
+    icon: <Layers size={18} strokeWidth={1.75} aria-hidden="true" />,
+    span: 'md:col-span-7',
+  },
+  {
+    id: 'design',
+    badge: 'Product Design',
+    title: 'Interfaces que convertem',
+    description: 'Design system completo, protótipos navegáveis e identidade visual pronta para escalar.',
+    metricValue: '98%',
+    metricLabel: 'satisfação do cliente',
+    ctaLabel: 'Contratar Design',
+    ctaHref: '#services',
+    icon: <Zap size={18} strokeWidth={1.75} aria-hidden="true" />,
+    span: 'md:col-span-5',
+  },
+  {
+    id: 'strategy',
+    badge: 'Discovery',
+    title: 'Estratégia antes do código',
+    description: 'Validação de produto, roadmap técnico e plano de execução de 90 dias para o seu MVP.',
+    metricValue: '6 sem',
+    metricLabel: 'MVP médio',
+    ctaLabel: 'Agendar Discovery',
+    ctaHref: '#contact',
+    icon: <Gauge size={18} strokeWidth={1.75} aria-hidden="true" />,
+    span: 'md:col-span-5',
+  },
+  {
+    id: 'stack',
+    badge: 'Edge Runtime',
+    title: 'Performance como padrão',
+    description: 'Stack moderna em edge, regiões otimizadas e zero cold start. Velocidade sem concessões.',
+    metricValue: '100',
+    metricLabel: 'Lighthouse performance',
+    ctaLabel: 'Ver Cases',
+    ctaHref: '#testimonials',
+    icon: <ArrowUpRight size={18} strokeWidth={1.75} aria-hidden="true" />,
+    span: 'md:col-span-7',
+  },
+];
+
+interface BentoCardProps {
+  card: BentoCardData;
+  reduceMotion: boolean;
+}
+
+function BentoCard({ card, reduceMotion }: BentoCardProps) {
+  return (
+    <motion.article
+      variants={reduceMotion ? undefined : RELIEF_CHILD}
+      initial={reduceMotion ? { opacity: 0 } : undefined}
+      whileInView={reduceMotion ? { opacity: 1 } : undefined}
+      viewport={{ once: true, amount: 0.25 }}
+      transition={reduceMotion ? { duration: 0.4 } : undefined}
+      whileHover={reduceMotion ? undefined : { y: -5 }}
+      className={`bento-card will-change-transform group flex flex-col p-6 transition-colors duration-300 hover:border-white/25 md:p-7 ${card.span}`}
+      aria-labelledby={`bento-title-${card.id}`}
+    >
+      <div className="mb-5 flex flex-row items-center justify-between gap-3">
+        <span className="tech-badge">
+          <span className="tech-badge-dot" aria-hidden="true" />
+          {card.badge}
+        </span>
+        <span
+          className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-white/[0.04] text-white/70 transition-colors duration-300 group-hover:border-pink-500/40 group-hover:text-white"
+          aria-hidden="true"
+        >
+          {card.icon}
+        </span>
+      </div>
+
+      <h3 id={`bento-title-${card.id}`} className="mb-2 text-xl font-bold tracking-tight text-white">
+        {card.title}
+      </h3>
+      <p className="mb-5 text-sm leading-relaxed text-white/70">{card.description}</p>
+
+      <div className="mb-6 flex flex-row items-baseline gap-2">
+        <span className="font-display text-3xl font-bold tracking-tight text-white">{card.metricValue}</span>
+        <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/45">{card.metricLabel}</span>
+      </div>
+
+      <div className="mt-auto flex flex-row items-center gap-3 border-t border-white/10 pt-5">
+        <button
+          type="button"
+          onClick={() => navigate(card.ctaHref)}
+          aria-label={card.ctaLabel}
+          className="btn-secondary-nex w-full !justify-between"
+        >
+          <span>{card.ctaLabel}</span>
+          <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
+        </button>
+      </div>
+    </motion.article>
+  );
+}
+
+const HeroComponent = forwardRef<HTMLElement, HeroProps>(
+  ({ className = '' }: HeroProps, ref: ForwardedRef<HTMLElement>) => {
+    const reduce = useReducedMotion() ?? false;
+
     return (
-      <section ref={ref} id="hero" className={styles.hero} aria-labelledby="hero-title">
-      <div className={styles.auroraLayer} aria-hidden="true">
-        <div style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}>
+      <section
+        ref={ref}
+        id="hero"
+        aria-labelledby="hero-title"
+        className={`relative overflow-hidden bg-[#050505] ${className}`}
+      >
+        <div className="veil-wrap" aria-hidden="true">
           <DarkVeil
             hueShift={275}
-            noiseIntensity={0.12}
-            speed={0.7}
-            scanlineFrequency={0.5}
-            warpAmount={5}
+            noiseIntensity={0.08}
+            speed={0.5}
+            scanlineFrequency={0.3}
+            warpAmount={3}
           />
         </div>
-        <div className={styles.gridPattern} />
-      </div>
-      <div className={styles.container}>
-        <div className={styles.content}>
-          <div className={styles.badge}>
-            <span className={styles.badgeDot} aria-hidden="true"></span>
-            <span>Novo: Starter Kit para MVPs em 4 semanas</span>
-          </div>
-          <h1 id="hero-title" className={styles.headline}>
-            <SlideUpText
-              split="words"
-              stagger={0.08}
-              delay={0.3}
-              inView={true}
-              transition={{ type: 'tween', ease: [0.625, 0.05, 0, 1], duration: 0.6 }}
-              className="slide-up-text"
+        <div className="grid-pattern-subtle" aria-hidden="true" />
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-b from-transparent to-[#050505]"
+          aria-hidden="true"
+        />
+
+        <div className="relative mx-auto w-full max-w-6xl px-5 pb-24 pt-28 md:px-8 md:pb-32 md:pt-32">
+          <div className="flex flex-col items-center text-center">
+            <motion.div
+              initial={reduce ? { opacity: 0 } : ENTER.initial}
+              whileInView={reduce ? { opacity: 1 } : ENTER.whileInView}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={ENTER.transition}
+              className="mb-6 will-change-transform"
+            >
+              <span className="tech-badge">
+                <span className="tech-badge-dot animate-pulse-dot" aria-hidden="true" />
+                Starter Kit para MVPs em 4 semanas
+              </span>
+            </motion.div>
+
+            <motion.h1
+              id="hero-title"
+              initial={reduce ? { opacity: 0 } : ENTER.initial}
+              whileInView={reduce ? { opacity: 1 } : ENTER.whileInView}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ ...ENTER.transition, delay: 0.08 }}
+              className="w-full max-w-5xl text-balance font-heavy text-5xl font-normal leading-[1.02] tracking-[-0.015em] text-white will-change-transform md:text-6xl lg:text-7xl"
             >
               {config.hero.headline}
-            </SlideUpText>
-          </h1>
-          <p className={styles.subheadline}>{config.hero.subheadline}</p>
-          <div className={styles.ctaGroup}>
-            <Button
-              variant="primary"
-              size="lg"
-              aria-label={config.hero.ctaPrimary.label}
-            >
-              <a href={config.hero.ctaPrimary.href}>
-                {config.hero.ctaPrimary.label}
-                <ArrowRight size={20} strokeWidth={2.5} aria-hidden="true" />
-              </a>
-            </Button>
-            <Button
-              variant="secondary"
-              size="lg"
-              aria-label={config.hero.ctaSecondary.label}
-            >
-              <a href={config.hero.ctaSecondary.href}>{config.hero.ctaSecondary.label}</a>
-            </Button>
-          </div>
-          <div className={styles.trust}>
-            <span className={styles.trustLabel}>Confiado por startups e scale-ups</span>
-            <div className={styles.trustAvatars} aria-hidden="true">
-              <span className={styles.avatar}>MS</span>
-              <span className={styles.avatar}>RO</span>
-              <span className={styles.avatar}>CR</span>
-              <span className={styles.avatar}>AF</span>
-              <span className={styles.avatarMore}>+12</span>
-            </div>
-          </div>
-        </div>
-        <div className={styles.visual} aria-hidden="true">
-          <div className={styles.window}>
-            <div className={styles.windowHeader}>
-              <div className={styles.windowControls}>
-                <span className={styles.control} />
-                <span className={styles.control} />
-                <span className={styles.control} />
-              </div>
-              <div className={styles.windowTitle}>nexos.config.ts</div>
-            </div>
-            <pre className={styles.code}>
-              <code className="mono">
-</code>
-            </pre>
-          </div>
-          <div className={styles.metrics}>
-            <div className={styles.metric}>
-              <span className={styles.metricValue}>40+</span>
-              <span className={styles.metricLabel}>Projetos entregues</span>
-            </div>
-            <div className={styles.metric}>
-              <span className={styles.metricValue}>98%</span>
-              <span className={styles.metricLabel}>Satisfação do cliente</span>
-            </div>
-            <div className={styles.metric}>
-              <span className={styles.metricValue}>6sem</span>
-              <span className={styles.metricLabel}>MVP médio</span>
-            </div>
-          </div>
-          <div className={styles.techIndicator} aria-hidden="true">
-            <span className={styles.techDot}></span>
-            <span className={styles.techLabel}>HOME</span>
-          </div>
-        </div>
-      </div>
-      <div className={styles.scrollIndicator} aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <path d="M12 5v14M19 12l-7 7-7-7" />
-        </svg>
-      </div>
-    </section>
-  );
-});
+            </motion.h1>
 
-Hero.displayName = 'Hero';
+            <motion.p
+              initial={reduce ? { opacity: 0 } : ENTER.initial}
+              whileInView={reduce ? { opacity: 1 } : ENTER.whileInView}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={{ ...ENTER.transition, delay: 0.16 }}
+              className="mt-5 max-w-[62ch] text-base leading-relaxed text-white/70 will-change-transform md:text-lg"
+            >
+              {config.hero.subheadline}
+            </motion.p>
 
+            <motion.div
+              initial={reduce ? { opacity: 0 } : ENTER.initial}
+              whileInView={reduce ? { opacity: 1 } : ENTER.whileInView}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={{ ...ENTER.transition, delay: 0.24 }}
+              className="mt-8 flex w-full flex-col items-center justify-center gap-3 will-change-transform sm:flex-row"
+            >
+              <HoldButton
+                label={config.hero.ctaPrimary.label}
+                ariaLabel={config.hero.ctaPrimary.label}
+                hintId="hero-hold-hint"
+                onConfirm={() => navigate(config.hero.ctaPrimary.href)}
+                featured
+                className="w-full px-6 py-3 text-sm font-medium tracking-wide sm:w-auto"
+              />
+
+              <motion.button
+                type="button"
+                onClick={() => navigate(config.hero.ctaSecondary.href)}
+                aria-label={config.hero.ctaSecondary.label}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ duration: 0.3, ease: FLUID_EASE }}
+                className="btn-secondary-nex w-full px-6 py-3 text-sm font-medium tracking-wide sm:w-auto"
+              >
+                {config.hero.ctaSecondary.label}
+              </motion.button>
+            </motion.div>
+
+            <motion.p
+              id="hero-hold-hint"
+              initial={reduce ? { opacity: 0 } : ENTER.initial}
+              whileInView={reduce ? { opacity: 1 } : ENTER.whileInView}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={{ ...ENTER.transition, delay: 0.32 }}
+              className="mt-4 font-mono text-[10px] uppercase tracking-[0.3em] text-white/40 will-change-transform"
+            >
+              Pressione para iniciar
+            </motion.p>
+          </div>
+
+          <motion.div
+            variants={reduce ? undefined : STAGGER_PARENT}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.15 }}
+            className="mt-14 grid grid-cols-1 gap-4 md:grid-cols-12 md:[grid-auto-flow:dense] md:gap-5"
+          >
+            {BENTO_CARDS.map((card: BentoCardData) => (
+              <BentoCard key={card.id} card={card} reduceMotion={reduce} />
+            ))}
+          </motion.div>
+        </div>
+      </section>
+    );
+  },
+);
+
+HeroComponent.displayName = 'Hero';
+
+export const Hero = HeroComponent;
 export default Hero;

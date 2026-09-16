@@ -18,17 +18,13 @@ export default function CancelPage() {
           Nenhuma cobrança foi realizada. Seu carrinho continua salvo caso queira tentar novamente.
         </p>
         <div className={styles.actions}>
-          <Button variant="primary" size="lg" asChild>
-            <Link href="/#services">
-              <RotateCcw size={20} strokeWidth={2.5} aria-hidden="true" />
-              Tentar novamente
-            </Link>
+          <Button variant="primary" size="lg" onClick={() => window.location.href = '/#services'}>
+            <RotateCcw size={20} strokeWidth={2.5} aria-hidden="true" />
+            Tentar novamente
           </Button>
-          <Button variant="secondary" size="lg" asChild>
-            <Link href="/">
-              <ArrowLeft size={20} strokeWidth={2.5} aria-hidden="true" />
-              Voltar ao início
-            </Link>
+          <Button variant="secondary" size="lg" onClick={() => window.location.href = '/'}>
+            <ArrowLeft size={20} strokeWidth={2.5} aria-hidden="true" />
+            Voltar ao início
           </Button>
         </div>
         <div className={styles.help}>

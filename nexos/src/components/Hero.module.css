@@ -5,7 +5,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: calc(72px + var(--space-xl)) var(--container-padding) var(--space-xxl);
+  padding: calc(80px + var(--space-xl)) var(--container-padding) var(--space-xxl);
   overflow: hidden;
   isolation: isolate;
 }
@@ -21,87 +21,87 @@
 .auroraOrb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(80px);
-  animation: floatSlow 25s ease-in-out infinite;
+  filter: blur(60px);
+  animation: floatSlow 30s ease-in-out infinite;
   will-change: transform;
   transform: translateZ(0);
-  opacity: 0.4;
+  opacity: 0.3;
 }
 
 .auroraOrb:nth-child(1) {
-  width: 500px;
-  height: 500px;
+  width: 400px;
+  height: 400px;
   background: radial-gradient(ellipse at 30% 30%, var(--color-aurora-violet-glow) 0%, transparent 70%);
-  top: -150px;
-  left: -150px;
+  top: -100px;
+  left: -100px;
   animation-delay: 0s;
 }
 
 .auroraOrb:nth-child(2) {
-  width: 450px;
-  height: 450px;
+  width: 350px;
+  height: 350px;
   background: radial-gradient(ellipse at 70% 70%, var(--color-aurora-cyan-glow) 0%, transparent 70%);
-  bottom: -150px;
-  right: -150px;
-  animation-delay: -5s;
+  bottom: -100px;
+  right: -100px;
+  animation-delay: -8s;
 }
 
 .auroraOrb:nth-child(3) {
-  width: 400px;
-  height: 400px;
+  width: 300px;
+  height: 300px;
   background: radial-gradient(ellipse at 50% 50%, var(--color-tech-pink-glow) 0%, transparent 70%);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) translateZ(0);
-  animation-delay: -10s;
-}
-
-.auroraOrb:nth-child(4) {
-  width: 350px;
-  height: 350px;
-  background: radial-gradient(ellipse at 50% 50%, var(--color-aurora-emerald-glow) 0%, transparent 70%);
-  top: 15%;
-  right: 5%;
   animation-delay: -15s;
 }
 
+.auroraOrb:nth-child(4) {
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(ellipse at 50% 50%, var(--color-aurora-emerald-glow) 0%, transparent 70%);
+  top: 10%;
+  right: 5%;
+  animation-delay: -12s;
+}
+
 .auroraOrb:nth-child(5) {
-  width: 300px;
-  height: 300px;
+  width: 250px;
+  height: 250px;
   background: radial-gradient(ellipse at 50% 50%, var(--color-aurora-amber-glow) 0%, transparent 70%);
-  bottom: 25%;
+  bottom: 20%;
   left: 10%;
-  animation-delay: -7s;
+  animation-delay: -5s;
 }
 
 .gridPattern {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
-  background-size: 80px 80px;
-  animation: gridMove 80s linear infinite;
+    linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+  background-size: 100px 100px;
+  animation: gridMove 100s linear infinite;
   will-change: background-position;
   transform: translateZ(0);
-  opacity: 0.5;
+  opacity: 0.3;
 }
 
 @media (max-width: 768px) {
   .auroraOrb {
-    filter: blur(60px);
-    opacity: 0.3;
+    filter: blur(50px);
+    opacity: 0.2;
   }
 
-  .auroraOrb:nth-child(1) { width: 350px; height: 350px; top: -100px; left: -100px; }
-  .auroraOrb:nth-child(2) { width: 300px; height: 300px; bottom: -100px; right: -100px; }
-  .auroraOrb:nth-child(3) { width: 280px; height: 280px; }
-  .auroraOrb:nth-child(4) { width: 250px; height: 250px; top: 10%; right: 2%; }
-  .auroraOrb:nth-child(5) { width: 200px; height: 200px; bottom: 20%; left: 5%; }
+  .auroraOrb:nth-child(1) { width: 280px; height: 280px; top: -80px; left: -80px; }
+  .auroraOrb:nth-child(2) { width: 240px; height: 240px; bottom: -80px; right: -80px; }
+  .auroraOrb:nth-child(3) { width: 220px; height: 220px; }
+  .auroraOrb:nth-child(4) { width: 200px; height: 200px; top: 8%; right: 3%; }
+  .auroraOrb:nth-child(5) { width: 180px; height: 180px; bottom: 15%; left: 5%; }
 
   .gridPattern {
-    background-size: 60px 60px;
-    animation-duration: 60s;
+    background-size: 80px 80px;
+    animation-duration: 80s;
   }
 }
 
@@ -254,12 +254,11 @@
   font-size: var(--font-size-body-sm);
   font-weight: 600;
   color: var(--color-ink);
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  transition: transform var(--transition-base);
 }
 
 .avatar:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-card-hover);
   z-index: 10;
 }
 
@@ -284,12 +283,21 @@
   gap: var(--space-lg);
 }
 
+.bentoCard {
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--rounded-xl);
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  will-change: transform, opacity;
+  transform: translateZ(0);
+}
+
 .window {
   background-color: var(--color-surface-1);
   border: 1px solid var(--color-hairline);
   border-radius: var(--rounded-xl);
   overflow: hidden;
-  animation: fadeInUp var(--transition-slow) ease-out 0.2s both;
   box-shadow: var(--shadow-elevated);
 }
 

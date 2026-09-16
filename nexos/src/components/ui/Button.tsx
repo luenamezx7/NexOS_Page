@@ -1,95 +1,48 @@
 import * as React from 'react';
-import { Slot } from '@radix-ui/react-slot';
-import { cva, type VariantProps } from 'class-variance-authority';
+import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
 
-const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-medium transition-all duration-300 ease-[cubic-bezier(0.625,0.05,0,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black disabled:pointer-events-none disabled:opacity-40 active:scale-[0.97]',
-  {
-    variants: {
-      variant: {
-        primary: [
-          'relative overflow-hidden',
-          'bg-white/10 text-white',
-          'backdrop-blur-[24px] -webkit-backdrop-blur-[24px]',
-          'border border-white/10',
-          'shadow-[0_1px_0_rgba(255,255,255,0.08)_inset,0_2px_8px_rgba(0,0,0,0.12),0_8px_24px_rgba(0,0,0,0.08)]',
-          'hover:bg-white/15',
-          'hover:border-white/15',
-          'hover:shadow-[0_1px_0_rgba(255,255,255,0.12)_inset,0_4px_16px_rgba(0,0,0,0.15),0_12px_32px_rgba(0,0,0,0.1)]',
-          'hover:-translate-y-0.5',
-          'active:translate-y-0',
-        ].join(' '),
-        secondary: [
-          'relative overflow-hidden',
-          'bg-white/5 text-white',
-          'backdrop-blur-[24px] -webkit-backdrop-blur-[24px]',
-          'border border-white/8',
-          'shadow-[0_1px_0_rgba(255,255,255,0.04)_inset,0_1px_3px_rgba(0,0,0,0.08)]',
-          'hover:bg-white/10',
-          'hover:border-white/12',
-          'hover:shadow-[0_1px_0_rgba(255,255,255,0.06)_inset,0_2px_8px_rgba(0,0,0,0.1),0_8px_24px_rgba(0,0,0,0.06)]',
-          'hover:-translate-y-0.5',
-          'active:translate-y-0',
-        ].join(' '),
-        ghost: [
-          'bg-transparent text-white',
-          'hover:bg-white/5',
-          'hover:shadow-[0_1px_0_rgba(255,255,255,0.04)_inset,0_2px_8px_rgba(0,0,0,0.06)]',
-          'hover:-translate-y-0.5',
-          'active:translate-y-0',
-        ].join(' '),
-        outline: [
-          'relative overflow-hidden',
-          'bg-transparent text-white',
-          'border border-white/15',
-          'shadow-[0_1px_0_rgba(255,255,255,0.02)_inset]',
-          'hover:bg-white/5',
-          'hover:border-white/20',
-          'hover:shadow-[0_1px_0_rgba(255,255,255,0.06)_inset,0_2px_8px_rgba(0,0,0,0.08),0_8px_24px_rgba(0,0,0,0.05)]',
-          'hover:-translate-y-0.5',
-          'active:translate-y-0',
-        ].join(' '),
-        destructive: [
-          'relative overflow-hidden',
-          'bg-red-500/20 text-red-100',
-          'backdrop-blur-[24px] -webkit-backdrop-blur-[24px]',
-          'border border-red-500/20',
-          'shadow-[0_1px_0_rgba(239,68,68,0.08)_inset,0_2px_8px_rgba(239,68,68,0.1),0_8px_24px_rgba(239,68,68,0.06)]',
-          'hover:bg-red-500/30',
-          'hover:border-red-500/30',
-          'hover:shadow-[0_1px_0_rgba(239,68,68,0.12)_inset,0_4px_16px_rgba(239,68,68,0.15),0_12px_32px_rgba(239,68,68,0.1)]',
-          'hover:-translate-y-0.5',
-          'active:translate-y-0',
-        ].join(' '),
-        link: 'text-white/70 underline-offset-4 hover:text-white hover:underline',
-      },
-      size: {
-        sm: 'h-9 px-3 text-xs rounded-lg gap-1.5',
-        md: 'h-10 px-4 text-sm rounded-xl gap-2',
-        lg: 'h-12 px-6 text-base rounded-xl gap-2',
-        xl: 'h-14 px-8 text-lg rounded-2xl gap-2.5',
-        icon: 'h-10 w-10 rounded-xl',
-      },
-    },
-    defaultVariants: {
-      variant: 'primary',
-      size: 'md',
-    },
-  }
-);
-
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
-  asChild?: boolean;
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
   fullWidth?: boolean;
+  shimmer?: boolean;
 }
 
+const baseStyles = 'relative inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black disabled:pointer-events-none disabled:opacity-40 select-none';
+
+const buttonVariants = {
+  primary: 'overflow-hidden rounded-lg bg-pink-600 px-7 py-3 text-sm font-semibold text-white shadow-[0_0_25px_rgba(219,39,119,0.5)] hover:shadow-[0_0_35px_rgba(219,39,119,0.8)] hover:bg-pink-500',
+  secondary: 'rounded-lg border border-white/20 bg-white/5 px-6 py-3 text-sm font-medium text-white/90 backdrop-blur-sm hover:bg-white/10 hover:border-white/40',
+  ghost: 'rounded-lg bg-transparent text-white/80 hover:bg-white/5 hover:text-white',
+};
+
+const sizes = {
+  sm: 'px-4 py-2 text-xs',
+  md: 'px-6 py-3 text-sm',
+  lg: 'px-7 py-3 text-sm',
+};
+
+type MotionSafeProps = Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 
+  'onDrag' | 'onDragEnd' | 'onDragStart' | 'onDragEnter' | 'onDragLeave' | 'onDragOver' | 'onDrop' |
+  'onAnimationStart' | 'onAnimationEnd' | 'onAnimationIteration' |
+  'onTransitionStart' | 'onTransitionEnd' | 'onTransitionRun' | 'onTransitionCancel' |
+  'whileHover' | 'whileTap' | 'whileFocus' | 'whileInView' | 'whileDrag' | 'animate' | 'initial' | 'exit' | 'transition' | 'variants' | 'custom' | 'layout' | 'layoutId' | 'style'
+>;
+
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, loading, disabled, fullWidth, children, ...props }, ref) => {
-    const Comp = asChild ? Slot : 'button';
+  ({ 
+    className, 
+    variant = 'primary', 
+    size = 'md', 
+    loading, 
+    disabled, 
+    fullWidth, 
+    shimmer = true, 
+    children, 
+    ...props 
+  }, ref) => {
     const content = loading ? (
       <>
         <svg
@@ -111,19 +64,48 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ) : (
       children
     );
+
+    const baseClasses = cn(
+      baseStyles,
+      buttonVariants[variant],
+      sizes[size],
+      fullWidth && 'w-full',
+      className
+    );
+
+    const motionProps = {
+      whileHover: { scale: variant === 'primary' ? 1.04 : 1.02 },
+      whileTap: { scale: variant === 'primary' ? 0.96 : 0.98 },
+      transition: { type: 'spring', stiffness: 300, damping: 20 } as const,
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { onDrag, onDragEnd, onDragStart, onDragEnter, onDragLeave, onDragOver, onDrop,
+      onAnimationStart, onAnimationEnd, onAnimationIteration,
+      onTransitionStart, onTransitionEnd, onTransitionRun, onTransitionCancel,
+      transition: _transition,
+      whileHover, whileTap, whileFocus, whileInView, whileDrag, animate, initial, exit,
+      variants: _variants, custom, layout, layoutId, style,
+      ...restProps } = props as MotionSafeProps & Record<string, unknown>;
+
     return (
-      <Comp
-        className={cn(buttonVariants({ variant, size, className }), fullWidth && 'w-full')}
+      <motion.button
         ref={ref}
+        className={baseClasses}
         disabled={disabled || loading}
         aria-busy={loading}
-        {...props}
+        {...motionProps}
+        {...restProps}
       >
         {content}
-      </Comp>
+        {shimmer && variant === 'primary' && !loading && (
+          <span className="shimmer-sweep" aria-hidden="true" />
+        )}
+      </motion.button>
     );
   }
 );
+
 Button.displayName = 'Button';
 
-export { Button, buttonVariants };
+export { Button };
