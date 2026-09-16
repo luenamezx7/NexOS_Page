@@ -11,6 +11,8 @@ import { Footer } from '@/components/Footer';
 import { ThinkingOrbWrapper } from '@/components/ThinkingOrbWrapper';
 import TextPressure from '@/components/TextPressure';
 import DarkVeil from '@/components/DarkVeil';
+import Grainient from '@/components/Grainient';
+import { useTheme } from '@/components/ThemeProvider';
 
 type Stage = 'loading' | 'intro' | 'main';
 
@@ -26,7 +28,7 @@ function LoadingScreen() {
       aria-label="Carregando plataforma NexOS"
       exit={{ opacity: 0, filter: 'blur(6px)' }}
       transition={{ duration: 0.6, ease: FLUID_EASE }}
-      className="fixed inset-0 z-[999] flex items-center justify-center bg-[#050505] will-change-transform"
+      className="fixed inset-0 z-[999] flex items-center justify-center bg-canvas will-change-transform"
     >
       <ThinkingOrbWrapper state="searching" size={64} label="INITIALIZING NEXOS..." />
     </motion.div>
@@ -39,6 +41,7 @@ interface IntroSectionProps {
 
 function IntroSection({ onComplete }: IntroSectionProps) {
   const reduce = useReducedMotion() ?? false;
+  const { theme } = useTheme();
   const completedRef = useRef<boolean>(false);
 
   const finish = useCallback(() => {
@@ -81,17 +84,40 @@ function IntroSection({ onComplete }: IntroSectionProps) {
       aria-label="Apresentação NexOS — role para entrar"
       exit={reduce ? { opacity: 0 } : { opacity: 0, y: -90, filter: 'blur(8px)' }}
       transition={{ duration: 0.7, ease: FLUID_EASE }}
-      className="fixed inset-0 z-[900] flex flex-col justify-center overflow-hidden bg-[#050505] will-change-transform"
+      className="fixed inset-0 z-[900] flex flex-col justify-center overflow-hidden bg-canvas will-change-transform"
     >
-      <div className="veil-wrap" aria-hidden="true">
-        <DarkVeil
-          hueShift={275}
-          noiseIntensity={0.08}
-          speed={0.5}
-          scanlineFrequency={0.3}
-          warpAmount={3}
-        />
-      </div>
+      {theme === 'dark' ? (
+        <div className="veil-wrap" aria-hidden="true">
+          <DarkVeil
+            hueShift={275}
+            noiseIntensity={0.08}
+            speed={0.5}
+            scanlineFrequency={0.3}
+            warpAmount={3}
+          />
+        </div>
+      ) : (
+        <div className="veil-wrap" aria-hidden="true">
+          <Grainient
+            color1="#ffd6e7"
+            color2="#ff2e6a"
+            color3="#ece7db"
+            lightMode={true}
+            timeSpeed={0.25}
+            warpStrength={1.0}
+            warpFrequency={5.0}
+            warpSpeed={2.0}
+            warpAmplitude={50.0}
+            grainAmount={0.06}
+            grainScale={2.0}
+            grainAnimated={false}
+            contrast={1.2}
+            gamma={1.0}
+            saturation={0.9}
+            zoom={0.9}
+          />
+        </div>
+      )}
       <div className="grid-pattern-subtle" aria-hidden="true" />
 
       <motion.div
@@ -111,8 +137,8 @@ function IntroSection({ onComplete }: IntroSectionProps) {
           alpha={true}
           stroke={false}
           scale={false}
-          textColor="#FFFFFF"
-          strokeColor="#FFFFFF"
+          textColor={theme === 'dark' ? '#FFFFFF' : '#131316'}
+          strokeColor={theme === 'dark' ? '#FFFFFF' : '#131316'}
           minFontSize={36}
         />
       </motion.div>
@@ -124,7 +150,7 @@ function IntroSection({ onComplete }: IntroSectionProps) {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.9, ease: FLUID_EASE }}
-        className="absolute bottom-10 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3 font-mono text-[11px] uppercase tracking-[0.22em] text-white/40 transition-colors duration-300 hover:text-white/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+        className="absolute bottom-10 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3 font-mono text-[11px] uppercase tracking-[0.22em] text-ink/40 transition-colors duration-300 hover:text-ink/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
       >
         <span className="animate-scroll-hint grid place-items-center" aria-hidden="true">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
@@ -169,27 +195,28 @@ export default function HomeClient() {
   }, [stage]);
 
   return (
-    <main className="w-full max-w-full overflow-x-hidden bg-[#050505] text-white">
+    <main className="w-full max-w-full overflow-x-hidden bg-canvas text-ink">
       <AnimatePresence>{stage === 'loading' && <LoadingScreen key="loading" />}</AnimatePresence>
 
       <AnimatePresence>{stage === 'intro' && <IntroSection key="intro" onComplete={handleIntroComplete} />}</AnimatePresence>
 
       {stage === 'main' && (
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: FLUID_EASE }}
-          className="will-change-transform"
-        >
+        <>
           <Header />
-          <div id="main-content" role="main">
-            <Hero ref={heroRef} />
-            <Services />
-            <Testimonials />
-            <Contact />
-          </div>
-          <Footer />
-        </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: FLUID_EASE }}
+          >
+            <div id="main-content" role="main">
+              <Hero ref={heroRef} />
+              <Services />
+              <Testimonials />
+              <Contact />
+            </div>
+            <Footer />
+          </motion.div>
+        </>
       )}
     </main>
   );

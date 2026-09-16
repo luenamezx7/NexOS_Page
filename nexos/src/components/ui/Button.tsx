@@ -10,12 +10,12 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   shimmer?: boolean;
 }
 
-const baseStyles = 'relative inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black disabled:pointer-events-none disabled:opacity-40 select-none';
+const baseStyles = 'relative inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-canvas disabled:pointer-events-none disabled:opacity-40 select-none';
 
 const buttonVariants = {
   primary: 'overflow-hidden rounded-lg bg-pink-600 px-7 py-3 text-sm font-semibold text-white shadow-[0_0_25px_rgba(219,39,119,0.5)] hover:shadow-[0_0_35px_rgba(219,39,119,0.8)] hover:bg-pink-500',
-  secondary: 'rounded-lg border border-white/20 bg-white/5 px-6 py-3 text-sm font-medium text-white/90 backdrop-blur-sm hover:bg-white/10 hover:border-white/40',
-  ghost: 'rounded-lg bg-transparent text-white/80 hover:bg-white/5 hover:text-white',
+  secondary: 'rounded-lg border border-ink/20 bg-ink/5 px-6 py-3 text-sm font-medium text-ink/90 hover:bg-ink/10 hover:border-ink/40',
+  ghost: 'rounded-lg bg-transparent text-ink/80 hover:bg-ink/5 hover:text-ink',
 };
 
 const sizes = {

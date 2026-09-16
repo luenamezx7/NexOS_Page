@@ -1,15 +1,15 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
-import { Geist, Geist_Mono, Space_Grotesk, Archivo_Black } from "next/font/google";
+import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
 import { cn } from "@/lib/utils";
 import GlobalNoise from '@/components/GlobalNoise';
 import GradualBlur from '@/components/GradualBlur';
 import { SmoothScrollProvider } from '@/components/SmoothScrollProvider';
+import { ThemeProvider } from '@/components/ThemeProvider';
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans', display: 'swap' });
 const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap' });
 const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-display', display: 'swap' });
-const archivoBlack = Archivo_Black({ subsets: ['latin'], variable: '--font-heavy', display: 'swap', weight: '400' });
 
 export const metadata: Metadata = {
   title: {
@@ -76,16 +76,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR" className={cn("font-sans", geist.variable, geistMono.variable, spaceGrotesk.variable, archivoBlack.variable)}>
+    <html lang="pt-BR" className={cn("font-sans dark", geist.variable, geistMono.variable, spaceGrotesk.variable)}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://js.stripe.com" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('nexos-theme');if(t==='light'){document.documentElement.classList.remove('dark');}document.documentElement.style.colorScheme=t==='light'?'light':'dark';}catch(e){}})()`,
+          }}
+        />
       </head>
       <body className="min-h-screen antialiased">
-        <SmoothScrollProvider>
-          {children}
-        </SmoothScrollProvider>
+        <ThemeProvider>
+          <SmoothScrollProvider>
+            {children}
+          </SmoothScrollProvider>
+        </ThemeProvider>
         <GlobalNoise
           noiseIntensity={0.03}
           scanlineIntensity={0.02}

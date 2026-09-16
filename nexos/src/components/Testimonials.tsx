@@ -41,27 +41,27 @@ function TestimonialCard({ testimonial, reduceMotion }: TestimonialCardProps) {
       viewport={{ once: true, amount: 0.25 }}
       transition={reduceMotion ? { duration: 0.4 } : undefined}
       whileHover={reduceMotion ? undefined : { y: -5 }}
-      className="bento-card will-change-transform flex flex-col p-7 transition-colors duration-300 hover:border-white/25 md:p-8"
+      className="bento-card will-change-transform flex flex-col p-7 transition-colors duration-300 hover:border-ink/25 md:p-8"
       aria-label={`Depoimento de ${testimonial.author}`}
     >
       <Quote size={28} strokeWidth={1.5} className="mb-5 text-[#ff2e6a]" aria-hidden="true" />
 
       <blockquote className="mb-7">
-        <p className="text-[15px] leading-relaxed text-white/80">
+        <p className="text-[15px] leading-relaxed text-ink/80">
           &ldquo;{testimonial.content}&rdquo;
         </p>
       </blockquote>
 
-      <footer className="mt-auto flex flex-row items-center gap-3.5 border-t border-white/10 pt-5">
+      <footer className="mt-auto flex flex-row items-center gap-3.5 border-t border-ink/10 pt-5">
         <div
-          className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-white/10 bg-white/[0.05] font-mono text-xs font-semibold text-white"
+          className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-ink/10 bg-ink/[0.05] font-mono text-xs font-semibold text-ink"
           aria-hidden="true"
         >
           {initials}
         </div>
         <div className="flex min-w-0 flex-col">
-          <cite className="truncate text-sm font-semibold not-italic text-white">{testimonial.author}</cite>
-          <p className="truncate text-xs text-white/50">
+          <cite className="truncate text-sm font-semibold not-italic text-ink">{testimonial.author}</cite>
+          <p className="truncate text-xs text-ink/50">
             {testimonial.role} · {testimonial.company}
           </p>
         </div>
@@ -81,7 +81,7 @@ export function Testimonials({ className = '' }: TestimonialsProps) {
     <section
       id="testimonials"
       aria-labelledby="testimonials-title"
-      className={`relative border-t border-white/10 bg-[#050505] ${className}`}
+      className={`relative border-t border-ink/10 bg-canvas ${className}`}
     >
       <div className="mx-auto w-full max-w-6xl px-5 py-24 md:px-8 md:py-32">
         <motion.header
@@ -91,11 +91,11 @@ export function Testimonials({ className = '' }: TestimonialsProps) {
           transition={{ duration: 0.8, ease: FLUID_EASE }}
           className="mb-12 max-w-2xl will-change-transform md:mb-16"
         >
-          <h2 id="testimonials-title" className="flex flex-row items-start gap-3 text-white">
+          <h2 id="testimonials-title" className="flex flex-row items-start gap-3 text-ink">
             <span className="pink-marker mt-[0.28em]" aria-hidden="true" />
             Cases &amp; Depoimentos
           </h2>
-          <p className="mt-4 text-base leading-relaxed text-white/70 md:text-lg">
+          <p className="mt-4 text-base leading-relaxed text-ink/70 md:text-lg">
             Resultados reais de times que confiaram na gente para construir seus produtos.
           </p>
         </motion.header>

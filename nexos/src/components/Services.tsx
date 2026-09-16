@@ -84,7 +84,7 @@ function ServiceCard({ service, reduceMotion }: ServiceCardProps) {
       viewport={{ once: true, amount: 0.25 }}
       transition={reduceMotion ? { duration: 0.4 } : undefined}
       whileHover={reduceMotion ? undefined : { y: -5 }}
-      className="bento-card will-change-transform flex flex-col p-7 transition-colors duration-300 hover:border-white/25 md:p-8"
+      className="bento-card will-change-transform flex flex-col p-7 transition-colors duration-300 hover:border-ink/25 md:p-8"
       aria-labelledby={`service-title-${service.id}`}
     >
       <div className="mb-5 flex flex-row items-start justify-between gap-3">
@@ -92,26 +92,26 @@ function ServiceCard({ service, reduceMotion }: ServiceCardProps) {
           <span className="tech-badge-dot" aria-hidden="true" />
           {service.id}
         </span>
-        <span className="font-mono text-sm font-semibold tracking-tight text-white">
+        <span className="font-mono text-sm font-semibold tracking-tight text-ink">
           R$ {service.price.toLocaleString('pt-BR')}
         </span>
       </div>
 
-      <h3 id={`service-title-${service.id}`} className="mb-2 text-xl font-bold tracking-tight text-white">
+      <h3 id={`service-title-${service.id}`} className="mb-2 text-xl font-bold tracking-tight text-ink">
         {service.title}
       </h3>
-      <p className="mb-6 text-sm leading-relaxed text-white/70">{service.description}</p>
+      <p className="mb-6 text-sm leading-relaxed text-ink/70">{service.description}</p>
 
       <ul className="mb-7 space-y-2.5" role="list" aria-label={`${service.title} — características`}>
         {service.features.map((feature: string) => (
-          <li key={feature} className="flex flex-row items-start gap-2.5 text-sm leading-relaxed text-white/70">
+          <li key={feature} className="flex flex-row items-start gap-2.5 text-sm leading-relaxed text-ink/70">
             <Check size={16} strokeWidth={2.5} className="mt-0.5 shrink-0 text-[#ff2e6a]" aria-hidden="true" />
             <span>{feature}</span>
           </li>
         ))}
       </ul>
 
-      <div className="mt-auto border-t border-white/10 pt-5">
+      <div className="mt-auto border-t border-ink/10 pt-5">
         <Button
           variant="primary"
           size="md"
@@ -139,7 +139,7 @@ export function Services({ className = '' }: ServicesProps) {
     <section
       id="services"
       aria-labelledby="services-title"
-      className={`relative border-t border-white/10 bg-[#050505] ${className}`}
+      className={`relative border-t border-ink/10 bg-canvas ${className}`}
     >
       <div className="mx-auto w-full max-w-6xl px-5 py-24 md:px-8 md:py-32">
         <motion.header
@@ -149,11 +149,11 @@ export function Services({ className = '' }: ServicesProps) {
           transition={{ duration: 0.8, ease: FLUID_EASE }}
           className="mb-12 max-w-2xl will-change-transform md:mb-16"
         >
-          <h2 id="services-title" className="flex flex-row items-start gap-3 text-white">
+          <h2 id="services-title" className="flex flex-row items-start gap-3 text-ink">
             <span className="pink-marker mt-[0.28em]" aria-hidden="true" />
             Serviços
           </h2>
-          <p className="mt-4 text-base leading-relaxed text-white/70 md:text-lg">
+          <p className="mt-4 text-base leading-relaxed text-ink/70 md:text-lg">
             Três pilares para transformar sua ideia em produto escalável. Escolha o que faz sentido para o seu momento.
           </p>
         </motion.header>
@@ -177,9 +177,9 @@ export function Services({ className = '' }: ServicesProps) {
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true, amount: 0.6 }}
           transition={{ duration: 0.8, ease: FLUID_EASE }}
-          className="mt-10 flex flex-row items-center justify-center gap-2.5 text-center text-sm text-white/45 will-change-transform"
+          className="mt-10 flex flex-row items-center justify-center gap-2.5 text-center text-sm text-ink/45 will-change-transform"
         >
-          <ShieldCheck size={16} strokeWidth={2} className="shrink-0 text-white/45" aria-hidden="true" />
+          <ShieldCheck size={16} strokeWidth={2} className="shrink-0 text-ink/45" aria-hidden="true" />
           <span>Pagamento seguro via Stripe. Redirecionamento automático para WhatsApp após confirmação.</span>
         </motion.div>
       </div>
