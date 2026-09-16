@@ -1,30 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { loadStripe, type Stripe } from '@stripe/stripe-js';
 import { motion, useReducedMotion, type Variants } from 'motion/react';
 import { Check, ArrowRight, ShieldCheck } from 'lucide-react';
 import { config } from '@/config';
 import type { Service } from '@/types';
 import { Button } from './ui/Button';
-
-interface StripeExtended extends Stripe {
-  redirectToCheckout: (options: {
-    mode: 'payment' | 'subscription' | 'setup';
-    lineItems: Array<{ price: string; quantity: number }>;
-    successUrl: string;
-    cancelUrl: string;
-  }) => Promise<{ error?: { message: string } }>;
-}
-
-let stripePromise: Promise<StripeExtended | null>;
-
-function getStripe(): Promise<StripeExtended | null> {
-  if (!stripePromise) {
-    stripePromise = loadStripe(config.stripe.publishableKey) as Promise<StripeExtended | null>;
-  }
-  return stripePromise;
-}
 
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
@@ -54,23 +35,23 @@ function ServiceCard({ service, reduceMotion }: ServiceCardProps) {
   const handleCheckout = async (priceId: string): Promise<void> => {
     setLoading(true);
     try {
-      const stripe: StripeExtended | null = await getStripe();
-      if (!stripe) throw new Error('Stripe não carregou');
-
-      const { error } = await stripe.redirectToCheckout({
-        mode: 'payment',
-        lineItems: [{ price: priceId, quantity: 1 }],
-        successUrl: config.stripe.successUrl,
-        cancelUrl: config.stripe.cancelUrl,
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ priceId }),
       });
+      const body: { url?: string; error?: string; details?: unknown } = await res.json().catch(() => ({}));
 
-      if (error) {
-        console.error('Stripe redirect error:', error);
-        alert('Erro ao redirecionar para pagamento. Tente novamente.');
+      if (!res.ok || !body.url) {
+        const details = typeof body.details === 'string' ? body.details : body.details ? JSON.stringify(body.details) : '';
+        throw new Error(body.error ?? `Erro ao criar checkout${details ? `: ${details}` : ''}`);
       }
+
+      window.location.href = body.url;
     } catch (error) {
       console.error('Checkout error:', error);
-      alert('Erro ao processar pagamento. Tente novamente.');
+      const msg = error instanceof Error ? error.message : 'Erro ao processar pagamento. Tente novamente.';
+      alert(msg);
     } finally {
       setLoading(false);
     }
@@ -93,7 +74,7 @@ function ServiceCard({ service, reduceMotion }: ServiceCardProps) {
           {service.id}
         </span>
         <span className="font-mono text-sm font-semibold tracking-tight text-ink">
-          R$ {service.price.toLocaleString('pt-BR')}
+          R$ {service.price.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
         </span>
       </div>
 
@@ -118,7 +99,7 @@ function ServiceCard({ service, reduceMotion }: ServiceCardProps) {
           fullWidth
           loading={loading}
           onClick={() => handleCheckout(service.stripePriceId)}
-          aria-label={`${service.ctaText} — R$ ${service.price.toLocaleString('pt-BR')}`}
+          aria-label={`${service.ctaText} — R$ ${service.price.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
         >
           {service.ctaText}
           <ArrowRight size={18} strokeWidth={2.5} aria-hidden="true" />
