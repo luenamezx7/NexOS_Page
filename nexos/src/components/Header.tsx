@@ -3,8 +3,9 @@
 import { useCallback, useState, type MouseEvent as ReactMouseEvent } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence, useReducedMotion, useScroll, useMotionValueEvent } from 'motion/react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Sun, Moon } from 'lucide-react';
 import { config } from '@/config';
+import { useTheme } from './ThemeProvider';
 
 interface NavItem {
   label: string;
@@ -75,6 +76,31 @@ function SecondaryCta({ label, onClick, className = '', ariaLabel }: SecondaryCt
   );
 }
 
+function ThemeToggle({ className = '' }: { className?: string }) {
+  const { theme, toggle } = useTheme();
+
+  return (
+    <motion.button
+      type="button"
+      onClick={toggle}
+      aria-label={theme === 'dark' ? 'Ativar modo claro' : 'Ativar modo escuro'}
+      whileTap={{ scale: 0.95 }}
+      transition={{ duration: 0.2, ease: FLUID_EASE }}
+      className={`grid h-10 w-10 shrink-0 place-items-center rounded-full border border-ink/15 bg-ink/[0.05] text-ink/80 transition-colors duration-300 hover:bg-ink/10 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink ${className}`}
+    >
+      <motion.span
+        key={theme}
+        initial={{ rotate: -90, opacity: 0 }}
+        animate={{ rotate: 0, opacity: 1 }}
+        transition={{ duration: 0.35, ease: FLUID_EASE }}
+        className="grid place-items-center will-change-transform"
+      >
+        {theme === 'dark' ? <Sun size={17} strokeWidth={2} /> : <Moon size={17} strokeWidth={2} />}
+      </motion.span>
+    </motion.button>
+  );
+}
+
 export function Header() {
   const [scrolled, setScrolled] = useState<boolean>(false);
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
@@ -101,7 +127,7 @@ export function Header() {
         initial={reduce ? { opacity: 0 } : { opacity: 0, y: -16 }}
         animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: FLUID_EASE }}
-        className="glass-header will-change-transform fixed top-6 left-1/2 z-50 flex w-[85%] max-w-5xl -translate-x-1/2 items-center justify-between rounded-full px-6 py-2.5"
+        className={`glass-header will-change-transform fixed top-6 left-1/2 z-50 flex w-[85%] max-w-5xl -translate-x-1/2 items-center justify-between rounded-full px-6 py-2.5 ${scrolled ? 'glass-header--scrolled' : ''}`}
       >
         <div className="glass-header-reflex" aria-hidden="true" />
 
@@ -112,14 +138,14 @@ export function Header() {
             e.preventDefault();
             handleNav('#hero');
           }}
-          className="relative z-10 flex items-center rounded-full transition-opacity duration-300 hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          className="relative z-10 flex items-center rounded-full transition-opacity duration-300 hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
         >
           <Image
             src="/logo_nexOS.png"
             alt="NexOS"
             width={112}
             height={28}
-            className="h-7 w-auto object-contain"
+            className="logo-invert h-7 w-auto object-contain"
             priority
           />
         </a>
@@ -133,7 +159,7 @@ export function Header() {
                 e.preventDefault();
                 handleNav(item.href);
               }}
-              className="rounded-lg px-4 py-2 text-sm font-medium tracking-[-0.01em] text-white/70 transition-colors duration-300 hover:bg-white/[0.06] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              className="rounded-lg px-4 py-2 text-sm font-medium tracking-[-0.01em] text-ink/70 transition-colors duration-300 hover:bg-ink/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
             >
               {item.label}
             </a>
@@ -141,6 +167,7 @@ export function Header() {
         </nav>
 
         <div className="relative z-10 hidden flex-row items-center gap-3 md:flex">
+          <ThemeToggle />
           <SecondaryCta
             label="Entrar em contato"
             ariaLabel="Entrar em contato"
@@ -153,13 +180,14 @@ export function Header() {
           />
         </div>
 
-        <div className="relative z-10 flex flex-row items-center gap-3 md:hidden">
+        <div className="relative z-10 flex flex-row items-center gap-2.5 md:hidden">
           <PrimaryCta
             label="Começar"
             ariaLabel="Começar agora"
             onClick={() => handleNav('#services')}
             className="!px-5 !py-2.5"
           />
+          <ThemeToggle />
           <motion.button
             type="button"
             aria-label={mobileOpen ? 'Fechar menu' : 'Abrir menu'}
@@ -167,7 +195,7 @@ export function Header() {
             onClick={toggleMobile}
             whileTap={{ scale: 0.95 }}
             transition={{ duration: 0.2, ease: FLUID_EASE }}
-            className="grid h-10 w-10 place-items-center rounded-full border border-white/15 bg-white/[0.05] text-white backdrop-blur-md transition-colors duration-300 hover:bg-white/[0.1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            className="grid h-10 w-10 place-items-center rounded-full border border-ink/15 bg-ink/[0.05] text-ink backdrop-blur-md transition-colors duration-300 hover:bg-ink/[0.1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
           >
             <motion.span
               initial={false}
@@ -182,7 +210,7 @@ export function Header() {
 
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent"
+          className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-ink/25 to-transparent"
           style={{ opacity: scrolled ? 1 : 0.4 }}
         />
       </motion.header>
@@ -194,7 +222,7 @@ export function Header() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25, ease: FLUID_EASE }}
-            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-md md:hidden"
+            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-md md:hidden"
             onClick={() => setMobileOpen(false)}
             aria-hidden="true"
           />
@@ -211,7 +239,7 @@ export function Header() {
             animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
             exit={reduce ? { opacity: 0 } : { opacity: 0, y: -10, scale: 0.98 }}
             transition={{ duration: 0.35, ease: FLUID_EASE }}
-            className="fixed left-1/2 top-24 z-50 w-[min(calc(100vw-2rem),26rem)] -translate-x-1/2 rounded-3xl border border-white/10 bg-black/80 p-5 shadow-[0_32px_96px_rgba(0,0,0,0.65)] backdrop-blur-xl will-change-transform md:hidden"
+            className="fixed left-1/2 top-24 z-50 w-[min(calc(100vw-2rem),26rem)] -translate-x-1/2 rounded-3xl border border-ink/10 bg-glass-strong p-5 shadow-[0_32px_96px_rgba(0,0,0,0.35)] backdrop-blur-xl will-change-transform md:hidden"
           >
             <div className="grid gap-1">
               {NAV_ITEMS.map((item: NavItem, i: number) => (
@@ -225,13 +253,13 @@ export function Header() {
                     e.preventDefault();
                     handleNav(item.href);
                   }}
-                  className="rounded-xl px-5 py-3.5 text-[15px] font-medium text-white/85 transition-colors duration-300 hover:bg-white/[0.06] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  className="rounded-xl px-5 py-3.5 text-[15px] font-medium text-ink/85 transition-colors duration-300 hover:bg-ink/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
                 >
                   {item.label}
                 </motion.a>
               ))}
             </div>
-            <div className="mt-4 grid grid-cols-2 gap-3 border-t border-white/10 pt-4">
+            <div className="mt-4 grid grid-cols-2 gap-3 border-t border-ink/10 pt-4">
               <SecondaryCta
                 label="Contato"
                 ariaLabel="Entrar em contato"

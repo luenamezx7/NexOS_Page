@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, useMotionValue, useReducedMotion } from 'motion/react';
-import Shuffle from './Shuffle';
+import { SpecialText } from './special-text';
 
 const HOLD_MS = 1500;
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
@@ -17,7 +17,7 @@ interface HoldButtonProps {
 }
 
 export function HoldButton({ label, ariaLabel, hintId, onConfirm, className = '', featured = false }: HoldButtonProps) {
-  const [hovering, setHovering] = useState<boolean>(false);
+  const [scrambleKey, setScrambleKey] = useState<number>(0);
   const progress = useMotionValue(0);
   const holdingRef = useRef<boolean>(false);
   const rafRef = useRef<number>(0);
@@ -83,30 +83,16 @@ export function HoldButton({ label, ariaLabel, hintId, onConfirm, className = ''
       onKeyUp={(e: React.KeyboardEvent<HTMLButtonElement>) => {
         if (e.key === 'Enter' || e.key === ' ') cancelHold();
       }}
-      onHoverStart={() => setHovering(true)}
-      onHoverEnd={() => setHovering(false)}
+      onHoverStart={() => setScrambleKey((k: number) => k + 1)}
       onContextMenu={(e: React.MouseEvent<HTMLButtonElement>) => e.preventDefault()}
       whileHover={reduce ? undefined : { scale: 1.03 }}
       whileTap={reduce ? undefined : { scale: 0.97 }}
       transition={{ duration: 0.3, ease: FLUID_EASE }}
       className={`btn-primary-nex touch-none select-none ${featured ? 'btn-primary-nex--featured' : ''} ${className}`}
     >
-      <Shuffle
-        text={label}
-        tag="span"
-        className="relative z-10"
-        shuffleDirection="up"
-        duration={0.35}
-        shuffleTimes={1}
-        animationMode="evenodd"
-        stagger={0.03}
-        threshold={0.1}
-        triggerOnce={true}
-        triggerOnHover={true}
-        respectReducedMotion={true}
-        loop={hovering}
-        loopDelay={0.4}
-      />
+      <SpecialText key={scrambleKey} speed={30} className="relative z-10">
+        {label}
+      </SpecialText>
       <span className="shimmer-sweep" aria-hidden="true" />
       <motion.span
         aria-hidden="true"

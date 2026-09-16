@@ -4,7 +4,9 @@ import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 import { motion, useReducedMotion, type Variants } from 'motion/react';
 import { ArrowRight, ArrowUpRight, Zap, Layers, Gauge } from 'lucide-react';
 import DarkVeil from './DarkVeil';
+import Grainient from './Grainient';
 import { HoldButton } from './HoldButton';
+import { useTheme } from './ThemeProvider';
 import { config } from '@/config';
 
 interface HeroProps {
@@ -123,7 +125,7 @@ function BentoCard({ card, reduceMotion }: BentoCardProps) {
       viewport={{ once: true, amount: 0.25 }}
       transition={reduceMotion ? { duration: 0.4 } : undefined}
       whileHover={reduceMotion ? undefined : { y: -5 }}
-      className={`bento-card will-change-transform group flex flex-col p-6 transition-colors duration-300 hover:border-white/25 md:p-7 ${card.span}`}
+      className={`bento-card will-change-transform group flex flex-col p-6 transition-colors duration-300 hover:border-ink/25 md:p-7 ${card.span}`}
       aria-labelledby={`bento-title-${card.id}`}
     >
       <div className="mb-5 flex flex-row items-center justify-between gap-3">
@@ -132,24 +134,24 @@ function BentoCard({ card, reduceMotion }: BentoCardProps) {
           {card.badge}
         </span>
         <span
-          className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-white/[0.04] text-white/70 transition-colors duration-300 group-hover:border-pink-500/40 group-hover:text-white"
+          className="grid h-9 w-9 place-items-center rounded-lg border border-ink/10 bg-ink/[0.04] text-ink/70 transition-colors duration-300 group-hover:border-pink-500/40 group-hover:text-ink"
           aria-hidden="true"
         >
           {card.icon}
         </span>
       </div>
 
-      <h3 id={`bento-title-${card.id}`} className="mb-2 text-xl font-bold tracking-tight text-white">
+      <h3 id={`bento-title-${card.id}`} className="mb-2 text-xl font-bold tracking-tight text-ink">
         {card.title}
       </h3>
-      <p className="mb-5 text-sm leading-relaxed text-white/70">{card.description}</p>
+      <p className="mb-5 text-sm leading-relaxed text-ink/70">{card.description}</p>
 
       <div className="mb-6 flex flex-row items-baseline gap-2">
-        <span className="font-display text-3xl font-bold tracking-tight text-white">{card.metricValue}</span>
-        <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/45">{card.metricLabel}</span>
+        <span className="font-display text-3xl font-bold tracking-tight text-ink">{card.metricValue}</span>
+        <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/45">{card.metricLabel}</span>
       </div>
 
-      <div className="mt-auto flex flex-row items-center gap-3 border-t border-white/10 pt-5">
+      <div className="mt-auto flex flex-row items-center gap-3 border-t border-ink/10 pt-5">
         <button
           type="button"
           onClick={() => navigate(card.ctaHref)}
@@ -167,26 +169,50 @@ function BentoCard({ card, reduceMotion }: BentoCardProps) {
 const HeroComponent = forwardRef<HTMLElement, HeroProps>(
   ({ className = '' }: HeroProps, ref: ForwardedRef<HTMLElement>) => {
     const reduce = useReducedMotion() ?? false;
+    const { theme } = useTheme();
 
     return (
       <section
         ref={ref}
         id="hero"
         aria-labelledby="hero-title"
-        className={`relative overflow-hidden bg-[#050505] ${className}`}
+        className={`relative overflow-hidden bg-canvas ${className}`}
       >
-        <div className="veil-wrap" aria-hidden="true">
-          <DarkVeil
-            hueShift={275}
-            noiseIntensity={0.08}
-            speed={0.5}
-            scanlineFrequency={0.3}
-            warpAmount={3}
-          />
-        </div>
+        {theme === 'dark' ? (
+          <div className="veil-wrap" aria-hidden="true">
+            <DarkVeil
+              hueShift={275}
+              noiseIntensity={0.08}
+              speed={0.5}
+              scanlineFrequency={0.3}
+              warpAmount={3}
+            />
+          </div>
+        ) : (
+          <div className="veil-wrap" aria-hidden="true">
+            <Grainient
+              color1="#ffd6e7"
+              color2="#ff2e6a"
+              color3="#ece7db"
+              lightMode={true}
+              timeSpeed={0.25}
+              warpStrength={1.0}
+              warpFrequency={5.0}
+              warpSpeed={2.0}
+              warpAmplitude={50.0}
+              grainAmount={0.06}
+              grainScale={2.0}
+              grainAnimated={false}
+              contrast={1.2}
+              gamma={1.0}
+              saturation={0.9}
+              zoom={0.9}
+            />
+          </div>
+        )}
         <div className="grid-pattern-subtle" aria-hidden="true" />
         <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-b from-transparent to-[#050505]"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-b from-transparent to-canvas"
           aria-hidden="true"
         />
 
@@ -211,7 +237,7 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
               whileInView={reduce ? { opacity: 1 } : ENTER.whileInView}
               viewport={{ once: true, amount: 0.5 }}
               transition={{ ...ENTER.transition, delay: 0.08 }}
-              className="w-full max-w-5xl text-balance font-heavy text-5xl font-normal leading-[1.02] tracking-[-0.015em] text-white will-change-transform md:text-6xl lg:text-7xl"
+              className="w-full max-w-5xl text-balance font-heavy text-5xl font-black leading-[1.02] tracking-[-0.02em] text-ink will-change-transform md:text-6xl lg:text-7xl"
             >
               {config.hero.headline}
             </motion.h1>
@@ -221,7 +247,7 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
               whileInView={reduce ? { opacity: 1 } : ENTER.whileInView}
               viewport={{ once: true, amount: 0.6 }}
               transition={{ ...ENTER.transition, delay: 0.16 }}
-              className="mt-5 max-w-[62ch] text-base leading-relaxed text-white/70 will-change-transform md:text-lg"
+              className="mt-5 max-w-[62ch] text-base leading-relaxed text-ink/70 will-change-transform md:text-lg"
             >
               {config.hero.subheadline}
             </motion.p>
@@ -261,7 +287,7 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
               whileInView={reduce ? { opacity: 1 } : ENTER.whileInView}
               viewport={{ once: true, amount: 0.6 }}
               transition={{ ...ENTER.transition, delay: 0.32 }}
-              className="mt-4 font-mono text-[10px] uppercase tracking-[0.3em] text-white/40 will-change-transform"
+              className="mt-4 font-mono text-[10px] uppercase tracking-[0.3em] text-ink/40 will-change-transform"
             >
               Pressione para iniciar
             </motion.p>

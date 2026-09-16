@@ -119,7 +119,7 @@ export function Contact({ className = '' }: ContactProps) {
       <section
         id="contact"
         aria-labelledby="contact-title"
-        className={`relative border-t border-white/10 bg-[#050505] ${className}`}
+        className={`relative border-t border-ink/10 bg-canvas ${className}`}
       >
         <div className="mx-auto w-full max-w-3xl px-5 py-24 text-center md:px-8 md:py-32">
           <motion.div
@@ -134,10 +134,10 @@ export function Contact({ className = '' }: ContactProps) {
                 <path d="M8 12l2.5 2.5L16 9" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
-            <h2 id="contact-title" className="mb-3 text-white">
+            <h2 id="contact-title" className="mb-3 text-ink">
               Mensagem enviada
             </h2>
-            <p className="mx-auto mb-8 max-w-md text-sm leading-relaxed text-white/70">
+            <p className="mx-auto mb-8 max-w-md text-sm leading-relaxed text-ink/70">
               Obrigado pelo contato. Vamos analisar seu projeto e retornamos em até 24h.
             </p>
             <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -165,7 +165,7 @@ export function Contact({ className = '' }: ContactProps) {
     <section
       id="contact"
       aria-labelledby="contact-title"
-      className={`relative border-t border-white/10 bg-[#050505] ${className}`}
+      className={`relative border-t border-ink/10 bg-canvas ${className}`}
     >
       <div className="mx-auto w-full max-w-6xl px-5 py-24 md:px-8 md:py-32">
         <motion.header
@@ -175,11 +175,11 @@ export function Contact({ className = '' }: ContactProps) {
           transition={{ duration: 0.8, ease: FLUID_EASE }}
           className="mb-12 max-w-2xl will-change-transform md:mb-16"
         >
-          <h2 id="contact-title" className="flex flex-row items-start gap-3 text-white">
+          <h2 id="contact-title" className="flex flex-row items-start gap-3 text-ink">
             <span className="pink-marker mt-[0.28em]" aria-hidden="true" />
             Vamos conversar?
           </h2>
-          <p className="mt-4 text-base leading-relaxed text-white/70 md:text-lg">
+          <p className="mt-4 text-base leading-relaxed text-ink/70 md:text-lg">
             Tem um projeto em mente? Preencha o formulário ou chame direto no WhatsApp. Respondemos rápido.
           </p>
         </motion.header>
@@ -197,7 +197,7 @@ export function Contact({ className = '' }: ContactProps) {
           >
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div className="flex flex-col gap-2">
-                <label htmlFor="contact-name" className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/55">
+                <label htmlFor="contact-name" className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/55">
                   Nome completo *
                 </label>
                 <input
@@ -216,7 +216,7 @@ export function Contact({ className = '' }: ContactProps) {
                 {errors.name && <p id="contact-name-error" className="text-xs text-[#ff2e6a]" role="alert">{errors.name}</p>}
               </div>
               <div className="flex flex-col gap-2">
-                <label htmlFor="contact-email" className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/55">
+                <label htmlFor="contact-email" className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/55">
                   E-mail corporativo *
                 </label>
                 <input
@@ -235,7 +235,7 @@ export function Contact({ className = '' }: ContactProps) {
                 {errors.email && <p id="contact-email-error" className="text-xs text-[#ff2e6a]" role="alert">{errors.email}</p>}
               </div>
               <div className="flex flex-col gap-2">
-                <label htmlFor="contact-company" className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/55">
+                <label htmlFor="contact-company" className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/55">
                   Empresa
                 </label>
                 <input
@@ -250,7 +250,7 @@ export function Contact({ className = '' }: ContactProps) {
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <label htmlFor="contact-service" className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/55">
+                <label htmlFor="contact-service" className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/55">
                   Serviço de interesse
                 </label>
                 <select
@@ -269,7 +269,7 @@ export function Contact({ className = '' }: ContactProps) {
             </div>
 
             <div className="mt-5 flex flex-col gap-2">
-              <label htmlFor="contact-message" className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/55">
+              <label htmlFor="contact-message" className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/55">
                 Mensagem *
               </label>
               <textarea
@@ -287,7 +287,7 @@ export function Contact({ className = '' }: ContactProps) {
               {errors.message && <p id="contact-message-error" className="text-xs text-[#ff2e6a]" role="alert">{errors.message}</p>}
             </div>
 
-            <div className="mt-6 border-t border-white/10 pt-5">
+            <div className="mt-6 border-t border-ink/10 pt-5">
               <Button type="submit" variant="primary" size="lg" fullWidth loading={submitting}>
                 {submitting ? 'Enviando...' : 'Enviar projeto'}
                 <Send size={18} strokeWidth={2.5} aria-hidden="true" />
@@ -296,11 +296,11 @@ export function Contact({ className = '' }: ContactProps) {
 
             {submitError && <p className="mt-3 text-xs text-[#ff2e6a]" role="alert">{submitError}</p>}
 
-            <p className="mt-4 text-center text-xs leading-relaxed text-white/40">
+            <p className="mt-4 text-center text-xs leading-relaxed text-ink/40">
               Seus dados são usados apenas para responder seu contato.{' '}
-              <a href="/privacidade" className="underline underline-offset-2 transition-colors hover:text-white/70">Política de Privacidade</a>
+              <a href="/privacidade" className="underline underline-offset-2 transition-colors hover:text-ink/70">Política de Privacidade</a>
               {' '}·{' '}
-              <a href="/termos" className="underline underline-offset-2 transition-colors hover:text-white/70">Termos de Uso</a>
+              <a href="/termos" className="underline underline-offset-2 transition-colors hover:text-ink/70">Termos de Uso</a>
             </p>
           </motion.form>
 
@@ -313,7 +313,7 @@ export function Contact({ className = '' }: ContactProps) {
             aria-label="Informações de contato"
           >
             <div className="bento-card flex flex-col p-7 md:p-8">
-              <h3 className="mb-5 text-lg font-bold tracking-tight text-white">
+              <h3 className="mb-5 text-lg font-bold tracking-tight text-ink">
                 Outras formas de falar com a gente
               </h3>
               <div className="flex flex-col gap-2.5">
@@ -325,28 +325,28 @@ export function Contact({ className = '' }: ContactProps) {
                     rel={method.external ? 'noopener noreferrer' : undefined}
                     whileHover={reduce ? undefined : { y: -3 }}
                     transition={{ duration: 0.3, ease: FLUID_EASE }}
-                    className="group flex flex-row items-center gap-3.5 rounded-lg border border-white/10 bg-white/[0.02] p-4 transition-colors duration-300 hover:border-white/25 will-change-transform"
+                    className="group flex flex-row items-center gap-3.5 rounded-lg border border-ink/10 bg-ink/[0.02] p-4 transition-colors duration-300 hover:border-ink/25 will-change-transform"
                   >
-                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-white/10 bg-white/[0.04] text-white/70 transition-colors duration-300 group-hover:border-pink-500/40 group-hover:text-white" aria-hidden="true">
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-ink/10 bg-ink/[0.04] text-ink/70 transition-colors duration-300 group-hover:border-pink-500/40 group-hover:text-ink" aria-hidden="true">
                       {method.icon}
                     </span>
                     <span className="flex min-w-0 flex-col">
-                      <span className="text-sm font-semibold text-white">{method.label}</span>
-                      <span className="truncate text-xs text-white/50">{method.value}</span>
+                      <span className="text-sm font-semibold text-ink">{method.label}</span>
+                      <span className="truncate text-xs text-ink/50">{method.value}</span>
                     </span>
-                    <ArrowRight size={16} strokeWidth={2} className="ml-auto shrink-0 text-white/35 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-[#ff2e6a]" aria-hidden="true" />
+                    <ArrowRight size={16} strokeWidth={2} className="ml-auto shrink-0 text-ink/35 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-[#ff2e6a]" aria-hidden="true" />
                   </motion.a>
                 ))}
               </div>
             </div>
 
             <div className="bento-card flex flex-row items-center gap-3.5 p-7 md:p-8">
-              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-white/10 bg-white/[0.04] text-white/70" aria-hidden="true">
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-ink/10 bg-ink/[0.04] text-ink/70" aria-hidden="true">
                 <MapPin size={20} strokeWidth={1.75} />
               </span>
               <span className="flex flex-col">
-                <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/55">Onde estamos</span>
-                <address className="text-sm not-italic text-white/80">Atendemos remoto global</address>
+                <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/55">Onde estamos</span>
+                <address className="text-sm not-italic text-ink/80">Atendemos remoto global</address>
               </span>
             </div>
           </motion.aside>
