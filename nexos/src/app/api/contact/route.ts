@@ -29,6 +29,38 @@ function getServiceLabel(serviceId: string): string {
   return map[serviceId] ?? serviceId;
 }
 
+export async function GET() {
+  const hasToken = !!process.env.NOTION_TOKEN;
+  const rawId = process.env.NOTION_DATABASE_ID ?? '';
+  // diagnostico sem vazar token completo
+  const tokenPreview = process.env.NOTION_TOKEN ? `${process.env.NOTION_TOKEN.slice(0, 6)}...${process.env.NOTION_TOKEN.slice(-4)}` : null;
+
+  if (!hasToken || !rawId) {
+    return NextResponse.json(
+      { ok: false, hasToken, hasDatabaseId: !!rawId, tokenPreview, error: 'NOTION_TOKEN ou NOTION_DATABASE_ID faltando no Vercel' },
+      { status: 500 }
+    );
+  }
+
+  try {
+    const notion = getNotionClient()!;
+    const dbId = rawId.trim();
+    // tenta via database_id
+    try {
+      const db = await notion.databases.retrieve({ database_id: dbId }) as unknown as { title: unknown; data_sources?: { id: string }[] };
+      const dsId: string | undefined = db.data_sources?.[0]?.id;
+      return NextResponse.json({ ok: true, hasToken, hasDatabaseId: true, tokenPreview, databaseId: dbId, dataSourceId: dsId ?? null, title: db.title });
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      const body = (e as unknown as { body?: unknown })?.body;
+      return NextResponse.json({ ok: false, hasToken, hasDatabaseId: true, tokenPreview, databaseId: dbId, error: msg, body }, { status: 500 });
+    }
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    return NextResponse.json({ ok: false, error: msg }, { status: 500 });
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const body: unknown = await req.json();
@@ -44,13 +76,13 @@ export async function POST(req: Request) {
 
     const data: ContactPayload = parsed.data;
 
-    const token = process.env.NOTION_TOKEN;
-    const databaseId = process.env.NOTION_DATABASE_ID;
+    const token = process.env.NOTION_TOKEN?.trim();
+    const rawDatabaseId = process.env.NOTION_DATABASE_ID?.trim();
 
-    if (!token || !databaseId) {
-      console.error('[api/contact] NOTION_TOKEN ou NOTION_DATABASE_ID não configurados');
+    if (!token || !rawDatabaseId) {
+      console.error('[api/contact] NOTION_TOKEN ou NOTION_DATABASE_ID não configurados', { hasToken: !!token, hasDatabaseId: !!rawDatabaseId });
       return NextResponse.json(
-        { error: 'Integração Notion não configurada no servidor. Configure NOTION_TOKEN e NOTION_DATABASE_ID.' },
+        { error: 'Integração Notion não configurada no servidor. Configure NOTION_TOKEN e NOTION_DATABASE_ID no Vercel → Settings → Environment Variables e faça Redeploy.' },
         { status: 500 }
       );
     }
@@ -61,51 +93,57 @@ export async function POST(req: Request) {
     }
 
     const serviceLabel = getServiceLabel(data.service);
+    const databaseId = rawDatabaseId.replace(/-/g, '').replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, '$1-$2-$3-$4-$5');
 
-    // Mapeamento para o seu database "Contatos de Clientes"
-    // Propriedades detectadas: Nome (title), Email (email), Companhia (rich_text), Serviço (rich_text), Mensagem (rich_text)
+    const properties = {
+      Nome: { title: [{ text: { content: data.name } }] },
+      Email: { email: data.email },
+      Companhia: { rich_text: [{ text: { content: data.company || '-' } }] },
+      Serviço: { rich_text: [{ text: { content: serviceLabel } }] },
+      Mensagem: { rich_text: [{ text: { content: data.message } }] },
+    } as unknown as Record<string, never>;
+
+    // tenta database_id primeiro, fallback para data_source_id (novo modelo Notion)
+    const tryCreate = async (parent: { database_id: string } | { data_source_id: string }) => {
+      return (notion.pages.create as unknown as (args: { parent: typeof parent; properties: typeof properties }) => Promise<unknown>)({ parent, properties });
+    };
+
     try {
-      await notion.pages.create({
-        parent: { database_id: databaseId },
-        properties: {
-          Nome: {
-            title: [{ text: { content: data.name } }],
-          },
-          Email: {
-            email: data.email,
-          },
-          Companhia: {
-            rich_text: [{ text: { content: data.company || '-' } }],
-          },
-          Serviço: {
-            rich_text: [{ text: { content: serviceLabel } }],
-          },
-          Mensagem: {
-            rich_text: [{ text: { content: data.message } }],
-          },
-        },
-      });
-    } catch (notionError: unknown) {
-      const msg = notionError instanceof Error ? notionError.message : String(notionError);
-      console.error('[api/contact] Notion error:', msg);
+      await tryCreate({ database_id: databaseId });
+    } catch (firstError: unknown) {
+      const firstMsg = firstError instanceof Error ? firstError.message : String(firstError);
+      const firstBody = (firstError as unknown as { body?: unknown })?.body ?? (firstError as unknown as { code?: string })?.code;
+      console.error('[api/contact] Notion create via database_id failed:', firstMsg, firstBody);
 
-      // Mensagem amigável para erro comum de propriedade não encontrada
-      if (msg.includes('property') || msg.includes('validation_error')) {
+      // tenta via data_source_id se o database usa novo modelo
+      try {
+        const db = await notion.databases.retrieve({ database_id: databaseId }) as unknown as { data_sources?: { id: string }[] };
+        const dsId: string | undefined = db.data_sources?.[0]?.id;
+        if (dsId) {
+          console.log('[api/contact] retry via data_source_id', dsId);
+          await tryCreate({ data_source_id: dsId });
+        } else {
+          throw firstError;
+        }
+      } catch (secondError: unknown) {
+        const msg = secondError instanceof Error ? secondError.message : String(secondError);
+        const body = (secondError as unknown as { body?: unknown })?.body ?? msg;
+        console.error('[api/contact] Notion retry failed:', msg, body);
         return NextResponse.json(
           {
-            error:
-              'Erro de propriedades no Notion. Verifique se o database tem as colunas: Nome (title), Email (email), Companhia (rich_text), Serviço (rich_text), Mensagem (rich_text).',
-            details: msg,
+            error: 'Erro ao salvar no Notion',
+            details: typeof body === 'string' ? body : JSON.stringify(body),
+            hint: 'Verifique se a Integration tem acesso ao database (Connections) e se as colunas são: Nome (title), Email (email), Companhia (rich_text), Serviço (rich_text), Mensagem (rich_text).',
           },
           { status: 500 }
         );
       }
-      return NextResponse.json({ error: 'Erro ao salvar no Notion', details: msg }, { status: 500 });
     }
 
     return NextResponse.json({ ok: true }, { status: 200 });
   } catch (err) {
     console.error('[api/contact] unexpected', err);
-    return NextResponse.json({ error: 'Erro interno' }, { status: 500 });
+    const msg = err instanceof Error ? err.message : String(err);
+    return NextResponse.json({ error: 'Erro interno', details: msg }, { status: 500 });
   }
 }

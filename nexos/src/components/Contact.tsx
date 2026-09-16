@@ -75,10 +75,12 @@ export function Contact({ className = '' }: ContactProps) {
         body: JSON.stringify(formData),
       });
 
-      const body: { error?: string; details?: string } = await res.json().catch(() => ({}));
+      const body: { error?: string; details?: unknown; hint?: string } = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        throw new Error(body.error ?? 'Erro ao enviar. Tente novamente.');
+        const details = typeof body.details === 'string' ? body.details : body.details ? JSON.stringify(body.details) : '';
+        const hint = body.hint ? ` ${body.hint}` : '';
+        throw new Error(`${body.error ?? 'Erro ao enviar. Tente novamente.'}${details ? ` — ${details.slice(0, 400)}` : ''}${hint}`);
       }
 
       setSubmitted(true);
