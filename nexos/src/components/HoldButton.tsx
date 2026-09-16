@@ -2,10 +2,10 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, useMotionValue, useReducedMotion } from 'motion/react';
-import { SpecialText } from './special-text';
 
 const HOLD_MS = 1500;
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const SCRAMBLE_CHARS = '_!X$0-+*#';
 
 interface HoldButtonProps {
   label: string;
@@ -17,13 +17,68 @@ interface HoldButtonProps {
 }
 
 export function HoldButton({ label, ariaLabel, hintId, onConfirm, className = '', featured = false }: HoldButtonProps) {
-  const [scrambleKey, setScrambleKey] = useState<number>(0);
   const progress = useMotionValue(0);
   const holdingRef = useRef<boolean>(false);
   const rafRef = useRef<number>(0);
   const startRef = useRef<number>(0);
   const confirmRef = useRef(onConfirm);
   const reduce = useReducedMotion() ?? false;
+
+  // --- hover scramble (fixed, sem bugar) ---
+  const [display, setDisplay] = useState<string>(label);
+  const scrambleRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const isScramblingRef = useRef<boolean>(false);
+
+  useEffect(() => {
+    setDisplay(label);
+  }, [label]);
+
+  useEffect(() => {
+    return () => {
+      if (scrambleRef.current) clearInterval(scrambleRef.current);
+    };
+  }, []);
+
+  const triggerScramble = useCallback(() => {
+    if (reduce || isScramblingRef.current) return;
+    isScramblingRef.current = true;
+    if (scrambleRef.current) clearInterval(scrambleRef.current);
+
+    let frame = 0;
+    const totalFrames = 14;
+    const baseLabel = label;
+
+    scrambleRef.current = setInterval(() => {
+      frame += 1;
+      const progressRatio = frame / totalFrames;
+      // revela gradualmente do início ao fim, sem blank inicial
+      const revealed = Math.floor(progressRatio * baseLabel.length);
+
+      const next = baseLabel
+        .split('')
+        .map((ch, i) => {
+          if (ch === ' ') return ' ';
+          if (i < revealed) return baseLabel[i];
+          // 70% chance de mostrar char aleatório, 30% mantém original para não piscar demais
+          return Math.random() > 0.3
+            ? SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)]
+            : baseLabel[i];
+        })
+        .join('');
+
+      setDisplay(next);
+
+      if (frame >= totalFrames) {
+        if (scrambleRef.current) clearInterval(scrambleRef.current);
+        scrambleRef.current = null;
+        setDisplay(baseLabel);
+        // debounce: libera após 350ms para não retriggerar se mouse tremer dentro do botão
+        setTimeout(() => {
+          isScramblingRef.current = false;
+        }, 350);
+      }
+    }, 28);
+  }, [label, reduce]);
 
   useEffect(() => {
     confirmRef.current = onConfirm;
@@ -83,16 +138,16 @@ export function HoldButton({ label, ariaLabel, hintId, onConfirm, className = ''
       onKeyUp={(e: React.KeyboardEvent<HTMLButtonElement>) => {
         if (e.key === 'Enter' || e.key === ' ') cancelHold();
       }}
-      onHoverStart={() => setScrambleKey((k: number) => k + 1)}
       onContextMenu={(e: React.MouseEvent<HTMLButtonElement>) => e.preventDefault()}
+      onHoverStart={triggerScramble}
       whileHover={reduce ? undefined : { scale: 1.03 }}
       whileTap={reduce ? undefined : { scale: 0.97 }}
       transition={{ duration: 0.3, ease: FLUID_EASE }}
       className={`btn-primary-nex touch-none select-none ${featured ? 'btn-primary-nex--featured' : ''} ${className}`}
     >
-      <SpecialText key={scrambleKey} speed={30} className="relative z-10">
-        {label}
-      </SpecialText>
+      <span className="relative z-10 inline-flex h-[1.25em] items-center whitespace-nowrap font-medium">
+        {display}
+      </span>
       <span className="shimmer-sweep" aria-hidden="true" />
       <motion.span
         aria-hidden="true"
