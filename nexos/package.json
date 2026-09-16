@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "deploy": "npm run build && echo \"Build complete! Deploy the out/ folder to GitHub Pages.\" && echo \"Don't forget to add a .nojekyll file to out/ for GitHub Pages.\"",
+    "deploy": "NEXT_EXPORT=1 npm run build && echo \"Build complete! Deploy the out/ folder to GitHub Pages.\" && echo \"Don't forget to add a .nojekyll file to out/ for GitHub Pages.\"",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
