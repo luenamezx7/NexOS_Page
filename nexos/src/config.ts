@@ -97,7 +97,7 @@ export const config: SiteConfig = {
     cancelUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/cancelado`,
   },
   whatsapp: {
-    number: '5511999999999',
+    number: '5564993289250',
     message: 'Olá, vim pelo site da NexOS e gostaria de conversar sobre meu projeto.',
   },
   meta: {

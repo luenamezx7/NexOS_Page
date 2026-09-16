@@ -95,18 +95,18 @@ export function Footer() {
             transition={reduce ? { duration: 0.4 } : undefined}
             className="lg:col-span-2"
           >
-            <Link href="/" className="inline-flex flex-row items-center gap-2.5" aria-label={`${config.brand.name} — Página inicial`}>
-              <span className="grid h-9 w-9 place-items-center rounded-lg bg-ink font-display text-sm font-bold tracking-tight text-canvas" aria-hidden="true">
+            <Link href="/" className="inline-flex flex-row items-center gap-2.5 overflow-visible" aria-label={`${config.brand.name} — Página inicial`}>
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-ink font-display text-sm font-bold tracking-tight text-canvas" aria-hidden="true">
                 {config.brand.logo}
               </span>
-              <span aria-hidden="true" className="inline-flex items-center overflow-hidden">
+              <span aria-hidden="true" className="inline-flex items-center overflow-visible shrink-0">
                 <Signature
                   text={config.brand.name}
                   fontSize={36}
                   duration={1.2}
                   inView={true}
                   color={theme === 'dark' ? '#FFFFFF' : '#131316'}
-                  className="h-9 w-auto"
+                  className="h-9 w-auto overflow-visible shrink-0"
                 />
               </span>
             </Link>

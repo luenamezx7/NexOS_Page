@@ -68,11 +68,27 @@ export function Contact({ className = '' }: ContactProps) {
     setErrors({});
     setSubmitError(null);
 
-    await new Promise((resolve: (value: void) => void) => setTimeout(resolve, 1000));
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
 
-    setSubmitted(true);
-    setFormData(EMPTY_FORM);
-    setSubmitting(false);
+      const body: { error?: string; details?: string } = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(body.error ?? 'Erro ao enviar. Tente novamente.');
+      }
+
+      setSubmitted(true);
+      setFormData(EMPTY_FORM);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Erro ao enviar. Tente novamente.';
+      setSubmitError(msg);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>): void => {
@@ -95,16 +111,16 @@ export function Contact({ className = '' }: ContactProps) {
     {
       id: 'email',
       label: 'E-mail',
-      value: 'contato@nexos.digital',
-      href: 'mailto:contato@nexos.digital',
+      value: 'Resposta em até 24h',
+      href: 'mailto:nexosperformance@gmail.com',
       external: false,
       icon: <Mail size={20} strokeWidth={1.75} aria-hidden="true" />,
     },
     {
       id: 'phone',
       label: 'Telefone',
-      value: '+55 11 9999-9999',
-      href: 'tel:+5511999999999',
+      value: 'Toque para ligar',
+      href: 'tel:+5564993289250',
       external: false,
       icon: <Phone size={20} strokeWidth={1.75} aria-hidden="true" />,
     },

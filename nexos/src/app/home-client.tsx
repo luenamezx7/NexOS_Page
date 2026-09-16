@@ -8,6 +8,7 @@ import { Services } from '@/components/Services';
 import { Testimonials } from '@/components/Testimonials';
 import { Contact } from '@/components/Contact';
 import { Footer } from '@/components/Footer';
+import { SectionIndicator } from '@/components/SectionIndicator';
 import { ThinkingOrbWrapper } from '@/components/ThinkingOrbWrapper';
 import TextPressure from '@/components/TextPressure';
 import DarkVeil from '@/components/DarkVeil';
@@ -203,6 +204,7 @@ export default function HomeClient() {
       {stage === 'main' && (
         <>
           <Header />
+          <SectionIndicator />
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
