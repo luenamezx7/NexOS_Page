@@ -13,9 +13,9 @@
   inset: 0;
   background: var(--gradient-aurora-1);
   background-size: 300% 300%;
-  opacity: 0.15;
-  filter: blur(100px);
-  animation: auroraShift 40s ease-in-out infinite;
+  opacity: 0.12;
+  filter: blur(120px);
+  animation: auroraShift 50s ease-in-out infinite;
   will-change: transform, opacity, filter;
   transform: translateZ(0);
   pointer-events: none;
@@ -28,9 +28,9 @@
   inset: 0;
   background: var(--gradient-mesh-base);
   background-size: 400% 400%;
-  opacity: 0.08;
-  filter: blur(80px);
-  animation: meshFloat 30s ease-in-out infinite;
+  opacity: 0.06;
+  filter: blur(100px);
+  animation: meshFloat 40s ease-in-out infinite;
   will-change: transform, opacity, filter;
   transform: translateZ(0);
   pointer-events: none;
@@ -54,51 +54,83 @@
 .glowOrb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(100px);
-  animation: floatSlow 25s ease-in-out infinite;
+  filter: blur(120px);
+  animation: floatSlow 30s ease-in-out infinite;
   will-change: transform;
   transform: translateZ(0);
 }
 
 .glowOrb:nth-child(1) {
-  width: 500px;
-  height: 500px;
+  width: 600px;
+  height: 600px;
   background: radial-gradient(ellipse at 30% 30%, var(--color-aurora-violet-glow) 0%, transparent 70%);
-  top: -200px;
-  left: -200px;
+  top: -250px;
+  left: -250px;
   animation-delay: 0s;
 }
 
 .glowOrb:nth-child(2) {
-  width: 400px;
-  height: 400px;
+  width: 500px;
+  height: 500px;
   background: radial-gradient(ellipse at 70% 70%, var(--color-aurora-cyan-glow) 0%, transparent 70%);
-  bottom: -150px;
-  right: -150px;
-  animation-delay: -8s;
+  bottom: -200px;
+  right: -200px;
+  animation-delay: -10s;
 }
 
 .glowOrb:nth-child(3) {
-  width: 300px;
-  height: 300px;
+  width: 400px;
+  height: 400px;
   background: radial-gradient(ellipse at 50% 50%, var(--color-tech-pink-glow) 0%, transparent 70%);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) translateZ(0);
-  animation-delay: -15s;
+  animation-delay: -20s;
 }
 
 .pixelGrid {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
-  background-size: 100px 100px;
-  animation: gridMove 100s linear infinite;
+    linear-gradient(rgba(255, 255, 255, 0.008) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.008) 1px, transparent 1px);
+  background-size: 120px 120px;
+  animation: gridMove 120s linear infinite;
   will-change: background-position;
   transform: translateZ(0);
-  opacity: 0.3;
+  opacity: 0.25;
+}
+
+.techGrid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 46, 106, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 46, 106, 0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 30%, transparent 80%);
+  opacity: 0.4;
+  animation: gridMove 80s linear infinite reverse;
+  will-change: background-position;
+  transform: translateZ(0);
+  pointer-events: none;
+}
+
+.glassmorphismBar {
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.04) 10%,
+    rgba(255, 46, 106, 0.3) 50%,
+    rgba(255, 255, 255, 0.04) 90%,
+    transparent 100%
+  );
+  pointer-events: none;
 }
 
 @media (max-width: 768px) {
@@ -106,13 +138,18 @@
     filter: blur(80px);
   }
 
-  .glowOrb:nth-child(1) { width: 350px; height: 350px; top: -150px; left: -150px; }
-  .glowOrb:nth-child(2) { width: 300px; height: 300px; bottom: -100px; right: -100px; }
-  .glowOrb:nth-child(3) { width: 250px; height: 250px; }
+  .glowOrb:nth-child(1) { width: 400px; height: 400px; top: -180px; left: -180px; }
+  .glowOrb:nth-child(2) { width: 350px; height: 350px; bottom: -120px; right: -120px; }
+  .glowOrb:nth-child(3) { width: 300px; height: 300px; }
 
   .pixelGrid {
     background-size: 80px 80px;
     animation-duration: 80s;
+  }
+
+  .techGrid {
+    background-size: 30px 30px;
+    animation-duration: 60s;
   }
 }
 
@@ -120,7 +157,8 @@
   .footer::before,
   .footer::after,
   .glowOrb,
-  .pixelGrid {
+  .pixelGrid,
+  .techGrid {
     animation: none !important;
   }
 }
@@ -163,20 +201,28 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  background-color: var(--color-ink);
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--color-tech-pink) 0%, var(--color-aurora-violet) 100%);
   color: var(--color-canvas);
   border-radius: var(--rounded-md);
   font-family: var(--font-mono);
   font-weight: 700;
   font-size: var(--font-size-lg);
   line-height: 1;
-  transition: transform var(--transition-base);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 4px 20px rgba(255, 46, 106, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all var(--transition-base);
 }
 
 .logo:hover .logoMark {
   transform: scale(1.05) rotate(2deg);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.15),
+    0 8px 30px rgba(255, 46, 106, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
 .logoText {
@@ -224,13 +270,31 @@
   color: var(--color-ink-subtle);
   border: 1px solid var(--color-hairline);
   transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.socialLink::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--color-tech-pink)/0, var(--color-aurora-violet)/0);
+  opacity: 0;
+  transition: opacity var(--transition-base);
 }
 
 .socialLink:hover {
   background-color: var(--color-surface-2);
-  border-color: var(--color-hairline-strong);
+  border-color: var(--color-tech-pink-border);
   color: var(--color-ink);
-  transform: translateY(-2px);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(255, 46, 106, 0.2);
+}
+
+.socialLink:hover::before {
+  opacity: 1;
 }
 
 .socialLink:focus-visible {
@@ -279,14 +343,15 @@
 .navLink::before {
   content: '';
   position: absolute;
-  left: -12px;
+  left: -14px;
   top: 50%;
   transform: translateY(-50%);
-  width: 4px;
-  height: 4px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
-  background-color: var(--color-ink);
+  background: linear-gradient(135deg, var(--color-tech-pink), var(--color-aurora-violet));
   opacity: 0;
+  transform: translateY(-50%) scale(0);
   transition: all var(--transition-base);
 }
 
@@ -296,7 +361,8 @@
 
 .navLink:hover::before {
   opacity: 1;
-  left: -16px;
+  left: -18px;
+  transform: translateY(-50%) scale(1);
 }
 
 .navLink:focus-visible {
@@ -346,7 +412,10 @@
 
 .heart {
   color: #ff6496;
-  animation: heartBeat 1.2s ease-in-out infinite;
+}
+
+.arrow {
+  color: var(--color-tech-pink);
 }
 
 @keyframes heartBeat {
@@ -356,10 +425,6 @@
   50% {
     transform: scale(1.2);
   }
-}
-
-.arrow {
-  animation: pulse 2s ease-in-out infinite;
 }
 
 @keyframes pulse {

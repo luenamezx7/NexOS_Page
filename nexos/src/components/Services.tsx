@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { loadStripe, Stripe } from '@stripe/stripe-js';
-import styles from './Services.module.css';
+import { loadStripe, type Stripe } from '@stripe/stripe-js';
+import { motion, useReducedMotion, type Variants } from 'motion/react';
+import { Check, ArrowRight, ShieldCheck } from 'lucide-react';
 import { config } from '@/config';
+import type { Service } from '@/types';
 import { Button } from './ui/Button';
-import { Check, ArrowRight, ExternalLink } from 'lucide-react';
-import { SlideUpText } from './SlideUpText';
 
 interface StripeExtended extends Stripe {
   redirectToCheckout: (options: {
@@ -19,25 +19,42 @@ interface StripeExtended extends Stripe {
 
 let stripePromise: Promise<StripeExtended | null>;
 
-function getStripe() {
+function getStripe(): Promise<StripeExtended | null> {
   if (!stripePromise) {
     stripePromise = loadStripe(config.stripe.publishableKey) as Promise<StripeExtended | null>;
   }
   return stripePromise;
 }
 
+const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+
+const STAGGER_PARENT: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.12, delayChildren: 0.05 } },
+};
+
+const RELIEF_CHILD: Variants = {
+  hidden: { opacity: 0, y: 40, scale: 0.98 },
+  show: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.8, ease: FLUID_EASE },
+  },
+};
+
 interface ServiceCardProps {
-  service: typeof config.services[0];
+  service: Service;
+  reduceMotion: boolean;
 }
 
-function ServiceCard({ service }: ServiceCardProps) {
-  const [hovered, setHovered] = useState(false);
-  const [loading, setLoading] = useState(false);
+function ServiceCard({ service, reduceMotion }: ServiceCardProps) {
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const handleCheckout = async (priceId: string) => {
+  const handleCheckout = async (priceId: string): Promise<void> => {
     setLoading(true);
     try {
-      const stripe = await getStripe();
+      const stripe: StripeExtended | null = await getStripe();
       if (!stripe) throw new Error('Stripe não carregou');
 
       const { error } = await stripe.redirectToCheckout({
@@ -60,69 +77,111 @@ function ServiceCard({ service }: ServiceCardProps) {
   };
 
   return (
-    <article
-      className={`${styles.card} ${hovered ? styles.hovered : ''}`}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+    <motion.article
+      variants={reduceMotion ? undefined : RELIEF_CHILD}
+      initial={reduceMotion ? { opacity: 0 } : undefined}
+      whileInView={reduceMotion ? { opacity: 1 } : undefined}
+      viewport={{ once: true, amount: 0.25 }}
+      transition={reduceMotion ? { duration: 0.4 } : undefined}
+      whileHover={reduceMotion ? undefined : { y: -5 }}
+      className="bento-card will-change-transform flex flex-col p-7 transition-colors duration-300 hover:border-white/25 md:p-8"
+      aria-labelledby={`service-title-${service.id}`}
     >
-      <div className={styles.cardGlow} aria-hidden="true" />
-      <div className={styles.cardHeader}>
-        <h3 className={styles.title}>{service.title}</h3>
-        <span className={styles.price}>R$ {service.price.toLocaleString('pt-BR')}</span>
+      <div className="mb-5 flex flex-row items-start justify-between gap-3">
+        <span className="tech-badge">
+          <span className="tech-badge-dot" aria-hidden="true" />
+          {service.id}
+        </span>
+        <span className="font-mono text-sm font-semibold tracking-tight text-white">
+          R$ {service.price.toLocaleString('pt-BR')}
+        </span>
       </div>
-      <p className={styles.description}>{service.description}</p>
-      <ul className={styles.features} role="list" aria-label={`${service.title} - características`}>
-        {service.features.map((feature, i) => (
-          <li key={i} className={styles.feature}>
-            <Check size={16} strokeWidth={2.5} className={styles.checkIcon} aria-hidden="true" />
-            {feature}
+
+      <h3 id={`service-title-${service.id}`} className="mb-2 text-xl font-bold tracking-tight text-white">
+        {service.title}
+      </h3>
+      <p className="mb-6 text-sm leading-relaxed text-white/70">{service.description}</p>
+
+      <ul className="mb-7 space-y-2.5" role="list" aria-label={`${service.title} — características`}>
+        {service.features.map((feature: string) => (
+          <li key={feature} className="flex flex-row items-start gap-2.5 text-sm leading-relaxed text-white/70">
+            <Check size={16} strokeWidth={2.5} className="mt-0.5 shrink-0 text-[#ff2e6a]" aria-hidden="true" />
+            <span>{feature}</span>
           </li>
         ))}
       </ul>
-      <Button
-        variant="primary"
-        size="md"
-        fullWidth
-        loading={loading}
-        onClick={() => handleCheckout(service.stripePriceId)}
-        aria-label={`${service.ctaText} - R$ ${service.price.toLocaleString('pt-BR')}`}
-      >
-        {service.ctaText}
-        <ArrowRight size={18} strokeWidth={2.5} aria-hidden="true" />
-      </Button>
-    </article>
+
+      <div className="mt-auto border-t border-white/10 pt-5">
+        <Button
+          variant="primary"
+          size="md"
+          fullWidth
+          loading={loading}
+          onClick={() => handleCheckout(service.stripePriceId)}
+          aria-label={`${service.ctaText} — R$ ${service.price.toLocaleString('pt-BR')}`}
+        >
+          {service.ctaText}
+          <ArrowRight size={18} strokeWidth={2.5} aria-hidden="true" />
+        </Button>
+      </div>
+    </motion.article>
   );
 }
 
-export function Services() {
+interface ServicesProps {
+  className?: string;
+}
+
+export function Services({ className = '' }: ServicesProps) {
+  const reduce = useReducedMotion() ?? false;
+
   return (
-    <section id="services" className={styles.section} aria-labelledby="services-title">
-      <div className={styles.container}>
-        <header className={styles.sectionHeader}>
-          <h2 id="services-title" className={styles.sectionTitle}>
-            <SlideUpText
-              split="words"
-              stagger={0.08}
-              delay={0.1}
-              inView={true}
-              transition={{ type: 'tween', ease: [0.625, 0.05, 0, 1], duration: 0.6 }}
-            >
-              Serviços
-            </SlideUpText>
+    <section
+      id="services"
+      aria-labelledby="services-title"
+      className={`relative border-t border-white/10 bg-[#050505] ${className}`}
+    >
+      <div className="mx-auto w-full max-w-6xl px-5 py-24 md:px-8 md:py-32">
+        <motion.header
+          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 40, scale: 0.98 }}
+          whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: 0.8, ease: FLUID_EASE }}
+          className="mb-12 max-w-2xl will-change-transform md:mb-16"
+        >
+          <h2 id="services-title" className="flex flex-row items-start gap-3 text-white">
+            <span className="pink-marker mt-[0.28em]" aria-hidden="true" />
+            Serviços
           </h2>
-          <p className={styles.sectionSubtitle}>
+          <p className="mt-4 text-base leading-relaxed text-white/70 md:text-lg">
             Três pilares para transformar sua ideia em produto escalável. Escolha o que faz sentido para o seu momento.
           </p>
-        </header>
-        <div className={styles.grid} role="list" aria-label="Lista de serviços">
-          {config.services.map((service) => (
-            <ServiceCard key={service.id} service={service} />
+        </motion.header>
+
+        <motion.div
+          variants={reduce ? undefined : STAGGER_PARENT}
+          initial={reduce ? { opacity: 0 } : 'hidden'}
+          whileInView={reduce ? { opacity: 1 } : 'show'}
+          viewport={{ once: true, amount: 0.15 }}
+          className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-3"
+          role="list"
+          aria-label="Lista de serviços"
+        >
+          {config.services.map((service: Service) => (
+            <ServiceCard key={service.id} service={service} reduceMotion={reduce} />
           ))}
-        </div>
-        <div className={styles.note}>
-          <ExternalLink size={16} strokeWidth={2} aria-hidden="true" />
+        </motion.div>
+
+        <motion.div
+          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 40, scale: 0.98 }}
+          whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true, amount: 0.6 }}
+          transition={{ duration: 0.8, ease: FLUID_EASE }}
+          className="mt-10 flex flex-row items-center justify-center gap-2.5 text-center text-sm text-white/45 will-change-transform"
+        >
+          <ShieldCheck size={16} strokeWidth={2} className="shrink-0 text-white/45" aria-hidden="true" />
           <span>Pagamento seguro via Stripe. Redirecionamento automático para WhatsApp após confirmação.</span>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

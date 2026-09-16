@@ -25,14 +25,12 @@ export default function SuccessContent() {
             Seu pagamento pode ter sido processado, mas não conseguimos confirmar automaticamente.
           </p>
           <div className={styles.errorActions}>
-            <Button variant="primary" size="lg" asChild>
-              <Link href="/#contact">Falar com suporte</Link>
+            <Button variant="primary" size="lg" onClick={() => window.location.href = '/#contact'}>
+              Falar com suporte
             </Button>
-            <Button variant="secondary" size="lg">
-              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-                <MessageSquare size={20} strokeWidth={2.5} aria-hidden="true" />
-                WhatsApp
-              </a>
+            <Button variant="secondary" size="lg" onClick={() => window.open(whatsappUrl, '_blank')}>
+              <MessageSquare size={20} strokeWidth={2.5} aria-hidden="true" />
+              WhatsApp
             </Button>
           </div>
         </div>
@@ -63,8 +61,8 @@ export default function SuccessContent() {
             <span>Continuar no WhatsApp</span>
             <ArrowRight size={20} strokeWidth={2.5} aria-hidden="true" />
           </a>
-          <Button variant="secondary" size="lg" asChild>
-            <Link href="/">Voltar ao início</Link>
+          <Button variant="secondary" size="lg" onClick={() => window.location.href = '/'}>
+            Voltar ao início
           </Button>
         </div>
         <p className={styles.nextSteps}>

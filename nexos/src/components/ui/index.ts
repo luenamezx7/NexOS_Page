@@ -1,4 +1,4 @@
-export { Button, buttonVariants } from './Button';
+export { Button } from './Button';
 export { Input } from './input';
 export { Label } from './label';
 export { Textarea } from './textarea';
