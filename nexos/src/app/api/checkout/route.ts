@@ -100,7 +100,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    // Valida Price no servidor (nunca confia no client)
+    // Valida Price no servidor (nunca confia no client) e busca produto para imagem
     const price = await stripe.prices.retrieve(priceId);
     if (!price.active) {
       return NextResponse.json({ error: 'Produto indisponível no momento.' }, { status: 400, headers: securityHeaders() });
@@ -109,12 +109,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Preço inválido.' }, { status: 400, headers: securityHeaders() });
     }
 
+    // Busca produto para expor imagem/título no checkout embarcado
+    let productImage: string | null = null;
+    let productName: string | null = null;
+    try {
+      const productId = typeof price.product === 'string' ? price.product : (price.product as Stripe.Product).id;
+      const product = await stripe.products.retrieve(productId);
+      productName = product.name ?? null;
+      productImage = product.images?.[0] ?? null;
+    } catch {
+      // silencioso — imagem é opcional
+    }
+
     const origin = req.headers.get('origin') ?? process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
     const returnUrl = `${origin.replace(/\/$/, '')}/sucesso?session_id={CHECKOUT_SESSION_ID}`;
 
-    // Checkout Sessions com ui_mode custom → alimenta Checkout SDK (Payment Element)
-    // Stripe recomenda este fluxo sobre PaymentIntents para a maioria dos casos
-    // (Adaptive Pricing, tax, etc. só aqui). client_secret inicializa o SDK.
+    // Checkout Sessions com ui_mode elements → alimenta Checkout SDK (Payment Element)
+    // Stripe recomenda este fluxo sobre PaymentIntents (Adaptive Pricing, tax, etc.)
     const session = await stripe.checkout.sessions.create({
       ui_mode: 'elements' as const,
       line_items: [{ price: priceId, quantity: 1 }],
@@ -132,6 +143,8 @@ export async function POST(req: NextRequest) {
         sessionId: session.id,
         amount: price.unit_amount,
         currency: price.currency,
+        productImage,
+        productName,
       },
       { status: 200, headers: securityHeaders() }
     );
