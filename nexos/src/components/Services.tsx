@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { motion, useReducedMotion, type Variants } from 'motion/react';
 import { Check, ArrowRight, ShieldCheck } from 'lucide-react';
 import { config } from '@/config';
 import type { Service } from '@/types';
 import { Button } from './ui/Button';
+import { EmbeddedCheckoutDrawer } from './EmbeddedCheckout';
 
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
@@ -27,36 +28,10 @@ const RELIEF_CHILD: Variants = {
 interface ServiceCardProps {
   service: Service;
   reduceMotion: boolean;
+  onCheckout: (s: Service) => void;
 }
 
-function ServiceCard({ service, reduceMotion }: ServiceCardProps) {
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const handleCheckout = async (priceId: string): Promise<void> => {
-    setLoading(true);
-    try {
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priceId }),
-      });
-      const body: { url?: string; error?: string; details?: unknown } = await res.json().catch(() => ({}));
-
-      if (!res.ok || !body.url) {
-        const details = typeof body.details === 'string' ? body.details : body.details ? JSON.stringify(body.details) : '';
-        throw new Error(body.error ?? `Erro ao criar checkout${details ? `: ${details}` : ''}`);
-      }
-
-      window.location.href = body.url;
-    } catch (error) {
-      console.error('Checkout error:', error);
-      const msg = error instanceof Error ? error.message : 'Erro ao processar pagamento. Tente novamente.';
-      alert(msg);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+function ServiceCard({ service, reduceMotion, onCheckout }: ServiceCardProps) {
   return (
     <motion.article
       variants={reduceMotion ? undefined : RELIEF_CHILD}
@@ -97,8 +72,7 @@ function ServiceCard({ service, reduceMotion }: ServiceCardProps) {
           variant="primary"
           size="md"
           fullWidth
-          loading={loading}
-          onClick={() => handleCheckout(service.stripePriceId)}
+          onClick={() => onCheckout(service)}
           aria-label={`${service.ctaText} — R$ ${service.price.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
         >
           {service.ctaText}
@@ -115,55 +89,75 @@ interface ServicesProps {
 
 export function Services({ className = '' }: ServicesProps) {
   const reduce = useReducedMotion() ?? false;
+  const [activeService, setActiveService] = useState<Service | null>(null);
+
+  const handleCheckout = useCallback((service: Service) => {
+    setActiveService(service);
+  }, []);
+
+  const handleClose = useCallback(() => {
+    setActiveService(null);
+  }, []);
 
   return (
-    <section
-      id="services"
-      aria-labelledby="services-title"
-      className={`relative border-t border-ink/10 bg-canvas ${className}`}
-    >
-      <div className="mx-auto w-full max-w-6xl px-5 py-24 md:px-8 md:py-32">
-        <motion.header
-          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 40, scale: 0.98 }}
-          whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 0.8, ease: FLUID_EASE }}
-          className="mb-12 max-w-2xl will-change-transform md:mb-16"
-        >
-          <h2 id="services-title" className="flex flex-row items-start gap-3 text-ink">
-            <span className="pink-marker mt-[0.28em]" aria-hidden="true" />
-            Serviços
-          </h2>
-          <p className="mt-4 text-base leading-relaxed text-ink/70 md:text-lg">
-            Três pilares para transformar sua ideia em produto escalável. Escolha o que faz sentido para o seu momento.
-          </p>
-        </motion.header>
+    <>
+      <section
+        id="services"
+        aria-labelledby="services-title"
+        className={`relative border-t border-ink/10 bg-canvas ${className}`}
+      >
+        <div className="mx-auto w-full max-w-6xl px-5 py-24 md:px-8 md:py-32">
+          <motion.header
+            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 40, scale: 0.98 }}
+            whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ duration: 0.8, ease: FLUID_EASE }}
+            className="mb-12 max-w-2xl will-change-transform md:mb-16"
+          >
+            <h2 id="services-title" className="flex flex-row items-start gap-3 text-ink">
+              <span className="pink-marker mt-[0.28em]" aria-hidden="true" />
+              Serviços
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-ink/70 md:text-lg">
+              Dois pilares para transformar sua ideia em produto escalável. Escolha o que faz sentido para o seu momento.
+            </p>
+          </motion.header>
 
-        <motion.div
-          variants={reduce ? undefined : STAGGER_PARENT}
-          initial={reduce ? { opacity: 0 } : 'hidden'}
-          whileInView={reduce ? { opacity: 1 } : 'show'}
-          viewport={{ once: true, amount: 0.15 }}
-          className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-3"
-          role="list"
-          aria-label="Lista de serviços"
-        >
-          {config.services.map((service: Service) => (
-            <ServiceCard key={service.id} service={service} reduceMotion={reduce} />
-          ))}
-        </motion.div>
+          <motion.div
+            variants={reduce ? undefined : STAGGER_PARENT}
+            initial={reduce ? { opacity: 0 } : 'hidden'}
+            whileInView={reduce ? { opacity: 1 } : 'show'}
+            viewport={{ once: true, amount: 0.15 }}
+            className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-2"
+            role="list"
+            aria-label="Lista de serviços"
+          >
+            {config.services.map((service: Service) => (
+              <ServiceCard key={service.id} service={service} reduceMotion={reduce} onCheckout={handleCheckout} />
+            ))}
+          </motion.div>
 
-        <motion.div
-          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 40, scale: 0.98 }}
-          whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: true, amount: 0.6 }}
-          transition={{ duration: 0.8, ease: FLUID_EASE }}
-          className="mt-10 flex flex-row items-center justify-center gap-2.5 text-center text-sm text-ink/45 will-change-transform"
-        >
-          <ShieldCheck size={16} strokeWidth={2} className="shrink-0 text-ink/45" aria-hidden="true" />
-          <span>Pagamento seguro via Stripe. Redirecionamento automático para WhatsApp após confirmação.</span>
-        </motion.div>
-      </div>
-    </section>
+          <motion.div
+            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 40, scale: 0.98 }}
+            whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.6 }}
+            transition={{ duration: 0.8, ease: FLUID_EASE }}
+            className="mt-10 flex flex-row items-center justify-center gap-2.5 text-center text-sm text-ink/45 will-change-transform"
+          >
+            <ShieldCheck size={16} strokeWidth={2} className="shrink-0 text-ink/45" aria-hidden="true" />
+            <span>Pagamento seguro e transparente via Stripe Elements — sem redirecionamento.</span>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Checkout Transparente — container oculto até ser solicitado, unmount limpa memória */}
+      <EmbeddedCheckoutDrawer
+        open={!!activeService}
+        onClose={handleClose}
+        priceId={activeService?.stripePriceId ?? null}
+        productTitle={activeService?.title ?? ''}
+        productPrice={activeService?.price ?? 0}
+      />
+    </>
   );
 }
