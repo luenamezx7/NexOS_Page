@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { CheckoutElementsProvider, useCheckoutElements, PaymentElement } from '@stripe/react-stripe-js/checkout';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
-import { X, ShieldCheck, Lock, Loader2, Check, AlertCircle } from 'lucide-react';
+import { X, ShieldCheck, Lock, Loader2 } from 'lucide-react';
 import { config } from '@/config';
 import { useTheme } from './ThemeProvider';
 
@@ -199,6 +199,23 @@ function CheckoutFormInner({
 
   const [email, setEmail] = useState<string>('');
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [fullName, setFullName] = useState<string>('');
+  const [fullNameError, setFullNameError] = useState<string | null>(null);
+  const [cardError, setCardError] = useState<string | null>(null);
+  const [cardComplete, setCardComplete] = useState<boolean>(false);
+
+  const validateName = useCallback((v: string) => {
+    if (!v.trim()) {
+      setFullNameError('Nome completo é obrigatório');
+      return false;
+    }
+    if (v.trim().length < 3) {
+      setFullNameError('Informe seu nome completo');
+      return false;
+    }
+    setFullNameError(null);
+    return true;
+  }, []);
 
   const validateEmail = useCallback((v: string) => {
     if (!v.trim()) {
@@ -215,7 +232,19 @@ function CheckoutFormInner({
 
   const handlePay = useCallback(async () => {
     if (!checkout) return;
-    if (!validateEmail(email)) return;
+    const nameOk = validateName(fullName);
+    const emailOk = validateEmail(email);
+    if (!cardComplete && !isLoading) {
+      setCardError('Preencha os dados do cartão ou selecione o Pix para continuar');
+    } else {
+      setCardError(null);
+    }
+    if (!nameOk || !emailOk || (!cardComplete && !isLoading)) {
+      // Foca o primeiro campo inválido (mesmo padrão do e-mail)
+      const target = !nameOk ? document.getElementById('checkout-name') : document.getElementById('checkout-email');
+      target?.focus({ preventScroll: false });
+      return;
+    }
     setSubmitting(true);
     try {
       const result = await checkout.confirm({ email: email.trim() });
@@ -237,7 +266,7 @@ function CheckoutFormInner({
     } finally {
       setSubmitting(false);
     }
-  }, [checkout, email, validateEmail, onSuccess, onError]);
+  }, [checkout, fullName, email, cardComplete, isLoading, validateName, validateEmail, onSuccess, onError]);
 
   if (isError) {
     const msg = checkoutResult.type === 'error' ? checkoutResult.error.message : 'Falha ao carregar checkout.';
@@ -251,7 +280,34 @@ function CheckoutFormInner({
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-2">
+        <label htmlFor="checkout-name" className={`font-mono text-[11px] uppercase tracking-[0.14em] ${isDark ? 'text-white/55' : 'text-ink/55'}`}>
+          Nome completo *
+        </label>
+        <input
+          id="checkout-name"
+          type="text"
+          value={fullName}
+          onChange={(e) => {
+            setFullName(e.target.value);
+            if (fullNameError) setFullNameError(null);
+          }}
+          onBlur={() => validateName(fullName)}
+          placeholder="Seu nome completo"
+          autoComplete="name"
+          required
+          aria-invalid={fullNameError ? 'true' : 'false'}
+          aria-describedby={fullNameError ? 'checkout-name-error' : undefined}
+          className={`field-input ${fullNameError ? '!border-red-500/60' : ''}`}
+        />
+        {fullNameError && (
+          <p id="checkout-name-error" className="text-xs text-red-500" role="alert">
+            {fullNameError}
+          </p>
+        )}
+      </div>
+
       <div className="flex flex-col gap-2">
         <label htmlFor="checkout-email" className={`font-mono text-[11px] uppercase tracking-[0.14em] ${isDark ? 'text-white/55' : 'text-ink/55'}`}>
           E-mail para recibo *
@@ -270,7 +326,7 @@ function CheckoutFormInner({
           required
           aria-invalid={emailError ? 'true' : 'false'}
           aria-describedby={emailError ? 'checkout-email-error' : undefined}
-          className="field-input"
+          className={`field-input ${emailError ? '!border-red-500/60' : ''}`}
         />
         {emailError && (
           <p id="checkout-email-error" className="text-xs text-red-500" role="alert">
@@ -280,6 +336,9 @@ function CheckoutFormInner({
       </div>
 
       <div className={`rounded-xl border p-4 ${isDark ? 'border-white/10 bg-white/[0.03]' : 'border-ink/10 bg-ink/[0.03]'}`}>
+        <p className={`mb-3 font-mono text-[11px] uppercase tracking-[0.14em] ${isDark ? 'text-white/55' : 'text-ink/55'}`}>
+          Dados do cartão / Pix *
+        </p>
         {isLoading ? (
           <div className="space-y-3" aria-live="polite" aria-busy="true">
             <div className={`h-12 animate-pulse rounded-lg border ${isDark ? 'border-white/10 bg-white/[0.04]' : 'border-ink/10 bg-ink/[0.04]'}`} />
@@ -290,8 +349,21 @@ function CheckoutFormInner({
             </div>
           </div>
         ) : (
-          <PaymentElement />
+          <PaymentElement
+            onChange={(e: { complete: boolean; empty: boolean }) => {
+              setCardComplete(e.complete);
+              if (e.complete || !e.empty) setCardError(null);
+            }}
+          />
         )}
+        {cardError && (
+          <p className="mt-3 text-xs text-red-500" role="alert">
+            {cardError}
+          </p>
+        )}
+        <p className={`mt-3 text-[11px] leading-relaxed ${isDark ? 'text-white/35' : 'text-ink/40'}`}>
+          Cartão e Pix são validados pelo Stripe em iFrame isolado (PCI-DSS). Confira número, validade, CVV e nome impresso antes de pagar.
+        </p>
       </div>
 
       <motion.button
@@ -422,6 +494,23 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
     return () => window.removeEventListener('keydown', onKey);
   }, [open, handleClose]);
 
+  // Event Delegation & Body Lock: trava o scroll do <body>/root enquanto o checkout está ativo.
+  // O scroll fica restrito ao container interno (data-lenis-prevent + overscroll-contain),
+  // mitigando scroll chaining / jank com o Lenis da página.
+  useEffect(() => {
+    if (!open) return;
+    const prevBodyOverflow = document.body.style.overflow;
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    document.documentElement.classList.add('lenis-stopped');
+    return () => {
+      document.body.style.overflow = prevBodyOverflow;
+      document.documentElement.style.overflow = prevHtmlOverflow;
+      document.documentElement.classList.remove('lenis-stopped');
+    };
+  }, [open]);
+
   const amountLabel = `R$ ${productPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
   return (
@@ -456,11 +545,22 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
             <div className={`pointer-events-none absolute inset-0 rounded-t-[24px] md:rounded-3xl ${isDark ? 'bg-gradient-to-b from-white/[0.07] to-transparent' : 'bg-gradient-to-b from-ink/[0.03] to-transparent'}`} aria-hidden="true" />
 
             <div className={`relative flex items-start justify-between gap-4 border-b px-6 py-5 md:px-7 ${isDark ? 'border-white/10' : 'border-ink/10'}`}>
-              <div className="flex min-w-0 items-start gap-3">
+              <div className="flex min-w-0 flex-1 items-center gap-3">
                 {productImage && drawerState !== 'success' && (
-                  <span className={`grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl border bg-white ${isDark ? 'border-white/10' : 'border-ink/10'}`} aria-hidden="true">
+                  <span
+                    className={`flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl border bg-white ${isDark ? 'border-white/10' : 'border-ink/10'}`}
+                    style={{ aspectRatio: '1 / 1' }}
+                    aria-hidden="true"
+                  >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={productImage} alt="" className="h-full w-full object-cover" loading="eager" decoding="async" />
+                    <img
+                      src={productImage}
+                      alt=""
+                      loading="eager"
+                      decoding="async"
+                      style={{ aspectRatio: '1 / 1', objectFit: 'cover', objectPosition: 'center' }}
+                      className="h-full w-full scale-[1.04] object-cover align-middle"
+                    />
                   </span>
                 )}
                 <div className="min-w-0">
@@ -487,7 +587,11 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
               </button>
             </div>
 
-            <div className="relative flex-1 overflow-y-auto px-6 py-6 md:px-7 md:py-7">
+            <div
+              data-lenis-prevent
+              className="relative flex-1 touch-pan-y overflow-y-auto overscroll-contain px-6 py-6 md:px-7 md:py-7"
+              style={{ overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch' }}
+            >
               {drawerState === 'loading' && (
                 <motion.div
                   initial={{ opacity: 0 }}
