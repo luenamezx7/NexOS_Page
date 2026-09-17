@@ -7,6 +7,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { X, ShieldCheck, Lock, Loader2 } from 'lucide-react';
 import { config } from '@/config';
 import { useTheme } from './ThemeProvider';
+import { useScrollLock } from './useScrollLock';
 
 // ============================================================
 // NexOS — Embedded Checkout Transparente (Checkout Sessions + Elements)
@@ -494,22 +495,10 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
     return () => window.removeEventListener('keydown', onKey);
   }, [open, handleClose]);
 
-  // Event Delegation & Body Lock: trava o scroll do <body>/root enquanto o checkout está ativo.
-  // O scroll fica restrito ao container interno (data-lenis-prevent + overscroll-contain),
-  // mitigando scroll chaining / jank com o Lenis da página.
-  useEffect(() => {
-    if (!open) return;
-    const prevBodyOverflow = document.body.style.overflow;
-    const prevHtmlOverflow = document.documentElement.style.overflow;
-    document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
-    document.documentElement.classList.add('lenis-stopped');
-    return () => {
-      document.body.style.overflow = prevBodyOverflow;
-      document.documentElement.style.overflow = prevHtmlOverflow;
-      document.documentElement.classList.remove('lenis-stopped');
-    };
-  }, [open]);
+  // Trava real do scroll: lenis.stop() + overflow + compensação da
+  // scrollbar. O scroll fica restrito ao container interno
+  // (data-lenis-prevent + overscroll-contain). Ver useScrollLock.
+  useScrollLock(open);
 
   const amountLabel = `R$ ${productPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 

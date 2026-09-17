@@ -6,6 +6,7 @@ import GlobalNoise from '@/components/GlobalNoise';
 import GradualBlur from '@/components/GradualBlur';
 import { SmoothScrollProvider } from '@/components/SmoothScrollProvider';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import { CookieConsentProvider } from '@/components/cookie-consent';
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans', display: 'swap' });
 const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap' });
@@ -90,7 +91,7 @@ export default function RootLayout({
       <body className="min-h-screen antialiased">
         <ThemeProvider>
           <SmoothScrollProvider>
-            {children}
+            <CookieConsentProvider>{children}</CookieConsentProvider>
           </SmoothScrollProvider>
         </ThemeProvider>
         <GlobalNoise

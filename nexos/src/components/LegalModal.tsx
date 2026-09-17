@@ -5,6 +5,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { X, ShieldCheck, FileText } from 'lucide-react';
 import { LEGAL_DOCS, type LegalDoc } from './legal-content';
 import { useTheme } from './ThemeProvider';
+import { useScrollLock } from './useScrollLock';
 
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
@@ -16,7 +17,7 @@ interface LegalModalProps {
 
 // Modal/tab com o mesmo comportamento do checkout:
 // backdrop + painel, body lock, ESC, scroll isolado (data-lenis-prevent),
-// abas para Privacidade / Termos / LGPD / Reembolso.
+// abas para Privacidade / Termos / LGPD / Reembolso / Cookies.
 export function LegalModal({ open, initialSlug = 'privacidade', onClose }: LegalModalProps) {
   const reduce = useReducedMotion() ?? false;
   const { theme } = useTheme();
@@ -43,20 +44,8 @@ export function LegalModal({ open, initialSlug = 'privacidade', onClose }: Legal
     return () => window.removeEventListener('keydown', onKey);
   }, [open, handleClose]);
 
-  // Body lock idêntico ao checkout: trava root, libera só o container interno
-  useEffect(() => {
-    if (!open) return;
-    const prevBody = document.body.style.overflow;
-    const prevHtml = document.documentElement.style.overflow;
-    document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
-    document.documentElement.classList.add('lenis-stopped');
-    return () => {
-      document.body.style.overflow = prevBody;
-      document.documentElement.style.overflow = prevHtml;
-      document.documentElement.classList.remove('lenis-stopped');
-    };
-  }, [open]);
+  // Trava real do scroll (lenis.stop() + overflow). Ver useScrollLock.
+  useScrollLock(open);
 
   const doc: LegalDoc = LEGAL_DOCS.find((d) => d.slug === slug) ?? LEGAL_DOCS[0];
 
