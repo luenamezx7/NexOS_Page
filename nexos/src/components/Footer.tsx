@@ -7,6 +7,7 @@ import { config } from '@/config';
 import type { FooterLink } from '@/types';
 import { Signature } from './signature';
 import { useTheme } from './ThemeProvider';
+import { openCookiePreferences } from './cookie-consent';
 
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
@@ -165,10 +166,19 @@ export function Footer() {
           <p className="text-xs text-ink/40">
             © {currentYear} {config.brand.name}. Todos os direitos reservados.
           </p>
-          <p className="flex flex-row items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-ink/35">
-            <span className="pink-marker" aria-hidden="true" />
-            Em desenvolvimento · Global
-          </p>
+          <div className="flex flex-row flex-wrap items-center gap-x-4 gap-y-2">
+            <button
+              type="button"
+              onClick={openCookiePreferences}
+              className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/35 underline underline-offset-4 transition-colors hover:text-ink/70"
+            >
+              Gerenciar cookies
+            </button>
+            <p className="flex flex-row items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-ink/35">
+              <span className="pink-marker" aria-hidden="true" />
+              Em desenvolvimento · Global
+            </p>
+          </div>
         </div>
       </div>
     </footer>

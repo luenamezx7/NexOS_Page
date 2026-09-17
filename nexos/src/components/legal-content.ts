@@ -4,7 +4,7 @@ export interface LegalSection {
 }
 
 export interface LegalDoc {
-  slug: 'privacidade' | 'termos' | 'lgpd' | 'reembolso';
+  slug: 'privacidade' | 'termos' | 'lgpd' | 'reembolso' | 'cookies';
   tab: string;
   title: string;
   updated: string;
@@ -114,6 +114,32 @@ export const LEGAL_DOCS: LegalDoc[] = [
       {
         heading: '4. Exceções',
         body: 'Placas personalizadas (link gravado a pedido) não são elegíveis a arrependimento, apenas a garantia contra defeitos.',
+      },
+    ],
+  },
+  {
+    slug: 'cookies',
+    tab: 'Cookies',
+    title: 'Política de Cookies',
+    updated: 'Atualizado em setembro de 2026 · LGPD Lei nº 13.709/2018',
+    intro:
+      'Usamos apenas o essencial para o site funcionar (tema, consentimento) e deixamos analytics/marketing desligados por padrão. Você pode aceitar, recusar ou personalizar — e mudar de ideia quando quiser.',
+    sections: [
+      {
+        heading: '1. O que usamos',
+        body: 'Estritamente necessários (sempre ativos): nexos-theme (tema claro/escuro) e nexos-cookie-consent-v1 (sua escolha de cookies, 12 meses). Sem eles o site não lembra suas preferências.',
+      },
+      {
+        heading: '2. Opcionais (só com seu consentimento)',
+        body: 'Funcionais (Lenis/suavidade de scroll), Analytics (medição de visitas, ex. Vercel Analytics/GA4 — hoje desligado por padrão) e Marketing (pixels de remarketing — hoje desligado por padrão). Nada disso roda antes do aceite.',
+      },
+      {
+        heading: '3. Terceiros',
+        body: 'Stripe (js.stripe.com, checkout/pagamento) e fontes Google carregam apenas dentro do seu contexto (checkout ou fontes) e seguem as políticas próprias. Não vendemos dados.',
+      },
+      {
+        heading: '4. Gerenciar',
+        body: 'Use o botão "Gerenciar cookies" no rodapé ou o banner para aceitar tudo, recusar tudo ou salvar por categoria. Dúvidas: nexosperformance@gmail.com.',
       },
     ],
   },

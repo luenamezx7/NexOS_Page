@@ -77,6 +77,7 @@ export const config: SiteConfig = {
       { label: 'Termos de Uso', href: '/termos' },
       { label: 'LGPD', href: '/lgpd' },
       { label: 'Política de Reembolso', href: '/reembolso' },
+      { label: 'Política de Cookies', href: '/cookies' },
     ],
     social: [
       { label: 'GitHub', href: 'https://github.com/nexos', icon: 'GitBranch' },
