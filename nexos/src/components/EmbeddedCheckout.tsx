@@ -221,7 +221,11 @@ function CheckoutFormInner({
       const result = await checkout.confirm({ email: email.trim() });
 
       if (result.type === 'error') {
-        const msg = (result.error as { message?: string })?.message ?? 'Falha ao processar pagamento.';
+        let msg = (result.error as { message?: string })?.message ?? 'Falha ao processar pagamento.';
+        // Mapeia erro técnico de Boleto para mensagem amigável
+        if (msg.toLowerCase().includes('boleto tax id')) {
+          msg = 'Boleto indisponível para este CNPJ. Por favor, selecione Pix ou Cartão.';
+        }
         onError(msg);
         return;
       }
