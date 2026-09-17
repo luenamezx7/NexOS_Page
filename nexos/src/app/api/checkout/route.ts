@@ -11,7 +11,7 @@ import { config } from '@/config';
 // ============================================================
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? '', {
-  apiVersion: '2025-11-17.clover' as unknown as Stripe.LatestApiVersion,
+  apiVersion: '2026-03-25.dahlia' as unknown as Stripe.LatestApiVersion,
 });
 
 const bodySchema = z.object({
