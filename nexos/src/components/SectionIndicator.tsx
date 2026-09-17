@@ -12,7 +12,7 @@ interface SectionDef {
 const SECTIONS: SectionDef[] = [
   { id: 'hero', label: 'Início', number: '01' },
   { id: 'services', label: 'Serviços', number: '02' },
-  { id: 'testimonials', label: 'Cases', number: '03' },
+  { id: 'testimonials', label: 'Ecossistema', number: '03' },
   { id: 'contact', label: 'Contato', number: '04' },
 ];
 
@@ -124,8 +124,10 @@ export function SectionIndicator() {
             const isActive = section.id === activeId;
             const isPast = idx < activeIndex;
 
+            const isEcossistema = section.id === 'testimonials';
+
             return (
-              <li key={section.id} className="relative flex">
+              <li key={section.id} className="relative flex flex-col">
                 <button
                   type="button"
                   onClick={() => handleClick(section.id)}
@@ -216,6 +218,28 @@ export function SectionIndicator() {
                     style={{ display: isActive ? 'block' : 'none' }}
                   />
                 </button>
+
+                {/* Sub-pilares — só no Ecossistema ativo, estética Directive */}
+                {isEcossistema && isActive && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.35, ease: FLUID_EASE }}
+                    className="ml-[11px] mt-3 flex flex-col gap-1.5 border-l border-ink/10 pl-4"
+                    aria-hidden="true"
+                  >
+                    <span className="font-mono text-[9px] font-medium uppercase tracking-[0.16em] text-ink/30">
+                      TECNOLOGIA FÍSICA
+                    </span>
+                    <span className="font-mono text-[9px] font-medium uppercase tracking-[0.16em] text-ink/30">
+                      CHECKOUT
+                    </span>
+                    <span className="font-mono text-[9px] font-medium uppercase tracking-[0.16em] text-ink/30">
+                      ENGINE
+                    </span>
+                  </motion.div>
+                )}
               </li>
             );
           })}

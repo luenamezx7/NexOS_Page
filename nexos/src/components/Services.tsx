@@ -2,10 +2,10 @@
 
 import { useState, useCallback } from 'react';
 import { motion, useReducedMotion, type Variants } from 'motion/react';
-import { Check, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Check, ShieldCheck } from 'lucide-react';
 import { config } from '@/config';
 import type { Service } from '@/types';
-import { Button } from './ui/Button';
+import { HoldButton } from './HoldButton';
 import { EmbeddedCheckoutDrawer } from './EmbeddedCheckout';
 
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
@@ -32,17 +32,6 @@ interface ServiceCardProps {
 }
 
 function ServiceCard({ service, reduceMotion, onCheckout }: ServiceCardProps) {
-  const [opening, setOpening] = useState<boolean>(false);
-
-  const handleClick = useCallback(() => {
-    if (opening) return;
-    setOpening(true);
-    onCheckout(service);
-    // feedback tátil: mantém loading até o drawer abrir (fetch do clientSecret)
-    const t = setTimeout(() => setOpening(false), 1400);
-    return () => clearTimeout(t);
-  }, [opening, onCheckout, service]);
-
   return (
     <motion.article
       variants={reduceMotion ? undefined : RELIEF_CHILD}
@@ -79,17 +68,16 @@ function ServiceCard({ service, reduceMotion, onCheckout }: ServiceCardProps) {
       </ul>
 
       <div className="mt-auto border-t border-ink/10 pt-5">
-        <Button
-          variant="primary"
-          size="md"
-          fullWidth
-          loading={opening}
-          onClick={handleClick}
-          aria-label={`${service.ctaText} — R$ ${service.price.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-        >
-          {opening ? 'Abrindo checkout…' : service.ctaText}
-          {opening ? null : <ArrowRight size={18} strokeWidth={2.5} aria-hidden="true" />}
-        </Button>
+        <HoldButton
+          label={service.ctaText}
+          ariaLabel={`${service.ctaText} — R$ ${service.price.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+          hintId={`service-hold-hint-${service.id}`}
+          onConfirm={() => onCheckout(service)}
+          className="w-full py-3 text-sm font-semibold tracking-wide"
+        />
+        <p id={`service-hold-hint-${service.id}`} className="mt-2 text-center font-mono text-[10px] uppercase tracking-[0.16em] text-ink/35">
+          Segure para confirmar
+        </p>
       </div>
     </motion.article>
   );

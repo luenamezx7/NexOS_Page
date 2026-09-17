@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { motion, useReducedMotion, type Variants } from 'motion/react';
-import { GitBranch, Building2, MessageSquare, ArrowUpRight } from 'lucide-react';
+import { GitBranch, MessageSquare, ArrowUpRight } from 'lucide-react';
 import { config } from '@/config';
 import type { FooterLink } from '@/types';
 import { Signature } from './signature';
@@ -25,9 +25,19 @@ const RELIEF_CHILD: Variants = {
   },
 };
 
+function InstagramIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+      <circle cx="12" cy="12" r="5" />
+      <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
 const SOCIAL_ICONS = {
   GitBranch,
-  Building2,
+  Instagram: InstagramIcon,
   MessageSquare,
 } as const;
 
