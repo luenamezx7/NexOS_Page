@@ -24,6 +24,8 @@ interface BentoCardData {
   ctaHref: string;
   icon: ReactNode;
   span: string;
+  featured?: boolean;
+  featuredBadge?: string;
 }
 
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
@@ -62,34 +64,39 @@ function navigate(href: string): void {
 
 const BENTO_CARDS: BentoCardData[] = [
   {
-    id: 'dev',
-    badge: 'Full-Stack',
-    title: 'Desenvolvimento que escala',
-    description: 'Aplicações web e mobile modernas com arquitetura limpa, CI/CD e observabilidade nativa.',
-    metricValue: '40+',
-    metricLabel: 'projetos entregues',
-    ctaLabel: 'Contratar Desenvolvimento',
+    id: 'branding',
+    badge: 'Branding Control',
+    title: 'Controle total do seu branding',
+    description:
+      'Design system próprio, identidade corporativa e guias de uso escaláveis. Sua marca consistente em cada pixel, do logo ao produto.',
+    metricValue: '100%',
+    metricLabel: 'consistência de marca',
+    ctaLabel: 'Ver Serviços',
     ctaHref: '#services',
     icon: <Layers size={18} strokeWidth={1.75} aria-hidden="true" />,
     span: 'md:col-span-7',
   },
   {
-    id: 'design',
-    badge: 'Product Design',
-    title: 'Interfaces que convertem',
-    description: 'Design system completo, protótipos navegáveis e identidade visual pronta para escalar.',
-    metricValue: '98%',
-    metricLabel: 'satisfação do cliente',
-    ctaLabel: 'Contratar Design',
+    id: 'performance-valor',
+    badge: 'Performance & Valor',
+    title: 'Performance que gera valor B2B',
+    description:
+      'Modelo B2B focado em impulsionar negócios: velocidade, conversão e entrega de valor agregado mensurável para sua operação.',
+    metricValue: '+35%',
+    metricLabel: 'valor agregado B2B',
+    ctaLabel: 'Ver Serviços',
     ctaHref: '#services',
     icon: <Zap size={18} strokeWidth={1.75} aria-hidden="true" />,
     span: 'md:col-span-5',
+    featured: true,
+    featuredBadge: 'Destaque B2B',
   },
   {
     id: 'strategy',
     badge: 'Discovery',
-    title: 'Estratégia antes do código',
-    description: 'Validação de produto, roadmap técnico e plano de execução de 90 dias para o seu MVP.',
+    title: 'A melhor estratégia para seu Business',
+    description:
+      'A melhor estratégia para seu Business: validação de produto, roadmap técnico e plano de execução de 90 dias antes de investir em código.',
     metricValue: '6 sem',
     metricLabel: 'MVP médio',
     ctaLabel: 'Agendar Discovery',
@@ -98,14 +105,15 @@ const BENTO_CARDS: BentoCardData[] = [
     span: 'md:col-span-5',
   },
   {
-    id: 'stack',
-    badge: 'Edge Runtime',
-    title: 'Performance como padrão',
-    description: 'Stack moderna em edge, regiões otimizadas e zero cold start. Velocidade sem concessões.',
-    metricValue: '100',
-    metricLabel: 'Lighthouse performance',
-    ctaLabel: 'Ver Cases',
-    ctaHref: '#testimonials',
+    id: 'mvp',
+    badge: 'MVP Development',
+    title: 'Do protótipo à validação',
+    description:
+      'Prototipagem rápida e MVPs para validar clientes: Landing Pages, Cardápios, Portfólios, Biolinks e Gateways prontos para vender.',
+    metricValue: '4 sem',
+    metricLabel: 'protótipo validado',
+    ctaLabel: 'Ver Serviços',
+    ctaHref: '#services',
     icon: <ArrowUpRight size={18} strokeWidth={1.75} aria-hidden="true" />,
     span: 'md:col-span-7',
   },
@@ -125,11 +133,21 @@ function BentoCard({ card, reduceMotion }: BentoCardProps) {
       viewport={{ once: true, amount: 0.25 }}
       transition={reduceMotion ? { duration: 0.4 } : undefined}
       whileHover={reduceMotion ? undefined : { y: -5 }}
-      className={`bento-card will-change-transform group flex flex-col p-6 transition-colors duration-300 hover:border-ink/25 md:p-7 ${card.span}`}
+      className={`bento-card will-change-transform group relative flex flex-col p-6 transition-colors duration-300 hover:border-ink/25 md:p-7 ${card.span} ${
+        card.featured
+          ? '!border-pink-500/50 shadow-[0_0_28px_rgba(255,46,106,0.22),0_18px_60px_-24px_rgba(255,46,106,0.45)]'
+          : ''
+      }`}
       aria-labelledby={`bento-title-${card.id}`}
     >
+      {card.featured && card.featuredBadge && (
+        <span className="absolute -top-3 left-6 inline-flex items-center gap-1.5 rounded-full border border-pink-500/50 bg-[#ff2e6a] px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-white shadow-[0_0_16px_rgba(255,46,106,0.6)]">
+          <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-white" aria-hidden="true" />
+          {card.featuredBadge}
+        </span>
+      )}
       <div className="mb-5 flex flex-row items-center justify-between gap-3">
-        <span className="tech-badge">
+        <span className={`tech-badge ${card.featured ? '!border-pink-500/50 !text-ink' : ''}`}>
           <span className="tech-badge-dot" aria-hidden="true" />
           {card.badge}
         </span>

@@ -60,9 +60,8 @@ const FAQ_ITEMS: FAQItem[] = [
   },
   {
     id: '06',
-    question: 'Vocês atendem fora do Brasil?',
-    answer:
-      'Sim. Operação remota global com suporte em PT-BR. Infraestrutura edge e Stripe com Adaptive Pricing para conversão internacional.',
+    question: 'Como é calculado o frete?',
+    answer: 'Calculamos o frete de acordo com sua região.',
   },
 ];
 
