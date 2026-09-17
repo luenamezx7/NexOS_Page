@@ -2,23 +2,25 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
-import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { CheckoutElementsProvider, useCheckoutElements, PaymentElement } from '@stripe/react-stripe-js/checkout';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { X, ShieldCheck, Lock, Loader2, Check, AlertCircle } from 'lucide-react';
 import { config } from '@/config';
 import { useTheme } from './ThemeProvider';
 
 // ============================================================
-// NexOS — Embedded Checkout Transparente (Dual Theme)
-// PCI-DSS: nunca acessa PAN/CVV. Tudo via Stripe Elements (iFrame isolado).
-// Adapta 100% ao tema claro/escuro via Appearance API + Glassmorphism.
+// NexOS — Embedded Checkout Transparente (Checkout Sessions + Elements)
+// Stripe recomenda Checkout Sessions (ui_mode custom) sobre PaymentIntents.
+// - client_secret vem de POST /api/checkout (Checkout Session)
+// - SDK é inicializado via CheckoutProvider (iFrame isolado, PCI-DSS)
+// - Confirmação via checkout.confirm() — sem raw PAN no React
+// Dual theme: dark/light via Appearance API + Glassmorphism adaptativo
 // ============================================================
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? '');
 
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
-// ——— Appearance DARK ———
 const APPEARANCE_DARK = {
   theme: 'night' as const,
   variables: {
@@ -84,7 +86,6 @@ const APPEARANCE_DARK = {
   },
 } as const;
 
-// ——— Appearance LIGHT ———
 const APPEARANCE_LIGHT = {
   theme: 'stripe' as const,
   variables: {
@@ -158,9 +159,10 @@ interface EmbeddedCheckoutDrawerProps {
   productPrice: number;
 }
 
-type DrawerState = 'idle' | 'loading' | 'ready' | 'processing' | 'success' | 'error';
+type DrawerState = 'idle' | 'loading' | 'ready' | 'success' | 'error';
 
-function CheckoutForm({
+// ——— Inner form que consome o Checkout SDK ———
+function CheckoutFormInner({
   onSuccess,
   onError,
   amountLabel,
@@ -169,77 +171,74 @@ function CheckoutForm({
   onError: (msg: string) => void;
   amountLabel: string;
 }) {
-  const stripe = useStripe();
-  const elements = useElements();
+  const checkoutResult = useCheckoutElements();
   const reduce = useReducedMotion() ?? false;
   const { theme } = useTheme();
-  const [processing, setProcessing] = useState<boolean>(false);
-  const [formReady, setFormReady] = useState<boolean>(false);
+  const isDark = theme === 'dark';
+  const [submitting, setSubmitting] = useState<boolean>(false);
+
+  const isLoading = checkoutResult.type === 'loading';
+  const isError = checkoutResult.type === 'error';
+  const checkout = checkoutResult.type === 'success' ? checkoutResult.checkout : null;
 
   const handlePay = useCallback(async () => {
-    if (!stripe || !elements) return;
-    setProcessing(true);
+    if (!checkout) return;
+    setSubmitting(true);
     try {
-      const { error, paymentIntent } = await stripe.confirmPayment({
-        elements,
-        confirmParams: { return_url: `${window.location.origin}/sucesso` },
-        redirect: 'if_required',
-      });
+      const result = await checkout.confirm();
 
-      if (error) {
-        onError(error.message ?? 'Falha ao processar pagamento. Verifique os dados.');
+      if (result.type === 'error') {
+        const msg = (result.error as { message?: string })?.message ?? 'Falha ao processar pagamento.';
+        onError(msg);
         return;
       }
 
-      if (paymentIntent && paymentIntent.status === 'succeeded') {
-        onSuccess();
-        return;
-      }
-
-      if (paymentIntent && ['processing', 'requires_capture'].includes(paymentIntent.status)) {
-        onSuccess();
-        return;
-      }
-
-      onError('Pagamento não concluído. Tente novamente.');
+      onSuccess();
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Erro inesperado.';
       onError(msg);
     } finally {
-      setProcessing(false);
+      setSubmitting(false);
     }
-  }, [stripe, elements, onSuccess, onError]);
+  }, [checkout, onSuccess, onError]);
 
-  const isDark = theme === 'dark';
+  if (isError) {
+    return (
+      <div className="rounded-xl border border-red-500/20 bg-red-500/[0.08] p-4 text-sm text-red-600" role="alert">
+        Falha ao carregar checkout. Tente novamente.
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6">
       <div className={`rounded-xl border p-4 ${isDark ? 'border-white/10 bg-white/[0.03]' : 'border-ink/10 bg-ink/[0.03]'}`}>
-        <PaymentElement
-          onReady={() => setFormReady(true)}
-          onLoaderStart={() => setFormReady(false)}
-          options={{ layout: 'tabs', fields: { billingDetails: 'auto' } }}
-        />
-        {!formReady && (
-          <div className={`mt-4 flex items-center gap-3 text-sm ${isDark ? 'text-white/50' : 'text-ink/50'}`} aria-live="polite">
-            <Loader2 size={16} className="animate-spin text-[#ff2e6a]" aria-hidden="true" />
-            <span>Carregando campos seguros…</span>
+        {isLoading ? (
+          <div className="space-y-3" aria-live="polite" aria-busy="true">
+            <div className={`h-12 animate-pulse rounded-lg border ${isDark ? 'border-white/10 bg-white/[0.04]' : 'border-ink/10 bg-ink/[0.04]'}`} />
+            <div className={`h-12 animate-pulse rounded-lg border ${isDark ? 'border-white/10 bg-white/[0.04]' : 'border-ink/10 bg-ink/[0.04]'}`} />
+            <div className="flex items-center gap-2 py-2 text-sm opacity-60">
+              <Loader2 size={16} className="animate-spin text-[#ff2e6a]" aria-hidden="true" />
+              <span>Carregando checkout seguro…</span>
+            </div>
           </div>
+        ) : (
+          <PaymentElement />
         )}
       </div>
 
       <motion.button
         type="button"
         onClick={handlePay}
-        disabled={!stripe || !elements || processing || !formReady}
-        whileHover={reduce ? undefined : { scale: processing ? 1 : 1.02 }}
+        disabled={!checkout || submitting || isLoading}
+        whileHover={reduce ? undefined : { scale: submitting ? 1 : 1.02 }}
         whileTap={reduce ? undefined : { scale: 0.98 }}
         transition={{ duration: 0.3, ease: FLUID_EASE }}
         className="btn-primary-nex relative w-full justify-center overflow-hidden py-3.5 text-sm font-semibold tracking-wide disabled:cursor-not-allowed disabled:opacity-50"
         aria-live="polite"
       >
         <span className="relative z-10 inline-flex items-center gap-2">
-          {processing ? (
+          {submitting ? (
             <>
               <Loader2 size={18} className="animate-spin" aria-hidden="true" />
               Processando…
@@ -256,9 +255,40 @@ function CheckoutForm({
 
       <p className={`flex items-center justify-center gap-2 text-center font-mono text-[11px] uppercase tracking-[0.14em] ${isDark ? 'text-white/35' : 'text-ink/40'}`}>
         <ShieldCheck size={14} strokeWidth={2} aria-hidden="true" />
-        Pagamento seguro • PCI-DSS via Stripe • Seus dados não tocam nossos servidores
+        Checkout Sessions • PCI-DSS via Stripe • Seus dados não tocam nossos servidores
       </p>
     </div>
+  );
+}
+
+// Wrapper que isola o CheckoutElementsProvider — unmount limpa memória do SDK
+function CheckoutProviderWrapper({
+  clientSecret,
+  onSuccess,
+  onError,
+  amountLabel,
+}: {
+  clientSecret: string;
+  onSuccess: () => void;
+  onError: (msg: string) => void;
+  amountLabel: string;
+}) {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+  const appearance = isDark ? APPEARANCE_DARK : APPEARANCE_LIGHT;
+
+  return (
+    <CheckoutElementsProvider
+      stripe={stripePromise}
+      options={{
+        clientSecret,
+        elementsOptions: {
+          appearance: appearance as unknown as Record<string, unknown>,
+        },
+      }}
+    >
+      <CheckoutFormInner onSuccess={onSuccess} onError={onError} amountLabel={amountLabel} />
+    </CheckoutElementsProvider>
   );
 }
 
@@ -319,7 +349,6 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
   }, [open, handleClose]);
 
   const amountLabel = `R$ ${productPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  const appearance = isDark ? APPEARANCE_DARK : APPEARANCE_LIGHT;
 
   return (
     <AnimatePresence>
@@ -386,7 +415,7 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
                   </div>
                   <div className={`flex items-center justify-center gap-2 py-4 text-sm ${isDark ? 'text-white/45' : 'text-ink/50'}`}>
                     <Loader2 size={18} className="animate-spin text-[#ff2e6a]" aria-hidden="true" />
-                    Inicializando pagamento seguro…
+                    Inicializando checkout seguro…
                   </div>
                 </div>
               )}
@@ -425,9 +454,7 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
               )}
 
               {drawerState === 'ready' && clientSecret && (
-                <Elements key={`${theme}-${clientSecret.slice(-8)}`} stripe={stripePromise} options={{ clientSecret, appearance, locale: 'pt-BR' }}>
-                  <CheckoutForm amountLabel={amountLabel} onSuccess={() => setDrawerState('success')} onError={(msg) => { setErrorMsg(msg); setDrawerState('error'); }} />
-                </Elements>
+                <CheckoutProviderWrapper clientSecret={clientSecret} onSuccess={() => setDrawerState('success')} onError={(msg) => { setErrorMsg(msg); setDrawerState('error'); }} amountLabel={amountLabel} />
               )}
 
               {drawerState === 'success' && (
@@ -456,7 +483,7 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
               <div className={`border-t px-6 py-4 md:px-7 ${isDark ? 'border-white/10 bg-white/[0.02]' : 'border-ink/10 bg-ink/[0.02]'}`}>
                 <p className={`flex items-center justify-center gap-2 text-center font-mono text-[10px] uppercase tracking-[0.16em] ${isDark ? 'text-white/30' : 'text-ink/35'}`}>
                   <Lock size={12} strokeWidth={2} aria-hidden="true" />
-                  Criptografia TLS • Stripe Elements • Nenhum dado salvo no navegador
+                  Checkout Sessions • PCI-DSS • Nenhum dado salvo no navegador
                 </p>
               </div>
             )}

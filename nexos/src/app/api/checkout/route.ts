@@ -4,8 +4,10 @@ import { z } from 'zod';
 import { config } from '@/config';
 
 // ============================================================
-// NexOS — Checkout Transparente (PCI-DSS Compliant)
-// Server-side PaymentIntent creation only. Never trust client amount.
+// NexOS — Checkout Transparente via Checkout Sessions + Elements
+// Stripe recomenda Checkout Sessions (ui_mode custom) sobre PaymentIntents:
+// cobre price_data, line_items, tax, Adaptive Pricing, etc.
+// PCI-DSS: client_secret alimenta Checkout SDK (iFrame), nunca raw PAN.
 // ============================================================
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? '', {
@@ -16,12 +18,8 @@ const bodySchema = z.object({
   priceId: z.string().min(1).startsWith('price_'),
 });
 
-// Allowlist: só priceIds configurados no catálogo podem ser cobrados
 const ALLOWLIST = new Set(config.services.map((s) => s.stripePriceId));
 
-// --- Rate Limiting (in-memory, por IP) ---
-// 8 req / 60s por IP. Suficiente para uso legítimo, bloqueia burst/abuso.
-// Em produção multi-instância, troque por Redis/Upstash.
 const WINDOW_MS = 60_000;
 const MAX_REQ = 8;
 const buckets = new Map<string, number[]>();
@@ -45,7 +43,6 @@ function isRateLimited(ip: string): boolean {
   }
   valid.push(now);
   buckets.set(ip, valid);
-  // limpeza periódica para não vazar memória
   if (buckets.size > 5000) {
     for (const [k, v] of buckets) {
       if (v.every((t) => now - t >= WINDOW_MS)) buckets.delete(k);
@@ -54,10 +51,8 @@ function isRateLimited(ip: string): boolean {
   return false;
 }
 
-// --- Security Headers para o checkout ---
 function securityHeaders(): Record<string, string> {
   return {
-    // CSP restritivo: só permite frames/scripts do Stripe
     'Content-Security-Policy':
       "default-src 'self'; script-src 'self' https://js.stripe.com; frame-src https://js.stripe.com https://hooks.stripe.com; connect-src 'self' https://api.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://*.stripe.com;",
     'X-Content-Type-Options': 'nosniff',
@@ -66,19 +61,17 @@ function securityHeaders(): Record<string, string> {
   };
 }
 
-// Diagnóstico (GET) — verifica envs sem vazar segredo
 export async function GET(req: NextRequest) {
   const hasToken = !!process.env.STRIPE_SECRET_KEY;
   const hasPublishable = !!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
   const tokenPreview = process.env.STRIPE_SECRET_KEY ? `${process.env.STRIPE_SECRET_KEY.slice(0, 7)}...${process.env.STRIPE_SECRET_KEY.slice(-4)}` : null;
   return NextResponse.json(
-    { ok: hasToken && hasPublishable, hasToken, hasPublishable, tokenPreview, allowlist: [...ALLOWLIST] },
+    { ok: hasToken && hasPublishable, hasToken, hasPublishable, tokenPreview, allowlist: [...ALLOWLIST], mode: 'checkout_sessions_custom' },
     { headers: securityHeaders() }
   );
 }
 
 export async function POST(req: NextRequest) {
-  // Rate limiting
   const ip = getClientIp(req);
   if (isRateLimited(ip)) {
     return NextResponse.json({ error: 'Muitas tentativas. Aguarde um minuto e tente novamente.' }, { status: 429, headers: securityHeaders() });
@@ -101,43 +94,42 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Payload inválido' }, { status: 400, headers: securityHeaders() });
   }
 
-  // Validação de integridade: só allowlist
   if (!ALLOWLIST.has(priceId)) {
     console.warn('[api/checkout] priceId fora do allowlist:', priceId);
     return NextResponse.json({ error: 'Produto inválido.' }, { status: 400, headers: securityHeaders() });
   }
 
   try {
-    // Busca o Price no Stripe para validar valor/moeda no servidor (nunca confia no client)
+    // Valida Price no servidor (nunca confia no client)
     const price = await stripe.prices.retrieve(priceId);
     if (!price.active) {
       return NextResponse.json({ error: 'Produto indisponível no momento.' }, { status: 400, headers: securityHeaders() });
     }
-    if (price.unit_amount === null || price.unit_amount === 0) {
+    if (price.unit_amount === null) {
       return NextResponse.json({ error: 'Preço inválido.' }, { status: 400, headers: securityHeaders() });
     }
 
-    // Cria PaymentIntent — amount/currency vêm do Price, não do client
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: price.unit_amount,
-      currency: price.currency,
-      automatic_payment_methods: { enabled: true },
-      metadata: {
-        priceId,
-        productId: typeof price.product === 'string' ? price.product : (price.product as Stripe.Product).id,
-        source: 'nexos-embedded-checkout',
-      },
-      // Evita salvar cartão por padrão; tokenização acontece no client via Elements
-      // Se quiser salvar, use setup_future_usage com consentimento explícito
+    const origin = req.headers.get('origin') ?? process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+    const returnUrl = `${origin.replace(/\/$/, '')}/sucesso?session_id={CHECKOUT_SESSION_ID}`;
+
+    // Checkout Sessions com ui_mode custom → alimenta Checkout SDK (Payment Element)
+    // Stripe recomenda este fluxo sobre PaymentIntents para a maioria dos casos
+    // (Adaptive Pricing, tax, etc. só aqui). client_secret inicializa o SDK.
+    const session = await stripe.checkout.sessions.create({
+      ui_mode: 'elements' as const,
+      line_items: [{ price: priceId, quantity: 1 }],
+      mode: 'payment',
+      return_url: returnUrl,
     });
 
-    if (!paymentIntent.client_secret) {
-      return NextResponse.json({ error: 'Falha ao inicializar pagamento.' }, { status: 500, headers: securityHeaders() });
+    if (!session.client_secret) {
+      return NextResponse.json({ error: 'Falha ao inicializar checkout.' }, { status: 500, headers: securityHeaders() });
     }
 
     return NextResponse.json(
       {
-        clientSecret: paymentIntent.client_secret,
+        clientSecret: session.client_secret,
+        sessionId: session.id,
         amount: price.unit_amount,
         currency: price.currency,
       },
@@ -147,7 +139,6 @@ export async function POST(req: NextRequest) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error('[api/checkout] Stripe error', msg, err);
     const raw = (err as unknown as { raw?: unknown })?.raw ?? (err as unknown as { code?: string })?.code;
-    // Não vazar detalhes internos de Stripe para o client em produção — loga server, retorna genérico + código
-    return NextResponse.json({ error: 'Erro ao inicializar pagamento.', details: raw ?? msg }, { status: 500, headers: securityHeaders() });
+    return NextResponse.json({ error: 'Erro ao inicializar checkout.', details: raw ?? msg }, { status: 500, headers: securityHeaders() });
   }
 }
