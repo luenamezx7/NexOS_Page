@@ -4,10 +4,11 @@ import { useCallback, useEffect, useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { CheckoutElementsProvider, useCheckoutElements, PaymentElement } from '@stripe/react-stripe-js/checkout';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
-import { X, ShieldCheck, Lock, Loader2 } from 'lucide-react';
+import { X, ShieldCheck, Lock, Loader2, CreditCard, QrCode } from 'lucide-react';
 import { config } from '@/config';
 import { useTheme } from './ThemeProvider';
 import { useScrollLock } from './useScrollLock';
+import { InfinityPixPane } from './InfinityPixPane';
 
 // ============================================================
 // NexOS — Embedded Checkout Transparente (Checkout Sessions + Elements)
@@ -163,14 +164,23 @@ interface EmbeddedCheckoutDrawerProps {
 type DrawerState = 'idle' | 'loading' | 'ready' | 'success' | 'error';
 
 // ——— Inner form que consome o Checkout SDK ———
+// Nome/e-mail são controlados pelo drawer (compartilhados com a aba Pix).
 function CheckoutFormInner({
   onSuccess,
   onError,
   amountLabel,
+  name,
+  email,
+  onNameError,
+  onEmailError,
 }: {
   onSuccess: () => void;
   onError: (msg: string) => void;
   amountLabel: string;
+  name: string;
+  email: string;
+  onNameError: (msg: string | null) => void;
+  onEmailError: (msg: string | null) => void;
 }) {
   const checkoutResult = useCheckoutElements();
   const reduce = useReducedMotion() ?? false;
@@ -198,42 +208,44 @@ function CheckoutFormInner({
     return () => clearTimeout(t);
   }, [isLoading, checkoutResult.type, onError]);
 
-  const [email, setEmail] = useState<string>('');
-  const [emailError, setEmailError] = useState<string | null>(null);
-  const [fullName, setFullName] = useState<string>('');
-  const [fullNameError, setFullNameError] = useState<string | null>(null);
   const [cardError, setCardError] = useState<string | null>(null);
   const [cardComplete, setCardComplete] = useState<boolean>(false);
 
-  const validateName = useCallback((v: string) => {
-    if (!v.trim()) {
-      setFullNameError('Nome completo é obrigatório');
-      return false;
-    }
-    if (v.trim().length < 3) {
-      setFullNameError('Informe seu nome completo');
-      return false;
-    }
-    setFullNameError(null);
-    return true;
-  }, []);
+  const validateName = useCallback(
+    (v: string) => {
+      if (!v.trim()) {
+        onNameError('Nome completo é obrigatório');
+        return false;
+      }
+      if (v.trim().length < 3) {
+        onNameError('Informe seu nome completo');
+        return false;
+      }
+      onNameError(null);
+      return true;
+    },
+    [onNameError],
+  );
 
-  const validateEmail = useCallback((v: string) => {
-    if (!v.trim()) {
-      setEmailError('E-mail é obrigatório para o recibo');
-      return false;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) {
-      setEmailError('E-mail inválido');
-      return false;
-    }
-    setEmailError(null);
-    return true;
-  }, []);
+  const validateEmail = useCallback(
+    (v: string) => {
+      if (!v.trim()) {
+        onEmailError('E-mail é obrigatório para o recibo');
+        return false;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) {
+        onEmailError('E-mail inválido');
+        return false;
+      }
+      onEmailError(null);
+      return true;
+    },
+    [onEmailError],
+  );
 
   const handlePay = useCallback(async () => {
     if (!checkout) return;
-    const nameOk = validateName(fullName);
+    const nameOk = validateName(name);
     const emailOk = validateEmail(email);
     if (!cardComplete && !isLoading) {
       setCardError('Preencha os dados do cartão ou selecione o Pix para continuar');
@@ -267,7 +279,7 @@ function CheckoutFormInner({
     } finally {
       setSubmitting(false);
     }
-  }, [checkout, fullName, email, cardComplete, isLoading, validateName, validateEmail, onSuccess, onError]);
+  }, [checkout, name, email, cardComplete, isLoading, validateName, validateEmail, onSuccess, onError]);
 
   if (isError) {
     const msg = checkoutResult.type === 'error' ? checkoutResult.error.message : 'Falha ao carregar checkout.';
@@ -282,60 +294,6 @@ function CheckoutFormInner({
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex flex-col gap-2">
-        <label htmlFor="checkout-name" className={`font-mono text-[11px] uppercase tracking-[0.14em] ${isDark ? 'text-white/55' : 'text-ink/55'}`}>
-          Nome completo *
-        </label>
-        <input
-          id="checkout-name"
-          type="text"
-          value={fullName}
-          onChange={(e) => {
-            setFullName(e.target.value);
-            if (fullNameError) setFullNameError(null);
-          }}
-          onBlur={() => validateName(fullName)}
-          placeholder="Seu nome completo"
-          autoComplete="name"
-          required
-          aria-invalid={fullNameError ? 'true' : 'false'}
-          aria-describedby={fullNameError ? 'checkout-name-error' : undefined}
-          className={`field-input ${fullNameError ? '!border-red-500/60' : ''}`}
-        />
-        {fullNameError && (
-          <p id="checkout-name-error" className="text-xs text-red-500" role="alert">
-            {fullNameError}
-          </p>
-        )}
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <label htmlFor="checkout-email" className={`font-mono text-[11px] uppercase tracking-[0.14em] ${isDark ? 'text-white/55' : 'text-ink/55'}`}>
-          E-mail para recibo *
-        </label>
-        <input
-          id="checkout-email"
-          type="email"
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-            if (emailError) setEmailError(null);
-          }}
-          onBlur={() => validateEmail(email)}
-          placeholder="seu@email.com"
-          autoComplete="email"
-          required
-          aria-invalid={emailError ? 'true' : 'false'}
-          aria-describedby={emailError ? 'checkout-email-error' : undefined}
-          className={`field-input ${emailError ? '!border-red-500/60' : ''}`}
-        />
-        {emailError && (
-          <p id="checkout-email-error" className="text-xs text-red-500" role="alert">
-            {emailError}
-          </p>
-        )}
-      </div>
-
       <div className={`rounded-xl border p-4 ${isDark ? 'border-white/10 bg-white/[0.03]' : 'border-ink/10 bg-ink/[0.03]'}`}>
         <p className={`mb-3 font-mono text-[11px] uppercase tracking-[0.14em] ${isDark ? 'text-white/55' : 'text-ink/55'}`}>
           Dados do cartão / Pix *
@@ -407,11 +365,19 @@ function CheckoutProviderWrapper({
   onSuccess,
   onError,
   amountLabel,
+  name,
+  email,
+  onNameError,
+  onEmailError,
 }: {
   clientSecret: string;
   onSuccess: () => void;
   onError: (msg: string) => void;
   amountLabel: string;
+  name: string;
+  email: string;
+  onNameError: (msg: string | null) => void;
+  onEmailError: (msg: string | null) => void;
 }) {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
@@ -427,8 +393,127 @@ function CheckoutProviderWrapper({
         },
       }}
     >
-      <CheckoutFormInner onSuccess={onSuccess} onError={onError} amountLabel={amountLabel} />
+      <CheckoutFormInner
+        onSuccess={onSuccess}
+        onError={onError}
+        amountLabel={amountLabel}
+        name={name}
+        email={email}
+        onNameError={onNameError}
+        onEmailError={onEmailError}
+      />
     </CheckoutElementsProvider>
+  );
+}
+
+// Campos do cliente compartilhados pelas abas Cartão e Pix.
+// Mesmo padrão inline de erro do formulário de contato.
+function CustomerFields({
+  name,
+  email,
+  nameError,
+  emailError,
+  onNameChange,
+  onEmailChange,
+  onNameBlur,
+  onEmailBlur,
+}: {
+  name: string;
+  email: string;
+  nameError: string | null;
+  emailError: string | null;
+  onNameChange: (v: string) => void;
+  onEmailChange: (v: string) => void;
+  onNameBlur: () => void;
+  onEmailBlur: () => void;
+}) {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+  return (
+    <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-2">
+        <label htmlFor="checkout-name" className={`font-mono text-[11px] uppercase tracking-[0.14em] ${isDark ? 'text-white/55' : 'text-ink/55'}`}>
+          Nome completo *
+        </label>
+        <input
+          id="checkout-name"
+          type="text"
+          value={name}
+          onChange={(e) => onNameChange(e.target.value)}
+          onBlur={onNameBlur}
+          placeholder="Seu nome completo"
+          autoComplete="name"
+          required
+          aria-invalid={nameError ? 'true' : 'false'}
+          aria-describedby={nameError ? 'checkout-name-error' : undefined}
+          className={`field-input ${nameError ? '!border-red-500/60' : ''}`}
+        />
+        {nameError && (
+          <p id="checkout-name-error" className="text-xs text-red-500" role="alert">
+            {nameError}
+          </p>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <label htmlFor="checkout-email" className={`font-mono text-[11px] uppercase tracking-[0.14em] ${isDark ? 'text-white/55' : 'text-ink/55'}`}>
+          E-mail para recibo *
+        </label>
+        <input
+          id="checkout-email"
+          type="email"
+          value={email}
+          onChange={(e) => onEmailChange(e.target.value)}
+          onBlur={onEmailBlur}
+          placeholder="seu@email.com"
+          autoComplete="email"
+          required
+          aria-invalid={emailError ? 'true' : 'false'}
+          aria-describedby={emailError ? 'checkout-email-error' : undefined}
+          className={`field-input ${emailError ? '!border-red-500/60' : ''}`}
+        />
+        {emailError && (
+          <p id="checkout-email-error" className="text-xs text-red-500" role="alert">
+            {emailError}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+type PayMethod = 'card' | 'pix';
+
+function MethodTabs({ method, onChange }: { method: PayMethod; onChange: (m: PayMethod) => void }) {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+  const base = 'flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff2e6a]/60';
+  const idle = isDark
+    ? 'bg-white/[0.05] text-white/55 hover:bg-white/10 hover:text-white'
+    : 'bg-ink/[0.04] text-ink/55 hover:bg-ink/10 hover:text-ink';
+  return (
+    <div className={`flex gap-1.5 rounded-2xl border p-1.5 ${isDark ? 'border-white/10 bg-white/[0.03]' : 'border-ink/10 bg-ink/[0.03]'}`} role="tablist" aria-label="Método de pagamento">
+      <button
+        type="button"
+        role="tab"
+        aria-selected={method === 'card'}
+        onClick={() => onChange('card')}
+        className={`${base} ${method === 'card' ? 'bg-[#ff2e6a] text-white shadow-[0_0_16px_rgba(255,46,106,0.5)]' : idle}`}
+      >
+        <CreditCard size={14} strokeWidth={2} aria-hidden="true" />
+        Cartão
+      </button>
+      <button
+        type="button"
+        role="tab"
+        aria-selected={method === 'pix'}
+        onClick={() => onChange('pix')}
+        className={`${base} ${method === 'pix' ? 'bg-[#ff2e6a] text-white shadow-[0_0_16px_rgba(255,46,106,0.5)]' : idle}`}
+      >
+        <QrCode size={14} strokeWidth={2} aria-hidden="true" />
+        Pix · Taxa zero
+      </button>
+    </div>
   );
 }
 
@@ -440,9 +525,17 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
   const [drawerState, setDrawerState] = useState<DrawerState>('idle');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [productImage, setProductImage] = useState<string | null>(null);
+  const [method, setMethod] = useState<PayMethod>('card');
+  const [customerName, setCustomerName] = useState<string>('');
+  const [customerEmail, setCustomerEmail] = useState<string>('');
+  const [nameError, setNameError] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
 
+  // Stripe (cartão) é carregado sob demanda — só quando a aba cartão está ativa.
+  // O Pix usa a InfinitePay e não precisa de clientSecret.
   useEffect(() => {
-    if (!open || !priceId) return;
+    if (!open || !priceId || method !== 'card') return;
+    if (clientSecret || drawerState === 'loading') return;
     let cancelled = false;
     setDrawerState('loading');
     setErrorMsg(null);
@@ -476,13 +569,16 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
     return () => {
       cancelled = true;
     };
-  }, [open, priceId]);
+  }, [open, priceId, method, clientSecret, drawerState]);
 
   const handleClose = useCallback(() => {
     setClientSecret(null);
     setProductImage(null);
     setDrawerState('idle');
     setErrorMsg(null);
+    setMethod('card');
+    setNameError(null);
+    setEmailError(null);
     onClose();
   }, [onClose]);
 
@@ -581,7 +677,7 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
               className="relative flex-1 touch-pan-y overflow-y-auto overscroll-contain px-6 py-6 md:px-7 md:py-7"
               style={{ overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch' }}
             >
-              {drawerState === 'loading' && (
+              {(drawerState === 'loading' || drawerState === 'idle') && method === 'card' && (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -667,7 +763,7 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
                 </motion.div>
               )}
 
-              {drawerState === 'error' && (
+              {drawerState === 'error' && method === 'card' && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.96 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -734,8 +830,76 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
                 </motion.div>
               )}
 
-              {drawerState === 'ready' && clientSecret && (
-                <CheckoutProviderWrapper clientSecret={clientSecret} onSuccess={() => setDrawerState('success')} onError={(msg) => { setErrorMsg(msg); setDrawerState('error'); }} amountLabel={amountLabel} />
+              {drawerState !== 'success' && (drawerState === 'ready' || method === 'pix') && (
+                <div className="flex flex-col gap-5">
+                  <MethodTabs method={method} onChange={(m) => { setMethod(m); }} />
+                  {method === 'card' ? (
+                    clientSecret ? (
+                      <>
+                        <CustomerFields
+                          name={customerName}
+                          email={customerEmail}
+                          nameError={nameError}
+                          emailError={emailError}
+                          onNameChange={(v) => { setCustomerName(v); if (nameError) setNameError(null); }}
+                          onEmailChange={(v) => { setCustomerEmail(v); if (emailError) setEmailError(null); }}
+                          onNameBlur={() => {
+                            if (!customerName.trim()) setNameError('Nome completo é obrigatório');
+                            else if (customerName.trim().length < 3) setNameError('Informe seu nome completo');
+                            else setNameError(null);
+                          }}
+                          onEmailBlur={() => {
+                            if (!customerEmail.trim()) setEmailError('E-mail é obrigatório para o recibo');
+                            else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail)) setEmailError('E-mail inválido');
+                            else setEmailError(null);
+                          }}
+                        />
+                        <CheckoutProviderWrapper
+                          clientSecret={clientSecret}
+                          onSuccess={() => setDrawerState('success')}
+                          onError={(msg) => { setErrorMsg(msg); setDrawerState('error'); }}
+                          amountLabel={amountLabel}
+                          name={customerName}
+                          email={customerEmail}
+                          onNameError={setNameError}
+                          onEmailError={setEmailError}
+                        />
+                      </>
+                    ) : null
+                  ) : (
+                    <>
+                      <CustomerFields
+                        name={customerName}
+                        email={customerEmail}
+                        nameError={nameError}
+                        emailError={emailError}
+                        onNameChange={(v) => { setCustomerName(v); if (nameError) setNameError(null); }}
+                        onEmailChange={(v) => { setCustomerEmail(v); if (emailError) setEmailError(null); }}
+                        onNameBlur={() => {
+                          if (!customerName.trim()) setNameError('Nome completo é obrigatório');
+                          else if (customerName.trim().length < 3) setNameError('Informe seu nome completo');
+                          else setNameError(null);
+                        }}
+                        onEmailBlur={() => {
+                          if (!customerEmail.trim()) setEmailError('E-mail é obrigatório para o recibo');
+                          else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail)) setEmailError('E-mail inválido');
+                          else setEmailError(null);
+                        }}
+                      />
+                      <InfinityPixPane
+                        priceId={priceId}
+                        productPrice={productPrice}
+                        name={customerName}
+                        email={customerEmail}
+                        onNameError={setNameError}
+                        onEmailError={setEmailError}
+                        nameError={nameError}
+                        emailError={emailError}
+                        onSuccess={() => setDrawerState('success')}
+                      />
+                    </>
+                  )}
+                </div>
               )}
 
               {drawerState === 'success' && (
@@ -811,7 +975,7 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
               <div className={`border-t px-6 py-4 md:px-7 ${isDark ? 'border-white/10 bg-white/[0.02]' : 'border-ink/10 bg-ink/[0.02]'}`}>
                 <p className={`flex items-center justify-center gap-2 text-center font-mono text-[10px] uppercase tracking-[0.16em] ${isDark ? 'text-white/30' : 'text-ink/35'}`}>
                   <Lock size={12} strokeWidth={2} aria-hidden="true" />
-                  Checkout Sessions • PCI-DSS • Nenhum dado salvo no navegador
+                  {method === 'pix' ? 'Pix InfinitePay • Taxa zero • Confirmação em segundos' : 'Checkout Sessions • PCI-DSS • Nenhum dado salvo no navegador'}
                 </p>
               </div>
             )}
