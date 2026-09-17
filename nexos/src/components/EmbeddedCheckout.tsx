@@ -197,11 +197,28 @@ function CheckoutFormInner({
     return () => clearTimeout(t);
   }, [isLoading, checkoutResult.type, onError]);
 
+  const [email, setEmail] = useState<string>('');
+  const [emailError, setEmailError] = useState<string | null>(null);
+
+  const validateEmail = useCallback((v: string) => {
+    if (!v.trim()) {
+      setEmailError('E-mail é obrigatório para o recibo');
+      return false;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) {
+      setEmailError('E-mail inválido');
+      return false;
+    }
+    setEmailError(null);
+    return true;
+  }, []);
+
   const handlePay = useCallback(async () => {
     if (!checkout) return;
+    if (!validateEmail(email)) return;
     setSubmitting(true);
     try {
-      const result = await checkout.confirm();
+      const result = await checkout.confirm({ email: email.trim() });
 
       if (result.type === 'error') {
         const msg = (result.error as { message?: string })?.message ?? 'Falha ao processar pagamento.';
@@ -216,7 +233,7 @@ function CheckoutFormInner({
     } finally {
       setSubmitting(false);
     }
-  }, [checkout, onSuccess, onError]);
+  }, [checkout, email, validateEmail, onSuccess, onError]);
 
   if (isError) {
     const msg = checkoutResult.type === 'error' ? checkoutResult.error.message : 'Falha ao carregar checkout.';
@@ -231,6 +248,33 @@ function CheckoutFormInner({
 
   return (
     <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <label htmlFor="checkout-email" className={`font-mono text-[11px] uppercase tracking-[0.14em] ${isDark ? 'text-white/55' : 'text-ink/55'}`}>
+          E-mail para recibo *
+        </label>
+        <input
+          id="checkout-email"
+          type="email"
+          value={email}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            if (emailError) setEmailError(null);
+          }}
+          onBlur={() => validateEmail(email)}
+          placeholder="seu@email.com"
+          autoComplete="email"
+          required
+          aria-invalid={emailError ? 'true' : 'false'}
+          aria-describedby={emailError ? 'checkout-email-error' : undefined}
+          className="field-input"
+        />
+        {emailError && (
+          <p id="checkout-email-error" className="text-xs text-red-500" role="alert">
+            {emailError}
+          </p>
+        )}
+      </div>
+
       <div className={`rounded-xl border p-4 ${isDark ? 'border-white/10 bg-white/[0.03]' : 'border-ink/10 bg-ink/[0.03]'}`}>
         {isLoading ? (
           <div className="space-y-3" aria-live="polite" aria-busy="true">
