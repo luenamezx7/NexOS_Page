@@ -314,9 +314,12 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ priceId }),
         });
-        const body: { clientSecret?: string; error?: string } = await res.json().catch(() => ({}));
+        const body: { clientSecret?: string; error?: string; details?: unknown } = await res.json().catch(() => ({}));
         if (cancelled) return;
-        if (!res.ok || !body.clientSecret) throw new Error(body.error ?? 'Falha ao inicializar checkout.');
+        if (!res.ok || !body.clientSecret) {
+          const details = typeof body.details === 'string' ? body.details : body.details ? JSON.stringify(body.details) : '';
+          throw new Error(`${body.error ?? 'Falha ao inicializar checkout.'}${details ? ` — ${String(details).slice(0, 600)}` : ''}`);
+        }
         setClientSecret(body.clientSecret);
         setDrawerState('ready');
       } catch (err) {
@@ -433,12 +436,15 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
                       setDrawerState('loading');
                       setErrorMsg(null);
                       fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ priceId }) })
-                        .then((r) => r.json())
-                        .then((b: { clientSecret?: string; error?: string }) => {
-                          if (b.clientSecret) {
+                        .then((r) => r.json().then((b) => ({ ok: r.ok, body: b as { clientSecret?: string; error?: string; details?: unknown } })))
+                        .then(({ ok, body: b }) => {
+                          if (ok && b.clientSecret) {
                             setClientSecret(b.clientSecret);
                             setDrawerState('ready');
-                          } else throw new Error(b.error ?? 'Falha');
+                          } else {
+                            const details = typeof b.details === 'string' ? b.details : b.details ? JSON.stringify(b.details) : '';
+                            throw new Error(`${b.error ?? 'Falha'}${details ? ` — ${String(details).slice(0, 600)}` : ''}`);
+                          }
                         })
                         .catch((e: unknown) => {
                           const m = e instanceof Error ? e.message : 'Erro';
