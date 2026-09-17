@@ -1,9 +1,7 @@
 'use client';
 
 import { motion, useReducedMotion, type Variants } from 'motion/react';
-import { Quote } from 'lucide-react';
-import { config } from '@/config';
-import type { Testimonial } from '@/types';
+import { Cpu, Layers, CreditCard, ArrowRight } from 'lucide-react';
 
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
@@ -22,17 +20,73 @@ const RELIEF_CHILD: Variants = {
   },
 };
 
-interface TestimonialCardProps {
-  testimonial: Testimonial;
-  reduceMotion: boolean;
+// ============================================================
+// NexOS Content Engineering Directive — Cards de Valor
+// Substitui "Cases & Depoimentos" pelos 3 pilares oficiais
+// ============================================================
+
+interface ValueCard {
+  id: string;
+  overline: string;
+  title: string;
+  description: string;
+  metric: string;
+  metricLabel: string;
+  actionTag: string;
+  actionHref: string;
+  icon: React.ReactNode;
+  pilar: string;
 }
 
-function TestimonialCard({ testimonial, reduceMotion }: TestimonialCardProps) {
-  const initials: string = testimonial.author
-    .split(' ')
-    .map((n: string) => n[0])
-    .join('');
+const VALUE_CARDS: ValueCard[] = [
+  {
+    id: 'BENTO_NFC_ACRYLIC',
+    overline: 'TECNOLOGIA FÍSICA',
+    title: 'Conexão por Aproximação Sem Atrito',
+    description:
+      'Placas de acrílico cristal cortadas a laser com NFC e QR Code integrado. Permitem que seu cliente acesse cardápios, portfólios ou redes sociais em menos de 1 segundo, eliminando barreiras no atendimento.',
+    metric: 'Instantâneo',
+    metricLabel: 'NFC / QR',
+    actionTag: 'Adquirir em Lote',
+    actionHref: '#services',
+    icon: <Layers size={18} strokeWidth={1.75} aria-hidden="true" />,
+    pilar: 'PILAR 2 — DESIGN INDUSTRIAL-TECH',
+  },
+  {
+    id: 'BENTO_EMBEDDED_CHECKOUT',
+    overline: 'CHECKOUT TRANSPARENTE',
+    title: 'Conversão Máxima Sem Redirecionamentos',
+    description:
+      'Processe pagamentos diretamente na sua landing page sem enviar o cliente para links externos. Reduza o abandono de carrinho mantendo a coesão visual e a confiança do comprador no mesmo ambiente.',
+    metric: '+35%',
+    metricLabel: 'taxa de finalização',
+    actionTag: 'Ver Demonstração',
+    actionHref: '#services',
+    icon: <CreditCard size={18} strokeWidth={1.75} aria-hidden="true" />,
+    pilar: 'PILAR 3 — CONVERSÃO & RETENÇÃO',
+  },
+  {
+    id: 'BENTO_PERFORMANCE_60FPS',
+    overline: 'ENGINE & SPEED',
+    title: 'Fluidez Imersiva a 60–120 FPS',
+    description:
+      'Arquitetura acelerada por GPU que garante navegação contínua e sem interrupções em qualquer dispositivo. Otimização severa que converte visitantes em clientes engajados.',
+    metric: '< 0.8s',
+    metricLabel: 'LCP / 120Hz',
+    actionTag: 'Conhecer a Arquitetura',
+    actionHref: '#hero',
+    icon: <Cpu size={18} strokeWidth={1.75} aria-hidden="true" />,
+    pilar: 'PILAR 1 — PERFORMANCE ABSOLUTA',
+  },
+];
 
+function navigate(href: string): void {
+  const el = document.querySelector(href) as HTMLElement | null;
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  else window.location.href = href;
+}
+
+function ValueCardComponent({ card, reduceMotion }: { card: ValueCard; reduceMotion: boolean }) {
   return (
     <motion.article
       variants={reduceMotion ? undefined : RELIEF_CHILD}
@@ -41,31 +95,45 @@ function TestimonialCard({ testimonial, reduceMotion }: TestimonialCardProps) {
       viewport={{ once: true, amount: 0.25 }}
       transition={reduceMotion ? { duration: 0.4 } : undefined}
       whileHover={reduceMotion ? undefined : { y: -5 }}
-      className="bento-card will-change-transform flex flex-col p-7 transition-colors duration-300 hover:border-ink/25 md:p-8"
-      aria-label={`Depoimento de ${testimonial.author}`}
+      className="bento-card will-change-transform group flex flex-col p-7 transition-colors duration-300 hover:border-ink/25 md:p-8"
+      aria-labelledby={`value-title-${card.id}`}
     >
-      <Quote size={28} strokeWidth={1.5} className="mb-5 text-[#ff2e6a]" aria-hidden="true" />
-
-      <blockquote className="mb-7">
-        <p className="text-[15px] leading-relaxed text-ink/80">
-          &ldquo;{testimonial.content}&rdquo;
-        </p>
-      </blockquote>
-
-      <footer className="mt-auto flex flex-row items-center gap-3.5 border-t border-ink/10 pt-5">
-        <div
-          className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-ink/10 bg-ink/[0.05] font-mono text-xs font-semibold text-ink"
+      <div className="mb-5 flex flex-row items-center justify-between gap-3">
+        <span className="tech-badge">
+          <span className="tech-badge-dot" aria-hidden="true" />
+          {card.overline}
+        </span>
+        <span
+          className="grid h-9 w-9 place-items-center rounded-lg border border-ink/10 bg-ink/[0.04] text-ink/70 transition-colors duration-300 group-hover:border-pink-500/40 group-hover:text-ink"
           aria-hidden="true"
         >
-          {initials}
-        </div>
-        <div className="flex min-w-0 flex-col">
-          <cite className="truncate text-sm font-semibold not-italic text-ink">{testimonial.author}</cite>
-          <p className="truncate text-xs text-ink/50">
-            {testimonial.role} · {testimonial.company}
-          </p>
-        </div>
-      </footer>
+          {card.icon}
+        </span>
+      </div>
+
+      <h3 id={`value-title-${card.id}`} className="mb-3 text-xl font-bold tracking-tight text-ink">
+        {card.title}
+      </h3>
+
+      <p className="mb-6 text-sm leading-relaxed text-ink/70">{card.description}</p>
+
+      <div className="mb-6 flex flex-row items-baseline gap-2 border-y border-ink/10 py-4">
+        <span className="font-display text-2xl font-bold tracking-tight text-ink">{card.metric}</span>
+        <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/45">{card.metricLabel}</span>
+      </div>
+
+      <div className="mt-auto flex flex-col gap-3">
+        <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink/35">{card.pilar}</span>
+        <button
+          type="button"
+          onClick={() => navigate(card.actionHref)}
+          aria-label={card.actionTag}
+          className="btn-secondary-nex w-full !justify-between"
+        >
+          <span>{card.actionTag}</span>
+          <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
+        </button>
+      </div>
     </motion.article>
   );
 }
@@ -93,10 +161,10 @@ export function Testimonials({ className = '' }: TestimonialsProps) {
         >
           <h2 id="testimonials-title" className="flex flex-row items-start gap-3 text-ink">
             <span className="pink-marker mt-[0.28em]" aria-hidden="true" />
-            Cases &amp; Depoimentos
+            Ecossistema NexOS
           </h2>
           <p className="mt-4 text-base leading-relaxed text-ink/70 md:text-lg">
-            Resultados reais de times que confiaram na gente para construir seus produtos.
+            Três pilares de valor para transformar tráfego em receita: performance absoluta, conexão físico-digital e conversão sem atrito.
           </p>
         </motion.header>
 
@@ -107,10 +175,10 @@ export function Testimonials({ className = '' }: TestimonialsProps) {
           viewport={{ once: true, amount: 0.15 }}
           className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-3"
           role="list"
-          aria-label="Depoimentos de clientes"
+          aria-label="Pilares de valor NexOS"
         >
-          {config.testimonials.map((testimonial: Testimonial) => (
-            <TestimonialCard key={testimonial.id} testimonial={testimonial} reduceMotion={reduce} />
+          {VALUE_CARDS.map((card) => (
+            <ValueCardComponent key={card.id} card={card} reduceMotion={reduce} />
           ))}
         </motion.div>
       </div>

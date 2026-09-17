@@ -79,8 +79,7 @@ export const config: SiteConfig = {
     ],
     social: [
       { label: 'GitHub', href: 'https://github.com/nexos', icon: 'GitBranch' },
-      { label: 'LinkedIn', href: 'https://linkedin.com/company/nexos', icon: 'Building2' },
-      { label: 'Twitter', href: 'https://twitter.com/nexos', icon: 'MessageSquare' },
+      { label: 'Instagram', href: 'https://www.instagram.com/_nexoslab?stkn=ODZob2M2azAwYTFz&utm_source=qr', icon: 'Instagram' },
     ],
   },
   stripe: {
