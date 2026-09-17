@@ -145,7 +145,7 @@ export function Services({ className = '' }: ServicesProps) {
             className="mt-10 flex flex-row items-center justify-center gap-2.5 text-center text-sm text-ink/45 will-change-transform"
           >
             <ShieldCheck size={16} strokeWidth={2} className="shrink-0 text-ink/45" aria-hidden="true" />
-            <span>Pagamento seguro e transparente via Stripe Elements — sem redirecionamento.</span>
+            <span>Pagamento seguro: cartão via Stripe Elements ou Pix via InfinitePay (taxa zero).</span>
           </motion.div>
         </div>
       </section>
