@@ -181,6 +181,22 @@ function CheckoutFormInner({
   const isError = checkoutResult.type === 'error';
   const checkout = checkoutResult.type === 'success' ? checkoutResult.checkout : null;
 
+  // Timeout anti-loading infinito: se Stripe.js não carregar (pk faltando), mostra erro com instrução
+  useEffect(() => {
+    if (!isLoading) return;
+    const t = setTimeout(() => {
+      if (checkoutResult.type === 'loading') {
+        const hasPk = !!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY && process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY !== 'pk_test_placeholder';
+        onError(
+          hasPk
+            ? 'Checkout demorou para carregar. Verifique sua conexão ou tente novamente.'
+            : 'Stripe publishable key não configurada no Vercel. Adicione NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY e faça Redeploy (NEXT_PUBLIC_ é injetado no build).'
+        );
+      }
+    }, 9000);
+    return () => clearTimeout(t);
+  }, [isLoading, checkoutResult.type, onError]);
+
   const handlePay = useCallback(async () => {
     if (!checkout) return;
     setSubmitting(true);
@@ -203,9 +219,12 @@ function CheckoutFormInner({
   }, [checkout, onSuccess, onError]);
 
   if (isError) {
+    const msg = checkoutResult.type === 'error' ? checkoutResult.error.message : 'Falha ao carregar checkout.';
     return (
-      <div className="rounded-xl border border-red-500/20 bg-red-500/[0.08] p-4 text-sm text-red-600" role="alert">
-        Falha ao carregar checkout. Tente novamente.
+      <div className="rounded-xl border border-red-500/20 bg-red-500/[0.08] p-4 text-sm leading-relaxed text-red-600" role="alert">
+        <p className="font-semibold">Falha ao carregar checkout</p>
+        <p className="mt-1 text-xs opacity-80">{msg}</p>
+        <p className="mt-2 text-xs opacity-60">Verifique se NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY está no Vercel e se fez Redeploy com Clear Cache.</p>
       </div>
     );
   }
