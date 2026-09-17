@@ -18,7 +18,14 @@ const bodySchema = z.object({
   priceId: z.string().min(1).startsWith('price_'),
 });
 
-const ALLOWLIST = new Set(config.services.map((s) => s.stripePriceId));
+const ALLOWLIST = new Set([
+  ...config.services.map((s) => s.stripePriceId),
+  // allow both test and live priceIds (test ↔ live switch)
+  'price_1UGReeIG50KmD1h7kMbzamKD',
+  'price_1UGRbBIG50KmD1h7of6JbYHd',
+  'price_1UGVVWElCQS2D8A98bp4Va94',
+  'price_1UGVVWElCQS2D8A9Wc8o23wQ',
+]);
 
 const WINDOW_MS = 60_000;
 const MAX_REQ = 8;

@@ -22,7 +22,8 @@ export const config: SiteConfig = {
       price: 499.9,
       features: ['Arquitetura limpa e testável', 'CI/CD automatizado', 'Observabilidade nativa', 'Documentação técnica'],
       ctaText: 'Contratar Desenvolvimento',
-      stripePriceId: 'price_1UGReeIG50KmD1h7kMbzamKD',
+      // test: price_1UGReeIG50KmD1h7kMbzamKD | live: price_1UGVVWElCQS2D8A98bp4Va94
+      stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_DEV || 'price_1UGVVWElCQS2D8A98bp4Va94',
     },
     {
       id: 'placa',
@@ -31,7 +32,7 @@ export const config: SiteConfig = {
       price: 69.9,
       features: ['NFC e QR Code na mesma placa', 'Instalação simplificada', 'Link personalizável', 'Garantia estendida'],
       ctaText: 'Comprar Placa',
-      stripePriceId: 'price_1UGRbBIG50KmD1h7of6JbYHd',
+      stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_PLACA || 'price_1UGVVWElCQS2D8A9Wc8o23wQ',
     },
   ],
   testimonials: [
