@@ -6,6 +6,7 @@ import { Header } from '@/components/Header';
 import { Hero } from '@/components/Hero';
 import { Services } from '@/components/Services';
 import { Testimonials } from '@/components/Testimonials';
+import { FAQ } from '@/components/FAQ';
 import { Contact } from '@/components/Contact';
 import { Footer } from '@/components/Footer';
 import { SectionIndicator } from '@/components/SectionIndicator';
@@ -214,6 +215,7 @@ export default function HomeClient() {
               <Hero ref={heroRef} />
               <Services />
               <Testimonials />
+              <FAQ />
               <Contact />
             </div>
             <Footer />

@@ -13,7 +13,8 @@ const SECTIONS: SectionDef[] = [
   { id: 'hero', label: 'Início', number: '01' },
   { id: 'services', label: 'Serviços', number: '02' },
   { id: 'testimonials', label: 'Ecossistema', number: '03' },
-  { id: 'contact', label: 'Contato', number: '04' },
+  { id: 'faq', label: 'FAQ', number: '04' },
+  { id: 'contact', label: 'Contato', number: '05' },
 ];
 
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
