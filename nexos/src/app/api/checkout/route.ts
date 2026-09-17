@@ -138,6 +138,7 @@ export async function POST(req: NextRequest) {
       line_items: [{ price: priceId, quantity: 1 }],
       mode: 'payment',
       return_url: returnUrl,
+      // Pix + Cartão apenas — Boleto desabilitado no PMC live para evitar "tax id cannot match"
     });
 
     if (!session.client_secret) {
