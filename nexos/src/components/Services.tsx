@@ -32,6 +32,17 @@ interface ServiceCardProps {
 }
 
 function ServiceCard({ service, reduceMotion, onCheckout }: ServiceCardProps) {
+  const [opening, setOpening] = useState<boolean>(false);
+
+  const handleClick = useCallback(() => {
+    if (opening) return;
+    setOpening(true);
+    onCheckout(service);
+    // feedback tátil: mantém loading até o drawer abrir (fetch do clientSecret)
+    const t = setTimeout(() => setOpening(false), 1400);
+    return () => clearTimeout(t);
+  }, [opening, onCheckout, service]);
+
   return (
     <motion.article
       variants={reduceMotion ? undefined : RELIEF_CHILD}
@@ -72,11 +83,12 @@ function ServiceCard({ service, reduceMotion, onCheckout }: ServiceCardProps) {
           variant="primary"
           size="md"
           fullWidth
-          onClick={() => onCheckout(service)}
+          loading={opening}
+          onClick={handleClick}
           aria-label={`${service.ctaText} — R$ ${service.price.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
         >
-          {service.ctaText}
-          <ArrowRight size={18} strokeWidth={2.5} aria-hidden="true" />
+          {opening ? 'Abrindo checkout…' : service.ctaText}
+          {opening ? null : <ArrowRight size={18} strokeWidth={2.5} aria-hidden="true" />}
         </Button>
       </div>
     </motion.article>

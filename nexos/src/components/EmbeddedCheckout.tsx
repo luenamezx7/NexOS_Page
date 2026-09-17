@@ -318,6 +318,7 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [drawerState, setDrawerState] = useState<DrawerState>('idle');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [productImage, setProductImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open || !priceId) return;
@@ -325,6 +326,7 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
     setDrawerState('loading');
     setErrorMsg(null);
     setClientSecret(null);
+    setProductImage(null);
 
     (async () => {
       try {
@@ -333,13 +335,14 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ priceId }),
         });
-        const body: { clientSecret?: string; error?: string; details?: unknown } = await res.json().catch(() => ({}));
+        const body: { clientSecret?: string; error?: string; details?: unknown; productImage?: string | null } = await res.json().catch(() => ({}));
         if (cancelled) return;
         if (!res.ok || !body.clientSecret) {
           const details = typeof body.details === 'string' ? body.details : body.details ? JSON.stringify(body.details) : '';
           throw new Error(`${body.error ?? 'Falha ao inicializar checkout.'}${details ? ` — ${String(details).slice(0, 600)}` : ''}`);
         }
         setClientSecret(body.clientSecret);
+        if (body.productImage) setProductImage(body.productImage);
         setDrawerState('ready');
       } catch (err) {
         if (cancelled) return;
@@ -356,6 +359,7 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
 
   const handleClose = useCallback(() => {
     setClientSecret(null);
+    setProductImage(null);
     setDrawerState('idle');
     setErrorMsg(null);
     onClose();
@@ -404,16 +408,24 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
             <div className={`pointer-events-none absolute inset-0 rounded-t-[24px] md:rounded-3xl ${isDark ? 'bg-gradient-to-b from-white/[0.07] to-transparent' : 'bg-gradient-to-b from-ink/[0.03] to-transparent'}`} aria-hidden="true" />
 
             <div className={`relative flex items-start justify-between gap-4 border-b px-6 py-5 md:px-7 ${isDark ? 'border-white/10' : 'border-ink/10'}`}>
-              <div className="min-w-0">
-                <p className={`font-mono text-[11px] uppercase tracking-[0.18em] ${isDark ? 'text-white/40' : 'text-ink/40'}`}>Checkout seguro</p>
-                <h2 id="embedded-checkout-title" className={`mt-1 truncate font-display text-lg font-bold tracking-tight ${isDark ? 'text-white' : 'text-ink'}`}>
-                  {drawerState === 'success' ? 'Pagamento confirmado' : productTitle}
-                </h2>
-                {drawerState !== 'success' && (
-                  <p className={`mt-1 font-mono text-xs ${isDark ? 'text-white/50' : 'text-ink/55'}`}>
-                    {amountLabel} • parcela única • sem dados salvos
-                  </p>
+              <div className="flex min-w-0 items-start gap-3">
+                {productImage && drawerState !== 'success' && (
+                  <span className={`grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl border bg-white ${isDark ? 'border-white/10' : 'border-ink/10'}`} aria-hidden="true">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={productImage} alt="" className="h-full w-full object-cover" loading="eager" decoding="async" />
+                  </span>
                 )}
+                <div className="min-w-0">
+                  <p className={`font-mono text-[11px] uppercase tracking-[0.18em] ${isDark ? 'text-white/40' : 'text-ink/40'}`}>Checkout seguro</p>
+                  <h2 id="embedded-checkout-title" className={`mt-1 truncate font-display text-lg font-bold tracking-tight ${isDark ? 'text-white' : 'text-ink'}`}>
+                    {drawerState === 'success' ? 'Pagamento confirmado' : productTitle}
+                  </h2>
+                  {drawerState !== 'success' && (
+                    <p className={`mt-1 font-mono text-xs ${isDark ? 'text-white/50' : 'text-ink/55'}`}>
+                      {amountLabel} • parcela única • sem dados salvos
+                    </p>
+                  )}
+                </div>
               </div>
               <button
                 type="button"
@@ -429,52 +441,155 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
 
             <div className="relative flex-1 overflow-y-auto px-6 py-6 md:px-7 md:py-7">
               {drawerState === 'loading' && (
-                <div className="flex flex-col gap-4" aria-live="polite" aria-busy="true">
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex flex-col gap-6"
+                  aria-live="polite"
+                  aria-busy="true"
+                >
+                  {/* Spinner central com brilho rosado */}
+                  <div className="flex flex-col items-center gap-4 py-2">
+                    <div className="relative">
+                      <motion.div
+                        animate={reduce ? {} : { rotate: 360 }}
+                        transition={{ duration: 1.1, repeat: Infinity, ease: 'linear' }}
+                        className={`h-14 w-14 rounded-full border-2 ${isDark ? 'border-white/10' : 'border-ink/10'} border-t-[#ff2e6a] shadow-[0_0_20px_rgba(255,46,106,0.25)]`}
+                        aria-hidden="true"
+                      />
+                      <motion.div
+                        animate={reduce ? {} : { scale: [1, 1.08, 1] }}
+                        transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+                        className="absolute inset-[14px] rounded-full bg-[#ff2e6a]/15"
+                        aria-hidden="true"
+                      />
+                      <div className="absolute inset-0 grid place-items-center">
+                        <Lock size={16} className="text-[#ff2e6a]" strokeWidth={2} aria-hidden="true" />
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <p className={`text-sm font-medium ${isDark ? 'text-white' : 'text-ink'}`}>Abrindo checkout seguro…</p>
+                      <p className={`mt-1 font-mono text-[11px] uppercase tracking-[0.16em] ${isDark ? 'text-white/40' : 'text-ink/40'}`}>
+                        <motion.span
+                          animate={reduce ? {} : { opacity: [0.4, 1, 0.4] }}
+                          transition={{ duration: 1.4, repeat: Infinity }}
+                        >
+                          Criptografando • PCI-DSS
+                        </motion.span>
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Skeletons com shimmer */}
                   <div className="space-y-3">
-                    <div className={`h-12 animate-pulse rounded-lg border ${isDark ? 'border-white/10 bg-white/[0.04]' : 'border-ink/10 bg-ink/[0.04]'}`} />
-                    <div className={`h-12 animate-pulse rounded-lg border ${isDark ? 'border-white/10 bg-white/[0.04]' : 'border-ink/10 bg-ink/[0.04]'}`} />
-                    <div className={`h-[88px] animate-pulse rounded-lg border ${isDark ? 'border-white/10 bg-white/[0.04]' : 'border-ink/10 bg-ink/[0.04]'}`} />
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1, duration: 0.4, ease: FLUID_EASE }}
+                      className={`h-12 rounded-xl border ${isDark ? 'border-white/10 bg-white/[0.04]' : 'border-ink/10 bg-ink/[0.04]'} relative overflow-hidden`}
+                    >
+                      <motion.div
+                        animate={reduce ? {} : { x: ['-100%', '100%'] }}
+                        transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                        aria-hidden="true"
+                      />
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.18, duration: 0.4, ease: FLUID_EASE }}
+                      className={`h-12 rounded-xl border ${isDark ? 'border-white/10 bg-white/[0.04]' : 'border-ink/10 bg-ink/[0.04]'} relative overflow-hidden`}
+                    >
+                      <motion.div
+                        animate={reduce ? {} : { x: ['-100%', '100%'] }}
+                        transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut', delay: 0.2 }}
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                        aria-hidden="true"
+                      />
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.26, duration: 0.4, ease: FLUID_EASE }}
+                      className={`h-[88px] rounded-xl border ${isDark ? 'border-white/10 bg-white/[0.04]' : 'border-ink/10 bg-ink/[0.04]'} relative overflow-hidden`}
+                    >
+                      <motion.div
+                        animate={reduce ? {} : { x: ['-100%', '100%'] }}
+                        transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                        aria-hidden="true"
+                      />
+                    </motion.div>
                   </div>
-                  <div className={`flex items-center justify-center gap-2 py-4 text-sm ${isDark ? 'text-white/45' : 'text-ink/50'}`}>
-                    <Loader2 size={18} className="animate-spin text-[#ff2e6a]" aria-hidden="true" />
-                    Inicializando checkout seguro…
-                  </div>
-                </div>
+                </motion.div>
               )}
 
               {drawerState === 'error' && (
-                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl border border-red-500/20 bg-red-500/[0.08] p-5 text-sm leading-relaxed text-red-600 dark:text-red-200" role="alert">
-                  <span className="flex items-center gap-2 font-semibold">
-                    <AlertCircle size={16} strokeWidth={2} aria-hidden="true" />
-                    Não foi possível iniciar o pagamento
-                  </span>
-                  <p className="mt-2 opacity-80">{errorMsg}</p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setDrawerState('loading');
-                      setErrorMsg(null);
-                      fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ priceId }) })
-                        .then((r) => r.json().then((b) => ({ ok: r.ok, body: b as { clientSecret?: string; error?: string; details?: unknown } })))
-                        .then(({ ok, body: b }) => {
-                          if (ok && b.clientSecret) {
-                            setClientSecret(b.clientSecret);
-                            setDrawerState('ready');
-                          } else {
-                            const details = typeof b.details === 'string' ? b.details : b.details ? JSON.stringify(b.details) : '';
-                            throw new Error(`${b.error ?? 'Falha'}${details ? ` — ${String(details).slice(0, 600)}` : ''}`);
-                          }
-                        })
-                        .catch((e: unknown) => {
-                          const m = e instanceof Error ? e.message : 'Erro';
-                          setErrorMsg(m);
-                          setDrawerState('error');
-                        });
-                    }}
-                    className={`mt-4 inline-flex rounded-lg border px-4 py-2 text-xs font-semibold transition ${isDark ? 'border-white/10 bg-white/[0.06] text-white hover:bg-white/10' : 'border-ink/10 bg-ink/[0.04] text-ink hover:bg-ink/10'}`}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.35, ease: FLUID_EASE }}
+                  className="rounded-2xl border border-red-500/20 bg-red-500/[0.08] p-6 text-sm leading-relaxed"
+                  role="alert"
+                >
+                  <motion.div
+                    animate={reduce ? {} : { x: [0, -6, 6, -6, 6, 0] }}
+                    transition={{ duration: 0.45, ease: 'easeInOut' }}
+                    className="flex flex-col items-center gap-4 text-center"
                   >
-                    Tentar novamente
-                  </button>
+                    <motion.div
+                      initial={{ scale: 0, rotate: -90 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{ type: 'spring', stiffness: 300, damping: 18, delay: 0.1 }}
+                      className="grid h-14 w-14 place-items-center rounded-full border border-red-500/30 bg-red-500/10 text-red-500 shadow-[0_0_20px_rgba(239,68,68,0.25)]"
+                      aria-hidden="true"
+                    >
+                      <motion.svg width="26" height="26" viewBox="0 0 24 24" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.5, delay: 0.3, ease: FLUID_EASE }}>
+                        <motion.path d="M 6 6 L 18 18 M 18 6 L 6 18" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ duration: 0.45, delay: 0.35, ease: FLUID_EASE }} />
+                      </motion.svg>
+                    </motion.div>
+                    <div>
+                      <p className={`font-display text-base font-bold tracking-tight ${isDark ? 'text-white' : 'text-ink'}`}>Pagamento não aprovado</p>
+                      <p className={`mt-1 max-w-sm text-sm leading-relaxed ${isDark ? 'text-white/60' : 'text-ink/60'}`}>{errorMsg ?? 'Tente outro método de pagamento.'}</p>
+                    </div>
+                  </motion.div>
+                  <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.4, ease: FLUID_EASE }} className="mt-5 flex flex-col gap-2 sm:flex-row sm:justify-center">
+                    <motion.button
+                      type="button"
+                      whileHover={reduce ? undefined : { scale: 1.02 }}
+                      whileTap={reduce ? undefined : { scale: 0.98 }}
+                      onClick={() => {
+                        setDrawerState('loading');
+                        setErrorMsg(null);
+                        fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ priceId }) })
+                          .then((r) => r.json().then((b) => ({ ok: r.ok, body: b as { clientSecret?: string; error?: string; details?: unknown } })))
+                          .then(({ ok, body: b }) => {
+                            if (ok && b.clientSecret) {
+                              setClientSecret(b.clientSecret);
+                              setDrawerState('ready');
+                            } else {
+                              const details = typeof b.details === 'string' ? b.details : b.details ? JSON.stringify(b.details) : '';
+                              throw new Error(`${b.error ?? 'Falha'}${details ? ` — ${String(details).slice(0, 600)}` : ''}`);
+                            }
+                          })
+                          .catch((e: unknown) => {
+                            const m = e instanceof Error ? e.message : 'Erro';
+                            setErrorMsg(m);
+                            setDrawerState('error');
+                          });
+                      }}
+                      className={`inline-flex items-center justify-center gap-2 rounded-xl border px-5 py-2.5 text-xs font-semibold transition ${isDark ? 'border-white/10 bg-white text-black hover:bg-white/90' : 'border-ink/10 bg-ink text-white hover:bg-ink/90'}`}
+                    >
+                      <Loader2 size={14} className="hidden" aria-hidden="true" />
+                      Tentar novamente
+                    </motion.button>
+                    <button type="button" onClick={handleClose} className={`rounded-xl border px-5 py-2.5 text-xs font-medium transition ${isDark ? 'border-white/10 bg-white/[0.06] text-white/70 hover:bg-white/10 hover:text-white' : 'border-ink/10 bg-ink/[0.04] text-ink/60 hover:bg-ink/10'}`}>
+                      Fechar
+                    </button>
+                  </motion.div>
+                  <p className={`mt-4 text-center font-mono text-[10px] uppercase tracking-[0.14em] ${isDark ? 'text-white/30' : 'text-ink/35'}`}>Se o erro persistir, tente outro cartão ou Pix</p>
                 </motion.div>
               )}
 
@@ -483,23 +598,70 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
               )}
 
               {drawerState === 'success' && (
-                <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.4, ease: FLUID_EASE }} className="flex flex-col items-center gap-5 py-8 text-center" role="status" aria-live="polite">
-                  <span className="grid h-14 w-14 place-items-center rounded-full border border-[#ff2e6a]/30 bg-[#ff2e6a]/10 text-[#ff2e6a] shadow-[0_0_20px_rgba(255,46,106,0.25)]">
-                    <Check size={28} strokeWidth={2.5} aria-hidden="true" />
-                  </span>
-                  <div>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.92 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, ease: FLUID_EASE }}
+                  className="flex flex-col items-center gap-5 py-8 text-center"
+                  role="status"
+                  aria-live="polite"
+                >
+                  <motion.div
+                    initial={{ scale: 0, rotate: -30 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    transition={{ type: 'spring', stiffness: 320, damping: 18, delay: 0.1 }}
+                    className="relative grid h-16 w-16 place-items-center"
+                    aria-hidden="true"
+                  >
+                    <motion.div
+                      initial={{ scale: 0.6, opacity: 0 }}
+                      animate={{ scale: [0.6, 1.25, 1], opacity: [0, 0.25, 0] }}
+                      transition={{ duration: 1.2, delay: 0.2, ease: FLUID_EASE }}
+                      className="absolute inset-0 rounded-full bg-[#ff2e6a]/20"
+                    />
+                    <div className="grid h-16 w-16 place-items-center rounded-full border border-[#ff2e6a]/30 bg-[#ff2e6a]/10 text-[#ff2e6a] shadow-[0_0_28px_rgba(255,46,106,0.35)]">
+                      <motion.svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="overflow-visible">
+                        <motion.path d="M 6 12.5 L 10.5 17 L 18 8" stroke="currentColor" strokeWidth={2.6} strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ duration: 0.55, delay: 0.4, ease: [0.16, 1, 0.3, 1] }} />
+                      </motion.svg>
+                    </div>
+                    {/* confetes sutis */}
+                    {!reduce && (
+                      <>
+                        <motion.span animate={{ y: [-2, -10, -2], x: [-1, 1, -1], opacity: [0.7, 0, 0.7] }} transition={{ duration: 1.8, repeat: Infinity, delay: 0.6 }} className="absolute -right-1 -top-1 h-1.5 w-1.5 rounded-full bg-[#ff2e6a]" />
+                        <motion.span animate={{ y: [-1, -8, -1], x: [1, -1, 1], opacity: [0.6, 0, 0.6] }} transition={{ duration: 1.9, repeat: Infinity, delay: 0.8 }} className="absolute -left-1 top-2 h-1 w-1 rounded-full bg-white" />
+                      </>
+                    )}
+                  </motion.div>
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35, duration: 0.5, ease: FLUID_EASE }}>
                     <h3 className={`font-display text-xl font-bold tracking-tight ${isDark ? 'text-white' : 'text-ink'}`}>Pagamento aprovado</h3>
                     <p className={`mx-auto mt-2 max-w-sm text-sm leading-relaxed ${isDark ? 'text-white/60' : 'text-ink/60'}`}>
                       Recebemos seu pagamento de <span className={`font-semibold ${isDark ? 'text-white' : 'text-ink'}`}>{amountLabel}</span> para <span className={isDark ? 'text-white' : 'text-ink'}>{productTitle}</span>. Enviamos a confirmação por e-mail.
                     </p>
-                  </div>
-                  <a href={`https://wa.me/${config.whatsapp.number}?text=${encodeURIComponent(config.whatsapp.message)}`} target="_blank" rel="noopener noreferrer" className="btn-primary-nex">
+                  </motion.div>
+                  <motion.a
+                    href={`https://wa.me/${config.whatsapp.number}?text=${encodeURIComponent(config.whatsapp.message)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5, duration: 0.4, ease: FLUID_EASE }}
+                    className="btn-primary-nex"
+                    whileHover={reduce ? undefined : { scale: 1.03 }}
+                    whileTap={reduce ? undefined : { scale: 0.98 }}
+                  >
                     Falar no WhatsApp
                     <span className="shimmer-sweep" aria-hidden="true" />
-                  </a>
-                  <button type="button" onClick={handleClose} className={`text-sm underline underline-offset-4 ${isDark ? 'text-white/50 hover:text-white/80' : 'text-ink/50 hover:text-ink/80'}`}>
+                  </motion.a>
+                  <motion.button
+                    type="button"
+                    onClick={handleClose}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.6, duration: 0.3 }}
+                    className={`text-sm underline underline-offset-4 ${isDark ? 'text-white/50 hover:text-white/80' : 'text-ink/50 hover:text-ink/80'}`}
+                  >
                     Fechar
-                  </button>
+                  </motion.button>
                 </motion.div>
               )}
             </div>
