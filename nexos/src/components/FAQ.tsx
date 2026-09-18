@@ -44,7 +44,7 @@ const FAQ_ITEMS: FAQItem[] = [
     id: '03',
     question: 'O checkout transparente é seguro?',
     answer:
-      'Sim. Usamos Stripe Checkout Sessions com Payment Element em iFrame isolado (PCI-DSS). Nenhum dado de cartão toca nossos servidores. Pix e cartão aparecem no mesmo drawer, sem redirecionamento.',
+      'Sim. O cartão roda em Stripe Checkout Sessions com Payment Element em iFrame isolado (PCI-DSS) — nenhum dado de cartão toca nossos servidores. O Pix roda na aba “Pix · Taxa zero” via InfinitePay, com QR Code embutido no próprio checkout.',
   },
   {
     id: '04',
