@@ -69,6 +69,8 @@ export function InfinityPixPane({
   const [manualError, setManualError] = useState<string | null>(null);
   const triesRef = useRef(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const inFlightRef = useRef(false);
+  const [pollExpired, setPollExpired] = useState(false);
 
   const amountLabel = `R$ ${productPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
@@ -83,16 +85,24 @@ export function InfinityPixPane({
 
   const verifyPayment = useCallback(
     async (nsu: string): Promise<boolean> => {
+      // Trava de sobreposição: com intervalo de 5s e rede lenta, ticks
+      // acumulavam requests. Um por vez — sem isso, parecia "travado".
+      if (inFlightRef.current) return false;
+      inFlightRef.current = true;
       try {
         const res = await fetch('/api/checkout/infinitepay/status', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ orderNsu: nsu }),
+          // Timeout client-side: sem isso, servidor instável = espera infinita
+          signal: AbortSignal.timeout(20000),
         });
         const body: { paid?: boolean } = await res.json().catch(() => ({}));
         return res.ok && body.paid === true;
       } catch {
         return false;
+      } finally {
+        inFlightRef.current = false;
       }
     },
     [],
@@ -102,10 +112,16 @@ export function InfinityPixPane({
     (nsu: string) => {
       stopPolling();
       triesRef.current = 0;
+      setPollExpired(false);
       timerRef.current = setInterval(async () => {
         triesRef.current += 1;
+        // Fim do polling com orientação (nunca espera "para sempre"):
+        // se o usuário pagou OUTRA cobrança (ex.: manual no app),
+        // este order_nsu nunca confirma — abre a verificação manual.
         if (triesRef.current >= POLL_MAX_TRIES) {
           stopPolling();
+          setPollExpired(true);
+          setManualOpen(true);
           return;
         }
         const paid = await verifyPayment(nsu);
@@ -135,6 +151,7 @@ export function InfinityPixPane({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ priceId, name: name.trim(), email: email.trim() }),
+        signal: AbortSignal.timeout(25000),
       });
       const body: { paymentUrl?: string; orderNsu?: string; error?: string } = await res.json().catch(() => ({}));
       if (!res.ok || !body.paymentUrl || !body.orderNsu) {
@@ -190,6 +207,7 @@ export function InfinityPixPane({
     setPaymentUrl(null);
     setOrderNsu(null);
     setFatal(null);
+    setPollExpired(false);
     setState('idle');
   }, [stopPolling]);
 
@@ -206,6 +224,7 @@ export function InfinityPixPane({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code }),
+        signal: AbortSignal.timeout(20000),
       });
       const body: { paid?: boolean; error?: string } = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(body.error ?? 'Não foi possível verificar.');
@@ -293,14 +312,20 @@ export function InfinityPixPane({
             </button>
           </div>
           <p className={`mt-4 flex items-center justify-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] ${isDark ? 'text-white/30' : 'text-ink/35'}`}>
-            <motion.span
-              animate={reduce ? {} : { opacity: [0.4, 1, 0.4] }}
-              transition={{ duration: 1.6, repeat: Infinity }}
-              className="inline-flex items-center gap-1.5"
-            >
-              <Loader2 size={12} className="animate-spin text-[#ff2e6a]" aria-hidden="true" />
-              Aguardando pagamento…
-            </motion.span>
+            {pollExpired ? (
+              <span className="normal-case tracking-normal text-xs" role="status">
+                Não detectamos o pagamento neste Pix. Pagou outra cobrança (ex.: manual no app)? Confira abaixo em “Verificar pagamento”.
+              </span>
+            ) : (
+              <motion.span
+                animate={reduce ? {} : { opacity: [0.4, 1, 0.4] }}
+                transition={{ duration: 1.6, repeat: Infinity }}
+                className="inline-flex items-center gap-1.5"
+              >
+                <Loader2 size={12} className="animate-spin text-[#ff2e6a]" aria-hidden="true" />
+                Aguardando pagamento…
+              </motion.span>
+            )}
           </p>
         </motion.div>
       ) : (

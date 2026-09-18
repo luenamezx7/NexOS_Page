@@ -33,6 +33,21 @@
   color: var(--color-canvas);
 }
 
+.spinner {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid color-mix(in srgb, var(--color-canvas) 25%, transparent);
+  border-top-color: #ff2e6a;
+  animation: success-spin 1s linear infinite;
+}
+
+@keyframes success-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .title,
 .errorTitle {
   font-family: var(--font-display);
