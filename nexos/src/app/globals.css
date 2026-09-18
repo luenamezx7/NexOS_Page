@@ -398,24 +398,33 @@ button {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  min-height: 44px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  border-radius: 0.5rem;
+  padding: 0.875rem 1.75rem;
+  min-height: 48px;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  border-radius: 0.625rem;
   color: #fff;
-  background-color: var(--nex-pink);
-  box-shadow: 0 0 12px rgba(255, 46, 106, 0.25);
-  transition: box-shadow 0.3s var(--ease-fluid), background-color 0.3s var(--ease-fluid);
+  background: linear-gradient(to bottom, #f04484 0%, #db2777 55%, #c2185b 100%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 0 0 1px rgba(255, 46, 106, 0.28),
+    0 10px 28px -10px rgba(255, 46, 106, 0.55),
+    0 0 20px rgba(255, 46, 106, 0.28);
+  transition: box-shadow 0.3s var(--ease-fluid), filter 0.3s var(--ease-fluid);
   max-width: 100%;
   white-space: nowrap;
 }
 
 .btn-primary-nex:hover,
 .btn-primary-glow:hover {
-  background-color: #d61e63;
-  box-shadow: 0 0 16px rgba(255, 46, 106, 0.35);
+  filter: brightness(1.07);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 0 0 1px rgba(255, 46, 106, 0.4),
+    0 12px 32px -10px rgba(255, 46, 106, 0.6),
+    0 0 26px rgba(255, 46, 106, 0.35);
 }
 
 @media (max-width: 639px) {
@@ -427,8 +436,12 @@ button {
 }
 
 .btn-primary-nex:hover {
-  background-color: #d61e63;
-  box-shadow: 0 0 16px rgba(255, 46, 106, 0.35);
+  filter: brightness(1.07);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 0 0 1px rgba(255, 46, 106, 0.4),
+    0 12px 32px -10px rgba(255, 46, 106, 0.6),
+    0 0 26px rgba(255, 46, 106, 0.35);
 }
 
 /* Featured presence (hero CTA): machined gradient + leve brilho rosado.
@@ -516,6 +529,8 @@ button {
     opacity: 0;
   }
 }
+
+/* ---------- Hold affirm: camada verde — sem keyframes, só opacity/scale ---------- */
 
 /* ---------- Cards: thin hairlines, no glow spam ---------- */
 

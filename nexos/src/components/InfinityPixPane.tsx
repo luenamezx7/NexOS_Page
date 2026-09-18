@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { QrCode, CreditCard, Wallet, ExternalLink, Loader2, Check, Copy, RefreshCw, ShieldCheck, ReceiptText } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
+import { bulkUnitPrice } from '@/lib/bulk-pricing';
 
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const POLL_INTERVAL_MS = 5000;
@@ -75,7 +76,7 @@ export function InfinityPixPane({
   const inFlightRef = useRef(false);
   const [pollExpired, setPollExpired] = useState(false);
 
-  const amountLabel = `R$ ${(productPrice * quantity).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const amountLabel = `R$ ${(bulkUnitPrice(productPrice, quantity, productId ?? undefined) * quantity).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
   const stopPolling = useCallback(() => {
     if (timerRef.current) {

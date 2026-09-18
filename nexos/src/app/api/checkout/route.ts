@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { config } from '@/config';
+import { BULK_MAX_QTY, bulkUnitPrice } from '@/lib/bulk-pricing';
 import {
   createPixLink,
   generateOrderNsu,
@@ -15,13 +16,11 @@ import {
 // em config.services × quantity — nunca do client.
 // ============================================================
 
-const MAX_QTY = 10;
-
 const bodySchema = z.object({
   productId: z.string().min(1).max(40),
   name: z.string().trim().min(3).max(120),
   email: z.string().trim().email().max(160),
-  quantity: z.coerce.number().int().min(1).max(MAX_QTY).optional().default(1),
+  quantity: z.coerce.number().int().min(1).max(BULK_MAX_QTY).optional().default(1),
 });
 
 const WINDOW_MS = 60_000;
@@ -109,7 +108,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Produto inválido.' }, { status: 400, headers: securityHeaders() });
   }
 
-  const unitCents = Math.round(service.price * 100);
+  const unitCents = Math.round(bulkUnitPrice(service.price, quantity, productId) * 100);
   const amountCents = unitCents * quantity;
   if (!Number.isFinite(amountCents) || amountCents < 1) {
     return NextResponse.json({ error: 'Preço inválido.' }, { status: 400, headers: securityHeaders() });
