@@ -47,7 +47,7 @@ function ServiceCard({ service, reduceMotion, onCheckout }: ServiceCardProps) {
       viewport={{ once: true, amount: 0.25 }}
       transition={reduceMotion ? { duration: 0.4 } : undefined}
       whileHover={reduceMotion ? undefined : { y: -5 }}
-      className="bento-card will-change-transform flex flex-col p-7 transition-colors duration-300 hover:border-ink/25 md:p-8"
+      className="bento-card will-change-transform flex min-w-0 max-w-full flex-col p-5 transition-colors duration-300 hover:border-ink/25 sm:p-8"
       aria-labelledby={`service-title-${service.id}`}
     >
       <div className="mb-5 flex flex-row items-start justify-between gap-3">
@@ -67,10 +67,10 @@ function ServiceCard({ service, reduceMotion, onCheckout }: ServiceCardProps) {
         </span>
       </div>
 
-      <h3 id={`service-title-${service.id}`} className="mb-2 text-xl font-bold tracking-tight text-ink">
+      <h3 id={`service-title-${service.id}`} className="mb-2 break-words text-lg font-bold tracking-tight text-ink sm:text-xl">
         {service.title}
       </h3>
-      <p className="mb-6 text-sm leading-relaxed text-ink/70">{service.description}</p>
+      <p className="mb-6 break-words text-sm leading-relaxed text-ink/70">{service.description}</p>
 
       <ul className="mb-7 space-y-2.5" role="list" aria-label={`${service.title} — características`}>
         {service.features.map((feature: string) => (
@@ -118,9 +118,9 @@ export function Services({ className = '' }: ServicesProps) {
       <section
         id="services"
         aria-labelledby="services-title"
-        className={`relative border-t border-ink/10 bg-canvas ${className}`}
+        className={`relative w-full max-w-full overflow-x-clip border-t border-ink/10 bg-canvas ${className}`}
       >
-        <div className="mx-auto w-full max-w-6xl px-5 py-24 md:px-8 md:py-32">
+        <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24 md:px-8 md:py-32">
           <motion.header
             initial={reduce ? { opacity: 0 } : { opacity: 0, y: 40, scale: 0.98 }}
             whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
@@ -142,7 +142,7 @@ export function Services({ className = '' }: ServicesProps) {
             initial={reduce ? { opacity: 0 } : 'hidden'}
             whileInView={reduce ? { opacity: 1 } : 'show'}
             viewport={{ once: true, amount: 0.15 }}
-            className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-3"
+            className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8"
             role="list"
             aria-label="Lista de serviços"
           >

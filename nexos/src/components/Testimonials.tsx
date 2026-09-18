@@ -96,7 +96,7 @@ function navigate(href: string): void {
 
 function ValueRow({ card }: { card: ValueCard }) {
   return (
-    <li className="group grid grid-cols-[auto_1fr] gap-3 border-b border-ink/10 px-5 py-5 last:border-b-0 md:grid-cols-[auto_1fr_auto] md:items-center md:gap-5 md:px-6">
+    <li className="group grid min-w-0 grid-cols-[auto_minmax(0,1fr)] gap-3 border-b border-ink/10 px-4 py-5 last:border-b-0 sm:px-5 md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-center md:gap-5 md:px-6">
       <span
         className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-ink/10 bg-ink/[0.04] font-mono text-[11px] text-ink/70 transition-colors duration-300 group-hover:border-pink-500/40 group-hover:text-ink md:mt-0"
         aria-hidden="true"
@@ -109,8 +109,8 @@ function ValueRow({ card }: { card: ValueCard }) {
           {card.overline}
           <span className="ml-2 hidden text-ink/30 sm:inline">{card.id}</span>
         </p>
-        <h3 className="mt-1 text-[15px] font-bold leading-snug tracking-tight text-ink">{card.title}</h3>
-        <p className="mt-1 text-[13px] leading-relaxed text-ink/65">{card.description}</p>
+        <h3 className="mt-1 break-words text-[15px] font-bold leading-snug tracking-tight text-ink">{card.title}</h3>
+        <p className="mt-1 break-words text-[13px] leading-relaxed text-ink/65">{card.description}</p>
         <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px]">
           <span className="font-bold text-ink">{card.metric}</span>
           <span className="uppercase tracking-[0.14em] text-ink/45">{card.metricLabel}</span>
@@ -165,10 +165,10 @@ export function Testimonials({ className = '' }: TestimonialsProps) {
     <section
       id="testimonials"
       aria-labelledby="testimonials-title"
-      className={`relative overflow-clip border-t border-ink/10 bg-canvas ${className}`}
+      className={`relative w-full max-w-full overflow-clip overflow-x-clip border-t border-ink/10 bg-canvas ${className}`}
       style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 640px' }}
     >
-      <div className="mx-auto w-full max-w-6xl px-5 py-24 md:px-8 md:py-32">
+      <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24 md:px-8 md:py-32">
         <motion.header
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 24 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}

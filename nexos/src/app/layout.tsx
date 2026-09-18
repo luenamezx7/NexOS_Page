@@ -69,6 +69,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({
@@ -87,7 +88,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen antialiased">
+      <body className="min-h-screen min-h-dvh w-full max-w-full overflow-x-hidden overflow-x-clip antialiased">
         <ThemeProvider>
           <SmoothScrollProvider>
             <CookieConsentProvider>{children}</CookieConsentProvider>

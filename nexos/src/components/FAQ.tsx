@@ -86,7 +86,7 @@ function FAQAccordionItem({
         onClick={onToggle}
         aria-expanded={isOpen}
         aria-controls={`faq-answer-${item.id}`}
-        className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink md:px-7"
+        className="flex w-full min-h-[44px] items-center justify-between gap-3 px-4 py-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink sm:gap-4 sm:px-6 sm:py-5 md:px-7"
       >
         <span className="flex min-w-0 items-center gap-3">
           <span className="hidden font-mono text-xs tracking-[0.14em] text-ink/35 md:inline">{item.id}</span>
@@ -118,7 +118,7 @@ function FAQAccordionItem({
             transition={{ duration: 0.4, ease: FLUID_EASE }}
             className="overflow-hidden"
           >
-            <div className="border-t border-ink/10 px-6 pb-6 pt-4 md:px-7">
+            <div className="border-t border-ink/10 px-4 pb-5 pt-4 sm:px-6 sm:pb-6 md:px-7">
               <p className="text-sm leading-relaxed text-ink/70">{item.answer}</p>
             </div>
           </motion.div>
@@ -137,8 +137,8 @@ export function FAQ({ className = '' }: FAQProps) {
   const [openId, setOpenId] = useState<string | null>(FAQ_ITEMS[0].id);
 
   return (
-    <section id="faq" aria-labelledby="faq-title" className={`relative border-t border-ink/10 bg-canvas ${className}`}>
-      <div className="mx-auto w-full max-w-6xl px-5 py-24 md:px-8 md:py-32">
+    <section id="faq" aria-labelledby="faq-title" className={`relative w-full max-w-full overflow-x-clip border-t border-ink/10 bg-canvas ${className}`}>
+      <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24 md:px-8 md:py-32">
         <motion.header
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 40, scale: 0.98 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
@@ -160,7 +160,7 @@ export function FAQ({ className = '' }: FAQProps) {
           initial={reduce ? { opacity: 0 } : 'hidden'}
           whileInView={reduce ? { opacity: 1 } : 'show'}
           viewport={{ once: true, amount: 0.15 }}
-          className="grid grid-cols-1 gap-4 md:gap-5"
+          className="grid min-w-0 grid-cols-1 gap-4 sm:gap-6"
           role="list"
           aria-label="Perguntas frequentes"
         >
