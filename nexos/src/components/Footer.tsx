@@ -127,6 +127,9 @@ export function Footer() {
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-ink/60">
               Construímos produtos digitais que escalam. Da ideia ao mercado com velocidade e qualidade.
             </p>
+            <address className="mt-3 max-w-xs text-sm not-italic leading-relaxed text-ink">
+              CNPJ 69.194.842/0001-28 · Rua Joaquim Anicacio Pinto, 0 — Residencial Prefeito Ely Rocha · Piracanjuba/GO · CEP 75643-242
+            </address>
             <div className="mt-6 flex flex-row items-center gap-2.5" role="list" aria-label="Redes sociais">
               {config.footer.social.map((social) => {
                 const Icon = SOCIAL_ICONS[social.icon as keyof typeof SOCIAL_ICONS] ?? MessageSquare;

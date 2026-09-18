@@ -34,6 +34,15 @@ export const config: SiteConfig = {
       ctaText: 'Comprar Placa',
       stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_PLACA || 'price_1UGVVWElCQS2D8A9Wc8o23wQ',
     },
+    {
+      id: 'teste',
+      title: 'TESTE CHECKOUT',
+      description: 'Produto de teste para validar o checkout (cartão e Pix). Sem cobrança real — ambiente Stripe em modo teste.',
+      price: 1.0,
+      features: ['Modo teste (sem cobrança real)', 'Valida cartão via Stripe', 'Valida Pix via InfinitePay', 'Liberação automática no allowlist'],
+      ctaText: 'Testar Checkout',
+      stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_TESTE || 'price_1UGrA1ElCQS2D8A976VCvd2W',
+    },
   ],
   testimonials: [
     {
@@ -80,7 +89,6 @@ export const config: SiteConfig = {
       { label: 'Política de Cookies', href: '/cookies' },
     ],
     social: [
-      { label: 'GitHub', href: 'https://github.com/nexos', icon: 'GitBranch' },
       { label: 'Instagram', href: 'https://www.instagram.com/_nexoslab?stkn=ODZob2M2azAwYTFz&utm_source=qr', icon: 'Instagram' },
     ],
   },
