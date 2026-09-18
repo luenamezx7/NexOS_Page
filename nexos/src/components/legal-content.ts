@@ -19,19 +19,19 @@ export const LEGAL_DOCS: LegalDoc[] = [
     title: 'Política de Privacidade',
     updated: 'Atualizado em setembro de 2026',
     intro:
-      'Esta Política descreve como a NexOS coleta, usa e protege dados pessoais no site, no checkout transparente (Stripe) e no formulário de contato (Notion).',
+      'Esta Política descreve como a NexOS coleta, usa e protege dados pessoais no site, no checkout Pix (InfinitePay) e no formulário de contato (Notion).',
     sections: [
       {
         heading: '1. Dados que coletamos',
-        body: 'Coletamos nome, e-mail, empresa, serviço de interesse e mensagem via /api/contact, além de e-mail para recibo e dados de pagamento processados exclusivamente pelo Stripe em iFrame isolado (PCI-DSS). Nenhum dado de cartão toca nossos servidores.',
+        body: 'Coletamos nome, e-mail, empresa, serviço de interesse e mensagem via /api/contact, além de nome e e-mail para gerar a cobrança Pix e enviar o recibo. O pagamento é processado pela InfinitePay — nenhum dado bancário toca nossos servidores.',
       },
       {
         heading: '2. Finalidades',
-        body: 'Usamos os dados para responder contatos, emitir recibos, processar pagamentos via Stripe Checkout Sessions, prevenir fraude (rate limit de 8 req/min por IP) e melhorar o produto.',
+        body: 'Usamos os dados para responder contatos, gerar cobranças Pix, confirmar pagamentos, prevenir fraude (rate limit por IP) e melhorar o produto.',
       },
       {
         heading: '3. Compartilhamento',
-        body: 'Compartilhamos dados estritamente com Stripe (pagamentos) e Notion (CRM de contatos). Não vendemos dados pessoais.',
+        body: 'Compartilhamos dados estritamente com InfinitePay (pagamentos) e Notion (CRM de contatos). Não vendemos dados pessoais.',
       },
       {
         heading: '4. Retenção e direitos',
@@ -53,7 +53,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
       },
       {
         heading: '2. Checkout',
-        body: 'Pagamentos via Stripe Checkout Sessions (Pix e cartão). O allowlist de priceId é validado no servidor; valores vêm do Price do Stripe, nunca do client.',
+        body: 'Pagamentos via InfinitePay: Pix com QR na hora (taxa zero), cartão em até 12x e carteiras digitais, com confirmação automática. O valor é resolvido no servidor a partir do catálogo — nunca do navegador.',
       },
       {
         heading: '3. Uso aceitável',
@@ -71,7 +71,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
     title: 'LGPD — Direitos do Titular',
     updated: 'Atualizado em setembro de 2026 · Lei nº 13.709/2018',
     intro:
-      'A NexOS atua como controladora dos dados enviados pelo formulário e como operadora parcial no checkout (controlado pelo Stripe).',
+      'A NexOS atua como controladora dos dados enviados pelo formulário e das cobranças Pix (processadas pela InfinitePay).',
     sections: [
       {
         heading: '1. Bases legais',
@@ -83,7 +83,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
       },
       {
         heading: '3. Segurança',
-        body: 'CSP restritiva (frame-src js.stripe.com), X-Content-Type-Options, rate limiting em memória, validação zod e iFrame PCI-DSS. Nenhum PAN/CVV é persistido.',
+        body: 'CSP restritiva, X-Content-Type-Options, rate limiting em memória e validação zod. Nenhum dado bancário é persistido — o pagamento ocorre na InfinitePay.',
       },
       {
         heading: '4. Encarregado (DPO)',
@@ -105,11 +105,11 @@ export const LEGAL_DOCS: LegalDoc[] = [
       },
       {
         heading: '2. Desenvolvimento NexOS',
-        body: 'Sinal/kickoff não reembolsável após início do Discovery. Entregas incrementais: reembolso proporcional às sprints não executadas, descontadas taxas do Stripe.',
+        body: 'Sinal/kickoff não reembolsável após início do Discovery. Entregas incrementais: reembolso proporcional às sprints não executadas.',
       },
       {
         heading: '3. Como solicitar',
-        body: 'Abra o pedido via WhatsApp +55 64 99328-9250 ou nexosperformance@gmail.com com session_id do Stripe. Prazo de análise: 5 dias úteis; estorno via Stripe em até 10 dias úteis.',
+        body: 'Abra o pedido via WhatsApp +55 64 99328-9250 ou nexosperformance@gmail.com com o order_nsu do pagamento. Prazo de análise: 5 dias úteis; estorno no mesmo método (Pix ou cartão) em até 10 dias úteis.',
       },
       {
         heading: '4. Exceções',
@@ -135,7 +135,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
       },
       {
         heading: '3. Terceiros',
-        body: 'Stripe (js.stripe.com, checkout/pagamento) e fontes Google carregam apenas dentro do seu contexto (checkout ou fontes) e seguem as políticas próprias. Não vendemos dados.',
+        body: 'InfinitePay (checkout/pagamento) e fontes Google carregam apenas dentro do seu contexto e seguem as políticas próprias. Não vendemos dados.',
       },
       {
         heading: '4. Gerenciar',

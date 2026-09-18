@@ -22,8 +22,6 @@ export const config: SiteConfig = {
       price: 499.9,
       features: ['Arquitetura limpa e testável', 'CI/CD automatizado', 'Observabilidade nativa', 'Documentação técnica'],
       ctaText: 'Contratar Desenvolvimento',
-      // test: price_1UGReeIG50KmD1h7kMbzamKD | live: price_1UGVVWElCQS2D8A98bp4Va94
-      stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_DEV || 'price_1UGVVWElCQS2D8A98bp4Va94',
     },
     {
       id: 'placa',
@@ -32,16 +30,14 @@ export const config: SiteConfig = {
       price: 69.9,
       features: ['NFC e QR Code na mesma placa', 'Instalação simplificada', 'Link personalizável', 'Garantia estendida'],
       ctaText: 'Comprar Placa',
-      stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_PLACA || 'price_1UGVVWElCQS2D8A9Wc8o23wQ',
     },
     {
       id: 'teste',
       title: 'TESTE CHECKOUT',
-      description: 'Produto de teste para validar o checkout (cartão e Pix). Sem cobrança real — ambiente Stripe em modo teste.',
+      description: 'Produto de teste para validar o checkout Pix. Sem cobrança real — confirme com R$ 1,00 ou cancele antes de pagar.',
       price: 1.0,
-      features: ['Modo teste (sem cobrança real)', 'Valida cartão via Stripe', 'Valida Pix via InfinitePay', 'Liberação automática no allowlist'],
+      features: ['Ambiente de teste', 'Valida Pix via InfinitePay', 'Confirmação automática', 'Suporte via WhatsApp'],
       ctaText: 'Testar Checkout',
-      stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_TESTE || 'price_1UGrbyElCQS2D8A9MTXuwfbM',
     },
   ],
   testimonials: [
@@ -91,11 +87,6 @@ export const config: SiteConfig = {
     social: [
       { label: 'Instagram', href: 'https://www.instagram.com/_nexoslab?stkn=ODZob2M2azAwYTFz&utm_source=qr', icon: 'Instagram' },
     ],
-  },
-  stripe: {
-    publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_test_placeholder',
-    successUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/sucesso?session_id={CHECKOUT_SESSION_ID}`,
-    cancelUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/cancelado`,
   },
   whatsapp: {
     number: '5564993289250',

@@ -81,7 +81,6 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://js.stripe.com" />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem('nexos-theme');if(t==='light'){document.documentElement.classList.remove('dark');}document.documentElement.style.colorScheme=t==='light'?'light':'dark';}catch(e){}})()`,

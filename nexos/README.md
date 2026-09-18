@@ -1,6 +1,6 @@
 # NexOS — Serviços Digitais de Escala
 
-Landing page corporativa de alta conversão, minimalista (P&B), com motion background animado, checkout Stripe integrado e deploy estático no GitHub Pages.
+Landing page corporativa de alta conversão, minimalista (P&B), com motion background animado, checkout Pix integrado e deploy estático no GitHub Pages.
 
 ## Stack
 
@@ -8,7 +8,7 @@ Landing page corporativa de alta conversão, minimalista (P&B), com motion backg
 - **Estilização**: CSS Modules + CSS Custom Properties (design tokens)
 - **Animações**: Framer Motion + Canvas API (motion background)
 - **Ícones**: Lucide React
-- **Pagamentos**: Stripe Checkout
+- **Pagamentos**: Pix via InfinitePay
 - **Deploy**: GitHub Pages (static export)
 
 ## Arquitetura
@@ -17,9 +17,9 @@ Landing page corporativa de alta conversão, minimalista (P&B), com motion backg
 src/
 ├── app/
 │   ├── api/
-│   │   ├── checkout/route.ts      # Cria sessão Stripe
+│   │   ├── checkout/route.ts      # Cria cobrança Pix
 │   │   ├── contact/route.ts       # Processa formulário
-│   │   └── verify-session/route.ts # Verifica pagamento
+│   │   └── checkout/status/route.ts # Verifica pagamento
 │   ├── sucesso/page.tsx           # Página pós-pagamento
 │   ├── cancelado/page.tsx         # Página cancelamento
 │   ├── globals.css                # Design tokens + reset
@@ -31,7 +31,7 @@ src/
 │   │   └── Button.module.css
 │   ├── Header.tsx + .module.css   # Navegação responsiva
 │   ├── Hero.tsx + .module.css     # Hero com code preview
-│   ├── Services.tsx + .module.css # Cards de serviço + Stripe
+│   ├── Services.tsx + .module.css # Cards de serviço + checkout
 │   ├── Testimonials.tsx + .module.css # Carrossel acessível
 │   ├── Contact.tsx + .module.css  # Form + WhatsApp
 │   ├── Footer.tsx + .module.css   # Footer + legal
@@ -46,7 +46,7 @@ src/
 Edite **apenas** `src/config.ts` para personalizar:
 
 - Marca, hero, serviços, preços, depoimentos
-- Chaves Stripe, URLs de redirect, WhatsApp
+- Handle InfinitePay, URLs de retorno, WhatsApp
 - SEO metadata, navegação, footer
 
 ## Desenvolvimento
@@ -74,7 +74,7 @@ npm run lint
 ## Deploy GitHub Pages
 
 1. Configure `NEXT_PUBLIC_SITE_URL` nas variáveis do repositório
-2. Adicione secrets do Stripe: `STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
+2. Adicione o handle InfinitePay: `INFINITE_PAY_HANDLE`
 3. GitHub Actions fará build e deploy automático do folder `out/`
 
 ```yaml
@@ -113,15 +113,15 @@ jobs:
 
 4. Em Settings → Pages, selecione "GitHub Actions" como source
 
-## Stripe Setup
+## InfinitePay Setup
 
-1. Crie produtos/preços no Dashboard Stripe
-2. Copie `price_id` para `config.ts` → `services[].stripePriceId`
-3. Configure webhook para `https://seudominio.com/api/stripe/webhook` (opcional)
+1. Crie sua conta e pegue sua InfiniteTag (sem o `$`)
+2. Defina `INFINITE_PAY_HANDLE` no `.env.local` e na Vercel
+3. Webhook padrão em `https://seudominio.com/api/webhooks/checkout` (opcional)
 
 ## WhatsApp Integration
 
-Pós-pagamento redireciona automaticamente para WhatsApp com mensagem pré-preenchida contendo o `session_id`.
+Pós-pagamento redireciona automaticamente para WhatsApp com mensagem pré-preenchida contendo o `order_nsu`.
 
 ## Acessibilidade (WCAG AA)
 
@@ -164,11 +164,10 @@ Pós-pagamento redireciona automaticamente para WhatsApp com mensagem pré-preen
 interface SiteConfig {
   brand: { name, tagline, logo };
   hero: { headline, subheadline, ctaPrimary, ctaSecondary };
-  services: Service[];      // { id, title, description, price, features, stripePriceId }
+  services: Service[];      // { id, title, description, price, features, ctaText }
   testimonials: Testimonial[];
   navigation: NavItem[];
   footer: { links, legal, social };
-  stripe: { publishableKey, successUrl, cancelUrl };
   whatsapp: { number, message };
   meta: { title, description, ogImage };
 }

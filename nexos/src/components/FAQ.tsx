@@ -42,9 +42,9 @@ const FAQ_ITEMS: FAQItem[] = [
   },
   {
     id: '03',
-    question: 'O checkout transparente é seguro?',
+    question: 'O checkout é seguro?',
     answer:
-      'Sim. O cartão roda em Stripe Checkout Sessions com Payment Element em iFrame isolado (PCI-DSS) — nenhum dado de cartão toca nossos servidores. O Pix roda na aba “Pix · Taxa zero” via InfinitePay, com QR Code embutido no próprio checkout.',
+      'Sim. O pagamento roda na InfinitePay: Pix com QR na hora (taxa zero), cartão em até 12x e carteiras digitais, com confirmação automática em segundos. Recebemos apenas nome e e-mail para o recibo — nenhum dado bancário toca nossos servidores.',
   },
   {
     id: '04',
@@ -56,7 +56,7 @@ const FAQ_ITEMS: FAQItem[] = [
     id: '05',
     question: 'Preciso ter CNPJ para comprar?',
     answer:
-      'Não. Pix e cartão funcionam com CPF. Para faturamento empresarial emitimos nota. O boleto foi desabilitado para evitar conflito de tax ID — use Pix ou cartão.',
+      'Não. O Pix funciona com CPF e cai na hora. Para faturamento empresarial emitimos nota — chame no WhatsApp após o pagamento.',
   },
   {
     id: '06',
