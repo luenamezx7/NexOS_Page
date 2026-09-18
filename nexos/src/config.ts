@@ -41,7 +41,7 @@ export const config: SiteConfig = {
       price: 1.0,
       features: ['Modo teste (sem cobrança real)', 'Valida cartão via Stripe', 'Valida Pix via InfinitePay', 'Liberação automática no allowlist'],
       ctaText: 'Testar Checkout',
-      stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_TESTE || 'price_1UGrA1ElCQS2D8A976VCvd2W',
+      stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_TESTE || 'price_1UGrbyElCQS2D8A9MTXuwfbM',
     },
   ],
   testimonials: [

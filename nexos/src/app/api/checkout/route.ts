@@ -25,7 +25,7 @@ const ALLOWLIST = new Set([
   'price_1UGRbBIG50KmD1h7of6JbYHd',
   'price_1UGVVWElCQS2D8A98bp4Va94',
   'price_1UGVVWElCQS2D8A9Wc8o23wQ',
-  'price_1UGrA1ElCQS2D8A976VCvd2W',
+  'price_1UGrbyElCQS2D8A9MTXuwfbM',
 ]);
 
 const WINDOW_MS = 60_000;
@@ -161,6 +161,14 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error('[api/checkout] Stripe error', msg, err);
+    const code = (err as unknown as { code?: unknown })?.code;
+    // Valor abaixo do mínimo do Stripe em BRL (R$ 0,50) — mensagem acionável
+    if (code === 'amount_too_small') {
+      return NextResponse.json(
+        { error: 'Valor abaixo do mínimo (R$ 0,50). Ajuste o preço do produto no Stripe.' },
+        { status: 400, headers: securityHeaders() },
+      );
+    }
     const raw = (err as unknown as { raw?: unknown })?.raw ?? (err as unknown as { code?: string })?.code;
     return NextResponse.json({ error: 'Erro ao inicializar checkout.', details: raw ?? msg }, { status: 500, headers: securityHeaders() });
   }

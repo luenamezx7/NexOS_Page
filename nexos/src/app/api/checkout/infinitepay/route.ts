@@ -32,7 +32,7 @@ const ALLOWLIST = new Set([
   'price_1UGRbBIG50KmD1h7of6JbYHd',
   'price_1UGVVWElCQS2D8A98bp4Va94',
   'price_1UGVVWElCQS2D8A9Wc8o23wQ',
-  'price_1UGrA1ElCQS2D8A976VCvd2W',
+  'price_1UGrbyElCQS2D8A9MTXuwfbM',
 ]);
 
 const WINDOW_MS = 60_000;
