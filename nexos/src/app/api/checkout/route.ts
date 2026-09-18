@@ -133,12 +133,13 @@ export async function POST(req: NextRequest) {
 
     // Checkout Sessions com ui_mode elements → alimenta Checkout SDK (Payment Element)
     // Stripe recomenda este fluxo sobre PaymentIntents (Adaptive Pricing, tax, etc.)
+    // Somente cartão aqui — o Pix roda na aba InfinitePay (taxa zero).
     const session = await stripe.checkout.sessions.create({
       ui_mode: 'elements' as const,
       line_items: [{ price: priceId, quantity: 1 }],
       mode: 'payment',
+      payment_method_types: ['card'],
       return_url: returnUrl,
-      // Pix + Cartão apenas — Boleto desabilitado no PMC live para evitar "tax id cannot match"
     });
 
     if (!session.client_secret) {

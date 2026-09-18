@@ -248,7 +248,7 @@ function CheckoutFormInner({
     const nameOk = validateName(name);
     const emailOk = validateEmail(email);
     if (!cardComplete && !isLoading) {
-      setCardError('Preencha os dados do cartão ou selecione o Pix para continuar');
+      setCardError('Preencha os dados do cartão para continuar');
     } else {
       setCardError(null);
     }
@@ -266,7 +266,7 @@ function CheckoutFormInner({
         let msg = (result.error as { message?: string })?.message ?? 'Falha ao processar pagamento.';
         // Mapeia erro técnico de Boleto para mensagem amigável
         if (msg.toLowerCase().includes('boleto tax id')) {
-          msg = 'Boleto indisponível para este CNPJ. Por favor, selecione Pix ou Cartão.';
+          msg = 'Boleto indisponível para este CNPJ. Use o Pix (aba ao lado) ou outro cartão.';
         }
         onError(msg);
         return;
@@ -296,7 +296,7 @@ function CheckoutFormInner({
     <div className="flex flex-col gap-5">
       <div className={`rounded-xl border p-4 ${isDark ? 'border-white/10 bg-white/[0.03]' : 'border-ink/10 bg-ink/[0.03]'}`}>
         <p className={`mb-3 font-mono text-[11px] uppercase tracking-[0.14em] ${isDark ? 'text-white/55' : 'text-ink/55'}`}>
-          Dados do cartão / Pix *
+          Dados do cartão *
         </p>
         {isLoading ? (
           <div className="space-y-3" aria-live="polite" aria-busy="true">
@@ -321,7 +321,7 @@ function CheckoutFormInner({
           </p>
         )}
         <p className={`mt-3 text-[11px] leading-relaxed ${isDark ? 'text-white/35' : 'text-ink/40'}`}>
-          Cartão e Pix são validados pelo Stripe em iFrame isolado (PCI-DSS). Confira número, validade, CVV e nome impresso antes de pagar.
+          Cartão validado pelo Stripe em iFrame isolado (PCI-DSS). Confira número, validade, CVV e nome impresso antes de pagar. Prefere Pix? Use a aba “Pix · Taxa zero”.
         </p>
       </div>
 
@@ -849,7 +849,7 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
                       Pagar com Pix
                     </button>
                   </motion.div>
-                  <p className={`mt-4 text-center font-mono text-[10px] uppercase tracking-[0.14em] ${isDark ? 'text-white/30' : 'text-ink/35'}`}>Se o erro persistir, tente outro cartão ou Pix</p>
+                  <p className={`mt-4 text-center font-mono text-[10px] uppercase tracking-[0.14em] ${isDark ? 'text-white/30' : 'text-ink/35'}`}>Se o erro persistir, tente outro cartão ou pague com Pix</p>
                 </motion.div>
               )}
 

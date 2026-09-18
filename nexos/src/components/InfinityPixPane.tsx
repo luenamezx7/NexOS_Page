@@ -268,20 +268,31 @@ export function InfinityPixPane({
             Pix de {amountLabel} pronto
           </p>
           <p className={`mx-auto mt-1 max-w-sm text-xs leading-relaxed ${isDark ? 'text-white/55' : 'text-ink/55'}`}>
-            O QR Code abre no checkout seguro da InfinitePay (taxa zero). Pague no app do seu banco e volte aqui — confirmamos sozinho.
+            Pague com o QR Code abaixo, sem sair do site (taxa zero). A confirmação chega sozinha em segundos.
           </p>
+          {/* Checkout InfinitePay embutido. Se a InfinitePay bloquear iframe
+              (anti-clickjacking), o quadro fica em branco — use a nova aba. */}
+          <div
+            data-lenis-prevent
+            className={`relative mt-4 overflow-hidden rounded-xl border ${isDark ? 'border-white/10 bg-white' : 'border-ink/10 bg-white'}`}
+          >
+            <iframe
+              src={paymentUrl}
+              title={`Pagamento Pix de ${amountLabel} via InfinitePay`}
+              loading="lazy"
+              allow="payment *; clipboard-write"
+              className="h-[54dvh] max-h-[560px] min-h-[360px] w-full border-0 bg-white"
+            />
+          </div>
           <div className="mt-4 flex flex-col gap-2">
             <a
               href={paymentUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-primary-nex w-full justify-center py-3.5 text-sm font-semibold"
+              className={`inline-flex items-center justify-center gap-1.5 text-xs underline underline-offset-4 ${isDark ? 'text-white/50 hover:text-white/80' : 'text-ink/50 hover:text-ink/80'}`}
             >
-              <span className="relative z-10 inline-flex items-center gap-2">
-                <ExternalLink size={16} strokeWidth={2} aria-hidden="true" />
-                Abrir Pix na InfinitePay
-              </span>
-              <span className="shimmer-sweep" aria-hidden="true" />
+              <ExternalLink size={14} strokeWidth={2} aria-hidden="true" />
+              Quadro em branco? Abrir Pix em nova aba
             </a>
             <div className="flex gap-2">
               <button
@@ -333,7 +344,7 @@ export function InfinityPixPane({
           <div className={`rounded-xl border p-4 ${isDark ? 'border-white/10 bg-white/[0.03]' : 'border-ink/10 bg-ink/[0.03]'}`}>
             <p className={`flex items-start gap-2.5 text-[13px] leading-relaxed ${isDark ? 'text-white/65' : 'text-ink/65'}`}>
               <QrCode size={18} strokeWidth={2} className="mt-0.5 shrink-0 text-[#ff2e6a]" aria-hidden="true" />
-              Geramos um Pix de <span className={`font-semibold ${isDark ? 'text-white' : 'text-ink'}`}>{amountLabel}</span> na InfinitePay — QR Code na hora, confirmação em segundos e taxa zero.
+              Geramos um Pix de <span className={`font-semibold ${isDark ? 'text-white' : 'text-ink'}`}>{amountLabel}</span> na InfinitePay — QR Code na hora, aqui no site, confirmação em segundos e taxa zero.
             </p>
           </div>
 
