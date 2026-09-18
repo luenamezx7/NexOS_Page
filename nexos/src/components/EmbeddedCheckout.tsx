@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { X, Lock, QrCode } from 'lucide-react';
 import { config } from '@/config';
+import { bulkUnitPrice } from '@/lib/bulk-pricing';
 import { useTheme } from './ThemeProvider';
 import { useScrollLock } from './useScrollLock';
 import { InfinityPixPane } from './InfinityPixPane';
@@ -145,7 +146,7 @@ export function EmbeddedCheckoutDrawer({ open, onClose, productId, productTitle,
     else setEmailError(null);
   }, [customerEmail]);
 
-  const amountLabel = `R$ ${(productPrice * quantity).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const amountLabel = `R$ ${(bulkUnitPrice(productPrice, quantity, productId ?? undefined) * quantity).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
   return (
     <AnimatePresence>

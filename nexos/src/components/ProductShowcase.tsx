@@ -2,10 +2,11 @@
 
 import { useCallback, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { motion, useReducedMotion } from 'motion/react';
-import { Minus, Nfc, Plus } from 'lucide-react';
+import { motion, useMotionValue, useReducedMotion, useTransform, type MotionValue } from 'motion/react';
+import { Minus, Nfc, Palette, Plus } from 'lucide-react';
 import { config } from '@/config';
 import type { Service } from '@/types';
+import { BULK_MAX_QTY, bulkTag, bulkUnitPrice } from '@/lib/bulk-pricing';
 import { HoldButton } from './HoldButton';
 
 // Drawer fora do bundle inicial: só baixa quando pede o checkout da placa.
@@ -25,8 +26,21 @@ const EmbeddedCheckoutDrawer = dynamic(
 
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
-// Limite do lote — em sintonia com a API (/api/checkout, quantity 1–10).
-const MAX_QTY = 10;
+const PERSONALIZE_MSG = 'Olá! Vi a Placa Inteligente NexOS e quero personalizar com o nome/logo do meu negócio.';
+const personalizeUrl = `https://wa.me/${config.whatsapp.number}?text=${encodeURIComponent(PERSONALIZE_MSG)}`;
+
+/** Hold em verde: preenche só a área do botão (recortado pelo
+ *  overflow do .btn-primary-nex) e brilha em verde — sem borda rosada. */
+function HoldAffirmFill({ progress }: { progress: MotionValue<number> }) {
+  const opacity = useTransform(progress, [0, 1], [0, 1]);
+  return (
+    <motion.span
+      aria-hidden="true"
+      style={{ opacity }}
+      className="absolute inset-0 rounded-[inherit] bg-gradient-to-br from-emerald-400 via-green-500 to-emerald-600"
+    />
+  );
+}
 
 // O checkout da placa abre só nesta seção (drawer local) — sem card em Serviços.
 
@@ -126,10 +140,15 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
   const placa: Service | undefined = config.services.find((s) => s.id === 'placa');
 
   const [qty, setQty] = useState<number>(1);
+  const holdProgress = useMotionValue(0);
   const decQty = useCallback(() => setQty((q) => Math.max(1, q - 1)), []);
-  const incQty = useCallback(() => setQty((q) => Math.min(MAX_QTY, q + 1)), []);
+  const incQty = useCallback(() => setQty((q) => Math.min(BULK_MAX_QTY, q + 1)), []);
 
-  const unitPrice: number = placa?.price ?? 69.9;
+  const basePrice: number = placa?.price ?? 69.9;
+  const unitPrice: number = bulkUnitPrice(basePrice, qty, placa?.id);
+  const isDiscounted: boolean = unitPrice < basePrice;
+  const discountPct: number = isDiscounted ? Math.round((1 - unitPrice / basePrice) * 100) : 0;
+  const activeTag: string | null = bulkTag(qty, placa?.id);
   const fmtBRL = (v: number): string =>
     `R$ ${v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   const qtyLabel: string = `${qty} ${qty === 1 ? 'unidade' : 'unidades'}`;
@@ -152,21 +171,23 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
         aria-labelledby="showcase-title"
         className={`relative w-full max-w-full overflow-x-clip border-t border-ink/10 bg-canvas ${className}`}
       >
-        <div className="mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-8 px-4 py-16 sm:px-6 sm:py-24 md:grid-cols-2 md:gap-12 md:px-8">
-          <div className="mx-auto w-[min(68vw,19rem)] md:w-[22rem]">
-            <AcrylicPlate />
+        <div className="mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-10 px-4 py-20 sm:px-6 md:grid-cols-2 md:gap-12 md:px-8 lg:gap-16 md:py-28">
+          <div className="flex justify-center">
+            <div className="w-[min(68vw,19rem)] md:w-[22rem]">
+              <AcrylicPlate />
+            </div>
           </div>
-          <div className="min-w-0 text-center md:text-left">
-            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[#ff2e6a]">
+          <div className="flex min-w-0 flex-col gap-4 text-center md:items-start md:text-left">
+            <p className="self-center font-mono text-[11px] uppercase tracking-[0.22em] text-[#ff2e6a] md:self-start">
               Tecnologia física &amp; digital
             </p>
-            <h2 id="showcase-title" className="mt-3 break-words text-ink">
+            <h2 id="showcase-title" className="break-words text-ink">
               Placa Inteligente NexOS NFC &amp; QR Code
             </h2>
-            <p className="mt-4 break-words text-base leading-relaxed text-ink/70">
+            <p className="mx-auto max-w-[52ch] break-words text-base leading-relaxed text-ink/70 md:mx-0">
               Aproximação instantânea. Conecte clientes a cardápios, redes sociais e pagamentos em menos de 1 segundo.
             </p>
-            <div className="mt-6 flex items-center justify-center gap-3 md:justify-start">
+            <div className="flex flex-wrap items-center justify-center gap-3 md:justify-start">
               <div
                 className="inline-flex items-center gap-1 rounded-full border border-ink/15 bg-ink/[0.03] p-1"
                 role="group"
@@ -187,25 +208,47 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
                 <button
                   type="button"
                   onClick={incQty}
-                  disabled={qty >= MAX_QTY}
+                  disabled={qty >= BULK_MAX_QTY}
                   aria-label="Aumentar quantidade"
                   className="grid h-8 w-8 place-items-center rounded-full text-ink/70 transition-colors hover:bg-ink/[0.06] disabled:cursor-not-allowed disabled:opacity-30"
                 >
                   <Plus size={15} strokeWidth={2.5} aria-hidden="true" />
                 </button>
               </div>
-              <p className="font-mono text-sm font-semibold text-ink">{totalLabel}</p>
+              <p className="inline-flex flex-wrap items-center gap-2 font-mono text-sm font-semibold text-ink">
+                {totalLabel}
+                {activeTag && (
+                  <span className="rounded-full border border-[#ff2e6a]/40 bg-[#ff2e6a]/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#ff2e6a]">
+                    {activeTag} −{discountPct}%
+                  </span>
+                )}
+              </p>
             </div>
-            <HoldButton
-              label="Garantir Placas em Lote"
-              ariaLabel="Garantir placas em lote — segure para confirmar"
-              hintId="showcase-hold-hint"
-              onConfirm={openCheckout}
-              className="mt-4 w-full sm:w-auto"
-            />
-            <p id="showcase-hold-hint" className="mt-2 text-center font-mono text-[10px] uppercase tracking-[0.16em] text-ink/35 md:text-left">
-              Segure para confirmar
-            </p>
+            <div className="flex flex-col gap-3 self-stretch sm:self-center md:self-start">
+              <HoldButton
+                label="Adquirir Já"
+                ariaLabel="Adquirir já — segure para confirmar"
+                hintId="showcase-hold-hint"
+                onConfirm={openCheckout}
+                progress={holdProgress}
+                background={<HoldAffirmFill progress={holdProgress} />}
+                affirm
+                className="w-full sm:w-auto"
+              />
+              <p id="showcase-hold-hint" className="text-center font-mono text-[10px] uppercase tracking-[0.16em] text-ink/35 md:text-left">
+                Segure para confirmar
+              </p>
+              <a
+                href={personalizeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Personalizar placa com meu logo — falar no WhatsApp"
+                className="btn-secondary-nex w-full sm:w-auto"
+              >
+                <Palette size={16} strokeWidth={2} aria-hidden="true" />
+                <span>Personalizar minha placa</span>
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -240,7 +283,7 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
           />
           <div className="grid-pattern-subtle" aria-hidden="true" />
 
-          <div className="relative mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-8 px-4 py-16 sm:gap-10 sm:px-6 sm:py-20 md:grid-cols-2 md:gap-12 md:px-8 md:py-24">
+          <div className="relative mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-10 px-4 py-20 sm:px-6 md:grid-cols-2 md:gap-12 md:px-8 lg:gap-16 md:py-28">
             {/* Placa — gira e se aproxima uma vez ao entrar na viewport */}
             <motion.div
               initial={{ opacity: 0, y: 40, rotateY: -90, scale: 0.7 }}
@@ -248,9 +291,9 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
               viewport={{ once: true, margin: '-80px' }}
               transition={{ duration: 0.8, ease: FLUID_EASE }}
               style={{ transformPerspective: 1000 }}
-              className="relative mx-auto w-[min(62vw,16rem)] will-change-transform sm:w-[min(50vw,18rem)] md:w-[22rem]"
+              className="flex justify-center will-change-transform md:justify-center"
             >
-              <div className="w-full">
+              <div className="w-[min(62vw,16rem)] sm:w-[min(50vw,18rem)] md:w-[22rem]">
                 <AcrylicPlate />
               </div>
             </motion.div>
@@ -261,19 +304,19 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-80px' }}
               transition={{ duration: 0.8, delay: 0.15, ease: FLUID_EASE }}
-              className="min-w-0 text-center will-change-transform md:text-left"
+              className="flex min-w-0 flex-col gap-4 text-center will-change-transform md:items-start md:text-left"
             >
-              <p className="inline-flex items-center gap-2 rounded-full border border-[#ff2e6a]/40 bg-[#ff2e6a]/10 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.22em] text-[#ff2e6a]">
+              <p className="inline-flex items-center gap-2 self-center rounded-full border border-[#ff2e6a]/40 bg-[#ff2e6a]/10 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.22em] text-[#ff2e6a] md:self-start">
                 <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-[#ff2e6a]" aria-hidden="true" />
                 Tecnologia física &amp; digital
               </p>
-              <h2 id="showcase-title" className="mt-3 break-words text-ink md:mt-4">
+              <h2 id="showcase-title" className="break-words text-ink">
                 Placa Inteligente NexOS NFC &amp; QR Code
               </h2>
-              <p className="mx-auto mt-3 max-w-[52ch] break-words text-sm leading-relaxed text-ink/70 sm:text-base md:mx-0 md:mt-4 md:text-lg">
+              <p className="mx-auto max-w-[52ch] break-words text-sm leading-relaxed text-ink/70 sm:text-base md:mx-0 md:text-lg">
                 Aproximação instantânea. Conecte clientes a cardápios, redes sociais e pagamentos em menos de 1 segundo.
               </p>
-              <div className="mt-5 flex items-center justify-center gap-3 md:mt-6 md:justify-start">
+              <div className="flex flex-wrap items-center justify-center gap-3 md:justify-start">
                 <div
                   className="inline-flex items-center gap-1 rounded-full border border-ink/15 bg-ink/[0.03] p-1"
                   role="group"
@@ -294,29 +337,54 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
                   <button
                     type="button"
                     onClick={incQty}
-                    disabled={qty >= MAX_QTY}
+                    disabled={qty >= BULK_MAX_QTY}
                     aria-label="Aumentar quantidade"
                     className="grid h-8 w-8 place-items-center rounded-full text-ink/70 transition-colors hover:bg-ink/[0.06] disabled:cursor-not-allowed disabled:opacity-30"
                   >
                     <Plus size={15} strokeWidth={2.5} aria-hidden="true" />
                   </button>
                 </div>
-                <p className="font-mono text-sm font-semibold text-ink">{totalLabel}</p>
+                <p className="inline-flex flex-wrap items-center gap-2 font-mono text-sm font-semibold text-ink">
+                {totalLabel}
+                {activeTag && (
+                  <span className="rounded-full border border-[#ff2e6a]/40 bg-[#ff2e6a]/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#ff2e6a]">
+                    {activeTag} −{discountPct}%
+                  </span>
+                )}
+              </p>
               </div>
-              <div className="mt-4">
+              <div className="flex flex-col gap-3 self-stretch sm:self-center md:self-start">
                 <HoldButton
-                  label="Garantir Placas em Lote"
-                  ariaLabel="Garantir placas em lote — segure para confirmar"
+                  label="Adquirir Já"
+                  ariaLabel="Adquirir já — segure para confirmar"
                   hintId="showcase-hold-hint"
                   onConfirm={openCheckout}
+                  progress={holdProgress}
+                  background={<HoldAffirmFill progress={holdProgress} />}
+                  affirm
                   className="w-full sm:w-auto"
                 />
-                <p id="showcase-hold-hint" className="mt-2 text-center font-mono text-[10px] uppercase tracking-[0.16em] text-ink/35 md:text-left">
+                <p id="showcase-hold-hint" className="text-center font-mono text-[10px] uppercase tracking-[0.16em] text-ink/35 md:text-left">
                   Segure para confirmar
                 </p>
+                <a
+                  href={personalizeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Personalizar placa com meu logo — falar no WhatsApp"
+                  className="btn-secondary-nex w-full sm:w-auto"
+                >
+                  <Palette size={16} strokeWidth={2} aria-hidden="true" />
+                  <span>Personalizar minha placa</span>
+                </a>
               </div>
-              <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.2em] text-ink/35 md:mt-4">
-                {placa?.title ?? 'Placa Inteligente'} · {fmtBRL(unitPrice)} /un.
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink/35">
+                {placa?.title ?? 'Placa Inteligente'} · {fmtBRL(unitPrice)} /un.{' '}
+                {isDiscounted ? (
+                  <span className="line-through opacity-60">de {fmtBRL(basePrice)}</span>
+                ) : (
+                  <span>atacado a partir de 10 un.</span>
+                )}
               </p>
             </motion.div>
           </div>

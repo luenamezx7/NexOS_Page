@@ -1,7 +1,7 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { motion, useMotionValue, useReducedMotion } from 'motion/react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { motion, useMotionValue, useReducedMotion, useTransform, type MotionValue } from 'motion/react';
 
 const HOLD_MS = 1500;
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
@@ -14,10 +14,26 @@ interface HoldButtonProps {
   onConfirm: () => void;
   className?: string;
   featured?: boolean;
+  /** Progresso externo (0→1): permite animar elementos fora do botão junto ao hold. */
+  progress?: MotionValue<number>;
+  /** Camada de fundo (ex.: gradiente) — recortada no botão via overflow hidden. */
+  background?: ReactNode;
+  /** Brilho verde controlado pelo hold (exibido só dentro/fora do botão conforme wrapper). */
+  affirm?: boolean;
 }
 
-export function HoldButton({ label, ariaLabel, hintId, onConfirm, className = '', featured = false }: HoldButtonProps) {
-  const progress = useMotionValue(0);
+export function HoldButton({ label, ariaLabel, hintId, onConfirm, className = '', featured = false, progress: progressProp, background, affirm = false }: HoldButtonProps) {
+  const internalProgress = useMotionValue(0);
+  const progress = progressProp ?? internalProgress;
+  const boxShadow = useTransform(
+    progress,
+    [0, 1],
+    [
+      'inset 0 1px 0 rgba(255,255,255,0.25), 0 0 0 1px rgba(255,46,106,0.28), 0 10px 28px -10px rgba(255,46,106,0.55), 0 0 20px rgba(255,46,106,0.28)',
+      'inset 0 1px 0 rgba(255,255,255,0.22), 0 0 0 1px rgba(16,185,129,0.55), 0 10px 28px -10px rgba(16,185,129,0.55), 0 0 22px rgba(16,185,129,0.45)',
+    ],
+  );
+  const ringStyle = affirm ? ({ boxShadow } as const) : undefined;
   const holdingRef = useRef<boolean>(false);
   const rafRef = useRef<number>(0);
   const startRef = useRef<number>(0);
@@ -143,9 +159,15 @@ export function HoldButton({ label, ariaLabel, hintId, onConfirm, className = ''
       onFocus={triggerScramble}
       whileTap={reduce ? undefined : { scale: 0.98 }}
       transition={{ duration: 0.2, ease: FLUID_EASE }}
+      style={ringStyle}
       className={`btn-primary-nex touch-pan-y select-none ${featured ? 'btn-primary-nex--featured' : ''} ${className}`}
     >
-      <span className="relative z-10 inline-flex min-h-[1.25em] min-w-0 items-center break-words text-center font-medium">
+      {background && (
+        <span aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
+          {background}
+        </span>
+      )}
+      <span className={`relative z-10 inline-flex min-h-[1.25em] min-w-0 items-center break-words text-center font-medium ${background ? '[text-shadow:0_1px_10px_rgba(0,0,0,0.45)]' : ''}`}>
         {display}
       </span>
       <motion.span
