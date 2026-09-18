@@ -170,7 +170,6 @@ export function Contact({ className = '' }: ContactProps) {
               >
                 <MessageSquare size={16} strokeWidth={2} aria-hidden="true" />
                 <span className="relative z-10">Falar no WhatsApp</span>
-                <span className="shimmer-sweep" aria-hidden="true" />
               </a>
             </div>
           </motion.div>

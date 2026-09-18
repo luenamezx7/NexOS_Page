@@ -88,7 +88,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen min-h-dvh w-full max-w-full overflow-x-hidden overflow-x-clip antialiased">
+      <body className="min-h-screen min-h-dvh w-full max-w-full overflow-x-clip antialiased">
         <ThemeProvider>
           <SmoothScrollProvider>
             <CookieConsentProvider>{children}</CookieConsentProvider>

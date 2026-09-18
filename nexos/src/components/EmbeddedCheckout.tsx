@@ -259,11 +259,8 @@ export function EmbeddedCheckoutDrawer({ open, onClose, productId, productTitle,
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5, duration: 0.4, ease: FLUID_EASE }}
                     className="btn-primary-nex"
-                    whileHover={reduce ? undefined : { scale: 1.03 }}
-                    whileTap={reduce ? undefined : { scale: 0.98 }}
                   >
                     Falar no WhatsApp
-                    <span className="shimmer-sweep" aria-hidden="true" />
                   </motion.a>
                   <motion.button
                     type="button"

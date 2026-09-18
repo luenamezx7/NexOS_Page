@@ -213,7 +213,7 @@ export default function HomeClient() {
   }, [stage]);
 
   return (
-    <main className="w-full max-w-full overflow-x-hidden overflow-x-clip bg-canvas text-ink">
+    <main className="w-full max-w-full overflow-x-clip bg-canvas text-ink">
       <AnimatePresence>{stage === 'loading' && <LoadingScreen key="loading" />}</AnimatePresence>
 
       <AnimatePresence>{stage === 'intro' && <IntroSection key="intro" onComplete={handleIntroComplete} />}</AnimatePresence>

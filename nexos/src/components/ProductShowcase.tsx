@@ -1,42 +1,31 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { ArrowRight, Nfc } from 'lucide-react';
+import { useCallback, useState } from 'react';
+import dynamic from 'next/dynamic';
+import { motion, useReducedMotion } from 'motion/react';
+import { Nfc } from 'lucide-react';
 import { config } from '@/config';
+import type { Service } from '@/types';
+import { HoldButton } from './HoldButton';
+
+// Drawer fora do bundle inicial: só baixa quando pede o checkout da placa.
+const EmbeddedCheckoutDrawer = dynamic(
+  () => import('./EmbeddedCheckout').then((m) => m.EmbeddedCheckoutDrawer),
+  { ssr: false },
+);
 
 // ============================================================
-// NexOS — Interactive Product Showcase (3D Scroll Zoom + CTA)
+// NexOS — Product Showcase (sem pin, scroll normal)
 // Placa NFC + QR Code em acrílico cristal.
-// Fase 1: aproxima (scale 0.7 -> pico, rotateX 15deg -> 0).
-// Fase 2: recua (pico -> 0.95) e revela título/slogan/CTA.
-// GPU only: scale / rotateX / opacity. Mobile: pico 1.1.
+//
+// Sem travamento: a página rola direto. Ao entrar na viewport, a
+// placa anima uma vez (gira + se aproxima) e o texto sobe em fade.
+// GPU only: rotateY / scale / y / opacity.
 // ============================================================
 
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
-function scrollToServices(): void {
-  const el: HTMLElement | null = document.getElementById('services');
-  if (el) {
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  } else {
-    window.location.hash = '#services';
-  }
-}
-
-function useIsMobile(breakpointPx = 768): boolean {
-  const [isMobile, setIsMobile] = useState<boolean>(false);
-
-  useEffect(() => {
-    const mq: MediaQueryList = window.matchMedia(`(max-width: ${breakpointPx - 1}px)`);
-    const onChange = (): void => setIsMobile(mq.matches);
-    onChange();
-    mq.addEventListener('change', onChange);
-    return () => mq.removeEventListener('change', onChange);
-  }, [breakpointPx]);
-
-  return isMobile;
-}
+// O checkout da placa abre só nesta seção (drawer local) — sem card em Serviços.
 
 // QR decorativo determinístico (21x21, com finders nos 3 cantos).
 const QR_SIZE = 21;
@@ -128,25 +117,23 @@ interface ProductShowcaseProps {
 }
 
 export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
   const reduce: boolean = useReducedMotion() ?? false;
-  const isMobile: boolean = useIsMobile();
+  const [checkoutOpen, setCheckoutOpen] = useState<boolean>(false);
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end end'],
-  });
+  const placa: Service | undefined = config.services.find((s) => s.id === 'placa');
 
-  const peak: number = isMobile ? 1.1 : 1.3;
+  const openCheckout = useCallback(() => {
+    if (!placa) return;
+    setCheckoutOpen(true);
+  }, [placa]);
 
-  const plateScale = useTransform(scrollYProgress, [0, 0.45, 0.7, 1], [0.7, peak, 0.95, 0.95]);
-  const plateRotateX = useTransform(scrollYProgress, [0, 0.45, 0.7, 1], [15, 0, 0, 0]);
-  const plateOpacity = useTransform(scrollYProgress, [0, 0.45, 0.7, 1], [0.3, 1, 1, 1]);
-  const textOpacity = useTransform(scrollYProgress, [0, 0.55, 0.75, 1], [0, 0, 1, 1]);
-  const textY = useTransform(scrollYProgress, [0, 0.55, 0.75, 1], [60, 60, 0, 0]);
+  const closeCheckout = useCallback(() => {
+    setCheckoutOpen(false);
+  }, []);
 
   if (reduce) {
     return (
+      <>
       <section
         id="showcase"
         aria-labelledby="showcase-title"
@@ -166,25 +153,42 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
             <p className="mt-4 break-words text-base leading-relaxed text-ink/70">
               Aproximação instantânea. Conecte clientes a cardápios, redes sociais e pagamentos em menos de 1 segundo.
             </p>
-            <button type="button" onClick={scrollToServices} className="btn-primary-glow mt-6 w-full sm:w-auto">
-              <span className="relative z-10">Garantir Placas em Lote</span>
-              <ArrowRight size={16} strokeWidth={2} aria-hidden="true" className="relative z-10" />
-              <span className="shimmer-sweep" aria-hidden="true" />
-            </button>
+            <HoldButton
+              label="Garantir Placas em Lote"
+              ariaLabel="Garantir placas em lote — segure para confirmar"
+              hintId="showcase-hold-hint"
+              onConfirm={openCheckout}
+              className="mt-6 w-full sm:w-auto"
+            />
+            <p id="showcase-hold-hint" className="mt-2 text-center font-mono text-[10px] uppercase tracking-[0.16em] text-ink/35 md:text-left">
+              Segure para confirmar
+            </p>
           </div>
         </div>
       </section>
+      {placa && checkoutOpen && (
+        <EmbeddedCheckoutDrawer
+          open
+          onClose={closeCheckout}
+          productId={placa.id}
+          productTitle={placa.title}
+          productPrice={placa.price}
+        />
+      )}
+      </>
     );
   }
 
   return (
+    <>
     <section
       id="showcase"
       aria-labelledby="showcase-title"
       className={`relative w-full max-w-full overflow-x-clip border-t border-ink/10 bg-canvas ${className}`}
     >
-      <div ref={containerRef} className="relative h-[250vh] w-full max-w-full">
-        <div className="sticky top-0 flex h-screen h-dvh w-full max-w-full items-center justify-center overflow-hidden">
+      {/* Sem pin: scroll normal. A placa só anima ao entrar na viewport. */}
+      <div className="relative w-full max-w-full">
+        <div className="flex w-full max-w-full items-center justify-center">
           {/* Brilho radial rosado ao fundo da placa */}
           <div
             aria-hidden="true"
@@ -192,54 +196,52 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
           />
           <div className="grid-pattern-subtle" aria-hidden="true" />
 
-          <div className="relative mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-6 px-4 sm:gap-8 sm:px-6 md:grid-cols-2 md:gap-12 md:px-8">
-            {/* Placa 3D — clique leva ao checkout */}
-            <motion.button
-              type="button"
-              onClick={scrollToServices}
-              aria-label="Placa Inteligente NexOS — clique para comprar"
-              title="Clique para comprar"
-              whileTap={{ scale: 0.96 }}
-              transition={{ duration: 0.3, ease: FLUID_EASE }}
-              style={{ scale: plateScale, rotateX: plateRotateX, opacity: plateOpacity, transformPerspective: 900 }}
-              className="relative mx-auto block w-[min(68vw,19rem)] cursor-pointer touch-target will-change-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff2e6a] sm:w-[min(60vw,20rem)] md:w-[22rem]"
-            >
-              <AcrylicPlate />
-              <span className="pointer-events-none absolute -bottom-9 left-1/2 -translate-x-1/2 whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.24em] text-ink/45">
-                Clique para comprar
-              </span>
-            </motion.button>
-
-            {/* Overlay de informações — revelado na Fase 2 */}
+          <div className="relative mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-8 px-4 py-16 sm:gap-10 sm:px-6 sm:py-20 md:grid-cols-2 md:gap-12 md:px-8 md:py-24">
+            {/* Placa — gira e se aproxima uma vez ao entrar na viewport */}
             <motion.div
-              style={{ opacity: textOpacity, y: textY }}
+              initial={{ opacity: 0, y: 40, rotateY: -90, scale: 0.7 }}
+              whileInView={{ opacity: 1, y: 0, rotateY: 0, scale: 1 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 0.8, ease: FLUID_EASE }}
+              style={{ transformPerspective: 1000 }}
+              className="relative mx-auto w-[min(62vw,16rem)] will-change-transform sm:w-[min(50vw,18rem)] md:w-[22rem]"
+            >
+              <div className="w-full">
+                <AcrylicPlate />
+              </div>
+            </motion.div>
+
+            {/* Texto — sobe em fade logo em seguida */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 0.8, delay: 0.15, ease: FLUID_EASE }}
               className="min-w-0 text-center will-change-transform md:text-left"
             >
               <p className="inline-flex items-center gap-2 rounded-full border border-[#ff2e6a]/40 bg-[#ff2e6a]/10 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.22em] text-[#ff2e6a]">
                 <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-[#ff2e6a]" aria-hidden="true" />
                 Tecnologia física &amp; digital
               </p>
-              <h2 id="showcase-title" className="mt-4 break-words text-ink">
+              <h2 id="showcase-title" className="mt-3 break-words text-ink md:mt-4">
                 Placa Inteligente NexOS NFC &amp; QR Code
               </h2>
-              <p className="mx-auto mt-4 max-w-[52ch] break-words text-sm leading-relaxed text-ink/70 sm:text-base md:mx-0 md:text-lg">
+              <p className="mx-auto mt-3 max-w-[52ch] break-words text-sm leading-relaxed text-ink/70 sm:text-base md:mx-0 md:mt-4 md:text-lg">
                 Aproximação instantânea. Conecte clientes a cardápios, redes sociais e pagamentos em menos de 1 segundo.
               </p>
-              <div className="mt-6 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-center md:justify-start">
-                <motion.button
-                  type="button"
-                  onClick={scrollToServices}
-                  aria-label="Garantir placas em lote — ir para serviços"
-                  whileTap={{ scale: 0.96 }}
-                  transition={{ duration: 0.3, ease: FLUID_EASE }}
-                  className="btn-primary-glow touch-target w-full sm:w-auto"
-                >
-                  <span className="relative z-10">Garantir Placas em Lote</span>
-                  <ArrowRight size={16} strokeWidth={2} aria-hidden="true" className="relative z-10" />
-                  <span className="shimmer-sweep" aria-hidden="true" />
-                </motion.button>
+              <div className="mt-5 md:mt-6">
+                <HoldButton
+                  label="Garantir Placas em Lote"
+                  ariaLabel="Garantir placas em lote — segure para confirmar"
+                  hintId="showcase-hold-hint"
+                  onConfirm={openCheckout}
+                  className="w-full sm:w-auto"
+                />
+                <p id="showcase-hold-hint" className="mt-2 text-center font-mono text-[10px] uppercase tracking-[0.16em] text-ink/35 md:text-left">
+                  Segure para confirmar
+                </p>
               </div>
-              <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.2em] text-ink/35">
+              <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.2em] text-ink/35 md:mt-4">
                 {config.services.find((s) => s.id === 'placa')?.title ?? 'Placa Inteligente'} · a partir de R${' '}
                 {(config.services.find((s) => s.id === 'placa')?.price ?? 69.9).toLocaleString('pt-BR', {
                   minimumFractionDigits: 2,
@@ -251,6 +253,16 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
         </div>
       </div>
     </section>
+      {placa && checkoutOpen && (
+        <EmbeddedCheckoutDrawer
+          open
+          onClose={closeCheckout}
+          productId={placa.id}
+          productTitle={placa.title}
+          productPrice={placa.price}
+        />
+      )}
+    </>
   );
 }
 
