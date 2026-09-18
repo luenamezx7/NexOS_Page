@@ -123,7 +123,8 @@ html {
   font-size: 16px;
   scroll-behavior: auto;
   background-color: var(--color-canvas);
-  overflow-x: hidden;
+  /* clip (não hidden): não cria scroll-container, então position: sticky continua travando */
+  overflow-x: clip;
 }
 
 @media (max-width: 767px) {
@@ -157,7 +158,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  overflow-x: hidden;
+  /* clip (não hidden): preserva o pin sticky da vitrine da placa */
+  overflow-x: clip;
   min-height: 100vh;
   min-height: 100dvh;
 }
@@ -404,17 +406,16 @@ button {
   border-radius: 0.5rem;
   color: #fff;
   background-color: var(--nex-pink);
-  box-shadow: 0 0 25px rgba(219, 39, 119, 0.5);
+  box-shadow: 0 0 12px rgba(255, 46, 106, 0.25);
   transition: box-shadow 0.3s var(--ease-fluid), background-color 0.3s var(--ease-fluid);
-  will-change: transform;
   max-width: 100%;
   white-space: nowrap;
 }
 
 .btn-primary-nex:hover,
 .btn-primary-glow:hover {
-  background-color: #ec4899;
-  box-shadow: 0 0 35px rgba(219, 39, 119, 0.8);
+  background-color: #d61e63;
+  box-shadow: 0 0 16px rgba(255, 46, 106, 0.35);
 }
 
 @media (max-width: 639px) {
@@ -426,12 +427,12 @@ button {
 }
 
 .btn-primary-nex:hover {
-  background-color: #ec4899;
-  box-shadow: 0 0 35px rgba(219, 39, 119, 0.8);
+  background-color: #d61e63;
+  box-shadow: 0 0 16px rgba(255, 46, 106, 0.35);
 }
 
-/* Featured presence (hero CTA): larger volume, machined gradient,
-   inner top highlight and layered ambient glow. Restrained, no slop. */
+/* Featured presence (hero CTA): machined gradient + leve brilho rosado.
+   Sem zoom, sem shimmer — só scramble da escrita no hover. */
 .btn-primary-nex--featured {
   padding: 1rem 2.25rem;
   font-size: 0.9375rem;
@@ -439,19 +440,19 @@ button {
   letter-spacing: 0.04em;
   background: linear-gradient(to bottom, #e63f83 0%, #db2777 48%, #be185d 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
     inset 0 -1px 0 rgba(0, 0, 0, 0.22),
-    0 0 32px rgba(219, 39, 119, 0.55),
-    0 14px 44px -10px rgba(219, 39, 119, 0.55);
+    0 0 18px rgba(255, 46, 106, 0.3),
+    0 8px 24px -12px rgba(255, 46, 106, 0.3);
 }
 
 .btn-primary-nex--featured:hover {
-  background: linear-gradient(to bottom, #f0609a 0%, #ec4899 48%, #db2777 100%);
+  background: linear-gradient(to bottom, #e0488a 0%, #db2777 48%, #c2175b 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
     inset 0 -1px 0 rgba(0, 0, 0, 0.22),
-    0 0 44px rgba(219, 39, 119, 0.75),
-    0 18px 54px -10px rgba(219, 39, 119, 0.6);
+    0 0 22px rgba(255, 46, 106, 0.38),
+    0 10px 28px -12px rgba(255, 46, 106, 0.35);
 }
 
 .btn-primary-nex--featured .hold-bar {
@@ -473,7 +474,6 @@ button {
   border: 1px solid color-mix(in srgb, var(--color-ink) 20%, transparent);
   background: color-mix(in srgb, var(--color-ink) 5%, transparent);
   transition: background-color 0.25s var(--ease-fluid), border-color 0.25s var(--ease-fluid);
-  will-change: transform;
   max-width: 100%;
 }
 

@@ -284,7 +284,6 @@ export function InfinityPixPane({
                 <ExternalLink size={16} strokeWidth={2} aria-hidden="true" />
                 Pagar na InfinitePay
               </span>
-              <span className="shimmer-sweep" aria-hidden="true" />
             </a>
             <div className="flex gap-2">
               <button
@@ -365,9 +364,8 @@ export function InfinityPixPane({
             type="button"
             onClick={handleGenerate}
             disabled={state === 'generating' || !productId}
-            whileHover={reduce ? undefined : { scale: state === 'generating' ? 1 : 1.02 }}
             whileTap={reduce ? undefined : { scale: 0.98 }}
-            transition={{ duration: 0.3, ease: FLUID_EASE }}
+            transition={{ duration: 0.2, ease: FLUID_EASE }}
             className="btn-primary-nex relative w-full justify-center overflow-hidden py-3.5 text-sm font-semibold tracking-wide disabled:cursor-wait disabled:opacity-60"
             aria-live="polite"
           >
@@ -384,7 +382,6 @@ export function InfinityPixPane({
                 </>
               )}
             </span>
-            <span className="shimmer-sweep" aria-hidden="true" />
           </motion.button>
         </>
       )}

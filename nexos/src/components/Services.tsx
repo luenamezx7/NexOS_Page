@@ -133,7 +133,7 @@ export function Services({ className = '' }: ServicesProps) {
               Serviços
             </h2>
             <p className="mt-4 text-base leading-relaxed text-ink/70 md:text-lg">
-              Dois produtos mais um card de teste. Escolha o que faz sentido para o seu momento.
+              Desenvolvimento sob medida e um card de teste para validar o checkout. Escolha o que faz sentido para o seu momento.
             </p>
           </motion.header>
 
@@ -142,11 +142,14 @@ export function Services({ className = '' }: ServicesProps) {
             initial={reduce ? { opacity: 0 } : 'hidden'}
             whileInView={reduce ? { opacity: 1 } : 'show'}
             viewport={{ once: true, amount: 0.15 }}
-            className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8"
+            className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:gap-8"
             role="list"
             aria-label="Lista de serviços"
           >
-            {config.services.map((service: Service) => (
+            {/* A placa sai daqui: checkout dela abre só na seção da plaquinha */}
+            {config.services
+              .filter((service: Service) => service.id !== 'placa')
+              .map((service: Service) => (
               <ServiceCard key={service.id} service={service} reduceMotion={reduce} onCheckout={handleCheckout} />
             ))}
           </motion.div>

@@ -4,7 +4,6 @@ import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 import dynamic from 'next/dynamic';
 import { motion, useReducedMotion, type Variants } from 'motion/react';
 import { ArrowRight, ArrowUpRight, Zap, Layers, Gauge } from 'lucide-react';
-import { HoldButton } from './HoldButton';
 import { useTheme } from './ThemeProvider';
 import { config } from '@/config';
 
@@ -293,38 +292,28 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
               transition={{ ...ENTER.transition, delay: 0.24 }}
               className="mt-8 flex w-full flex-col items-stretch justify-center gap-3 will-change-transform sm:flex-row sm:items-center"
             >
-              <HoldButton
-                label={config.hero.ctaPrimary.label}
-                ariaLabel={config.hero.ctaPrimary.label}
-                hintId="hero-hold-hint"
-                onConfirm={() => navigate(config.hero.ctaPrimary.href)}
-                featured
-                className="w-full px-6 py-3 text-sm font-medium tracking-wide sm:w-auto"
-              />
+              <motion.button
+                type="button"
+                onClick={() => navigate(config.hero.ctaPrimary.href)}
+                aria-label={config.hero.ctaPrimary.label}
+                whileTap={{ scale: 0.98 }}
+                transition={{ duration: 0.2, ease: FLUID_EASE }}
+                className="btn-primary-nex btn-primary-nex--featured w-full px-6 py-3 text-sm font-medium tracking-wide sm:w-auto"
+              >
+                {config.hero.ctaPrimary.label}
+              </motion.button>
 
               <motion.button
                 type="button"
                 onClick={() => navigate(config.hero.ctaSecondary.href)}
                 aria-label={config.hero.ctaSecondary.label}
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.96 }}
-                transition={{ duration: 0.3, ease: FLUID_EASE }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ duration: 0.2, ease: FLUID_EASE }}
                 className="btn-secondary-nex w-full px-6 py-3 text-sm font-medium tracking-wide touch-target sm:w-auto"
               >
                 {config.hero.ctaSecondary.label}
               </motion.button>
             </motion.div>
-
-            <motion.p
-              id="hero-hold-hint"
-              initial={reduce ? { opacity: 0 } : ENTER.initial}
-              whileInView={reduce ? { opacity: 1 } : ENTER.whileInView}
-              viewport={{ once: true, amount: 0.6 }}
-              transition={{ ...ENTER.transition, delay: 0.32 }}
-              className="mt-4 font-mono text-[10px] uppercase tracking-[0.3em] text-ink/40 will-change-transform"
-            >
-              Pressione para iniciar
-            </motion.p>
           </div>
 
           <motion.div

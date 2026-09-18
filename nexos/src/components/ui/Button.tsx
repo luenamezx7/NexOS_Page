@@ -13,7 +13,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 const baseStyles = 'relative inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-canvas disabled:pointer-events-none disabled:opacity-40 select-none';
 
 const buttonVariants = {
-  primary: 'overflow-hidden rounded-lg bg-pink-600 px-7 py-3 text-sm font-semibold text-white shadow-[0_0_25px_rgba(219,39,119,0.5)] hover:shadow-[0_0_35px_rgba(219,39,119,0.8)] hover:bg-pink-500',
+  primary: 'overflow-hidden rounded-lg bg-pink-600 px-7 py-3 text-sm font-semibold text-white shadow-[0_0_12px_rgba(255,46,106,0.25)] hover:shadow-[0_0_16px_rgba(255,46,106,0.35)] hover:bg-[#d61e63]',
   secondary: 'rounded-lg border border-ink/20 bg-ink/5 px-6 py-3 text-sm font-medium text-ink/90 hover:bg-ink/10 hover:border-ink/40',
   ghost: 'rounded-lg bg-transparent text-ink/80 hover:bg-ink/5 hover:text-ink',
 };
@@ -39,7 +39,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     loading, 
     disabled, 
     fullWidth, 
-    shimmer = true, 
+    shimmer = false, 
     children, 
     ...props 
   }, ref) => {
@@ -74,9 +74,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     );
 
     const motionProps = {
-      whileHover: { scale: variant === 'primary' ? 1.04 : 1.02 },
-      whileTap: { scale: variant === 'primary' ? 0.96 : 0.98 },
-      transition: { type: 'spring', stiffness: 300, damping: 20 } as const,
+      whileTap: { scale: 0.98 },
+      transition: { duration: 0.2 } as const,
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
