@@ -22,6 +22,7 @@ interface EmbeddedCheckoutDrawerProps {
   productId: string | null;
   productTitle: string;
   productPrice: number;
+  quantity?: number;
 }
 
 type DrawerState = 'idle' | 'success';
@@ -101,7 +102,7 @@ function CustomerFields({
   );
 }
 
-export function EmbeddedCheckoutDrawer({ open, onClose, productId, productTitle, productPrice }: EmbeddedCheckoutDrawerProps) {
+export function EmbeddedCheckoutDrawer({ open, onClose, productId, productTitle, productPrice, quantity = 1 }: EmbeddedCheckoutDrawerProps) {
   const reduce = useReducedMotion() ?? false;
   const { theme } = useTheme();
   const isDark = theme === 'dark';
@@ -144,7 +145,7 @@ export function EmbeddedCheckoutDrawer({ open, onClose, productId, productTitle,
     else setEmailError(null);
   }, [customerEmail]);
 
-  const amountLabel = `R$ ${productPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const amountLabel = `R$ ${(productPrice * quantity).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
   return (
     <AnimatePresence>
@@ -288,6 +289,7 @@ export function EmbeddedCheckoutDrawer({ open, onClose, productId, productTitle,
                   <InfinityPixPane
                     productId={productId}
                     productPrice={productPrice}
+                    quantity={quantity}
                     name={customerName}
                     email={customerEmail}
                     onNameError={setNameError}

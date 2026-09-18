@@ -3,7 +3,7 @@
 import { useCallback, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { motion, useReducedMotion } from 'motion/react';
-import { Nfc } from 'lucide-react';
+import { Minus, Nfc, Plus } from 'lucide-react';
 import { config } from '@/config';
 import type { Service } from '@/types';
 import { HoldButton } from './HoldButton';
@@ -24,6 +24,9 @@ const EmbeddedCheckoutDrawer = dynamic(
 // ============================================================
 
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+
+// Limite do lote — em sintonia com a API (/api/checkout, quantity 1–10).
+const MAX_QTY = 10;
 
 // O checkout da placa abre só nesta seção (drawer local) — sem card em Serviços.
 
@@ -122,6 +125,16 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
 
   const placa: Service | undefined = config.services.find((s) => s.id === 'placa');
 
+  const [qty, setQty] = useState<number>(1);
+  const decQty = useCallback(() => setQty((q) => Math.max(1, q - 1)), []);
+  const incQty = useCallback(() => setQty((q) => Math.min(MAX_QTY, q + 1)), []);
+
+  const unitPrice: number = placa?.price ?? 69.9;
+  const fmtBRL = (v: number): string =>
+    `R$ ${v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const qtyLabel: string = `${qty} ${qty === 1 ? 'unidade' : 'unidades'}`;
+  const totalLabel: string = fmtBRL(unitPrice * qty);
+
   const openCheckout = useCallback(() => {
     if (!placa) return;
     setCheckoutOpen(true);
@@ -153,12 +166,42 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
             <p className="mt-4 break-words text-base leading-relaxed text-ink/70">
               Aproximação instantânea. Conecte clientes a cardápios, redes sociais e pagamentos em menos de 1 segundo.
             </p>
+            <div className="mt-6 flex items-center justify-center gap-3 md:justify-start">
+              <div
+                className="inline-flex items-center gap-1 rounded-full border border-ink/15 bg-ink/[0.03] p-1"
+                role="group"
+                aria-label="Quantidade de placas"
+              >
+                <button
+                  type="button"
+                  onClick={decQty}
+                  disabled={qty <= 1}
+                  aria-label="Diminuir quantidade"
+                  className="grid h-8 w-8 place-items-center rounded-full text-ink/70 transition-colors hover:bg-ink/[0.06] disabled:cursor-not-allowed disabled:opacity-30"
+                >
+                  <Minus size={15} strokeWidth={2.5} aria-hidden="true" />
+                </button>
+                <span className="min-w-[4.5rem] text-center font-mono text-xs text-ink" aria-live="polite">
+                  {qtyLabel}
+                </span>
+                <button
+                  type="button"
+                  onClick={incQty}
+                  disabled={qty >= MAX_QTY}
+                  aria-label="Aumentar quantidade"
+                  className="grid h-8 w-8 place-items-center rounded-full text-ink/70 transition-colors hover:bg-ink/[0.06] disabled:cursor-not-allowed disabled:opacity-30"
+                >
+                  <Plus size={15} strokeWidth={2.5} aria-hidden="true" />
+                </button>
+              </div>
+              <p className="font-mono text-sm font-semibold text-ink">{totalLabel}</p>
+            </div>
             <HoldButton
               label="Garantir Placas em Lote"
               ariaLabel="Garantir placas em lote — segure para confirmar"
               hintId="showcase-hold-hint"
               onConfirm={openCheckout}
-              className="mt-6 w-full sm:w-auto"
+              className="mt-4 w-full sm:w-auto"
             />
             <p id="showcase-hold-hint" className="mt-2 text-center font-mono text-[10px] uppercase tracking-[0.16em] text-ink/35 md:text-left">
               Segure para confirmar
@@ -173,6 +216,7 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
           productId={placa.id}
           productTitle={placa.title}
           productPrice={placa.price}
+          quantity={qty}
         />
       )}
       </>
@@ -229,7 +273,37 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
               <p className="mx-auto mt-3 max-w-[52ch] break-words text-sm leading-relaxed text-ink/70 sm:text-base md:mx-0 md:mt-4 md:text-lg">
                 Aproximação instantânea. Conecte clientes a cardápios, redes sociais e pagamentos em menos de 1 segundo.
               </p>
-              <div className="mt-5 md:mt-6">
+              <div className="mt-5 flex items-center justify-center gap-3 md:mt-6 md:justify-start">
+                <div
+                  className="inline-flex items-center gap-1 rounded-full border border-ink/15 bg-ink/[0.03] p-1"
+                  role="group"
+                  aria-label="Quantidade de placas"
+                >
+                  <button
+                    type="button"
+                    onClick={decQty}
+                    disabled={qty <= 1}
+                    aria-label="Diminuir quantidade"
+                    className="grid h-8 w-8 place-items-center rounded-full text-ink/70 transition-colors hover:bg-ink/[0.06] disabled:cursor-not-allowed disabled:opacity-30"
+                  >
+                    <Minus size={15} strokeWidth={2.5} aria-hidden="true" />
+                  </button>
+                  <span className="min-w-[4.5rem] text-center font-mono text-xs text-ink" aria-live="polite">
+                    {qtyLabel}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={incQty}
+                    disabled={qty >= MAX_QTY}
+                    aria-label="Aumentar quantidade"
+                    className="grid h-8 w-8 place-items-center rounded-full text-ink/70 transition-colors hover:bg-ink/[0.06] disabled:cursor-not-allowed disabled:opacity-30"
+                  >
+                    <Plus size={15} strokeWidth={2.5} aria-hidden="true" />
+                  </button>
+                </div>
+                <p className="font-mono text-sm font-semibold text-ink">{totalLabel}</p>
+              </div>
+              <div className="mt-4">
                 <HoldButton
                   label="Garantir Placas em Lote"
                   ariaLabel="Garantir placas em lote — segure para confirmar"
@@ -242,11 +316,7 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
                 </p>
               </div>
               <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.2em] text-ink/35 md:mt-4">
-                {config.services.find((s) => s.id === 'placa')?.title ?? 'Placa Inteligente'} · a partir de R${' '}
-                {(config.services.find((s) => s.id === 'placa')?.price ?? 69.9).toLocaleString('pt-BR', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
+                {placa?.title ?? 'Placa Inteligente'} · {fmtBRL(unitPrice)} /un.
               </p>
             </motion.div>
           </div>
@@ -260,6 +330,7 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
           productId={placa.id}
           productTitle={placa.title}
           productPrice={placa.price}
+          quantity={qty}
         />
       )}
     </>

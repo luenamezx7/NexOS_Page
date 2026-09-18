@@ -14,6 +14,7 @@ type PixState = 'idle' | 'generating' | 'pending' | 'error';
 interface InfinityPixPaneProps {
   productId: string | null;
   productPrice: number;
+  quantity?: number;
   name: string;
   email: string;
   onNameError: (msg: string | null) => void;
@@ -45,6 +46,7 @@ function validateEmailField(v: string): string | null {
 export function InfinityPixPane({
   productId,
   productPrice,
+  quantity = 1,
   name,
   email,
   onNameError,
@@ -73,7 +75,7 @@ export function InfinityPixPane({
   const inFlightRef = useRef(false);
   const [pollExpired, setPollExpired] = useState(false);
 
-  const amountLabel = `R$ ${productPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const amountLabel = `R$ ${(productPrice * quantity).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
   const stopPolling = useCallback(() => {
     if (timerRef.current) {
@@ -151,7 +153,7 @@ export function InfinityPixPane({
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId, name: name.trim(), email: email.trim() }),
+        body: JSON.stringify({ productId, name: name.trim(), email: email.trim(), quantity }),
         signal: AbortSignal.timeout(25000),
       });
       const body: { paymentUrl?: string; orderNsu?: string; error?: string } = await res.json().catch(() => ({}));
@@ -167,7 +169,7 @@ export function InfinityPixPane({
       setFatal(msg);
       setState('error');
     }
-  }, [name, email, productId, onNameError, onEmailError, startPolling]);
+  }, [name, email, productId, quantity, onNameError, onEmailError, startPolling]);
 
   const handleManualCheck = useCallback(async () => {
     if (!orderNsu || checking) return;

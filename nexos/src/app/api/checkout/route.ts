@@ -9,16 +9,19 @@ import {
 
 // ============================================================
 // NexOS — Checkout Pix via InfinitePay (taxa zero)
-// POST /api/checkout { productId, name, email }
+// POST /api/checkout { productId, name, email, quantity? }
 //   → { paymentUrl, orderNsu, amount, currency }
 // Amount (centavos) resolvido no servidor a partir do catálogo
-// em config.services — nunca do client.
+// em config.services × quantity — nunca do client.
 // ============================================================
+
+const MAX_QTY = 10;
 
 const bodySchema = z.object({
   productId: z.string().min(1).max(40),
   name: z.string().trim().min(3).max(120),
   email: z.string().trim().email().max(160),
+  quantity: z.coerce.number().int().min(1).max(MAX_QTY).optional().default(1),
 });
 
 const WINDOW_MS = 60_000;
@@ -88,13 +91,14 @@ export async function POST(req: NextRequest) {
   let productId: string;
   let name: string;
   let email: string;
+  let quantity: number;
   try {
     const body: unknown = await req.json();
     const parsed = bodySchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400, headers: securityHeaders() });
     }
-    ({ productId, name, email } = parsed.data);
+    ({ productId, name, email, quantity } = parsed.data);
   } catch {
     return NextResponse.json({ error: 'Payload inválido' }, { status: 400, headers: securityHeaders() });
   }
@@ -105,7 +109,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Produto inválido.' }, { status: 400, headers: securityHeaders() });
   }
 
-  const amountCents = Math.round(service.price * 100);
+  const unitCents = Math.round(service.price * 100);
+  const amountCents = unitCents * quantity;
   if (!Number.isFinite(amountCents) || amountCents < 1) {
     return NextResponse.json({ error: 'Preço inválido.' }, { status: 400, headers: securityHeaders() });
   }
@@ -119,7 +124,7 @@ export async function POST(req: NextRequest) {
 
     const { paymentUrl } = await createPixLink({
       amountCents,
-      description: service.title.slice(0, 120),
+      description: (quantity > 1 ? `${service.title} x${quantity}` : service.title).slice(0, 120),
       orderNsu,
       customerName: name,
       customerEmail: email,
