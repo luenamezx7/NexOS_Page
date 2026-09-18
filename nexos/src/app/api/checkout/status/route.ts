@@ -4,9 +4,9 @@ import { checkPixStatus, isInfinitePayConfigured } from '@/lib/infinitepay';
 
 // ============================================================
 // NexOS — polling do Pix InfinitePay
-// POST /api/checkout/infinitepay/status { orderNsu }
+// POST /api/checkout/status { orderNsu | slug | transactionNsu | code }
 //   → { paid, captureMethod, amount, paidAmount }
-// Usado pelo drawer enquanto o cliente paga no link externo.
+// `code` aceita o link da cobrança ou o order_nsu colado.
 // ============================================================
 
 const idSchema = z.string().min(1).max(120);
@@ -19,10 +19,8 @@ const bodySchema = z
       .max(36)
       .regex(/^([a-zA-Z0-9-]+)$/)
       .optional(),
-    // slug = código da fatura (ex.: fim do link checkout.infinitepay.com.br/<slug>)
     slug: idSchema.regex(/^([a-zA-Z0-9-_]+)$/).optional(),
     transactionNsu: idSchema.optional(),
-    // Aceita colar o link ou o order_nsu direto num campo só
     code: z.string().trim().min(1).max(500).optional(),
   })
   .refine((d) => d.orderNsu || d.slug || d.transactionNsu || d.code, {

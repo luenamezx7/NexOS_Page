@@ -1,32 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Stripe from 'stripe';
 import { z } from 'zod';
 import { config } from '@/config';
+import {
+  createPixLink,
+  generateOrderNsu,
+  isInfinitePayConfigured,
+} from '@/lib/infinitepay';
 
 // ============================================================
-// NexOS — Checkout Transparente via Checkout Sessions + Elements
-// Stripe recomenda Checkout Sessions (ui_mode custom) sobre PaymentIntents:
-// cobre price_data, line_items, tax, Adaptive Pricing, etc.
-// PCI-DSS: client_secret alimenta Checkout SDK (iFrame), nunca raw PAN.
+// NexOS — Checkout Pix via InfinitePay (taxa zero)
+// POST /api/checkout { productId, name, email }
+//   → { paymentUrl, orderNsu, amount, currency }
+// Amount (centavos) resolvido no servidor a partir do catálogo
+// em config.services — nunca do client.
 // ============================================================
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? '', {
-  apiVersion: '2026-03-25.dahlia' as unknown as Stripe.LatestApiVersion,
-});
 
 const bodySchema = z.object({
-  priceId: z.string().min(1).startsWith('price_'),
+  productId: z.string().min(1).max(40),
+  name: z.string().trim().min(3).max(120),
+  email: z.string().trim().email().max(160),
 });
-
-const ALLOWLIST = new Set([
-  ...config.services.map((s) => s.stripePriceId),
-  // allow both test and live priceIds (test ↔ live switch)
-  'price_1UGReeIG50KmD1h7kMbzamKD',
-  'price_1UGRbBIG50KmD1h7of6JbYHd',
-  'price_1UGVVWElCQS2D8A98bp4Va94',
-  'price_1UGVVWElCQS2D8A9Wc8o23wQ',
-  'price_1UGrbyElCQS2D8A9MTXuwfbM',
-]);
 
 const WINDOW_MS = 60_000;
 const MAX_REQ = 8;
@@ -61,21 +54,23 @@ function isRateLimited(ip: string): boolean {
 
 function securityHeaders(): Record<string, string> {
   return {
-    'Content-Security-Policy':
-      "default-src 'self'; script-src 'self' https://js.stripe.com; frame-src https://js.stripe.com https://hooks.stripe.com; connect-src 'self' https://api.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://*.stripe.com;",
+    'Content-Security-Policy': "default-src 'self';",
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'SAMEORIGIN',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
   };
 }
 
-export async function GET(req: NextRequest) {
-  const hasToken = !!process.env.STRIPE_SECRET_KEY;
-  const hasPublishable = !!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
-  const tokenPreview = process.env.STRIPE_SECRET_KEY ? `${process.env.STRIPE_SECRET_KEY.slice(0, 7)}...${process.env.STRIPE_SECRET_KEY.slice(-4)}` : null;
+export async function GET() {
   return NextResponse.json(
-    { ok: hasToken && hasPublishable, hasToken, hasPublishable, tokenPreview, allowlist: [...ALLOWLIST], mode: 'checkout_sessions_custom' },
-    { headers: securityHeaders() }
+    {
+      ok: isInfinitePayConfigured(),
+      provider: 'infinitepay',
+      method: 'pix',
+      hasHandle: isInfinitePayConfigured(),
+      products: config.services.map((s) => ({ id: s.id, title: s.title, price: s.price })),
+    },
+    { headers: securityHeaders() },
   );
 }
 
@@ -85,91 +80,60 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Muitas tentativas. Aguarde um minuto e tente novamente.' }, { status: 429, headers: securityHeaders() });
   }
 
-  if (!process.env.STRIPE_SECRET_KEY) {
-    console.error('[api/checkout] STRIPE_SECRET_KEY não configurado');
+  if (!isInfinitePayConfigured()) {
+    console.error('[api/checkout] INFINITE_PAY_HANDLE não configurado');
     return NextResponse.json({ error: 'Pagamentos temporariamente indisponíveis.' }, { status: 500, headers: securityHeaders() });
   }
 
-  let priceId: string;
+  let productId: string;
+  let name: string;
+  let email: string;
   try {
     const body: unknown = await req.json();
     const parsed = bodySchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: 'priceId inválido', details: parsed.error.flatten() }, { status: 400, headers: securityHeaders() });
+      return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400, headers: securityHeaders() });
     }
-    priceId = parsed.data.priceId;
+    ({ productId, name, email } = parsed.data);
   } catch {
     return NextResponse.json({ error: 'Payload inválido' }, { status: 400, headers: securityHeaders() });
   }
 
-  if (!ALLOWLIST.has(priceId)) {
-    console.warn('[api/checkout] priceId fora do allowlist:', priceId);
+  const service = config.services.find((s) => s.id === productId);
+  if (!service) {
+    console.warn('[api/checkout] productId inválido:', productId);
     return NextResponse.json({ error: 'Produto inválido.' }, { status: 400, headers: securityHeaders() });
   }
 
+  const amountCents = Math.round(service.price * 100);
+  if (!Number.isFinite(amountCents) || amountCents < 1) {
+    return NextResponse.json({ error: 'Preço inválido.' }, { status: 400, headers: securityHeaders() });
+  }
+
   try {
-    // Valida Price no servidor (nunca confia no client) e busca produto para imagem
-    const price = await stripe.prices.retrieve(priceId);
-    if (!price.active) {
-      return NextResponse.json({ error: 'Produto indisponível no momento.' }, { status: 400, headers: securityHeaders() });
-    }
-    if (price.unit_amount === null) {
-      return NextResponse.json({ error: 'Preço inválido.' }, { status: 400, headers: securityHeaders() });
-    }
-
-    // Busca produto para expor imagem/título no checkout embarcado
-    let productImage: string | null = null;
-    let productName: string | null = null;
-    try {
-      const productId = typeof price.product === 'string' ? price.product : (price.product as Stripe.Product).id;
-      const product = await stripe.products.retrieve(productId);
-      productName = product.name ?? null;
-      productImage = product.images?.[0] ?? null;
-    } catch {
-      // silencioso — imagem é opcional
-    }
-
+    const orderNsu = generateOrderNsu();
     const origin = req.headers.get('origin') ?? process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
-    const returnUrl = `${origin.replace(/\/$/, '')}/sucesso?session_id={CHECKOUT_SESSION_ID}`;
+    const base = origin.replace(/\/$/, '');
+    const redirectUrl = `${base}/sucesso?provider=infinitepay&order_nsu=${encodeURIComponent(orderNsu)}`;
+    const webhookUrl = (process.env.INFINITE_PAY_WEBHOOK_URL ?? '').trim() || `${base}/api/webhooks/checkout`;
 
-    // Checkout Sessions com ui_mode elements → alimenta Checkout SDK (Payment Element)
-    // Stripe recomenda este fluxo sobre PaymentIntents (Adaptive Pricing, tax, etc.)
-    // Somente cartão aqui — o Pix roda na aba InfinitePay (taxa zero).
-    const session = await stripe.checkout.sessions.create({
-      ui_mode: 'elements' as const,
-      line_items: [{ price: priceId, quantity: 1 }],
-      mode: 'payment',
-      payment_method_types: ['card'],
-      return_url: returnUrl,
+    const { paymentUrl } = await createPixLink({
+      amountCents,
+      description: service.title.slice(0, 120),
+      orderNsu,
+      customerName: name,
+      customerEmail: email,
+      redirectUrl,
+      webhookUrl,
     });
 
-    if (!session.client_secret) {
-      return NextResponse.json({ error: 'Falha ao inicializar checkout.' }, { status: 500, headers: securityHeaders() });
-    }
-
     return NextResponse.json(
-      {
-        clientSecret: session.client_secret,
-        sessionId: session.id,
-        amount: price.unit_amount,
-        currency: price.currency,
-        productImage,
-        productName,
-      },
-      { status: 200, headers: securityHeaders() }
+      { paymentUrl, orderNsu, amount: amountCents, currency: 'brl' },
+      { status: 200, headers: securityHeaders() },
     );
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.error('[api/checkout] Stripe error', msg, err);
-    const code = (err as unknown as { code?: unknown })?.code;
-    // Valor abaixo do mínimo do Stripe em BRL (R$ 0,50) — mensagem acionável
-    if (code === 'amount_too_small') {
-      return NextResponse.json(
-        { error: 'Valor abaixo do mínimo (R$ 0,50). Ajuste o preço do produto no Stripe.' },
-        { status: 400, headers: securityHeaders() },
-      );
-    }
-    const raw = (err as unknown as { raw?: unknown })?.raw ?? (err as unknown as { code?: string })?.code;
-    return NextResponse.json({ error: 'Erro ao inicializar checkout.', details: raw ?? msg }, { status: 500, headers: securityHeaders() });
+    console.error('[api/checkout] InfinitePay error', msg);
+    return NextResponse.json({ error: 'Erro ao gerar Pix. Tente novamente.' }, { status: 500, headers: securityHeaders() });
   }
 }

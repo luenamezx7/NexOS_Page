@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import styles from './Success.module.css';
 import { config } from '@/config';
@@ -11,25 +10,23 @@ import { CheckCircle, MessageSquare, ArrowRight } from 'lucide-react';
 type PixVerifyState = 'verifying' | 'confirmed' | 'failed';
 
 // ============================================================
-// /sucesso — dois fluxos:
-// - Stripe: ?session_id=... → confirmado direto (webhook/redirect).
-// - InfinitePay Pix: ?provider=infinitepay&order_nsu=... → verifica
-//   no servidor (payment_check) com polling curto. Antes caía no
-//   "Não foi possível verificar" (parecia erro/travamento).
+// /sucesso — retorno do Pix (?provider=infinitepay&order_nsu=...).
+// Verifica no servidor (payment_check) com polling curto e
+// confirma sozinho. Sem order_nsu, mostra erro orientado.
 // ============================================================
 
-function usePixVerification(orderNsu: string | null, enabled: boolean): PixVerifyState {
+function usePixVerification(orderNsu: string | null): PixVerifyState {
   // Estado inicial decidido no lazy init (sem setState dentro de effect).
-  const [state, setState] = useState<PixVerifyState>(() => (enabled && orderNsu ? 'verifying' : 'failed'));
+  const [state, setState] = useState<PixVerifyState>(() => (orderNsu ? 'verifying' : 'failed'));
 
   useEffect(() => {
-    if (!enabled || !orderNsu) return;
+    if (!orderNsu) return;
     let cancelled = false;
     let tries = 0;
 
     const check = async (): Promise<boolean> => {
       try {
-        const res = await fetch('/api/checkout/infinitepay/status', {
+        const res = await fetch('/api/checkout/status', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ orderNsu }),
@@ -63,35 +60,30 @@ function usePixVerification(orderNsu: string | null, enabled: boolean): PixVerif
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [enabled, orderNsu]);
+  }, [orderNsu]);
 
   return state;
 }
 
 export default function SuccessContent() {
   const searchParams = useSearchParams();
-  const sessionId = searchParams.get('session_id');
-  const provider = searchParams.get('provider');
   const orderNsu = searchParams.get('order_nsu');
 
-  const isStripe = Boolean(sessionId);
-  const isPix = provider === 'infinitepay' && Boolean(orderNsu);
-  const pixState = usePixVerification(orderNsu, isPix);
+  const pixState = usePixVerification(orderNsu);
 
-  const txLabel = sessionId ?? orderNsu ?? 'não informado';
+  const txLabel = orderNsu ?? 'não informado';
   const whatsappUrl = `https://wa.me/${config.whatsapp.number}?text=${encodeURIComponent(
-    `Olá! Acabei de finalizar o pagamento (${isPix ? 'Pix' : 'session'}: ${txLabel}). Gostaria de agendar o início do meu projeto.`,
+    `Olá! Acabei de finalizar o pagamento (pedido: ${txLabel}). Gostaria de agendar o início do meu projeto.`,
   )}`;
 
-  // Pix ainda confirmando no servidor
-  if (isPix && pixState === 'verifying') {
+  if (pixState === 'verifying') {
     return (
       <div className={styles.container}>
         <div className={styles.success}>
           <div className={styles.iconWrapper} aria-hidden="true">
             <div className={styles.spinner} role="status" aria-label="Confirmando pagamento Pix" />
           </div>
-          <h1 className={styles.title}>Confirmando seu Pix…</h1>
+          <h1 className={styles.title}>Confirmando seu pagamento…</h1>
           <p className={styles.subtitle}>
             Voltamos do checkout da InfinitePay e estamos conferindo a confirmação. Aguarde alguns segundos — esta página atualiza sozinha.
           </p>
@@ -107,17 +99,13 @@ export default function SuccessContent() {
     );
   }
 
-  const isSuccess = isStripe || (isPix && pixState === 'confirmed');
-
-  if (!isSuccess) {
+  if (pixState !== 'confirmed') {
     return (
       <div className={styles.container}>
         <div className={styles.error}>
           <h1 className={styles.errorTitle}>Não foi possível verificar</h1>
           <p className={styles.errorText}>
-            {isPix
-              ? 'Ainda não consta a confirmação desse Pix. Se você já pagou, aguarde 1 minuto e recarregue — ou fale com a gente que conferimos na hora.'
-              : 'Seu pagamento pode ter sido processado, mas não conseguimos confirmar automaticamente.'}
+            Ainda não consta a confirmação desse pagamento. Se você já pagou, aguarde 1 minuto e recarregue — ou fale com a gente que conferimos na hora.
           </p>
           <div className={styles.errorActions}>
             <Button variant="primary" size="lg" onClick={() => window.location.href = '/#contact'}>

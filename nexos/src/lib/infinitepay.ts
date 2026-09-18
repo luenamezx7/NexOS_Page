@@ -5,7 +5,7 @@
 // - POST /payment_check  → consulta status (polling, sem webhook obrigatório)
 // - Webhook (opcional)   → POST no webhook_url com invoice_slug etc.
 // Preço NUNCA vem do client: o amount é resolvido no servidor a
-// partir do Stripe Price (mesma fonte do checkout cartão), em centavos.
+// partir do catálogo em config.services (id do produto), em centavos.
 // ============================================================
 
 const LINKS_URL = 'https://api.checkout.infinitepay.io/links';

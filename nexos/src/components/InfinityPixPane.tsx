@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
-import { QrCode, ExternalLink, Loader2, Check, Copy, RefreshCw, ShieldCheck, ReceiptText } from 'lucide-react';
+import { QrCode, CreditCard, Wallet, ExternalLink, Loader2, Check, Copy, RefreshCw, ShieldCheck, ReceiptText } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
@@ -12,7 +12,7 @@ const POLL_MAX_TRIES = 60; // ~5 min
 type PixState = 'idle' | 'generating' | 'pending' | 'error';
 
 interface InfinityPixPaneProps {
-  priceId: string | null;
+  productId: string | null;
   productPrice: number;
   name: string;
   email: string;
@@ -36,14 +36,14 @@ function validateEmailField(v: string): string | null {
 }
 
 // ============================================================
-// NexOS — Pix via InfinitePay (taxa zero)
-// idle → generating (POST /api/checkout/infinitepay) → pending
+// NexOS — Checkout InfinitePay (todos os métodos: Pix, cartão,
+// carteiras). idle → generating (POST /api/checkout) → pending
 // (link externo + polling de /status a cada 5s) → success.
-// O QR Code aparece no checkout da InfinitePay (nova aba).
+// O cliente escolhe o método no checkout da InfinitePay (nova aba).
 // ============================================================
 
 export function InfinityPixPane({
-  priceId,
+  productId,
   productPrice,
   name,
   email,
@@ -66,6 +66,7 @@ export function InfinityPixPane({
   const [manualCode, setManualCode] = useState('');
   const [manualChecking, setManualChecking] = useState(false);
   const [manualResult, setManualResult] = useState<'paid' | 'pending' | null>(null);
+  const [manualMethod, setManualMethod] = useState<string | null>(null);
   const [manualError, setManualError] = useState<string | null>(null);
   const triesRef = useRef(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -90,7 +91,7 @@ export function InfinityPixPane({
       if (inFlightRef.current) return false;
       inFlightRef.current = true;
       try {
-        const res = await fetch('/api/checkout/infinitepay/status', {
+        const res = await fetch('/api/checkout/status', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ orderNsu: nsu }),
@@ -140,17 +141,17 @@ export function InfinityPixPane({
     onNameError(nErr);
     onEmailError(eErr);
     setFatal(null);
-    if (nErr || eErr || !priceId) {
+    if (nErr || eErr || !productId) {
       const target = document.getElementById(nErr ? 'checkout-name' : 'checkout-email');
       target?.focus({ preventScroll: false });
       return;
     }
     setState('generating');
     try {
-      const res = await fetch('/api/checkout/infinitepay', {
+      const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priceId, name: name.trim(), email: email.trim() }),
+        body: JSON.stringify({ productId, name: name.trim(), email: email.trim() }),
         signal: AbortSignal.timeout(25000),
       });
       const body: { paymentUrl?: string; orderNsu?: string; error?: string } = await res.json().catch(() => ({}));
@@ -166,7 +167,7 @@ export function InfinityPixPane({
       setFatal(msg);
       setState('error');
     }
-  }, [name, email, priceId, onNameError, onEmailError, startPolling]);
+  }, [name, email, productId, onNameError, onEmailError, startPolling]);
 
   const handleManualCheck = useCallback(async () => {
     if (!orderNsu || checking) return;
@@ -219,16 +220,18 @@ export function InfinityPixPane({
     setManualChecking(true);
     setManualError(null);
     setManualResult(null);
+    setManualMethod(null);
     try {
-      const res = await fetch('/api/checkout/infinitepay/status', {
+      const res = await fetch('/api/checkout/status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code }),
         signal: AbortSignal.timeout(20000),
       });
-      const body: { paid?: boolean; error?: string } = await res.json().catch(() => ({}));
+      const body: { paid?: boolean; captureMethod?: string | null; error?: string } = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(body.error ?? 'Não foi possível verificar.');
       setManualResult(body.paid === true ? 'paid' : 'pending');
+      if (body.paid === true && typeof body.captureMethod === 'string') setManualMethod(body.captureMethod);
     } catch (err) {
       setManualError(err instanceof Error ? err.message : 'Falha ao verificar.');
     } finally {
@@ -238,10 +241,10 @@ export function InfinityPixPane({
 
   return (
     <div className="flex flex-col gap-5">
-      {/* Nome/e-mail compartilhados com a aba cartão — mesmo padrão inline */}
+      {/* Nome/e-mail para a cobrança — mesmo padrão inline */}
       <div className="flex flex-col gap-2">
         <p className={`font-mono text-[11px] uppercase tracking-[0.14em] ${isDark ? 'text-white/55' : 'text-ink/55'}`}>
-          Seus dados para o Pix *
+          Seus dados para o pagamento *
         </p>
         <p className={`text-[11px] leading-relaxed ${isDark ? 'text-white/35' : 'text-ink/40'}`}>
           Usados para gerar a cobrança e enviar o recibo. Confira nos campos acima.
@@ -265,10 +268,10 @@ export function InfinityPixPane({
             <QrCode size={24} strokeWidth={2} />
           </div>
           <p className={`mt-3 text-sm font-semibold ${isDark ? 'text-white' : 'text-ink'}`}>
-            Pix de {amountLabel} pronto
+            Cobrança de {amountLabel} pronta
           </p>
           <p className={`mx-auto mt-1 max-w-sm text-xs leading-relaxed ${isDark ? 'text-white/55' : 'text-ink/55'}`}>
-            O QR Code abre no checkout seguro da InfinitePay (taxa zero). Pague no app do seu banco e volte aqui — confirmamos sozinho.
+            Escolha como pagar no checkout seguro da InfinitePay: Pix com QR na hora (taxa zero), cartão em até 12x ou carteira digital. A confirmação chega sozinha.
           </p>
           <div className="mt-4 flex flex-col gap-2">
             <a
@@ -279,7 +282,7 @@ export function InfinityPixPane({
             >
               <span className="relative z-10 inline-flex items-center gap-2">
                 <ExternalLink size={16} strokeWidth={2} aria-hidden="true" />
-                Abrir Pix na InfinitePay
+                Pagar na InfinitePay
               </span>
               <span className="shimmer-sweep" aria-hidden="true" />
             </a>
@@ -308,13 +311,13 @@ export function InfinityPixPane({
               onClick={handleReset}
               className={`text-xs underline underline-offset-4 ${isDark ? 'text-white/40 hover:text-white/70' : 'text-ink/40 hover:text-ink/70'}`}
             >
-              Cancelar e gerar novo Pix
+              Cancelar e gerar nova cobrança
             </button>
           </div>
           <p className={`mt-4 flex items-center justify-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] ${isDark ? 'text-white/30' : 'text-ink/35'}`}>
             {pollExpired ? (
               <span className="normal-case tracking-normal text-xs" role="status">
-                Não detectamos o pagamento neste Pix. Pagou outra cobrança (ex.: manual no app)? Confira abaixo em “Verificar pagamento”.
+                Não detectamos o pagamento desta cobrança. Pagou outra cobrança (ex.: manual no app)? Confira abaixo em “Verificar pagamento”.
               </span>
             ) : (
               <motion.span
@@ -333,8 +336,23 @@ export function InfinityPixPane({
           <div className={`rounded-xl border p-4 ${isDark ? 'border-white/10 bg-white/[0.03]' : 'border-ink/10 bg-ink/[0.03]'}`}>
             <p className={`flex items-start gap-2.5 text-[13px] leading-relaxed ${isDark ? 'text-white/65' : 'text-ink/65'}`}>
               <QrCode size={18} strokeWidth={2} className="mt-0.5 shrink-0 text-[#ff2e6a]" aria-hidden="true" />
-              Geramos um Pix de <span className={`font-semibold ${isDark ? 'text-white' : 'text-ink'}`}>{amountLabel}</span> na InfinitePay — QR Code na hora, confirmação em segundos e taxa zero.
+              Geramos uma cobrança de <span className={`font-semibold ${isDark ? 'text-white' : 'text-ink'}`}>{amountLabel}</span> na InfinitePay — escolha o método no checkout.
             </p>
+            <div className="mt-3 flex flex-wrap gap-1.5" aria-label="Métodos aceitos">
+              {[
+                { icon: <QrCode size={12} strokeWidth={2} aria-hidden="true" />, label: 'Pix · taxa zero' },
+                { icon: <CreditCard size={12} strokeWidth={2} aria-hidden="true" />, label: 'Cartão até 12x' },
+                { icon: <Wallet size={12} strokeWidth={2} aria-hidden="true" />, label: 'Apple Pay · Google Pay' },
+              ].map((m) => (
+                <span
+                  key={m.label}
+                  className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] ${isDark ? 'border-white/10 bg-white/[0.04] text-white/60' : 'border-ink/10 bg-ink/[0.03] text-ink/60'}`}
+                >
+                  {m.icon}
+                  {m.label}
+                </span>
+              ))}
+            </div>
           </div>
 
           {state === 'error' && fatal && (
@@ -346,7 +364,7 @@ export function InfinityPixPane({
           <motion.button
             type="button"
             onClick={handleGenerate}
-            disabled={state === 'generating' || !priceId}
+            disabled={state === 'generating' || !productId}
             whileHover={reduce ? undefined : { scale: state === 'generating' ? 1 : 1.02 }}
             whileTap={reduce ? undefined : { scale: 0.98 }}
             transition={{ duration: 0.3, ease: FLUID_EASE }}
@@ -357,12 +375,12 @@ export function InfinityPixPane({
               {state === 'generating' ? (
                 <>
                   <Loader2 size={18} className="animate-spin" aria-hidden="true" />
-                  Gerando Pix…
+                  Gerando cobrança…
                 </>
               ) : (
                 <>
                   <QrCode size={16} strokeWidth={2} aria-hidden="true" />
-                  Gerar Pix de {amountLabel}
+                  Pagar {amountLabel}
                 </>
               )}
             </span>
@@ -373,7 +391,7 @@ export function InfinityPixPane({
 
       <p className={`flex items-center justify-center gap-2 text-center font-mono text-[11px] uppercase tracking-[0.14em] ${isDark ? 'text-white/35' : 'text-ink/40'}`}>
         <ShieldCheck size={14} strokeWidth={2} aria-hidden="true" />
-        Pix InfinitePay · taxa zero · sem dados salvos
+        InfinitePay · Pix, cartão e carteiras · sem dados salvos
       </p>
 
       {/* Cobrança manual (criada no app): verificação avulsa por link/order_nsu */}
@@ -398,7 +416,7 @@ export function InfinityPixPane({
               id="pix-manual-code"
               type="text"
               value={manualCode}
-              onChange={(e) => { setManualCode(e.target.value); setManualResult(null); setManualError(null); }}
+              onChange={(e) => { setManualCode(e.target.value); setManualResult(null); setManualMethod(null); setManualError(null); }}
               onKeyDown={(e) => { if (e.key === 'Enter') handleManualVerify(); }}
               placeholder="https://checkout.infinitepay.com.br/… ou order_nsu"
               autoComplete="off"
@@ -416,7 +434,7 @@ export function InfinityPixPane({
             {manualResult === 'paid' && (
               <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#28c840]" role="status">
                 <Check size={14} strokeWidth={2.5} aria-hidden="true" />
-                Pagamento confirmado na InfinitePay.
+                Pagamento confirmado na InfinitePay{manualMethod ? ` via ${manualMethod === 'pix' ? 'Pix' : 'cartão'}` : ''}.
               </p>
             )}
             {manualResult === 'pending' && (

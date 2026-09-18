@@ -5,7 +5,6 @@ export interface Service {
   price: number;
   features: string[];
   ctaText: string;
-  stripePriceId: string;
 }
 
 export interface Testimonial {
@@ -46,11 +45,6 @@ export interface SiteConfig {
     links: FooterLink[];
     legal: FooterLink[];
     social: { label: string; href: string; icon: string }[];
-  };
-  stripe: {
-    publishableKey: string;
-    successUrl: string;
-    cancelUrl: string;
   };
   whatsapp: {
     number: string;
