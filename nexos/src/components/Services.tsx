@@ -1,12 +1,19 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 import { motion, useReducedMotion, type Variants } from 'motion/react';
 import { Check, ShieldCheck } from 'lucide-react';
 import { config } from '@/config';
 import type { Service } from '@/types';
 import { HoldButton } from './HoldButton';
-import { EmbeddedCheckoutDrawer } from './EmbeddedCheckout';
+
+// Drawer fora do bundle inicial E fora do DOM: o chunk só baixa quando
+// o usuário segura o botão de compra (mount condicional abaixo).
+const EmbeddedCheckoutDrawer = dynamic(
+  () => import('./EmbeddedCheckout').then((m) => m.EmbeddedCheckoutDrawer),
+  { ssr: false },
+);
 
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
@@ -157,14 +164,16 @@ export function Services({ className = '' }: ServicesProps) {
         </div>
       </section>
 
-      {/* Checkout Pix — container oculto até ser solicitado */}
-      <EmbeddedCheckoutDrawer
-        open={!!activeService}
-        onClose={handleClose}
-        productId={activeService?.id ?? null}
-        productTitle={activeService?.title ?? ''}
-        productPrice={activeService?.price ?? 0}
-      />
+      {/* Checkout — só monta (e baixa o chunk) após o hold do botão */}
+      {activeService && (
+        <EmbeddedCheckoutDrawer
+          open
+          onClose={handleClose}
+          productId={activeService.id}
+          productTitle={activeService.title}
+          productPrice={activeService.price}
+        />
+      )}
     </>
   );
 }

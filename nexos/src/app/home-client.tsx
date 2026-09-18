@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { Header } from '@/components/Header';
 import { Hero } from '@/components/Hero';
@@ -12,9 +13,23 @@ import { Footer } from '@/components/Footer';
 import { SectionIndicator } from '@/components/SectionIndicator';
 import { ThinkingOrbWrapper } from '@/components/ThinkingOrbWrapper';
 import TextPressure from '@/components/TextPressure';
-import DarkVeil from '@/components/DarkVeil';
-import Grainient from '@/components/Grainient';
 import { useTheme } from '@/components/ThemeProvider';
+
+// Mesmo lazy do Hero: WebGL/canvas fora do bundle inicial, com fallback
+// estático (a intro aparece após 2.2s de loading — tempo de sobra pro chunk).
+function VeilFallback() {
+  return <div className="absolute inset-0 bg-[radial-gradient(70%_60%_at_50%_35%,rgba(255,46,106,0.14),transparent_75%)]" aria-hidden="true" />;
+}
+
+const DarkVeil = dynamic(() => import('@/components/DarkVeil'), {
+  ssr: false,
+  loading: VeilFallback,
+});
+
+const Grainient = dynamic(() => import('@/components/Grainient'), {
+  ssr: false,
+  loading: VeilFallback,
+});
 
 type Stage = 'loading' | 'intro' | 'main';
 
