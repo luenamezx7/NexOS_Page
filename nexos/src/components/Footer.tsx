@@ -89,8 +89,8 @@ export function Footer() {
   const currentYear: number = new Date().getFullYear();
 
   return (
-    <footer role="contentinfo" className="glass-footer relative">
-      <div className="mx-auto w-full max-w-6xl px-5 pb-10 pt-16 md:px-8 md:pt-20">
+    <footer role="contentinfo" className="glass-footer relative w-full max-w-full overflow-x-clip">
+      <div className="mx-auto w-full max-w-6xl px-4 pb-10 pt-12 sm:pb-10 sm:pt-16 md:px-8 md:pt-20">
         <motion.div
           variants={reduce ? undefined : STAGGER_PARENT}
           initial={reduce ? { opacity: 0 } : 'hidden'}

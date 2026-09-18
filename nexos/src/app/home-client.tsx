@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { Header } from '@/components/Header';
 import { Hero } from '@/components/Hero';
+import { ProductShowcase } from '@/components/ProductShowcase';
 import { Services } from '@/components/Services';
 import { Testimonials } from '@/components/Testimonials';
 import { FAQ } from '@/components/FAQ';
@@ -101,7 +102,7 @@ function IntroSection({ onComplete }: IntroSectionProps) {
       aria-label="Apresentação NexOS — role para entrar"
       exit={reduce ? { opacity: 0 } : { opacity: 0, y: -90, filter: 'blur(8px)' }}
       transition={{ duration: 0.7, ease: FLUID_EASE }}
-      className="fixed inset-0 z-[900] flex flex-col justify-center overflow-hidden bg-canvas will-change-transform"
+      className="fixed inset-0 z-[900] flex min-h-dvh flex-col justify-center overflow-hidden overflow-x-clip bg-canvas will-change-transform"
     >
       {theme === 'dark' ? (
         <div className="veil-wrap" aria-hidden="true">
@@ -141,7 +142,7 @@ function IntroSection({ onComplete }: IntroSectionProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, ease: FLUID_EASE }}
-        className="absolute inset-0 will-change-transform"
+        className="absolute inset-0 w-full max-w-full overflow-hidden px-4 will-change-transform sm:px-6 md:px-8"
         aria-label="Nexos, a performance que seu business merece."
       >
         <TextPressure
@@ -156,7 +157,7 @@ function IntroSection({ onComplete }: IntroSectionProps) {
           scale={false}
           textColor={theme === 'dark' ? '#FFFFFF' : '#131316'}
           strokeColor={theme === 'dark' ? '#FFFFFF' : '#131316'}
-          minFontSize={36}
+          minFontSize={24}
         />
       </motion.div>
 
@@ -167,7 +168,7 @@ function IntroSection({ onComplete }: IntroSectionProps) {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.9, ease: FLUID_EASE }}
-        className="absolute bottom-10 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3 font-mono text-[11px] uppercase tracking-[0.22em] text-ink/40 transition-colors duration-300 hover:text-ink/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
+        className="absolute bottom-[calc(2.5rem+env(safe-area-inset-bottom))] left-1/2 z-10 flex min-h-[44px] min-w-[44px] -translate-x-1/2 flex-col items-center gap-3 px-4 font-mono text-[11px] uppercase tracking-[0.22em] text-ink/40 transition-colors duration-300 hover:text-ink/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
       >
         <span className="animate-scroll-hint grid place-items-center" aria-hidden="true">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
@@ -212,7 +213,7 @@ export default function HomeClient() {
   }, [stage]);
 
   return (
-    <main className="w-full max-w-full overflow-x-hidden bg-canvas text-ink">
+    <main className="w-full max-w-full overflow-x-hidden overflow-x-clip bg-canvas text-ink">
       <AnimatePresence>{stage === 'loading' && <LoadingScreen key="loading" />}</AnimatePresence>
 
       <AnimatePresence>{stage === 'intro' && <IntroSection key="intro" onComplete={handleIntroComplete} />}</AnimatePresence>
@@ -228,6 +229,7 @@ export default function HomeClient() {
           >
             <div id="main-content" role="main">
               <Hero ref={heroRef} />
+              <ProductShowcase />
               <Services />
               <Testimonials />
               <FAQ />

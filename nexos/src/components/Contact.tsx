@@ -139,13 +139,13 @@ export function Contact({ className = '' }: ContactProps) {
         aria-labelledby="contact-title"
         className={`relative border-t border-ink/10 bg-canvas ${className}`}
       >
-        <div className="mx-auto w-full max-w-3xl px-5 py-24 text-center md:px-8 md:py-32">
+        <div className="mx-auto w-full max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-24 md:px-8 md:py-32">
           <motion.div
             initial={reveal.initial}
             whileInView={reveal.whileInView}
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 0.8, ease: FLUID_EASE }}
-            className="bento-card will-change-transform p-10 md:p-14"
+            className="bento-card will-change-transform min-w-0 p-5 sm:p-10 md:p-14"
           >
             <div className="mx-auto mb-6 grid h-14 w-14 place-items-center rounded-full border border-[#ff2e6a]/40 bg-[#ff2e6a]/10" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-7 w-7 text-[#ff2e6a]">
@@ -183,9 +183,9 @@ export function Contact({ className = '' }: ContactProps) {
     <section
       id="contact"
       aria-labelledby="contact-title"
-      className={`relative border-t border-ink/10 bg-canvas ${className}`}
+      className={`relative w-full max-w-full overflow-x-clip border-t border-ink/10 bg-canvas ${className}`}
     >
-      <div className="mx-auto w-full max-w-6xl px-5 py-24 md:px-8 md:py-32">
+      <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24 md:px-8 md:py-32">
         <motion.header
           initial={reveal.initial}
           whileInView={reveal.whileInView}
@@ -202,13 +202,13 @@ export function Contact({ className = '' }: ContactProps) {
           </p>
         </motion.header>
 
-        <div className="grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-5">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-5 lg:gap-8">
           <motion.form
             initial={reveal.initial}
             whileInView={reveal.whileInView}
             viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.8, ease: FLUID_EASE }}
-            className="bento-card will-change-transform p-7 md:p-8 lg:col-span-3"
+            className="bento-card will-change-transform min-w-0 p-5 sm:p-8 lg:col-span-3"
             onSubmit={handleSubmit}
             noValidate
             aria-label="Formulário de contato"
@@ -327,10 +327,10 @@ export function Contact({ className = '' }: ContactProps) {
             whileInView={reveal.whileInView}
             viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.8, delay: 0.1, ease: FLUID_EASE }}
-            className="flex flex-col gap-6 will-change-transform md:gap-8 lg:col-span-2"
+            className="flex min-w-0 flex-col gap-4 will-change-transform sm:gap-6 lg:col-span-2"
             aria-label="Informações de contato"
           >
-            <div className="bento-card flex flex-col p-7 md:p-8">
+            <div className="bento-card flex min-w-0 flex-col p-5 sm:p-8">
               <h3 className="mb-5 text-lg font-bold tracking-tight text-ink">
                 Outras formas de falar com a gente
               </h3>
@@ -358,7 +358,7 @@ export function Contact({ className = '' }: ContactProps) {
               </div>
             </div>
 
-            <div className="bento-card flex flex-row items-center gap-3.5 p-7 md:p-8">
+            <div className="bento-card flex min-w-0 flex-row items-center gap-3.5 p-5 sm:p-8">
               <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-ink/10 bg-ink/[0.04] text-ink/70" aria-hidden="true">
                 <MapPin size={20} strokeWidth={1.75} />
               </span>

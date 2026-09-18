@@ -149,7 +149,7 @@ function BentoCard({ card, reduceMotion }: BentoCardProps) {
       viewport={{ once: true, amount: 0.25 }}
       transition={reduceMotion ? { duration: 0.4 } : undefined}
       whileHover={reduceMotion ? undefined : { y: -5 }}
-      className={`bento-card will-change-transform group relative flex flex-col p-6 transition-colors duration-300 hover:border-ink/25 md:p-7 ${card.span} ${
+      className={`bento-card will-change-transform group relative flex min-w-0 max-w-full flex-col p-5 transition-colors duration-300 hover:border-ink/25 sm:p-8 md:p-7 ${card.span} ${
         card.featured
           ? '!border-pink-500/50 shadow-[0_0_28px_rgba(255,46,106,0.22),0_18px_60px_-24px_rgba(255,46,106,0.45)]'
           : ''
@@ -157,12 +157,12 @@ function BentoCard({ card, reduceMotion }: BentoCardProps) {
       aria-labelledby={`bento-title-${card.id}`}
     >
       {card.featured && card.featuredBadge && (
-        <span className="absolute -top-3 left-6 inline-flex items-center gap-1.5 rounded-full border border-pink-500/50 bg-[#ff2e6a] px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-white shadow-[0_0_16px_rgba(255,46,106,0.6)]">
-          <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-white" aria-hidden="true" />
+        <span className="absolute -top-3 left-5 inline-flex max-w-[calc(100%-2.5rem)] items-center gap-1.5 truncate rounded-full border border-pink-500/50 bg-[#ff2e6a] px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-white shadow-[0_0_16px_rgba(255,46,106,0.6)] sm:left-6">
+          <span className="h-1.5 w-1.5 shrink-0 animate-pulse-dot rounded-full bg-white" aria-hidden="true" />
           {card.featuredBadge}
         </span>
       )}
-      <div className="mb-5 flex flex-row items-center justify-between gap-3">
+      <div className="mb-5 flex min-w-0 flex-row flex-wrap items-center justify-between gap-2 sm:gap-3">
         <span className={`tech-badge ${card.featured ? '!border-pink-500/50 !text-ink' : ''}`}>
           <span className="tech-badge-dot" aria-hidden="true" />
           {card.badge}
@@ -175,14 +175,14 @@ function BentoCard({ card, reduceMotion }: BentoCardProps) {
         </span>
       </div>
 
-      <h3 id={`bento-title-${card.id}`} className="mb-2 text-xl font-bold tracking-tight text-ink">
+      <h3 id={`bento-title-${card.id}`} className="mb-2 break-words text-lg font-bold tracking-tight text-ink sm:text-xl">
         {card.title}
       </h3>
-      <p className="mb-5 text-sm leading-relaxed text-ink/70">{card.description}</p>
+      <p className="mb-5 break-words text-sm leading-relaxed text-ink/70">{card.description}</p>
 
-      <div className="mb-6 flex flex-row items-baseline gap-2">
-        <span className="font-display text-3xl font-bold tracking-tight text-ink">{card.metricValue}</span>
-        <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/45">{card.metricLabel}</span>
+      <div className="mb-6 flex min-w-0 flex-row flex-wrap items-baseline gap-x-2 gap-y-1">
+        <span className="font-display text-2xl font-bold tracking-tight text-ink sm:text-3xl">{card.metricValue}</span>
+        <span className="break-words font-mono text-[11px] uppercase tracking-[0.14em] text-ink/45">{card.metricLabel}</span>
       </div>
 
       <div className="mt-auto flex flex-row items-center gap-3 border-t border-ink/10 pt-5">
@@ -190,7 +190,7 @@ function BentoCard({ card, reduceMotion }: BentoCardProps) {
           type="button"
           onClick={() => navigate(card.ctaHref)}
           aria-label={card.ctaLabel}
-          className="btn-secondary-nex w-full !justify-between"
+          className="btn-secondary-nex w-full !justify-between touch-target"
         >
           <span>{card.ctaLabel}</span>
           <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
@@ -210,7 +210,7 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
         ref={ref}
         id="hero"
         aria-labelledby="hero-title"
-        className={`relative overflow-hidden bg-canvas ${className}`}
+        className={`relative w-full max-w-full overflow-hidden overflow-x-clip bg-canvas ${className}`}
       >
         {theme === 'dark' ? (
           <div className="veil-wrap" aria-hidden="true">
@@ -250,8 +250,8 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
           aria-hidden="true"
         />
 
-        <div className="relative mx-auto w-full max-w-6xl px-5 pb-24 pt-28 md:px-8 md:pb-32 md:pt-32">
-          <div className="flex flex-col items-center text-center">
+        <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-24 sm:px-6 sm:pb-24 sm:pt-28 md:px-8 md:pb-32 md:pt-32">
+          <div className="flex min-w-0 flex-col items-center text-center">
             <motion.div
               initial={reduce ? { opacity: 0 } : ENTER.initial}
               whileInView={reduce ? { opacity: 1 } : ENTER.whileInView}
@@ -271,7 +271,7 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
               whileInView={reduce ? { opacity: 1 } : ENTER.whileInView}
               viewport={{ once: true, amount: 0.5 }}
               transition={{ ...ENTER.transition, delay: 0.08 }}
-              className="w-full max-w-5xl text-balance font-heavy text-5xl font-black leading-[1.02] tracking-[-0.02em] text-ink will-change-transform md:text-6xl lg:text-7xl"
+              className="w-full max-w-5xl text-balance break-words font-heavy text-[1.75rem] font-black leading-[1.08] tracking-[-0.02em] text-ink will-change-transform sm:text-4xl sm:leading-[1.02] md:text-6xl lg:text-7xl"
             >
               {config.hero.headline}
             </motion.h1>
@@ -281,7 +281,7 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
               whileInView={reduce ? { opacity: 1 } : ENTER.whileInView}
               viewport={{ once: true, amount: 0.6 }}
               transition={{ ...ENTER.transition, delay: 0.16 }}
-              className="mt-5 max-w-[62ch] text-base leading-relaxed text-ink/70 will-change-transform md:text-lg"
+              className="mt-5 max-w-[62ch] break-words text-sm leading-relaxed text-ink/70 will-change-transform sm:text-base md:text-lg"
             >
               {config.hero.subheadline}
             </motion.p>
@@ -291,7 +291,7 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
               whileInView={reduce ? { opacity: 1 } : ENTER.whileInView}
               viewport={{ once: true, amount: 0.6 }}
               transition={{ ...ENTER.transition, delay: 0.24 }}
-              className="mt-8 flex w-full flex-col items-center justify-center gap-3 will-change-transform sm:flex-row"
+              className="mt-8 flex w-full flex-col items-stretch justify-center gap-3 will-change-transform sm:flex-row sm:items-center"
             >
               <HoldButton
                 label={config.hero.ctaPrimary.label}
@@ -307,9 +307,9 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
                 onClick={() => navigate(config.hero.ctaSecondary.href)}
                 aria-label={config.hero.ctaSecondary.label}
                 whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
+                whileTap={{ scale: 0.96 }}
                 transition={{ duration: 0.3, ease: FLUID_EASE }}
-                className="btn-secondary-nex w-full px-6 py-3 text-sm font-medium tracking-wide sm:w-auto"
+                className="btn-secondary-nex w-full px-6 py-3 text-sm font-medium tracking-wide touch-target sm:w-auto"
               >
                 {config.hero.ctaSecondary.label}
               </motion.button>
@@ -332,7 +332,7 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, amount: 0.15 }}
-            className="mt-14 grid grid-cols-1 gap-4 md:grid-cols-12 md:[grid-auto-flow:dense] md:gap-5"
+            className="mt-10 grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-12 md:[grid-auto-flow:dense] md:gap-5 lg:gap-8"
           >
             {BENTO_CARDS.map((card: BentoCardData) => (
               <BentoCard key={card.id} card={card} reduceMotion={reduce} />

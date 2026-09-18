@@ -141,11 +141,11 @@ export function HoldButton({ label, ariaLabel, hintId, onConfirm, className = ''
       onContextMenu={(e: React.MouseEvent<HTMLButtonElement>) => e.preventDefault()}
       onHoverStart={triggerScramble}
       whileHover={reduce ? undefined : { scale: 1.03 }}
-      whileTap={reduce ? undefined : { scale: 0.97 }}
+      whileTap={reduce ? undefined : { scale: 0.96 }}
       transition={{ duration: 0.3, ease: FLUID_EASE }}
-      className={`btn-primary-nex touch-none select-none ${featured ? 'btn-primary-nex--featured' : ''} ${className}`}
+      className={`btn-primary-nex touch-pan-y select-none ${featured ? 'btn-primary-nex--featured' : ''} ${className}`}
     >
-      <span className="relative z-10 inline-flex h-[1.25em] items-center whitespace-nowrap font-medium">
+      <span className="relative z-10 inline-flex min-h-[1.25em] min-w-0 items-center break-words text-center font-medium">
         {display}
       </span>
       <span className="shimmer-sweep" aria-hidden="true" />

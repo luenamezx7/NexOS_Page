@@ -43,9 +43,9 @@ function PrimaryCta({ label, onClick, className = '', ariaLabel }: PrimaryCtaPro
       aria-label={ariaLabel}
       onClick={onClick}
       whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 0.97 }}
+      whileTap={{ scale: 0.96 }}
       transition={{ duration: 0.3, ease: FLUID_EASE }}
-      className={`btn-primary-nex will-change-transform ${className}`}
+      className={`btn-primary-nex will-change-transform touch-target ${className}`}
     >
       <span className="relative z-10">{label}</span>
       <span className="shimmer-sweep" aria-hidden="true" />
@@ -67,9 +67,9 @@ function SecondaryCta({ label, onClick, className = '', ariaLabel }: SecondaryCt
       aria-label={ariaLabel}
       onClick={onClick}
       whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 0.97 }}
+      whileTap={{ scale: 0.96 }}
       transition={{ duration: 0.3, ease: FLUID_EASE }}
-      className={`btn-secondary-nex will-change-transform ${className}`}
+      className={`btn-secondary-nex will-change-transform touch-target ${className}`}
     >
       {label}
     </motion.button>
@@ -86,7 +86,7 @@ function ThemeToggle({ className = '' }: { className?: string }) {
       aria-label={theme === 'dark' ? 'Ativar modo claro' : 'Ativar modo escuro'}
       whileTap={{ scale: 0.95 }}
       transition={{ duration: 0.2, ease: FLUID_EASE }}
-      className={`grid h-10 w-10 shrink-0 place-items-center rounded-full border border-ink/15 bg-ink/[0.05] text-ink/80 transition-colors duration-300 hover:bg-ink/10 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink ${className}`}
+      className={`grid h-10 w-10 shrink-0 place-items-center rounded-full border border-ink/15 bg-ink/[0.05] text-ink/80 transition-colors duration-300 hover:bg-ink/10 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink touch-target ${className}`}
     >
       <motion.span
         key={theme}
@@ -127,7 +127,7 @@ export function Header() {
         initial={reduce ? { opacity: 0 } : { opacity: 0, y: -16 }}
         animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: FLUID_EASE }}
-        className={`glass-header will-change-transform fixed top-6 left-1/2 z-50 flex w-[85%] max-w-5xl -translate-x-1/2 items-center justify-between rounded-full px-6 py-2.5 ${scrolled ? 'glass-header--scrolled' : ''}`}
+        className={`glass-header will-change-transform fixed top-4 left-1/2 z-50 flex w-[92%] max-w-5xl -translate-x-1/2 items-center justify-between rounded-full px-4 py-2 md:top-6 md:w-[85%] md:px-6 md:py-2.5 ${scrolled ? 'glass-header--scrolled' : ''}`}
       >
         <div className="glass-header-reflex" aria-hidden="true" />
 
@@ -145,7 +145,7 @@ export function Header() {
             alt="NexOS"
             width={112}
             height={28}
-            className="logo-invert h-7 w-auto object-contain"
+            className="logo-invert h-6 w-auto object-contain md:h-7"
             priority
           />
         </a>
@@ -159,7 +159,7 @@ export function Header() {
                 e.preventDefault();
                 handleNav(item.href);
               }}
-              className="rounded-lg px-4 py-2 text-sm font-medium tracking-[-0.01em] text-ink/70 transition-colors duration-300 hover:bg-ink/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
+              className="rounded-lg px-4 py-2 text-sm font-medium tracking-[-0.01em] text-ink/70 transition-colors duration-300 hover:bg-ink/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink touch-target"
             >
               {item.label}
             </a>
@@ -180,12 +180,12 @@ export function Header() {
           />
         </div>
 
-        <div className="relative z-10 flex flex-row items-center gap-2.5 md:hidden">
+        <div className="relative z-10 flex flex-row items-center gap-2 md:hidden">
           <PrimaryCta
             label="Começar"
             ariaLabel="Começar agora"
             onClick={() => handleNav('#services')}
-            className="!px-5 !py-2.5"
+            className="!px-4 !py-2 text-sm"
           />
           <ThemeToggle />
           <motion.button
@@ -195,7 +195,7 @@ export function Header() {
             onClick={toggleMobile}
             whileTap={{ scale: 0.95 }}
             transition={{ duration: 0.2, ease: FLUID_EASE }}
-            className="grid h-10 w-10 place-items-center rounded-full border border-ink/15 bg-ink/[0.05] text-ink backdrop-blur-md transition-colors duration-300 hover:bg-ink/[0.1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
+            className="grid h-10 w-10 place-items-center rounded-full border border-ink/15 bg-ink/[0.05] text-ink backdrop-blur-md transition-colors duration-300 hover:bg-ink/[0.1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink touch-target"
           >
             <motion.span
               initial={false}
@@ -210,7 +210,7 @@ export function Header() {
 
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-ink/25 to-transparent"
+          className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-ink/25 to-transparent md:inset-x-8"
           style={{ opacity: scrolled ? 1 : 0.4 }}
         />
       </motion.header>
@@ -222,7 +222,7 @@ export function Header() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25, ease: FLUID_EASE }}
-            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-md md:hidden"
+            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-md md:hidden safe-top"
             onClick={() => setMobileOpen(false)}
             aria-hidden="true"
           />
@@ -239,7 +239,7 @@ export function Header() {
             animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
             exit={reduce ? { opacity: 0 } : { opacity: 0, y: -10, scale: 0.98 }}
             transition={{ duration: 0.35, ease: FLUID_EASE }}
-            className="fixed left-1/2 top-24 z-50 w-[min(calc(100vw-2rem),26rem)] -translate-x-1/2 rounded-3xl border border-ink/10 bg-glass-strong p-5 shadow-[0_32px_96px_rgba(0,0,0,0.35)] backdrop-blur-xl will-change-transform md:hidden"
+            className="fixed left-1/2 top-[calc(4rem+env(safe-area-inset-top)+1rem)] z-50 max-h-[calc(100dvh-6rem)] w-[calc(100vw-2rem)] max-w-sm -translate-x-1/2 overflow-y-auto rounded-3xl border border-ink/10 bg-glass-strong p-5 shadow-[0_32px_96px_rgba(0,0,0,0.35)] backdrop-blur-2xl will-change-transform dark:border-white/10 dark:bg-black/80 md:hidden"
           >
             <div className="grid gap-1">
               {NAV_ITEMS.map((item: NavItem, i: number) => (
@@ -253,24 +253,24 @@ export function Header() {
                     e.preventDefault();
                     handleNav(item.href);
                   }}
-                  className="rounded-xl px-5 py-3.5 text-[15px] font-medium text-ink/85 transition-colors duration-300 hover:bg-ink/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
+                  className="rounded-xl px-5 py-4 text-base font-medium text-ink/85 transition-colors duration-300 hover:bg-ink/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink touch-target"
                 >
                   {item.label}
                 </motion.a>
               ))}
             </div>
-            <div className="mt-4 grid grid-cols-2 gap-3 border-t border-ink/10 pt-4">
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 border-t border-ink/10 pt-4">
               <SecondaryCta
                 label="Contato"
                 ariaLabel="Entrar em contato"
                 onClick={() => handleNav('#contact')}
-                className="w-full"
+                className="w-full py-3"
               />
               <PrimaryCta
                 label="Começar"
                 ariaLabel="Começar agora"
                 onClick={() => handleNav('#services')}
-                className="w-full !px-5"
+                className="w-full py-3"
               />
             </div>
           </motion.div>

@@ -330,7 +330,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
               animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
               exit={reduce ? { opacity: 0 } : { opacity: 0, y: 20, scale: 0.98 }}
               transition={{ duration: 0.45, ease: FLUID_EASE }}
-              className={`fixed inset-x-0 bottom-0 z-[71] mx-auto flex max-h-[92dvh] w-full max-w-xl flex-col overflow-hidden rounded-t-[24px] border shadow-[0_24px_80px_rgba(0,0,0,0.6)] backdrop-blur-[20px] md:inset-0 md:bottom-auto md:left-auto md:right-6 md:top-1/2 md:mx-0 md:max-h-[88dvh] md:w-[520px] md:-translate-y-1/2 md:rounded-3xl ${
+              className={`fixed inset-x-0 bottom-0 z-[71] mx-auto flex max-h-[92dvh] w-full max-w-xl flex-col overflow-hidden rounded-t-[24px] border shadow-[0_24px_80px_rgba(0,0,0,0.6)] backdrop-blur-[20px] will-change-transform md:inset-0 md:m-auto md:h-fit md:max-h-[88dvh] md:w-[min(520px,calc(100vw-2rem))] md:rounded-3xl ${
                 isDark ? 'border-white/10 bg-[#0a0a0a]/95' : 'border-ink/10 bg-white/95'
               }`}
             >
