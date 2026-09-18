@@ -44,9 +44,16 @@ function ServiceCard({ service, reduceMotion, onCheckout }: ServiceCardProps) {
       aria-labelledby={`service-title-${service.id}`}
     >
       <div className="mb-5 flex flex-row items-start justify-between gap-3">
-        <span className="tech-badge">
-          <span className="tech-badge-dot" aria-hidden="true" />
-          {service.id}
+        <span className="flex flex-wrap items-center gap-2">
+          <span className="tech-badge">
+            <span className="tech-badge-dot" aria-hidden="true" />
+            {service.id}
+          </span>
+          {service.id === 'teste' && (
+            <span className="inline-flex items-center rounded-full border border-amber-500/50 bg-amber-500/10 px-3 py-[0.3rem] font-mono text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-amber-500">
+              Teste
+            </span>
+          )}
         </span>
         <span className="font-mono text-sm font-semibold tracking-tight text-ink">
           R$ {service.price.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -119,7 +126,7 @@ export function Services({ className = '' }: ServicesProps) {
               Serviços
             </h2>
             <p className="mt-4 text-base leading-relaxed text-ink/70 md:text-lg">
-              Dois pilares para transformar sua ideia em produto escalável. Escolha o que faz sentido para o seu momento.
+              Dois produtos mais um card de teste. Escolha o que faz sentido para o seu momento.
             </p>
           </motion.header>
 
@@ -128,7 +135,7 @@ export function Services({ className = '' }: ServicesProps) {
             initial={reduce ? { opacity: 0 } : 'hidden'}
             whileInView={reduce ? { opacity: 1 } : 'show'}
             viewport={{ once: true, amount: 0.15 }}
-            className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-2"
+            className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-3"
             role="list"
             aria-label="Lista de serviços"
           >
