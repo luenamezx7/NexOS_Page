@@ -1,13 +1,29 @@
 'use client';
 
 import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
+import dynamic from 'next/dynamic';
 import { motion, useReducedMotion, type Variants } from 'motion/react';
 import { ArrowRight, ArrowUpRight, Zap, Layers, Gauge } from 'lucide-react';
-import DarkVeil from './DarkVeil';
-import Grainient from './Grainient';
 import { HoldButton } from './HoldButton';
 import { useTheme } from './ThemeProvider';
 import { config } from '@/config';
+
+// Lazy (abaixo): DarkVeil (WebGL/ogl ~700KB) e Grainient (canvas) saem do
+// bundle inicial. `ssr: false` porque canvas/WebGL não renderizam no
+// servidor. O fallback estático mantém o fundo idêntico durante o load.
+function VeilFallback() {
+  return <div className="absolute inset-0 bg-[radial-gradient(70%_60%_at_50%_35%,rgba(255,46,106,0.14),transparent_75%)]" aria-hidden="true" />;
+}
+
+const DarkVeil = dynamic(() => import('./DarkVeil'), {
+  ssr: false,
+  loading: VeilFallback,
+});
+
+const Grainient = dynamic(() => import('./Grainient'), {
+  ssr: false,
+  loading: VeilFallback,
+});
 
 interface HeroProps {
   className?: string;

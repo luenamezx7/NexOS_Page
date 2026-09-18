@@ -1,5 +1,7 @@
 # NexOS — Documentação Técnica Focada no Funcionamento
 
+> **DOCUMENTO LEGADO — desatualizado.** Descreve a arquitetura v1 (checkout anterior). A referência canônica atual é `DOCUMENTATION.md` na raiz do repositório.
+
 > **Objetivo:** explicar o que realmente importa para o site funcionar, sem ruído. Stack: **Next.js 16 App Router + React 19 + TypeScript + Tailwind v4 + Framer Motion + InfinitePay Pix + Notion**.
 
 ---
