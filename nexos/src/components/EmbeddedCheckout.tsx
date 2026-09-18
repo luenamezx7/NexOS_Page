@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { CheckoutElementsProvider, useCheckoutElements, PaymentElement } from '@stripe/react-stripe-js/checkout';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
@@ -533,14 +533,27 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
 
   // Stripe (cartão) é carregado sob demanda — só quando a aba cartão está ativa.
   // O Pix usa a InfinitePay e não precisa de clientSecret.
+  // fetchId: em dev o StrictMode/HMR monta → desmonta → remonta o effect.
+  // O padrão antigo (flag `cancelled` + gate em `loading`) descartava o
+  // fetch da 1ª montagem e bloqueava o da 2ª → "Abrindo checkout" eterno.
+  // Aqui vale o último fetch disparado; respostas antigas são ignoradas.
+  const fetchIdRef = useRef(0);
   useEffect(() => {
     if (!open || !priceId || method !== 'card') return;
-    if (clientSecret || drawerState === 'loading') return;
-    let cancelled = false;
+    if (clientSecret) return; // já carregado — sem refetch ao trocar de aba
+    const id = ++fetchIdRef.current;
     setDrawerState('loading');
     setErrorMsg(null);
     setClientSecret(null);
     setProductImage(null);
+
+    // Rede de segurança: servidor instável = erro acionável, nunca espera infinita
+    const timeout = setTimeout(() => {
+      if (fetchIdRef.current !== id) return;
+      fetchIdRef.current += 1;
+      setErrorMsg('Checkout demorou para responder. Verifique sua conexão ou tente o Pix.');
+      setDrawerState('error');
+    }, 25000);
 
     (async () => {
       try {
@@ -550,7 +563,8 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
           body: JSON.stringify({ priceId }),
         });
         const body: { clientSecret?: string; error?: string; details?: unknown; productImage?: string | null } = await res.json().catch(() => ({}));
-        if (cancelled) return;
+        if (fetchIdRef.current !== id) return;
+        clearTimeout(timeout);
         if (!res.ok || !body.clientSecret) {
           const details = typeof body.details === 'string' ? body.details : body.details ? JSON.stringify(body.details) : '';
           throw new Error(`${body.error ?? 'Falha ao inicializar checkout.'}${details ? ` — ${String(details).slice(0, 600)}` : ''}`);
@@ -559,7 +573,8 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
         if (body.productImage) setProductImage(body.productImage);
         setDrawerState('ready');
       } catch (err) {
-        if (cancelled) return;
+        if (fetchIdRef.current !== id) return;
+        clearTimeout(timeout);
         const msg = err instanceof Error ? err.message : 'Erro ao carregar checkout.';
         setErrorMsg(msg);
         setDrawerState('error');
@@ -567,9 +582,9 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
     })();
 
     return () => {
-      cancelled = true;
+      clearTimeout(timeout);
     };
-  }, [open, priceId, method, clientSecret, drawerState]);
+  }, [open, priceId, method, clientSecret]);
 
   const handleClose = useCallback(() => {
     setClientSecret(null);
@@ -824,6 +839,14 @@ export function EmbeddedCheckoutDrawer({ open, onClose, priceId, productTitle, p
                     </motion.button>
                     <button type="button" onClick={handleClose} className={`rounded-xl border px-5 py-2.5 text-xs font-medium transition ${isDark ? 'border-white/10 bg-white/[0.06] text-white/70 hover:bg-white/10 hover:text-white' : 'border-ink/10 bg-ink/[0.04] text-ink/60 hover:bg-ink/10'}`}>
                       Fechar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setErrorMsg(null); setMethod('pix'); }}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#ff2e6a] px-5 py-2.5 text-xs font-semibold text-white shadow-[0_0_16px_rgba(255,46,106,0.5)] transition hover:bg-[#ec4899]"
+                    >
+                      <QrCode size={14} strokeWidth={2} aria-hidden="true" />
+                      Pagar com Pix
                     </button>
                   </motion.div>
                   <p className={`mt-4 text-center font-mono text-[10px] uppercase tracking-[0.14em] ${isDark ? 'text-white/30' : 'text-ink/35'}`}>Se o erro persistir, tente outro cartão ou Pix</p>
