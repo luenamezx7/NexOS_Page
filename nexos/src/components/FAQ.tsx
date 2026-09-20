@@ -44,7 +44,7 @@ const FAQ_ITEMS: FAQItem[] = [
     id: '03',
     question: 'O checkout é seguro?',
     answer:
-      'Sim. O pagamento roda na InfinitePay: Pix com QR na hora (taxa zero), cartão em até 12x e carteiras digitais, com confirmação automática em segundos. Recebemos apenas nome e e-mail para o recibo — nenhum dado bancário toca nossos servidores.',
+      'Sim. O pagamento roda no Asaas: Pix com QR na hora, boleto e cartão em até 12x, com confirmação automática em segundos. Recebemos apenas nome e e-mail para o recibo — nenhum dado bancário toca nossos servidores.',
   },
   {
     id: '04',

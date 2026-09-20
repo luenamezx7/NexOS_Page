@@ -1,47 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { checkPixStatus, isInfinitePayConfigured } from '@/lib/infinitepay';
+import { getPaymentStatus, isAsaasConfigured } from '@/lib/asaas';
 
 // ============================================================
-// NexOS — polling do Pix InfinitePay
-// POST /api/checkout/status { orderNsu | slug | transactionNsu | code }
-//   → { paid, captureMethod, amount, paidAmount }
-// `code` aceita o link da cobrança ou o order_nsu colado.
+// NexOS — polling do pagamento Asaas
+// POST /api/checkout/status { paymentId | externalReference }
+//   → { paid, status, value, billingType }
 // ============================================================
-
-const idSchema = z.string().min(1).max(120);
 
 const bodySchema = z
   .object({
-    orderNsu: z
-      .string()
-      .min(1)
-      .max(36)
-      .regex(/^([a-zA-Z0-9-]+)$/)
-      .optional(),
-    slug: idSchema.regex(/^([a-zA-Z0-9-_]+)$/).optional(),
-    transactionNsu: idSchema.optional(),
-    code: z.string().trim().min(1).max(500).optional(),
+    paymentId: z.string().min(1).max(40).optional(),
+    externalReference: z.string().min(1).max(36).optional(),
   })
-  .refine((d) => d.orderNsu || d.slug || d.transactionNsu || d.code, {
-    message: 'Informe orderNsu, slug ou link da cobrança',
+  .refine((d) => d.paymentId || d.externalReference, {
+    message: 'Informe paymentId ou externalReference',
   });
-
-/** Extrai slug de um link checkout.infinitepay.com.br/<slug> ou devolve o texto. */
-function normalizeCode(code: string): { orderNsu?: string; slug?: string } {
-  const trimmed = code.trim();
-  try {
-    const url = new URL(trimmed);
-    if (url.hostname.includes('infinitepay')) {
-      const slug = url.pathname.split('/').filter(Boolean).pop();
-      if (slug) return { slug };
-    }
-  } catch {
-    /* não é URL — trata como order_nsu/slug puro */
-  }
-  if (/^([a-zA-Z0-9-]+)$/.test(trimmed) && trimmed.length <= 36) return { orderNsu: trimmed };
-  return { slug: trimmed };
-}
 
 const WINDOW_MS = 60_000;
 const MAX_REQ = 20;
@@ -71,8 +45,8 @@ export async function POST(req: NextRequest) {
   valid.push(now);
   buckets.set(ip, valid);
 
-  if (!isInfinitePayConfigured()) {
-    return NextResponse.json({ error: 'Pix indisponível.' }, { status: 500, headers: headers() });
+  if (!isAsaasConfigured()) {
+    return NextResponse.json({ error: 'Pagamentos indisponíveis.' }, { status: 500, headers: headers() });
   }
 
   try {
@@ -81,13 +55,10 @@ export async function POST(req: NextRequest) {
     if (!parsed.success) {
       return NextResponse.json({ error: 'Identificador inválido' }, { status: 400, headers: headers() });
     }
-    const { orderNsu, slug, transactionNsu, code } = parsed.data;
-    const fromCode = code ? normalizeCode(code) : {};
-    const status = await checkPixStatus({
-      orderNsu: orderNsu ?? fromCode.orderNsu,
-      slug: slug ?? fromCode.slug,
-      transactionNsu,
-    });
+    const { paymentId, externalReference } = parsed.data;
+    const status = paymentId
+      ? await getPaymentStatus(paymentId, 'id')
+      : await getPaymentStatus(externalReference!, 'externalReference');
     return NextResponse.json(status, { status: 200, headers: headers() });
   } catch {
     return NextResponse.json({ error: 'Falha ao verificar pagamento.' }, { status: 500, headers: headers() });

@@ -19,11 +19,11 @@ export const LEGAL_DOCS: LegalDoc[] = [
     title: 'Política de Privacidade',
     updated: 'Atualizado em setembro de 2026',
     intro:
-      'Esta Política descreve como a NexOS coleta, usa e protege dados pessoais no site, no checkout Pix (InfinitePay) e no formulário de contato (Notion).',
+      'Esta Política descreve como a NexOS coleta, usa e protege dados pessoais no site, no checkout (Asaas) e no formulário de contato (Notion).',
     sections: [
       {
         heading: '1. Dados que coletamos',
-        body: 'Coletamos nome, e-mail, empresa, serviço de interesse e mensagem via /api/contact, além de nome e e-mail para gerar a cobrança Pix e enviar o recibo. O pagamento é processado pela InfinitePay — nenhum dado bancário toca nossos servidores.',
+        body: 'Coletamos nome, e-mail, empresa, serviço de interesse e mensagem via /api/contact, além de nome e e-mail para gerar a cobrança e enviar o recibo. O pagamento é processado pelo Asaas — nenhum dado bancário toca nossos servidores.',
       },
       {
         heading: '2. Finalidades',
@@ -31,7 +31,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
       },
       {
         heading: '3. Compartilhamento',
-        body: 'Compartilhamos dados estritamente com InfinitePay (pagamentos) e Notion (CRM de contatos). Não vendemos dados pessoais.',
+        body: 'Compartilhamos dados estritamente com Asaas (pagamentos) e Notion (CRM de contatos). Não vendemos dados pessoais.',
       },
       {
         heading: '4. Retenção e direitos',
@@ -53,7 +53,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
       },
       {
         heading: '2. Checkout',
-        body: 'Pagamentos via InfinitePay: Pix com QR na hora (taxa zero), cartão em até 12x e carteiras digitais, com confirmação automática. O valor é resolvido no servidor a partir do catálogo — nunca do navegador.',
+        body: 'Pagamentos via Asaas: Pix com QR na hora, boleto e cartão em até 12x, com confirmação automática. O valor é resolvido no servidor a partir do catálogo — nunca do navegador.',
       },
       {
         heading: '3. Uso aceitável',
@@ -71,7 +71,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
     title: 'LGPD — Direitos do Titular',
     updated: 'Atualizado em setembro de 2026 · Lei nº 13.709/2018',
     intro:
-      'A NexOS atua como controladora dos dados enviados pelo formulário e das cobranças Pix (processadas pela InfinitePay).',
+      'A NexOS atua como controladora dos dados enviados pelo formulário e das cobranças (processadas pelo Asaas).',
     sections: [
       {
         heading: '1. Bases legais',
@@ -83,7 +83,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
       },
       {
         heading: '3. Segurança',
-        body: 'CSP restritiva, X-Content-Type-Options, rate limiting em memória e validação zod. Nenhum dado bancário é persistido — o pagamento ocorre na InfinitePay.',
+        body: 'CSP restritiva, X-Content-Type-Options, rate limiting em memória e validação zod. Nenhum dado bancário é persistido — o pagamento ocorre no Asaas.',
       },
       {
         heading: '4. Encarregado (DPO)',
@@ -109,7 +109,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
       },
       {
         heading: '3. Como solicitar',
-        body: 'Abra o pedido via WhatsApp +55 64 99328-9250 ou nexosperformance@gmail.com com o order_nsu do pagamento. Prazo de análise: 5 dias úteis; estorno no mesmo método (Pix ou cartão) em até 10 dias úteis.',
+        body: 'Abra o pedido via WhatsApp +55 64 99328-9250 ou nexosperformance@gmail.com com o ID da cobrança (paymentId / externalReference). Prazo de análise: 5 dias úteis; estorno no mesmo método (Pix, boleto ou cartão) em até 10 dias úteis.',
       },
       {
         heading: '4. Exceções',
@@ -135,7 +135,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
       },
       {
         heading: '3. Terceiros',
-        body: 'InfinitePay (checkout/pagamento) e fontes Google carregam apenas dentro do seu contexto e seguem as políticas próprias. Não vendemos dados.',
+        body: 'Asaas (checkout/pagamento) e fontes Google carregam apenas dentro do seu contexto e seguem as políticas próprias. Não vendemos dados.',
       },
       {
         heading: '4. Gerenciar',

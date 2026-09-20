@@ -7,11 +7,11 @@ import { config } from '@/config';
 import { bulkUnitPrice } from '@/lib/bulk-pricing';
 import { useTheme } from './ThemeProvider';
 import { useScrollLock } from './useScrollLock';
-import { InfinityPixPane } from './InfinityPixPane';
+import { AsaasCheckoutPane } from './AsaasCheckoutPane';
 
 // ============================================================
-// NexOS — Checkout InfinitePay (Pix, cartão, carteiras)
-// Fluxo único: nome + e-mail → gerar cobrança → checkout InfinitePay →
+// NexOS — Checkout Asaas (Pix / boleto / cartão)
+// Fluxo único: nome + e-mail → gerar cobrança → checkout Asaas →
 // polling de confirmação → sucesso.
 // ============================================================
 
@@ -287,7 +287,7 @@ export function EmbeddedCheckoutDrawer({ open, onClose, productId, productTitle,
                     onNameBlur={validateNameBlur}
                     onEmailBlur={validateEmailBlur}
                   />
-                  <InfinityPixPane
+                  <AsaasCheckoutPane
                     productId={productId}
                     productPrice={productPrice}
                     quantity={quantity}

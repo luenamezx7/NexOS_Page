@@ -10,17 +10,22 @@ import { CheckCircle, MessageSquare, ArrowRight } from 'lucide-react';
 type PixVerifyState = 'verifying' | 'confirmed' | 'failed';
 
 // ============================================================
-// /sucesso — retorno do Pix (?provider=infinitepay&order_nsu=...).
-// Verifica no servidor (payment_check) com polling curto e
-// confirma sozinho. Sem order_nsu, mostra erro orientado.
+// /sucesso — retorno do checkout Asaas
+// (?paymentId=... ou ?externalReference=...)
+// Verifica no servidor via /api/checkout/status com polling curto.
+// Sem identificador, mostra erro orientado.
 // ============================================================
 
-function usePixVerification(orderNsu: string | null): PixVerifyState {
-  // Estado inicial decidido no lazy init (sem setState dentro de effect).
-  const [state, setState] = useState<PixVerifyState>(() => (orderNsu ? 'verifying' : 'failed'));
+function useAsaasVerification(
+  paymentId: string | null,
+  externalReference: string | null,
+): PixVerifyState {
+  const [state, setState] = useState<PixVerifyState>(() =>
+    paymentId || externalReference ? 'verifying' : 'failed',
+  );
 
   useEffect(() => {
-    if (!orderNsu) return;
+    if (!paymentId && !externalReference) return;
     let cancelled = false;
     let tries = 0;
 
@@ -29,7 +34,9 @@ function usePixVerification(orderNsu: string | null): PixVerifyState {
         const res = await fetch('/api/checkout/status', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ orderNsu }),
+          body: JSON.stringify(
+            paymentId ? { paymentId } : { externalReference },
+          ),
           signal: AbortSignal.timeout(20000),
         });
         const body: { paid?: boolean } = await res.json().catch(() => ({}));
@@ -47,7 +54,6 @@ function usePixVerification(orderNsu: string | null): PixVerifyState {
         setState('confirmed');
         return;
       }
-      // ~1 min de polling (12 × 5s); depois, orienta a falar no suporte
       if (tries >= 12) {
         setState('failed');
         return;
@@ -60,18 +66,20 @@ function usePixVerification(orderNsu: string | null): PixVerifyState {
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [orderNsu]);
+  }, [paymentId, externalReference]);
 
   return state;
 }
 
 export default function SuccessContent() {
   const searchParams = useSearchParams();
-  const orderNsu = searchParams.get('order_nsu');
+  const paymentId = searchParams.get('paymentId') ?? searchParams.get('payment_id');
+  const externalReference = searchParams.get('externalReference') ?? searchParams.get('external_reference') ?? searchParams.get('order_nsu');
+  // Compat: antiga URL InfinitePay usava order_nsu — mantém leitura
 
-  const pixState = usePixVerification(orderNsu);
+  const pixState = useAsaasVerification(paymentId, externalReference);
 
-  const txLabel = orderNsu ?? 'não informado';
+  const txLabel = paymentId ?? externalReference ?? 'não informado';
   const whatsappUrl = `https://wa.me/${config.whatsapp.number}?text=${encodeURIComponent(
     `Olá! Acabei de finalizar o pagamento (pedido: ${txLabel}). Gostaria de agendar o início do meu projeto.`,
   )}`;
@@ -81,16 +89,16 @@ export default function SuccessContent() {
       <div className={styles.container}>
         <div className={styles.success}>
           <div className={styles.iconWrapper} aria-hidden="true">
-            <div className={styles.spinner} role="status" aria-label="Confirmando pagamento Pix" />
+            <div className={styles.spinner} role="status" aria-label="Confirmando pagamento" />
           </div>
           <h1 className={styles.title}>Confirmando seu pagamento…</h1>
           <p className={styles.subtitle}>
-            Voltamos do checkout da InfinitePay e estamos conferindo a confirmação. Aguarde alguns segundos — esta página atualiza sozinha.
+            Voltamos do checkout do Asaas e estamos conferindo a confirmação. Aguarde alguns segundos — esta página atualiza sozinha.
           </p>
-          {orderNsu && (
+          {(paymentId || externalReference) && (
             <div className={styles.details}>
               <p className={styles.sessionId}>
-                Pedido: <code>{orderNsu}</code>
+                Pedido: <code>{txLabel}</code>
               </p>
             </div>
           )}

@@ -8,7 +8,7 @@ Landing page corporativa de alta conversão, minimalista (P&B), com motion backg
 - **Estilização**: CSS Modules + CSS Custom Properties (design tokens)
 - **Animações**: Framer Motion + Canvas API (motion background)
 - **Ícones**: Lucide React
-- **Pagamentos**: Pix via InfinitePay
+- **Pagamentos**: Pix / Boleto / Cartão via Asaas
 - **Deploy**: GitHub Pages (static export)
 
 ## Arquitetura
@@ -46,7 +46,7 @@ src/
 Edite **apenas** `src/config.ts` para personalizar:
 
 - Marca, hero, serviços, preços, depoimentos
-- Handle InfinitePay, URLs de retorno, WhatsApp
+- Credenciais Asaas, URLs de retorno, WhatsApp
 - SEO metadata, navegação, footer
 
 ## Desenvolvimento
@@ -74,7 +74,7 @@ npm run lint
 ## Deploy GitHub Pages
 
 1. Configure `NEXT_PUBLIC_SITE_URL` nas variáveis do repositório
-2. Adicione o handle InfinitePay: `INFINITE_PAY_HANDLE`
+2. Adicione as credenciais Asaas: `ASAAS_API_KEY` e `ASAAS_ENV` (sandbox/production)
 3. GitHub Actions fará build e deploy automático do folder `out/`
 
 ```yaml
@@ -113,15 +113,26 @@ jobs:
 
 4. Em Settings → Pages, selecione "GitHub Actions" como source
 
-## InfinitePay Setup
+## Asaas Setup
 
-1. Crie sua conta e pegue sua InfiniteTag (sem o `$`)
-2. Defina `INFINITE_PAY_HANDLE` no `.env.local` e na Vercel
-3. Webhook padrão em `https://seudominio.com/api/webhooks/checkout` (opcional)
+1. Crie sua conta em https://www.asaas.com (use Sandbox para testes: https://sandbox.asaas.com)
+2. Gere sua API Key em **Minha Conta > Integrações > Gerar nova chave de API**
+3. Defina no `.env.local` e na Vercel:
+   ```
+   ASAAS_API_KEY=sua_chave_aqui
+   ASAAS_ENV=sandbox  # ou production
+   ```
+4. (Opcional) Cadastre o Webhook em **Minha Conta > Integrações > Webhooks** apontando para `https://seudominio.com/api/webhooks/checkout` e ative os eventos `PAYMENT_CONFIRMED`, `PAYMENT_RECEIVED`
+5. Veja `src/lib/asaas.ts` para `SANDBOX_URL` vs `PROD_URL` — a troca é automática via `ASAAS_ENV`
+
+## Webhook Asaas
+
+O Asaas notifica via `POST /api/webhooks/checkout` com `{ event, payment: { id, externalReference, status } }`.
+Responda sempre `200`. A confirmação visível ao usuário também funciona via polling (`POST /api/checkout/status`).
 
 ## WhatsApp Integration
 
-Pós-pagamento redireciona automaticamente para WhatsApp com mensagem pré-preenchida contendo o `order_nsu`.
+Pós-pagamento redireciona automaticamente para WhatsApp com mensagem pré-preenchida contendo o `externalReference` / `paymentId`.
 
 ## Acessibilidade (WCAG AA)
 
