@@ -123,6 +123,35 @@ export interface CreatePaymentResult {
   externalReference: string;
   value: number;
   billingType: string;
+  bankSlipUrl?: string | null;
+  identificationField?: string | null;
+  pixQrCodePayload?: string | null;
+}
+
+/** Flag para desabilitar Pix enquanto conta não aprovada — controla UI "Em desenvolvimento..." */
+export function isPixEnabled(): boolean {
+  // Quando Asaas liberar Pix, set ASAAS_PIX_ENABLED=true ou ASAAS_ENV=production com conta aprovada
+  if (process.env.ASAAS_PIX_ENABLED === 'true') return true;
+  if (process.env.ASAAS_PIX_ENABLED === 'false') return false;
+  // Auto-detect: se ASAAS_ENV=production mas Pix falhou antes, mantém desabilitado por padrão até manual
+  return false;
+}
+
+export interface InstallmentOption {
+  installment: number;
+  value: number;
+  total: number;
+}
+
+/** Simula parcelas como o Asaas mostraria no redirect — sem juros para 1x, com juros Asaas aproximado para 2-12x */
+export function simulateInstallments(value: number, maxInstallments = 12): InstallmentOption[] {
+  const opts: InstallmentOption[] = [];
+  for (let i = 1; i <= maxInstallments; i++) {
+    // Asaas cobra ~1.99% a.m. para parcelado no cartão — aproximamos para UI; backend Asaas recalcula exato
+    const total = i === 1 ? value : Number((value * (1 + 0.0199 * i)).toFixed(2));
+    opts.push({ installment: i, value: Number((total / i).toFixed(2)), total });
+  }
+  return opts;
 }
 
 function tomorrowISO(): string {
@@ -148,7 +177,16 @@ export async function createAsaasPayment(input: CreatePaymentInput): Promise<Cre
   const data = (await asaasFetch('/payments', {
     method: 'POST',
     body: JSON.stringify(payload),
-  })) as { id: string; invoiceUrl: string; value: number; billingType: string; externalReference: string };
+  })) as {
+    id: string;
+    invoiceUrl: string;
+    value: number;
+    billingType: string;
+    externalReference: string;
+    bankSlipUrl?: string;
+    identificationField?: string;
+    pixQrCodePayload?: string;
+  };
 
   if (!data.id || !data.invoiceUrl) throw new Error('Resposta inválida do Asaas ao criar cobrança');
   return {
@@ -157,6 +195,9 @@ export async function createAsaasPayment(input: CreatePaymentInput): Promise<Cre
     externalReference: data.externalReference ?? input.externalReference,
     value: data.value,
     billingType: data.billingType,
+    bankSlipUrl: data.bankSlipUrl ?? null,
+    identificationField: data.identificationField ?? null,
+    pixQrCodePayload: data.pixQrCodePayload ?? null,
   };
 }
 
@@ -165,6 +206,19 @@ export interface PaymentStatusResult {
   paid: boolean;
   value: number | null;
   billingType: string | null;
+}
+
+export async function getPaymentBillingInfo(paymentId: string): Promise<{ bankSlipUrl: string | null; identificationField: string | null; invoiceUrl: string | null }> {
+  const data = (await asaasFetch(`/payments/${encodeURIComponent(paymentId)}`, { method: 'GET' })) as {
+    bankSlipUrl?: string;
+    identificationField?: string;
+    invoiceUrl?: string;
+  };
+  return {
+    bankSlipUrl: data.bankSlipUrl ?? null,
+    identificationField: data.identificationField ?? null,
+    invoiceUrl: data.invoiceUrl ?? null,
+  };
 }
 
 export async function getPaymentStatus(
