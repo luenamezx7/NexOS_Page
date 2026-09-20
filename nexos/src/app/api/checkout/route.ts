@@ -17,6 +17,8 @@ const bodySchema = z.object({
   name: z.string().trim().min(3).max(120),
   email: z.string().trim().email().max(160),
   cpfCnpj: z.string().trim().min(11).max(18),
+  billingType: z.enum(['PIX', 'BOLETO', 'CREDIT_CARD', 'UNDEFINED']).optional().default('UNDEFINED'),
+  installments: z.coerce.number().int().min(1).max(12).optional().default(1),
   quantity: z.coerce.number().int().min(1).max(BULK_MAX_QTY).optional().default(1),
 });
 
@@ -87,6 +89,8 @@ export async function POST(req: NextRequest) {
   let name: string;
   let email: string;
   let cpfCnpj: string;
+  let billingType: 'PIX' | 'BOLETO' | 'CREDIT_CARD' | 'UNDEFINED';
+  let installments: number;
   let quantity: number;
   try {
     const body: unknown = await req.json();
@@ -94,7 +98,7 @@ export async function POST(req: NextRequest) {
     if (!parsed.success) {
       return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400, headers: securityHeaders() });
     }
-    ({ productId, name, email, cpfCnpj, quantity } = parsed.data);
+    ({ productId, name, email, cpfCnpj, billingType, installments, quantity } = parsed.data);
   } catch {
     return NextResponse.json({ error: 'Payload inválido' }, { status: 400, headers: securityHeaders() });
   }
@@ -116,21 +120,41 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Valor mínimo para cobrança no Asaas é R$ 5,00.' }, { status: 400, headers: securityHeaders() });
   }
 
+  // Pix ainda em aprovação — bloqueia no servidor também
+  if (billingType === 'PIX') {
+    return NextResponse.json({ error: 'Pix em desenvolvimento — liberação pendente no Asaas.' }, { status: 400, headers: securityHeaders() });
+  }
+
+  // Parcelas: Asaas recebe value + installmentCount via API transparente; para UNDEFINED/BOLETO é sempre 1x
+  const effectiveBillingType = billingType === 'CREDIT_CARD' ? 'CREDIT_CARD' : billingType === 'BOLETO' ? 'BOLETO' : 'UNDEFINED';
+
   try {
     const externalReference = generateExternalReference();
 
-    const { invoiceUrl, id } = await createAsaasPayment({
+    const result = await createAsaasPayment({
       amount,
       description: (quantity > 1 ? `${service.title} x${quantity}` : service.title).slice(0, 120),
       externalReference,
       customerName: name,
       customerEmail: email,
       cpfCnpj: cpfDigits,
-      billingType: 'UNDEFINED',
+      billingType: effectiveBillingType,
     });
 
+    // Para cartão com parcelas, o invoiceUrl já abre com parcelamento selecionado no iframe
+    // O valor de parcelas é exibido no front via /api/checkout/installments, o Asaas calcula o total na página deles
     return NextResponse.json(
-      { paymentUrl: invoiceUrl, paymentId: id, externalReference, amount: Math.round(amount * 100), currency: 'brl' },
+      {
+        paymentUrl: result.invoiceUrl,
+        paymentId: result.id,
+        externalReference,
+        amount: Math.round(amount * 100),
+        currency: 'brl',
+        billingType: result.billingType,
+        bankSlipUrl: result.bankSlipUrl ?? null,
+        identificationField: result.identificationField ?? null,
+        installments: effectiveBillingType === 'CREDIT_CARD' ? installments : 1,
+      },
       { status: 200, headers: securityHeaders() },
     );
   } catch (err) {
