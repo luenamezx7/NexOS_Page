@@ -2,17 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { config } from '@/config';
 import { BULK_MAX_QTY, bulkUnitPrice } from '@/lib/bulk-pricing';
-import {
-  createPixLink,
-  generateOrderNsu,
-  isInfinitePayConfigured,
-} from '@/lib/infinitepay';
+import { createAsaasPayment, generateExternalReference, isAsaasConfigured } from '@/lib/asaas';
 
 // ============================================================
-// NexOS — Checkout Pix via InfinitePay (taxa zero)
+// NexOS — Checkout via Asaas (PIX / Boleto / Cartão)
 // POST /api/checkout { productId, name, email, quantity? }
-//   → { paymentUrl, orderNsu, amount, currency }
-// Amount (centavos) resolvido no servidor a partir do catálogo
+//   → { paymentUrl, externalReference, paymentId, amount, currency }
+// Amount (reais) resolvido no servidor a partir do catálogo
 // em config.services × quantity — nunca do client.
 // ============================================================
 
@@ -66,10 +62,9 @@ function securityHeaders(): Record<string, string> {
 export async function GET() {
   return NextResponse.json(
     {
-      ok: isInfinitePayConfigured(),
-      provider: 'infinitepay',
-      method: 'pix',
-      hasHandle: isInfinitePayConfigured(),
+      ok: isAsaasConfigured(),
+      provider: 'asaas',
+      hasKey: isAsaasConfigured(),
       products: config.services.map((s) => ({ id: s.id, title: s.title, price: s.price })),
     },
     { headers: securityHeaders() },
@@ -82,8 +77,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Muitas tentativas. Aguarde um minuto e tente novamente.' }, { status: 429, headers: securityHeaders() });
   }
 
-  if (!isInfinitePayConfigured()) {
-    console.error('[api/checkout] INFINITE_PAY_HANDLE não configurado');
+  if (!isAsaasConfigured()) {
+    console.error('[api/checkout] ASAAS_API_KEY não configurado');
     return NextResponse.json({ error: 'Pagamentos temporariamente indisponíveis.' }, { status: 500, headers: securityHeaders() });
   }
 
@@ -108,36 +103,31 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Produto inválido.' }, { status: 400, headers: securityHeaders() });
   }
 
-  const unitCents = Math.round(bulkUnitPrice(service.price, quantity, productId) * 100);
-  const amountCents = unitCents * quantity;
-  if (!Number.isFinite(amountCents) || amountCents < 1) {
+  const unitPrice = bulkUnitPrice(service.price, quantity, productId);
+  const amount = Number((unitPrice * quantity).toFixed(2));
+  if (!Number.isFinite(amount) || amount < 1) {
     return NextResponse.json({ error: 'Preço inválido.' }, { status: 400, headers: securityHeaders() });
   }
 
   try {
-    const orderNsu = generateOrderNsu();
-    const origin = req.headers.get('origin') ?? process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
-    const base = origin.replace(/\/$/, '');
-    const redirectUrl = `${base}/sucesso?provider=infinitepay&order_nsu=${encodeURIComponent(orderNsu)}`;
-    const webhookUrl = (process.env.INFINITE_PAY_WEBHOOK_URL ?? '').trim() || `${base}/api/webhooks/checkout`;
+    const externalReference = generateExternalReference();
 
-    const { paymentUrl } = await createPixLink({
-      amountCents,
+    const { invoiceUrl, id } = await createAsaasPayment({
+      amount,
       description: (quantity > 1 ? `${service.title} x${quantity}` : service.title).slice(0, 120),
-      orderNsu,
+      externalReference,
       customerName: name,
       customerEmail: email,
-      redirectUrl,
-      webhookUrl,
+      billingType: 'UNDEFINED',
     });
 
     return NextResponse.json(
-      { paymentUrl, orderNsu, amount: amountCents, currency: 'brl' },
+      { paymentUrl: invoiceUrl, paymentId: id, externalReference, amount: Math.round(amount * 100), currency: 'brl' },
       { status: 200, headers: securityHeaders() },
     );
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.error('[api/checkout] InfinitePay error', msg);
-    return NextResponse.json({ error: 'Erro ao gerar Pix. Tente novamente.' }, { status: 500, headers: securityHeaders() });
+    console.error('[api/checkout] Asaas error', msg);
+    return NextResponse.json({ error: 'Erro ao gerar cobrança. Tente novamente.' }, { status: 500, headers: securityHeaders() });
   }
 }

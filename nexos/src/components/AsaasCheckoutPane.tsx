@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
-import { QrCode, CreditCard, Wallet, ExternalLink, Loader2, Check, Copy, RefreshCw, ShieldCheck, ReceiptText } from 'lucide-react';
+import { QrCode, CreditCard, Wallet, ExternalLink, Loader2, Check, Copy, RefreshCw, ShieldCheck } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 import { bulkUnitPrice } from '@/lib/bulk-pricing';
 
@@ -12,7 +12,7 @@ const POLL_MAX_TRIES = 60; // ~5 min
 
 type PixState = 'idle' | 'generating' | 'pending' | 'error';
 
-interface InfinityPixPaneProps {
+interface AsaasCheckoutPaneProps {
   productId: string | null;
   productPrice: number;
   quantity?: number;
@@ -38,13 +38,13 @@ function validateEmailField(v: string): string | null {
 }
 
 // ============================================================
-// NexOS — Checkout InfinitePay (todos os métodos: Pix, cartão,
-// carteiras). idle → generating (POST /api/checkout) → pending
-// (link externo + polling de /status a cada 5s) → success.
-// O cliente escolhe o método no checkout da InfinitePay (nova aba).
+// NexOS — Checkout Asaas (PIX / boleto / cartão)
+// idle → generating (POST /api/checkout) → pending
+// (link externo invoiceUrl + polling de /api/checkout/status a cada 5s) → success.
+// O cliente escolhe o método no checkout do Asaas (invoiceUrl).
 // ============================================================
 
-export function InfinityPixPane({
+export function AsaasCheckoutPane({
   productId,
   productPrice,
   quantity = 1,
@@ -55,26 +55,21 @@ export function InfinityPixPane({
   nameError,
   emailError,
   onSuccess,
-}: InfinityPixPaneProps) {
+}: AsaasCheckoutPaneProps) {
   const reduce = useReducedMotion() ?? false;
   const { theme } = useTheme();
   const isDark = theme === 'dark';
   const [state, setState] = useState<PixState>('idle');
   const [fatal, setFatal] = useState<string | null>(null);
   const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
-  const [orderNsu, setOrderNsu] = useState<string | null>(null);
+  const [paymentId, setPaymentId] = useState<string | null>(null);
+  const [externalReference, setExternalReference] = useState<string | null>(null);
   const [checking, setChecking] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [manualOpen, setManualOpen] = useState(false);
-  const [manualCode, setManualCode] = useState('');
-  const [manualChecking, setManualChecking] = useState(false);
-  const [manualResult, setManualResult] = useState<'paid' | 'pending' | null>(null);
-  const [manualMethod, setManualMethod] = useState<string | null>(null);
-  const [manualError, setManualError] = useState<string | null>(null);
+  const [pollExpired, setPollExpired] = useState(false);
   const triesRef = useRef(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const inFlightRef = useRef(false);
-  const [pollExpired, setPollExpired] = useState(false);
 
   const amountLabel = `R$ ${(bulkUnitPrice(productPrice, quantity, productId ?? undefined) * quantity).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
@@ -88,17 +83,14 @@ export function InfinityPixPane({
   useEffect(() => stopPolling, [stopPolling]);
 
   const verifyPayment = useCallback(
-    async (nsu: string): Promise<boolean> => {
-      // Trava de sobreposição: com intervalo de 5s e rede lenta, ticks
-      // acumulavam requests. Um por vez — sem isso, parecia "travado".
+    async (id: string): Promise<boolean> => {
       if (inFlightRef.current) return false;
       inFlightRef.current = true;
       try {
         const res = await fetch('/api/checkout/status', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ orderNsu: nsu }),
-          // Timeout client-side: sem isso, servidor instável = espera infinita
+          body: JSON.stringify({ paymentId: id }),
           signal: AbortSignal.timeout(20000),
         });
         const body: { paid?: boolean } = await res.json().catch(() => ({}));
@@ -113,22 +105,18 @@ export function InfinityPixPane({
   );
 
   const startPolling = useCallback(
-    (nsu: string) => {
+    (id: string) => {
       stopPolling();
       triesRef.current = 0;
       setPollExpired(false);
       timerRef.current = setInterval(async () => {
         triesRef.current += 1;
-        // Fim do polling com orientação (nunca espera "para sempre"):
-        // se o usuário pagou OUTRA cobrança (ex.: manual no app),
-        // este order_nsu nunca confirma — abre a verificação manual.
         if (triesRef.current >= POLL_MAX_TRIES) {
           stopPolling();
           setPollExpired(true);
-          setManualOpen(true);
           return;
         }
-        const paid = await verifyPayment(nsu);
+        const paid = await verifyPayment(id);
         if (paid) {
           stopPolling();
           onSuccess();
@@ -157,26 +145,27 @@ export function InfinityPixPane({
         body: JSON.stringify({ productId, name: name.trim(), email: email.trim(), quantity }),
         signal: AbortSignal.timeout(25000),
       });
-      const body: { paymentUrl?: string; orderNsu?: string; error?: string } = await res.json().catch(() => ({}));
-      if (!res.ok || !body.paymentUrl || !body.orderNsu) {
-        throw new Error(body.error ?? 'Falha ao gerar Pix.');
+      const body: { paymentUrl?: string; paymentId?: string; externalReference?: string; error?: string } = await res.json().catch(() => ({}));
+      if (!res.ok || !body.paymentUrl || !body.paymentId) {
+        throw new Error(body.error ?? 'Falha ao gerar cobrança.');
       }
       setPaymentUrl(body.paymentUrl);
-      setOrderNsu(body.orderNsu);
+      setPaymentId(body.paymentId);
+      setExternalReference(body.externalReference ?? null);
       setState('pending');
-      startPolling(body.orderNsu);
+      startPolling(body.paymentId);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Erro ao gerar Pix.';
+      const msg = err instanceof Error ? err.message : 'Erro ao gerar cobrança.';
       setFatal(msg);
       setState('error');
     }
   }, [name, email, productId, quantity, onNameError, onEmailError, startPolling]);
 
   const handleManualCheck = useCallback(async () => {
-    if (!orderNsu || checking) return;
+    if (!paymentId || checking) return;
     setChecking(true);
     try {
-      const paid = await verifyPayment(orderNsu);
+      const paid = await verifyPayment(paymentId);
       if (paid) {
         stopPolling();
         onSuccess();
@@ -184,7 +173,7 @@ export function InfinityPixPane({
     } finally {
       setChecking(false);
     }
-  }, [orderNsu, checking, verifyPayment, stopPolling, onSuccess]);
+  }, [paymentId, checking, verifyPayment, stopPolling, onSuccess]);
 
   const handleCopyLink = useCallback(async () => {
     if (!paymentUrl) return;
@@ -209,42 +198,15 @@ export function InfinityPixPane({
   const handleReset = useCallback(() => {
     stopPolling();
     setPaymentUrl(null);
-    setOrderNsu(null);
+    setPaymentId(null);
+    setExternalReference(null);
     setFatal(null);
     setPollExpired(false);
     setState('idle');
   }, [stopPolling]);
 
-  // Cobrança criada manualmente no app InfinitePay: cola o link da
-  // cobrança ou o order_nsu para conferir se já foi paga.
-  const handleManualVerify = useCallback(async () => {
-    const code = manualCode.trim();
-    if (!code || manualChecking) return;
-    setManualChecking(true);
-    setManualError(null);
-    setManualResult(null);
-    setManualMethod(null);
-    try {
-      const res = await fetch('/api/checkout/status', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code }),
-        signal: AbortSignal.timeout(20000),
-      });
-      const body: { paid?: boolean; captureMethod?: string | null; error?: string } = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(body.error ?? 'Não foi possível verificar.');
-      setManualResult(body.paid === true ? 'paid' : 'pending');
-      if (body.paid === true && typeof body.captureMethod === 'string') setManualMethod(body.captureMethod);
-    } catch (err) {
-      setManualError(err instanceof Error ? err.message : 'Falha ao verificar.');
-    } finally {
-      setManualChecking(false);
-    }
-  }, [manualCode, manualChecking]);
-
   return (
     <div className="flex flex-col gap-5">
-      {/* Nome/e-mail para a cobrança — mesmo padrão inline */}
       <div className="flex flex-col gap-2">
         <p className={`font-mono text-[11px] uppercase tracking-[0.14em] ${isDark ? 'text-white/55' : 'text-ink/55'}`}>
           Seus dados para o pagamento *
@@ -274,8 +236,11 @@ export function InfinityPixPane({
             Cobrança de {amountLabel} pronta
           </p>
           <p className={`mx-auto mt-1 max-w-sm text-xs leading-relaxed ${isDark ? 'text-white/55' : 'text-ink/55'}`}>
-            Escolha como pagar no checkout seguro da InfinitePay: Pix com QR na hora (taxa zero), cartão em até 12x ou carteira digital. A confirmação chega sozinha.
+            Escolha como pagar no checkout seguro do Asaas: Pix com QR na hora, boleto ou cartão em até 12x. A confirmação chega sozinha.
           </p>
+          {externalReference && (
+            <p className={`mt-2 font-mono text-[10px] ${isDark ? 'text-white/30' : 'text-ink/30'}`}>Ref: {externalReference}</p>
+          )}
           <div className="mt-4 flex flex-col gap-2">
             <a
               href={paymentUrl}
@@ -285,7 +250,7 @@ export function InfinityPixPane({
             >
               <span className="relative z-10 inline-flex items-center gap-2">
                 <ExternalLink size={16} strokeWidth={2} aria-hidden="true" />
-                Pagar na InfinitePay
+                Pagar no Asaas
               </span>
             </a>
             <div className="flex gap-2">
@@ -319,7 +284,7 @@ export function InfinityPixPane({
           <p className={`mt-4 flex items-center justify-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] ${isDark ? 'text-white/30' : 'text-ink/35'}`}>
             {pollExpired ? (
               <span className="normal-case tracking-normal text-xs" role="status">
-                Não detectamos o pagamento desta cobrança. Pagou outra cobrança (ex.: manual no app)? Confira abaixo em “Verificar pagamento”.
+                Não detectamos o pagamento ainda. Se já pagou, clique em “Já paguei, verificar” ou aguarde alguns segundos.
               </span>
             ) : (
               <motion.span
@@ -338,13 +303,13 @@ export function InfinityPixPane({
           <div className={`rounded-xl border p-4 ${isDark ? 'border-white/10 bg-white/[0.03]' : 'border-ink/10 bg-ink/[0.03]'}`}>
             <p className={`flex items-start gap-2.5 text-[13px] leading-relaxed ${isDark ? 'text-white/65' : 'text-ink/65'}`}>
               <QrCode size={18} strokeWidth={2} className="mt-0.5 shrink-0 text-[#ff2e6a]" aria-hidden="true" />
-              Geramos uma cobrança de <span className={`font-semibold ${isDark ? 'text-white' : 'text-ink'}`}>{amountLabel}</span> na InfinitePay — escolha o método no checkout.
+              Geramos uma cobrança de <span className={`font-semibold ${isDark ? 'text-white' : 'text-ink'}`}>{amountLabel}</span> no Asaas — escolha o método no checkout.
             </p>
             <div className="mt-3 flex flex-wrap gap-1.5" aria-label="Métodos aceitos">
               {[
-                { icon: <QrCode size={12} strokeWidth={2} aria-hidden="true" />, label: 'Pix · taxa zero' },
+                { icon: <QrCode size={12} strokeWidth={2} aria-hidden="true" />, label: 'Pix' },
                 { icon: <CreditCard size={12} strokeWidth={2} aria-hidden="true" />, label: 'Cartão até 12x' },
-                { icon: <Wallet size={12} strokeWidth={2} aria-hidden="true" />, label: 'Apple Pay · Google Pay' },
+                { icon: <Wallet size={12} strokeWidth={2} aria-hidden="true" />, label: 'Boleto' },
               ].map((m) => (
                 <span
                   key={m.label}
@@ -391,67 +356,10 @@ export function InfinityPixPane({
 
       <p className={`flex items-center justify-center gap-2 text-center font-mono text-[11px] uppercase tracking-[0.14em] ${isDark ? 'text-white/35' : 'text-ink/40'}`}>
         <ShieldCheck size={14} strokeWidth={2} aria-hidden="true" />
-        InfinitePay · Pix, cartão e carteiras · sem dados salvos
+        Asaas · Pix, boleto e cartão · sem dados salvos
       </p>
-
-      {/* Cobrança manual (criada no app): verificação avulsa por link/order_nsu */}
-      <div className={`rounded-xl border ${isDark ? 'border-white/10 bg-white/[0.02]' : 'border-ink/10 bg-ink/[0.02]'}`}>
-        <button
-          type="button"
-          onClick={() => setManualOpen((v) => !v)}
-          aria-expanded={manualOpen}
-          className="flex w-full items-center gap-2.5 px-4 py-3.5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff2e6a]/60 rounded-xl"
-        >
-          <ReceiptText size={16} strokeWidth={2} className="shrink-0 text-[#ff2e6a]" aria-hidden="true" />
-          <span className={`text-[13px] font-semibold ${isDark ? 'text-white/80' : 'text-ink/80'}`}>
-            Criou a cobrança no app? Verificar pagamento
-          </span>
-        </button>
-        {manualOpen && (
-          <div className="flex flex-col gap-2.5 px-4 pb-4">
-            <label htmlFor="pix-manual-code" className={`font-mono text-[10px] uppercase tracking-[0.14em] ${isDark ? 'text-white/40' : 'text-ink/40'}`}>
-              Link da cobrança ou order_nsu
-            </label>
-            <input
-              id="pix-manual-code"
-              type="text"
-              value={manualCode}
-              onChange={(e) => { setManualCode(e.target.value); setManualResult(null); setManualMethod(null); setManualError(null); }}
-              onKeyDown={(e) => { if (e.key === 'Enter') handleManualVerify(); }}
-              placeholder="https://checkout.infinitepay.com.br/… ou order_nsu"
-              autoComplete="off"
-              className="field-input !py-2.5 !text-[13px]"
-            />
-            <button
-              type="button"
-              onClick={handleManualVerify}
-              disabled={manualChecking || !manualCode.trim()}
-              className="btn-secondary-nex w-full !py-2.5 !text-xs disabled:cursor-wait disabled:opacity-60"
-            >
-              {manualChecking ? <Loader2 size={14} className="animate-spin" aria-hidden="true" /> : <RefreshCw size={14} strokeWidth={2} aria-hidden="true" />}
-              {manualChecking ? 'Consultando…' : 'Consultar status'}
-            </button>
-            {manualResult === 'paid' && (
-              <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#28c840]" role="status">
-                <Check size={14} strokeWidth={2.5} aria-hidden="true" />
-                Pagamento confirmado na InfinitePay{manualMethod ? ` via ${manualMethod === 'pix' ? 'Pix' : 'cartão'}` : ''}.
-              </p>
-            )}
-            {manualResult === 'pending' && (
-              <p className={`text-xs ${isDark ? 'text-white/55' : 'text-ink/55'}`} role="status">
-                Ainda não consta pagamento para essa cobrança. Se acabou de pagar, aguarde alguns segundos e consulte de novo.
-              </p>
-            )}
-            {manualError && (
-              <p className="text-xs text-red-500" role="alert">
-                {manualError}
-              </p>
-            )}
-          </div>
-        )}
-      </div>
     </div>
   );
 }
 
-export default InfinityPixPane;
+export default AsaasCheckoutPane;

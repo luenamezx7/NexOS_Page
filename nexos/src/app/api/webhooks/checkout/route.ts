@@ -2,29 +2,28 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 // ============================================================
-// NexOS — webhook do checkout (InfinitePay, confirmação real-time)
-// A InfinitePay POSTA aqui quando o pagamento aprova:
-// { invoice_slug, amount, paid_amount, installments, capture_method,
-//   transaction_nsu, order_nsu, receipt_url, items }
-// Responda 200 rápido (<1s). Responder 400 faz ela tentar de novo.
-// Sem banco de dados: validamos o shape, registramos o log e
-// a confirmação visível ao usuário vem do polling de status.
-// Configure INFINITE_PAY_WEBHOOK_URL (padrão: este endpoint).
+// NexOS — webhook do Asaas (confirmação real-time)
+// Configure em: Minha Conta > Integrações > Webhooks (Asaas)
+// URL: {NEXT_PUBLIC_SITE_URL}/api/webhooks/checkout
+// Eventos recomendados: PAYMENT_CONFIRMED, PAYMENT_RECEIVED,
+// PAYMENT_OVERDUE, PAYMENT_REFUNDED
+// O Asaas envia { event, payment: { id, externalReference, status, value, billingType } }
+// Responda 200 rápido (<1s).
 // ============================================================
 
 const webhookSchema = z.object({
-  invoice_slug: z.string().min(1).max(120),
-  amount: z.number().int().nonnegative(),
-  paid_amount: z.number().int().nonnegative().optional(),
-  installments: z.number().int().min(1).max(12).optional(),
-  capture_method: z.string().min(1).max(32).optional(),
-  transaction_nsu: z.string().min(1).max(120),
-  order_nsu: z.string().min(1).max(36),
-  receipt_url: z.string().url().max(500).optional(),
+  event: z.string().min(1).max(40),
+  payment: z.object({
+    id: z.string().min(1).max(40),
+    externalReference: z.string().min(1).max(36).optional().nullable(),
+    status: z.string().min(1).max(32),
+    value: z.number().optional(),
+    billingType: z.string().optional(),
+  }),
 });
 
 export async function GET() {
-  return NextResponse.json({ ok: true, provider: 'infinitepay', hint: 'POST webhook events here' });
+  return NextResponse.json({ ok: true, provider: 'asaas', hint: 'POST webhook events here' });
 }
 
 export async function POST(req: NextRequest) {
@@ -37,14 +36,18 @@ export async function POST(req: NextRequest) {
 
   const parsed = webhookSchema.safeParse(payload);
   if (!parsed.success) {
-    console.warn('[webhook/checkout] payload fora do shape:', JSON.stringify(payload).slice(0, 400));
+    console.warn('[webhook/checkout] payload fora do shape:', JSON.stringify(payload).slice(0, 600));
     return NextResponse.json({ error: 'Shape inválido' }, { status: 400 });
   }
 
-  const { order_nsu, capture_method, paid_amount, transaction_nsu } = parsed.data;
+  const { event, payment } = parsed.data;
   console.info(
-    `[webhook/checkout] pago order_nsu=${order_nsu} via=${capture_method ?? '?'} valor=${paid_amount ?? '?'} txn=${transaction_nsu}`,
+    `[webhook/checkout] ${event} payment=${payment.id} ref=${payment.externalReference ?? '?'} status=${payment.status} billingType=${payment.billingType ?? '?'} value=${payment.value ?? '?'}`,
   );
+
+  // PAYMENT_CONFIRMED / PAYMENT_RECEIVED → marque pedido como PAGO no seu banco
+  // usando payment.externalReference para localizar o pedido.
+  // Sem DB no projeto atual: apenas log. Confirmação visível ao usuário vem do polling.
 
   return NextResponse.json({ ok: true }, { status: 200 });
 }

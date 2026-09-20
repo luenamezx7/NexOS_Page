@@ -162,7 +162,7 @@ export function Services({ className = '' }: ServicesProps) {
             className="mt-10 flex flex-row items-center justify-center gap-2.5 text-center text-sm text-ink/45 will-change-transform"
           >
             <ShieldCheck size={16} strokeWidth={2} className="shrink-0 text-ink/45" aria-hidden="true" />
-            <span>Pix, cartão em até 12x e carteiras digitais via InfinitePay — confirmação automática.</span>
+            <span>Pix, boleto e cartão em até 12x via Asaas — confirmação automática.</span>
           </motion.div>
         </div>
       </section>
