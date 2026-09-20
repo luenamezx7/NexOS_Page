@@ -11,7 +11,7 @@ import { AsaasCheckoutPane } from './AsaasCheckoutPane';
 
 // ============================================================
 // NexOS — Checkout Asaas (Pix / boleto / cartão)
-// Fluxo único: nome + e-mail → gerar cobrança → checkout Asaas →
+// Fluxo único: nome + e-mail + CPF → gerar cobrança → checkout Asaas →
 // polling de confirmação → sucesso.
 // ============================================================
 
@@ -28,25 +28,41 @@ interface EmbeddedCheckoutDrawerProps {
 
 type DrawerState = 'idle' | 'success';
 
+function formatCpf(value: string): string {
+  const d = value.replace(/\D/g, '').slice(0, 14);
+  if (d.length <= 11) {
+    return d.replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+  }
+  return d.replace(/(\d{2})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{4})(\d{1,2})$/, '$1/$2-').replace(/(\d{2})(\d{1,2})$/, '$1-$2').slice(0, 18);
+}
+
 // Campos do cliente com feedback inline (mesmo padrão do contato).
 function CustomerFields({
   name,
   email,
+  cpfCnpj,
   nameError,
   emailError,
+  cpfError,
   onNameChange,
   onEmailChange,
+  onCpfChange,
   onNameBlur,
   onEmailBlur,
+  onCpfBlur,
 }: {
   name: string;
   email: string;
+  cpfCnpj: string;
   nameError: string | null;
   emailError: string | null;
+  cpfError: string | null;
   onNameChange: (v: string) => void;
   onEmailChange: (v: string) => void;
+  onCpfChange: (v: string) => void;
   onNameBlur: () => void;
   onEmailBlur: () => void;
+  onCpfBlur: () => void;
 }) {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
@@ -99,6 +115,33 @@ function CustomerFields({
           </p>
         )}
       </div>
+
+      <div className="flex flex-col gap-2">
+        <label htmlFor="checkout-cpf" className={`font-mono text-[11px] uppercase tracking-[0.14em] ${isDark ? 'text-white/55' : 'text-ink/55'}`}>
+          CPF / CNPJ *
+        </label>
+        <input
+          id="checkout-cpf"
+          type="text"
+          value={cpfCnpj}
+          onChange={(e) => onCpfChange(formatCpf(e.target.value))}
+          onBlur={onCpfBlur}
+          placeholder="000.000.000-00"
+          inputMode="numeric"
+          autoComplete="off"
+          required
+          aria-invalid={cpfError ? 'true' : 'false'}
+          aria-describedby={cpfError ? 'checkout-cpf-error' : undefined}
+          className={`field-input ${cpfError ? '!border-red-500/60' : ''}`}
+        />
+        {cpfError ? (
+          <p id="checkout-cpf-error" className="text-xs text-red-500" role="alert">
+            {cpfError}
+          </p>
+        ) : (
+          <p className={`text-[11px] ${isDark ? 'text-white/35' : 'text-ink/35'}`}>Obrigatório para a cobrança Asaas (Pix/boleto).</p>
+        )}
+      </div>
     </div>
   );
 }
@@ -110,13 +153,16 @@ export function EmbeddedCheckoutDrawer({ open, onClose, productId, productTitle,
   const [drawerState, setDrawerState] = useState<DrawerState>('idle');
   const [customerName, setCustomerName] = useState<string>('');
   const [customerEmail, setCustomerEmail] = useState<string>('');
+  const [customerCpf, setCustomerCpf] = useState<string>('');
   const [nameError, setNameError] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [cpfError, setCpfError] = useState<string | null>(null);
 
   const handleClose = useCallback(() => {
     setDrawerState('idle');
     setNameError(null);
     setEmailError(null);
+    setCpfError(null);
     onClose();
   }, [onClose]);
 
@@ -129,9 +175,6 @@ export function EmbeddedCheckoutDrawer({ open, onClose, productId, productTitle,
     return () => window.removeEventListener('keydown', onKey);
   }, [open, handleClose]);
 
-  // Trava real do scroll: lenis.stop() + overflow + compensação da
-  // scrollbar. O scroll fica restrito ao container interno
-  // (data-lenis-prevent + overscroll-contain). Ver useScrollLock.
   useScrollLock(open);
 
   const validateNameBlur = useCallback(() => {
@@ -145,6 +188,13 @@ export function EmbeddedCheckoutDrawer({ open, onClose, productId, productTitle,
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail)) setEmailError('E-mail inválido');
     else setEmailError(null);
   }, [customerEmail]);
+
+  const validateCpfBlur = useCallback(() => {
+    const d = customerCpf.replace(/\D/g, '');
+    if (!d) setCpfError('CPF/CNPJ é obrigatório');
+    else if (d.length !== 11 && d.length !== 14) setCpfError('CPF deve ter 11 dígitos ou CNPJ 14');
+    else setCpfError(null);
+  }, [customerCpf]);
 
   const amountLabel = `R$ ${(bulkUnitPrice(productPrice, quantity, productId ?? undefined) * quantity).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
@@ -191,7 +241,7 @@ export function EmbeddedCheckoutDrawer({ open, onClose, productId, productTitle,
                   </h2>
                   {drawerState !== 'success' && (
                     <p className={`mt-1 font-mono text-xs ${isDark ? 'text-white/50' : 'text-ink/55'}`}>
-                      {amountLabel} • Pix ou cartão • confirmação automática
+                      {amountLabel} • Pix/boleto/cartão • confirmação automática
                     </p>
                   )}
                 </div>
@@ -280,12 +330,16 @@ export function EmbeddedCheckoutDrawer({ open, onClose, productId, productTitle,
                   <CustomerFields
                     name={customerName}
                     email={customerEmail}
+                    cpfCnpj={customerCpf}
                     nameError={nameError}
                     emailError={emailError}
+                    cpfError={cpfError}
                     onNameChange={(v) => { setCustomerName(v); if (nameError) setNameError(null); }}
                     onEmailChange={(v) => { setCustomerEmail(v); if (emailError) setEmailError(null); }}
+                    onCpfChange={(v) => { setCustomerCpf(v); if (cpfError) setCpfError(null); }}
                     onNameBlur={validateNameBlur}
                     onEmailBlur={validateEmailBlur}
+                    onCpfBlur={validateCpfBlur}
                   />
                   <AsaasCheckoutPane
                     productId={productId}
@@ -293,10 +347,13 @@ export function EmbeddedCheckoutDrawer({ open, onClose, productId, productTitle,
                     quantity={quantity}
                     name={customerName}
                     email={customerEmail}
+                    cpfCnpj={customerCpf}
                     onNameError={setNameError}
                     onEmailError={setEmailError}
+                    onCpfError={setCpfError}
                     nameError={nameError}
                     emailError={emailError}
+                    cpfError={cpfError}
                     onSuccess={() => setDrawerState('success')}
                   />
                 </div>
@@ -307,7 +364,7 @@ export function EmbeddedCheckoutDrawer({ open, onClose, productId, productTitle,
               <div className={`border-t px-6 py-4 md:px-7 ${isDark ? 'border-white/10 bg-white/[0.02]' : 'border-ink/10 bg-ink/[0.02]'}`} style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
                 <p className={`flex items-center justify-center gap-2 text-center font-mono text-[10px] uppercase tracking-[0.16em] ${isDark ? 'text-white/30' : 'text-ink/35'}`}>
                   <Lock size={12} strokeWidth={2} aria-hidden="true" />
-                  Pix, cartão e carteiras • Nenhum dado salvo no navegador
+                  Asaas • Pix/boleto/cartão • mínimo R$ 5,00
                 </p>
               </div>
             )}

@@ -34,9 +34,9 @@ export const config: SiteConfig = {
     {
       id: 'teste',
       title: 'TESTE CHECKOUT',
-      description: 'Produto de teste para validar o checkout Pix. Sem cobrança real — confirme com R$ 1,00 ou cancele antes de pagar.',
-      price: 1.0,
-      features: ['Ambiente de teste', 'Valida Pix via Asaas', 'Confirmação automática', 'Suporte via WhatsApp'],
+      description: 'Produto de teste para validar o checkout Asaas. Sem cobrança real — confirme com R$ 5,00 (mínimo Asaas) ou cancele antes de pagar.',
+      price: 5.0,
+      features: ['Ambiente de teste', 'Valida pagamento via Asaas', 'Confirmação automática', 'Suporte via WhatsApp'],
       ctaText: 'Testar Checkout',
     },
   ],
