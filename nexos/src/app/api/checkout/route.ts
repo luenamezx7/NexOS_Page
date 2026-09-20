@@ -16,6 +16,7 @@ const bodySchema = z.object({
   productId: z.string().min(1).max(40),
   name: z.string().trim().min(3).max(120),
   email: z.string().trim().email().max(160),
+  cpfCnpj: z.string().trim().min(11).max(18),
   quantity: z.coerce.number().int().min(1).max(BULK_MAX_QTY).optional().default(1),
 });
 
@@ -85,6 +86,7 @@ export async function POST(req: NextRequest) {
   let productId: string;
   let name: string;
   let email: string;
+  let cpfCnpj: string;
   let quantity: number;
   try {
     const body: unknown = await req.json();
@@ -92,9 +94,14 @@ export async function POST(req: NextRequest) {
     if (!parsed.success) {
       return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400, headers: securityHeaders() });
     }
-    ({ productId, name, email, quantity } = parsed.data);
+    ({ productId, name, email, cpfCnpj, quantity } = parsed.data);
   } catch {
     return NextResponse.json({ error: 'Payload inválido' }, { status: 400, headers: securityHeaders() });
+  }
+
+  const cpfDigits = cpfCnpj.replace(/\D/g, '');
+  if (cpfDigits.length !== 11 && cpfDigits.length !== 14) {
+    return NextResponse.json({ error: 'CPF/CNPJ inválido. Use 11 dígitos (CPF) ou 14 (CNPJ).' }, { status: 400, headers: securityHeaders() });
   }
 
   const service = config.services.find((s) => s.id === productId);
@@ -105,8 +112,8 @@ export async function POST(req: NextRequest) {
 
   const unitPrice = bulkUnitPrice(service.price, quantity, productId);
   const amount = Number((unitPrice * quantity).toFixed(2));
-  if (!Number.isFinite(amount) || amount < 1) {
-    return NextResponse.json({ error: 'Preço inválido.' }, { status: 400, headers: securityHeaders() });
+  if (!Number.isFinite(amount) || amount < 5) {
+    return NextResponse.json({ error: 'Valor mínimo para cobrança no Asaas é R$ 5,00.' }, { status: 400, headers: securityHeaders() });
   }
 
   try {
@@ -118,6 +125,7 @@ export async function POST(req: NextRequest) {
       externalReference,
       customerName: name,
       customerEmail: email,
+      cpfCnpj: cpfDigits,
       billingType: 'UNDEFINED',
     });
 
@@ -128,6 +136,8 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error('[api/checkout] Asaas error', msg);
-    return NextResponse.json({ error: 'Erro ao gerar cobrança. Tente novamente.' }, { status: 500, headers: securityHeaders() });
+    // Expõe detalhes de validação do Asaas (ex: CPF obrigatório, valor mínimo) sem vazar stack
+    const isValidation = msg.includes('invalid_') || msg.includes('CPF') || msg.includes('mínimo') || msg.includes('R$ 5');
+    return NextResponse.json({ error: isValidation ? msg.slice(0, 300) : 'Erro ao gerar cobrança. Tente novamente.' }, { status: 500, headers: securityHeaders() });
   }
 }

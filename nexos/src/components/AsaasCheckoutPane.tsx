@@ -18,10 +18,13 @@ interface AsaasCheckoutPaneProps {
   quantity?: number;
   name: string;
   email: string;
+  cpfCnpj: string;
   onNameError: (msg: string | null) => void;
   onEmailError: (msg: string | null) => void;
+  onCpfError: (msg: string | null) => void;
   nameError: string | null;
   emailError: string | null;
+  cpfError: string | null;
   onSuccess: () => void;
 }
 
@@ -34,6 +37,13 @@ function validateNameField(v: string): string | null {
 function validateEmailField(v: string): string | null {
   if (!v.trim()) return 'E-mail é obrigatório para o recibo';
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return 'E-mail inválido';
+  return null;
+}
+
+function validateCpfField(v: string): string | null {
+  const d = v.replace(/\D/g, '');
+  if (!d) return 'CPF/CNPJ é obrigatório';
+  if (d.length !== 11 && d.length !== 14) return 'CPF 11 dígitos ou CNPJ 14';
   return null;
 }
 
@@ -50,10 +60,13 @@ export function AsaasCheckoutPane({
   quantity = 1,
   name,
   email,
+  cpfCnpj,
   onNameError,
   onEmailError,
+  onCpfError,
   nameError,
   emailError,
+  cpfError,
   onSuccess,
 }: AsaasCheckoutPaneProps) {
   const reduce = useReducedMotion() ?? false;
@@ -129,11 +142,13 @@ export function AsaasCheckoutPane({
   const handleGenerate = useCallback(async () => {
     const nErr = validateNameField(name);
     const eErr = validateEmailField(email);
+    const cErr = validateCpfField(cpfCnpj);
     onNameError(nErr);
     onEmailError(eErr);
+    onCpfError(cErr);
     setFatal(null);
-    if (nErr || eErr || !productId) {
-      const target = document.getElementById(nErr ? 'checkout-name' : 'checkout-email');
+    if (nErr || eErr || cErr || !productId) {
+      const target = document.getElementById(cErr ? 'checkout-cpf' : nErr ? 'checkout-name' : 'checkout-email');
       target?.focus({ preventScroll: false });
       return;
     }
@@ -142,7 +157,7 @@ export function AsaasCheckoutPane({
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId, name: name.trim(), email: email.trim(), quantity }),
+        body: JSON.stringify({ productId, name: name.trim(), email: email.trim(), cpfCnpj: cpfCnpj.trim(), quantity }),
         signal: AbortSignal.timeout(25000),
       });
       const body: { paymentUrl?: string; paymentId?: string; externalReference?: string; error?: string } = await res.json().catch(() => ({}));
@@ -159,7 +174,7 @@ export function AsaasCheckoutPane({
       setFatal(msg);
       setState('error');
     }
-  }, [name, email, productId, quantity, onNameError, onEmailError, startPolling]);
+  }, [name, email, cpfCnpj, productId, quantity, onNameError, onEmailError, onCpfError, startPolling]);
 
   const handleManualCheck = useCallback(async () => {
     if (!paymentId || checking) return;
@@ -214,9 +229,9 @@ export function AsaasCheckoutPane({
         <p className={`text-[11px] leading-relaxed ${isDark ? 'text-white/35' : 'text-ink/40'}`}>
           Usados para gerar a cobrança e enviar o recibo. Confira nos campos acima.
         </p>
-        {(nameError || emailError) && (
+        {(nameError || emailError || cpfError) && (
           <p className="text-xs text-red-500" role="alert">
-            {nameError ?? emailError}
+            {cpfError ?? nameError ?? emailError}
           </p>
         )}
       </div>

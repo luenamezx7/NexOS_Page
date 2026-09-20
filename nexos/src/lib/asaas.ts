@@ -2,7 +2,7 @@
 // NexOS — Asaas (Pix / Boleto / Cartão) — helper server-side
 // Docs: https://docs.asaas.com/
 // API v3: sandbox https://sandbox.asaas.com/api/v3
-//         prod    https://api.asaas.com/api/v3
+//         prod    https://www.asaas.com/api/v3
 // Preço NUNCA vem do client: amount resolvido no servidor a
 // partir do catálogo em config.services (id do produto).
 // ============================================================
@@ -69,19 +69,36 @@ async function asaasFetch(path: string, init: RequestInit): Promise<unknown> {
 interface AsaasCustomer {
   id: string;
   email: string;
+  cpfCnpj?: string | null;
 }
 
-async function findOrCreateCustomer(name: string, email: string): Promise<string> {
+function onlyDigits(v: string): string {
+  return v.replace(/\D/g, '');
+}
+
+async function findOrCreateCustomer(name: string, email: string, cpfCnpj: string): Promise<string> {
+  const cpf = onlyDigits(cpfCnpj);
   // 1. Busca por email
   const search = (await asaasFetch(`/customers?email=${encodeURIComponent(email)}`, {
     method: 'GET',
   })) as { data?: AsaasCustomer[] };
-  if (search.data && search.data.length > 0) return search.data[0].id;
+  if (search.data && search.data.length > 0) {
+    const existing = search.data[0];
+    // Se já existe mas sem CPF, atualiza
+    if (!existing.cpfCnpj && cpf.length >= 11) {
+      const updated = (await asaasFetch(`/customers/${existing.id}`, {
+        method: 'POST',
+        body: JSON.stringify({ name, cpfCnpj: cpf }),
+      })) as AsaasCustomer;
+      return updated.id ?? existing.id;
+    }
+    return existing.id;
+  }
 
-  // 2. Cria
+  // 2. Cria com CPF/CNPJ
   const created = (await asaasFetch('/customers', {
     method: 'POST',
-    body: JSON.stringify({ name, email }),
+    body: JSON.stringify({ name, email, cpfCnpj: cpf }),
   })) as AsaasCustomer;
   if (!created.id) throw new Error('Falha ao criar cliente no Asaas');
   return created.id;
@@ -95,6 +112,7 @@ export interface CreatePaymentInput {
   externalReference: string;
   customerName: string;
   customerEmail: string;
+  cpfCnpj: string;
   dueDate?: string; // YYYY-MM-DD, default amanhã
   billingType?: 'PIX' | 'BOLETO' | 'CREDIT_CARD' | 'UNDEFINED';
 }
@@ -116,7 +134,7 @@ function tomorrowISO(): string {
 export async function createAsaasPayment(input: CreatePaymentInput): Promise<CreatePaymentResult> {
   if (!isAsaasConfigured()) throw new Error('ASAAS_API_KEY não configurado');
 
-  const customerId = await findOrCreateCustomer(input.customerName, input.customerEmail);
+  const customerId = await findOrCreateCustomer(input.customerName, input.customerEmail, input.cpfCnpj);
 
   const payload = {
     customer: customerId,
