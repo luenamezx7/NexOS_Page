@@ -19,7 +19,9 @@ const STORAGE_KEY = 'nexos-theme';
 function applyTheme(theme: Theme): void {
   const root: HTMLElement = document.documentElement;
   root.classList.toggle('dark', theme === 'dark');
-  root.style.colorScheme = theme;
+  root.style.colorScheme = `only ${theme}`;
+  const meta = document.querySelector('meta[name="color-scheme"]');
+  if (meta) meta.setAttribute('content', theme);
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {

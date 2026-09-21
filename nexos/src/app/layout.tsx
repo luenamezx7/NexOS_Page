@@ -69,10 +69,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)', color: '#000000' },
-  ],
+  themeColor: '#050505',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
@@ -89,9 +86,10 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <meta name="color-scheme" content="dark" />
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('nexos-theme');if(t==='light'){document.documentElement.classList.remove('dark');}document.documentElement.style.colorScheme=t==='light'?'light':'dark';}catch(e){}})()`,
+            __html: `(function(){try{var t=localStorage.getItem('nexos-theme');var s=t==='light'?'light':'dark';if(t==='light'){document.documentElement.classList.remove('dark');}else{document.documentElement.classList.add('dark');}document.documentElement.style.colorScheme='only '+s;var m=document.querySelector('meta[name=color-scheme]');if(m)m.content=s;}catch(e){}})()`,
           }}
         />
       </head>

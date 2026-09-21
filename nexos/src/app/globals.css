@@ -138,6 +138,12 @@ html {
   background-color: var(--color-canvas);
   /* clip (não hidden): não cria scroll-container, então position: sticky continua travando */
   overflow-x: clip;
+  /* Força o navegador a se adaptar ao tema escolhido, ignorando prefers-color-scheme */
+  color-scheme: only light;
+}
+
+html.dark {
+  color-scheme: only dark;
 }
 
 @media (max-width: 767px) {
