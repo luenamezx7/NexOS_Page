@@ -159,9 +159,10 @@ export function Header() {
                 e.preventDefault();
                 handleNav(item.href);
               }}
-              className="rounded-lg px-4 py-2 text-sm font-medium tracking-[-0.01em] text-ink/70 transition-colors duration-300 hover:bg-ink/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink touch-target"
+              className="group relative rounded-lg px-4 py-2 text-sm font-medium tracking-[-0.01em] text-ink/70 transition-colors duration-300 hover:bg-ink/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink touch-target"
             >
               {item.label}
+              <span className="pointer-events-none absolute inset-x-3 bottom-1 h-px w-0 bg-gradient-to-r from-[#ff5c8a] via-[#83358F] to-transparent opacity-0 shadow-[0_0_8px_rgba(255,92,138,0.6)] transition-all duration-300 group-hover:w-[calc(100%-1.5rem)] group-hover:opacity-100" aria-hidden="true" />
             </a>
           ))}
         </nav>

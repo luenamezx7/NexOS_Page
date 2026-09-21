@@ -11,10 +11,11 @@ interface SectionDef {
 
 const SECTIONS: SectionDef[] = [
   { id: 'hero', label: 'Início', number: '01' },
-  { id: 'services', label: 'Serviços', number: '02' },
-  { id: 'testimonials', label: 'Documentação & Ecossistema', number: '03' },
-  { id: 'faq', label: 'FAQ', number: '04' },
-  { id: 'contact', label: 'Contato', number: '05' },
+  { id: 'showcase', label: 'Placa Inteligente', number: '02' },
+  { id: 'services', label: 'Serviços', number: '03' },
+  { id: 'testimonials', label: 'Ecossistema', number: '04' },
+  { id: 'faq', label: 'FAQ', number: '05' },
+  { id: 'contact', label: 'Contato', number: '06' },
 ];
 
 function scrollToId(id: string): void {

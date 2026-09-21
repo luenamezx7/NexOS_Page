@@ -8,6 +8,7 @@ import type { FooterLink } from '@/types';
 import { Signature } from './signature';
 import { useTheme } from './ThemeProvider';
 import { openCookiePreferences } from './cookie-consent';
+import Plasma from './Plasma';
 
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
@@ -89,8 +90,13 @@ export function Footer() {
   const currentYear: number = new Date().getFullYear();
 
   return (
-    <footer role="contentinfo" className="glass-footer relative w-full max-w-full overflow-x-clip">
-      <div className="mx-auto w-full max-w-6xl px-4 pb-10 pt-12 sm:pb-10 sm:pt-16 md:px-8 md:pt-20">
+    <footer role="contentinfo" className="relative w-full max-w-full overflow-x-clip border-t border-ink/10 dark:border-white/10">
+      {/* Plasma por trás do vidro — igual ao header, fica borrado */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <Plasma color="#83358F" speed={0.6} scale={1.1} opacity={theme === 'dark' ? 0.55 : 0.32} mouseInteractive lightMode={theme !== 'dark'} />
+        <div className="absolute inset-0 bg-[#fdf6ec]/65 backdrop-blur-2xl dark:bg-black/35" />
+      </div>
+      <div className="relative mx-auto w-full max-w-6xl px-4 pb-10 pt-12 sm:pb-10 sm:pt-16 md:px-8 md:pt-20">
         <motion.div
           variants={reduce ? undefined : STAGGER_PARENT}
           initial={reduce ? { opacity: 0 } : 'hidden'}

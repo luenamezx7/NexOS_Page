@@ -223,7 +223,7 @@ export function EmbeddedCheckoutDrawer({ open, onClose, productId, productTitle,
             exit={reduce ? { opacity: 0 } : { opacity: 0, y: 20, scale: 0.98 }}
             transition={{ duration: 0.45, ease: FLUID_EASE }}
             className={`fixed inset-x-0 bottom-0 z-[71] mx-auto flex max-h-[92dvh] w-full max-w-xl flex-col overflow-hidden rounded-t-[24px] border shadow-[0_24px_80px_rgba(0,0,0,0.6)] backdrop-blur-[20px] will-change-transform md:inset-0 md:m-auto md:h-fit md:max-h-[88dvh] md:w-[min(480px,calc(100vw-2rem))] md:rounded-3xl ${
-              isDark ? 'border-white/10 bg-[#0a0a0a]/90' : 'border-ink/10 bg-white/95 shadow-[0_24px_80px_rgba(0,0,0,0.18)]'
+              isDark ? 'border-white/10 bg-[#0a0a0a]/90' : 'border-ink/10 bg-[var(--color-card)] shadow-[0_24px_80px_rgba(0,0,0,0.18)]'
             }`}
           >
             <div className={`pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent to-transparent ${isDark ? 'via-white/15' : 'via-ink/10'}`} aria-hidden="true" />
@@ -361,7 +361,7 @@ export function EmbeddedCheckoutDrawer({ open, onClose, productId, productTitle,
             </div>
 
             {drawerState !== 'success' && (
-              <div className={`border-t px-6 py-4 md:px-7 ${isDark ? 'border-white/10 bg-white/[0.02]' : 'border-ink/10 bg-ink/[0.02]'}`} style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
+              <div className={`border-t px-6 py-4 md:px-7 ${isDark ? 'border-white/10 bg-white/[0.02]' : 'border-ink/10 bg-[var(--color-glass)]'}`} style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
                 <p className={`flex items-center justify-center gap-2 text-center font-mono text-[10px] uppercase tracking-[0.16em] ${isDark ? 'text-white/30' : 'text-ink/35'}`}>
                   <Lock size={12} strokeWidth={2} aria-hidden="true" />
                   Asaas • Pix/boleto/cartão • mínimo R$ 5,00
