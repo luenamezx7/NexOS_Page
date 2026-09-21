@@ -264,7 +264,7 @@ export function AsaasCheckoutPane({
 
           {externalReference && <p className={`mt-2 font-mono text-[10px] ${isDark ? 'text-white/30' : 'text-ink/30'}`}>Ref: {externalReference}</p>}
 
-          {/* Boleto: linha digitável + iframe PDF embutido */}
+          {/* Boleto: linha digitável + link (iframe bloqueado por X-Frame-Options SAMEORIGIN) */}
           {billingType === 'BOLETO' && (
             <div className="mt-4 flex flex-col gap-2">
               {identificationField && (
@@ -275,34 +275,27 @@ export function AsaasCheckoutPane({
                   </button>
                 </div>
               )}
-              <div className={`overflow-hidden rounded-xl border ${isDark ? 'border-white/10' : 'border-ink/10'}`}>
-                <iframe
-                  src={bankSlipUrl ?? paymentUrl}
-                  title="Boleto Asaas"
-                  className="h-[420px] w-full bg-white"
-                  loading="lazy"
-                />
-              </div>
+              <a
+                href={bankSlipUrl ?? paymentUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary-nex w-full justify-center py-3.5 text-sm font-semibold"
+              >
+                <ExternalLink size={16} /> Abrir boleto (PDF)
+              </a>
               <a href={paymentUrl} target="_blank" rel="noopener noreferrer" className={`text-center text-xs underline underline-offset-4 ${isDark ? 'text-white/50 hover:text-white' : 'text-ink/50 hover:text-ink'}`}>
-                Abrir boleto em nova aba
+                Abrir checkout completo em nova aba
               </a>
             </div>
           )}
 
-          {/* Cartão: iframe transparente — seu backend NUNCA vê número/ccv */}
+          {/* Cartão: checkout hospedado Asaas (iframe bloqueado por SAMEORIGIN) — abre em nova aba */}
           {billingType === 'CREDIT_CARD' && (
             <div className="mt-4 flex flex-col gap-2">
-              <div className={`overflow-hidden rounded-xl border ${isDark ? 'border-white/10' : 'border-ink/10'}`}>
-                <iframe
-                  src={paymentUrl}
-                  title="Checkout cartão Asaas"
-                  className="h-[560px] w-full bg-white"
-                  allow="payment *"
-                  sandbox="allow-forms allow-scripts allow-same-origin allow-popups"
-                  loading="lazy"
-                />
-              </div>
-              <p className={`text-center text-[11px] ${isDark ? 'text-white/35' : 'text-ink/35'}`}>Pagamento coletado diretamente pelo Asaas em iframe (seu servidor não recebe dados de cartão).</p>
+              <a href={paymentUrl} target="_blank" rel="noopener noreferrer" className="btn-primary-nex w-full justify-center py-3.5 text-sm font-semibold">
+                <ExternalLink size={16} /> Pagar com cartão no Asaas
+              </a>
+              <p className={`text-center text-[11px] ${isDark ? 'text-white/35' : 'text-ink/35'}`}>Checkout seguro hospedado pelo Asaas em nova aba — seu servidor não recebe dados de cartão.</p>
             </div>
           )}
 

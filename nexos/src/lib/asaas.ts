@@ -46,41 +46,46 @@ function asaasHeaders(): Record<string, string> {
   };
 }
 
+const PROD_URL_ALT = 'https://asaas.com/api/v3';
+
 async function asaasFetch(path: string, init: RequestInit): Promise<unknown> {
-  const url = `${getApiBase()}${path}`;
-  // No Windows local o CA do Node pode não conter o intermediário do Asaas (www.asaas.com),
-  // causando UNABLE_TO_VERIFY_LEAF_SIGNATURE. Em produção (Vercel) funciona.
-  // Tentamos fetch normal; se falhar por TLS, o erro será exposto para o caller
-  // com dica para rodar `npm run dev` (que já usa --use-system-ca).
-  let res: Response;
-  try {
-    res = await fetch(url, {
-      ...init,
-      headers: { ...asaasHeaders(), ...(init.headers as Record<string, string> | undefined) },
-      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-    });
-  } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e);
-    const cause = (e as { cause?: { code?: string } })?.cause?.code ?? '';
-    if (msg.includes('UNABLE_TO_VERIFY_LEAF_SIGNATURE') || cause === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE' || msg.includes('fetch failed')) {
-      throw new Error(
-        `Falha de TLS ao conectar em ${getApiBase()}. Rode local com "npm run dev" (já usa --use-system-ca) ou faça deploy na Vercel. Detalhe: ${msg.slice(0, 200)}`
-      );
+  const bases = getApiBase() === PROD_URL ? [PROD_URL, PROD_URL_ALT] : [getApiBase()];
+  let lastErr: unknown = null;
+  for (const base of bases) {
+    const url = `${base}${path}`;
+    try {
+      const res = await fetch(url, {
+        ...init,
+        headers: { ...asaasHeaders(), ...(init.headers as Record<string, string> | undefined) },
+        signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+      });
+      const body: unknown = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const msg =
+          typeof body === 'object' && body !== null && 'errors' in body
+            ? JSON.stringify((body as { errors: unknown }).errors).slice(0, 400)
+            : `Asaas ${res.status} em ${path}`;
+        throw new Error(msg);
+      }
+      return body;
+    } catch (e) {
+      lastErr = e;
+      const msg = e instanceof Error ? e.message : String(e);
+      const cause = (e as { cause?: { code?: string } })?.cause?.code ?? '';
+      const isTls = msg.includes('UNABLE_TO_VERIFY_LEAF_SIGNATURE') || cause === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE' || msg.includes('fetch failed');
+      const isConn = msg.includes('ECONNREFUSED') || cause === 'ECONNREFUSED';
+      // Se for erro de TLS/conexão e ainda há base alternativa, tenta a próxima
+      if ((isTls || isConn) && base !== bases[bases.length - 1]) continue;
+      if (isTls) {
+        throw new Error(`Falha de TLS ao conectar em ${base}. Rode local com "npm run dev" (--use-system-ca) ou faça deploy na Vercel. Detalhe: ${msg.slice(0, 200)}`);
+      }
+      if (isConn) {
+        throw new Error(`Conexão recusada em ${base}. Verifique firewall/antivírus. Detalhe: ${msg.slice(0, 200)}`);
+      }
+      throw e;
     }
-    if (msg.includes('ECONNREFUSED') || msg.includes('conexão') || cause === 'ECONNREFUSED') {
-      throw new Error(`Conexão recusada em ${getApiBase()}. Verifique firewall/antivírus ou tente rede diferente. Detalhe: ${msg.slice(0, 200)}`);
-    }
-    throw e;
   }
-  const body: unknown = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    const msg =
-      typeof body === 'object' && body !== null && 'errors' in body
-        ? JSON.stringify((body as { errors: unknown }).errors).slice(0, 400)
-        : `Asaas ${res.status} em ${path}`;
-    throw new Error(msg);
-  }
-  return body;
+  throw lastErr instanceof Error ? lastErr : new Error(String(lastErr));
 }
 
 // ── Customers ───────────────────────────────────────────────
