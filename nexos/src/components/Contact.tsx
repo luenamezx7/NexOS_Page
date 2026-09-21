@@ -147,8 +147,8 @@ export function Contact({ className = '' }: ContactProps) {
             transition={{ duration: 0.8, ease: FLUID_EASE }}
             className="bento-card will-change-transform min-w-0 p-5 sm:p-10 md:p-14"
           >
-            <div className="mx-auto mb-6 grid h-14 w-14 place-items-center rounded-full border border-[#ff2e6a]/40 bg-[#ff2e6a]/10" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-7 w-7 text-[#ff2e6a]">
+            <div className="mx-auto mb-6 grid h-14 w-14 place-items-center rounded-full border border-[#ff5c8a]/40 bg-[#ff5c8a]/10" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-7 w-7 text-[#ff5c8a]">
                 <path d="M8 12l2.5 2.5L16 9" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
@@ -230,7 +230,7 @@ export function Contact({ className = '' }: ContactProps) {
                   aria-invalid={errors.name ? 'true' : 'false'}
                   aria-describedby={errors.name ? 'contact-name-error' : undefined}
                 />
-                {errors.name && <p id="contact-name-error" className="text-xs text-[#ff2e6a]" role="alert">{errors.name}</p>}
+                {errors.name && <p id="contact-name-error" className="text-xs text-[#ff5c8a]" role="alert">{errors.name}</p>}
               </div>
               <div className="flex flex-col gap-2">
                 <label htmlFor="contact-email" className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/55">
@@ -249,7 +249,7 @@ export function Contact({ className = '' }: ContactProps) {
                   aria-invalid={errors.email ? 'true' : 'false'}
                   aria-describedby={errors.email ? 'contact-email-error' : undefined}
                 />
-                {errors.email && <p id="contact-email-error" className="text-xs text-[#ff2e6a]" role="alert">{errors.email}</p>}
+                {errors.email && <p id="contact-email-error" className="text-xs text-[#ff5c8a]" role="alert">{errors.email}</p>}
               </div>
               <div className="flex flex-col gap-2">
                 <label htmlFor="contact-company" className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/55">
@@ -301,7 +301,7 @@ export function Contact({ className = '' }: ContactProps) {
                 aria-invalid={errors.message ? 'true' : 'false'}
                 aria-describedby={errors.message ? 'contact-message-error' : undefined}
               />
-              {errors.message && <p id="contact-message-error" className="text-xs text-[#ff2e6a]" role="alert">{errors.message}</p>}
+              {errors.message && <p id="contact-message-error" className="text-xs text-[#ff5c8a]" role="alert">{errors.message}</p>}
             </div>
 
             <div className="mt-6 border-t border-ink/10 pt-5">
@@ -311,7 +311,7 @@ export function Contact({ className = '' }: ContactProps) {
               </Button>
             </div>
 
-            {submitError && <p className="mt-3 text-xs text-[#ff2e6a]" role="alert">{submitError}</p>}
+            {submitError && <p className="mt-3 text-xs text-[#ff5c8a]" role="alert">{submitError}</p>}
 
             <p className="mt-4 text-center text-xs leading-relaxed text-ink/40">
               Seus dados são usados apenas para responder seu contato.{' '}
@@ -351,7 +351,7 @@ export function Contact({ className = '' }: ContactProps) {
                       <span className="text-sm font-semibold text-ink">{method.label}</span>
                       <span className="truncate text-xs text-ink/50">{method.value}</span>
                     </span>
-                    <ArrowRight size={16} strokeWidth={2} className="ml-auto shrink-0 text-ink/35 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-[#ff2e6a]" aria-hidden="true" />
+                    <ArrowRight size={16} strokeWidth={2} className="ml-auto shrink-0 text-ink/35 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-[#ff5c8a]" aria-hidden="true" />
                   </motion.a>
                 ))}
               </div>

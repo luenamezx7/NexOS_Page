@@ -105,8 +105,8 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255, 46, 106, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 46, 106, 0.02) 1px, transparent 1px);
+    linear-gradient(rgba(255, 92, 138, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 92, 138, 0.02) 1px, transparent 1px);
   background-size: 40px 40px;
   mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 30%, transparent 80%);
   opacity: 0.4;
@@ -126,7 +126,7 @@
     90deg,
     transparent 0%,
     rgba(255, 255, 255, 0.04) 10%,
-    rgba(255, 46, 106, 0.3) 50%,
+    rgba(255, 92, 138, 0.3) 50%,
     rgba(255, 255, 255, 0.04) 90%,
     transparent 100%
   );
@@ -212,7 +212,7 @@
   line-height: 1;
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.1),
-    0 4px 20px rgba(255, 46, 106, 0.3),
+    0 4px 20px rgba(255, 92, 138, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   transition: all var(--transition-base);
 }
@@ -221,7 +221,7 @@
   transform: scale(1.05) rotate(2deg);
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.15),
-    0 8px 30px rgba(255, 46, 106, 0.4),
+    0 8px 30px rgba(255, 92, 138, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
@@ -290,7 +290,7 @@
   transform: translateY(-3px) scale(1.05);
   box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.3),
-    0 0 20px rgba(255, 46, 106, 0.2);
+    0 0 20px rgba(255, 92, 138, 0.2);
 }
 
 .socialLink:hover::before {

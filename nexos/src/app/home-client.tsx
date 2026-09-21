@@ -15,11 +15,12 @@ import { SectionIndicator } from '@/components/SectionIndicator';
 import { ThinkingOrbWrapper } from '@/components/ThinkingOrbWrapper';
 import TextPressure from '@/components/TextPressure';
 import { useTheme } from '@/components/ThemeProvider';
+import { LampContainer } from '@/components/ui/lamp';
 
 // Mesmo lazy do Hero: WebGL/canvas fora do bundle inicial, com fallback
 // estático (a intro aparece após 2.2s de loading — tempo de sobra pro chunk).
 function VeilFallback() {
-  return <div className="absolute inset-0 bg-[radial-gradient(70%_60%_at_50%_35%,rgba(255,46,106,0.14),transparent_75%)]" aria-hidden="true" />;
+  return <div className="absolute inset-0 bg-[radial-gradient(70%_60%_at_50%_35%,rgba(255, 92, 138,0.14),transparent_75%)]" aria-hidden="true" />;
 }
 
 const DarkVeil = dynamic(() => import('@/components/DarkVeil'), {
@@ -104,39 +105,12 @@ function IntroSection({ onComplete }: IntroSectionProps) {
       transition={{ duration: 0.7, ease: FLUID_EASE }}
       className="fixed inset-0 z-[900] flex min-h-dvh flex-col justify-center overflow-hidden overflow-x-clip bg-canvas will-change-transform"
     >
-      {theme === 'dark' ? (
-        <div className="veil-wrap" aria-hidden="true">
-          <DarkVeil
-            hueShift={275}
-            noiseIntensity={0.08}
-            speed={0.5}
-            scanlineFrequency={0.3}
-            warpAmount={3}
-          />
-        </div>
-      ) : (
-        <div className="veil-wrap" aria-hidden="true">
-          <Grainient
-            color1="#ffd6e7"
-            color2="#ff2e6a"
-            color3="#ece7db"
-            lightMode={true}
-            timeSpeed={0.25}
-            warpStrength={1.0}
-            warpFrequency={5.0}
-            warpSpeed={2.0}
-            warpAmplitude={50.0}
-            grainAmount={0.06}
-            grainScale={2.0}
-            grainAnimated={false}
-            contrast={1.2}
-            gamma={1.0}
-            saturation={0.9}
-            zoom={0.9}
-          />
-        </div>
-      )}
-      <div className="grid-pattern-subtle" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <LampContainer className="!min-h-dvh !rounded-none border-0 !bg-canvas">
+          <span className="sr-only">Lamp background</span>
+        </LampContainer>
+      </div>
+      <div className="grid-pattern-subtle opacity-40" aria-hidden="true" />
 
       <motion.div
         initial={{ opacity: 0 }}
@@ -147,8 +121,8 @@ function IntroSection({ onComplete }: IntroSectionProps) {
       >
         <TextPressure
           text={INTRO_TEXT}
-          fontFamily="Space Grotesk"
-          fontUrl="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap"
+          fontFamily="Dirtyline"
+          fontUrl=""
           width={true}
           weight={true}
           italic={false}
@@ -226,8 +200,9 @@ export default function HomeClient() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: FLUID_EASE }}
+            className="relative"
           >
-            <div id="main-content" role="main">
+            <div id="main-content" role="main" className="relative">
               <Hero ref={heroRef} />
               <ProductShowcase />
               <Services />

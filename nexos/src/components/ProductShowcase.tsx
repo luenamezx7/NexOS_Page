@@ -2,12 +2,13 @@
 
 import { useCallback, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { motion, useMotionValue, useReducedMotion, useTransform, type MotionValue } from 'motion/react';
+import { AnimatePresence, motion, useMotionValue, useReducedMotion, useTransform, type MotionValue } from 'motion/react';
 import { Minus, Nfc, Palette, Plus } from 'lucide-react';
 import { config } from '@/config';
 import type { Service } from '@/types';
 import { BULK_MAX_QTY, bulkTag, bulkUnitPrice } from '@/lib/bulk-pricing';
 import { HoldButton } from './HoldButton';
+
 
 // Drawer fora do bundle inicial: só baixa quando pede o checkout da placa.
 const EmbeddedCheckoutDrawer = dynamic(
@@ -92,39 +93,67 @@ function QrMatrix({ dark }: { dark: boolean }) {
   );
 }
 
+const HERO_PLATE_IMAGES = [
+  { src: '/placas/codex-1.png', alt: 'Placa NexOS — acrílico cristal' },
+  { src: '/placas/codex-2.png', alt: 'Placa NexOS — escala com luvas' },
+];
+
 function AcrylicPlate() {
+  const reduce = useReducedMotion() ?? false;
+  const [idx, setIdx] = useState(0);
+  // Design read: premium hardware showcase for SMB, minimalist luxury roso, double-bezel + bento, VARIANCE 7 / MOTION 5
   return (
-    <div
-      aria-hidden="true"
-      className="relative aspect-[3/4.2] w-full overflow-hidden rounded-2xl border border-white/25 bg-gradient-to-br from-white/25 via-white/[0.07] to-white/[0.16] shadow-[0_32px_80px_-24px_rgba(255,46,106,0.45),0_18px_60px_-20px_rgba(0,0,0,0.6)] backdrop-blur-md"
-    >
-      {/* Reflexo de vidro */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/35 via-transparent to-transparent opacity-60" />
-      <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent" />
-      {/* Borda polida */}
-      <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/20" />
-
-      <div className="relative flex h-full flex-col items-center px-5 py-5">
-        <p className="font-display text-sm font-bold tracking-[0.28em] text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.55)]">
-          NEXOS
-        </p>
-        <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.3em] text-white/70">
-          Smart Plate · NFC + QR
-        </p>
-
-        <div className="mt-4 w-[62%] max-w-[180px] overflow-hidden rounded-lg border border-white/30 bg-white p-1.5 shadow-[0_8px_28px_rgba(0,0,0,0.35)]">
-          <QrMatrix dark={false} />
+    <div className="relative w-full">
+      {/* Outer shell — Doppelrand */}
+      <motion.div
+        initial={reduce ? { opacity: 0, y: 16 } : { opacity: 0, y: 24, scale: 0.98 }}
+        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        className="relative rounded-[2rem] border border-ink/10 bg-ink/[0.02] p-2 shadow-[0_24px_60px_rgba(0,0,0,0.08)] backdrop-blur-sm dark:border-white/10 dark:bg-white/[0.04]"
+      >
+        <div className="pointer-events-none absolute inset-0 rounded-[2rem] bg-gradient-to-b from-white/30 to-transparent opacity-60 dark:from-white/10" />
+        {/* Inner core */}
+        <div className="relative rounded-[calc(2rem-8px)] bg-white p-3 shadow-[inset_0_1px_1px_rgba(255,255,255,0.9),0_8px_32px_rgba(0,0,0,0.06)] dark:bg-[#0e0e0f] dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)]">
+          <button
+            type="button"
+            onClick={() => setIdx((i) => (i + 1) % HERO_PLATE_IMAGES.length)}
+            aria-label="Trocar modelo — clique"
+            className="group relative block w-full cursor-pointer overflow-hidden rounded-[18px] bg-[#f7f5f3] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff5c8a] dark:bg-black/20"
+          >
+            <div className="relative aspect-[16/10] w-full overflow-hidden">
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.img
+                  key={HERO_PLATE_IMAGES[idx].src}
+                  src={HERO_PLATE_IMAGES[idx].src}
+                  alt={HERO_PLATE_IMAGES[idx].alt}
+                  initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 1.04 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                  className="absolute inset-0 h-full w-full object-cover will-change-transform"
+                  draggable={false}
+                />
+              </AnimatePresence>
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/18 via-transparent to-transparent" />
+            </div>
+            <span className="pointer-events-none absolute left-2 top-2 inline-flex items-center gap-1.5 rounded-full bg-black/55 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-white/85 backdrop-blur">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#ff5c8a] shadow-[0_0_8px_rgba(255,92,138,0.6)]" /> {idx === 0 ? 'Acrílico' : 'Escala'} · {idx + 1}/2
+            </span>
+          </button>
+          <div className="mt-3 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <span className="grid h-7 w-7 place-items-center rounded-full bg-[#ff5c8a]/10 text-[#ff5c8a] dark:bg-[#ff5c8a]/15">
+                <Nfc size={14} strokeWidth={2} />
+              </span>
+              <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/60 dark:text-white/60">NFC · QR</span>
+            </div>
+            <span className="font-mono text-[10px] tracking-[0.12em] text-ink/30 dark:text-white/30">Toque para trocar</span>
+          </div>
         </div>
-
-        <div className="mt-auto flex flex-col items-center gap-2">
-          <span className="grid h-12 w-12 place-items-center rounded-full border border-[#ff2e6a]/60 bg-[#ff2e6a]/20 text-[#ff7ba3] shadow-[0_0_24px_rgba(255,46,106,0.65)]">
-            <Nfc size={22} strokeWidth={2} aria-hidden="true" />
-          </span>
-          <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-white/75">
-            Aproxime ou escaneie
-          </p>
-        </div>
-      </div>
+      </motion.div>
+      {/* Sombra ambiente suave — não preta dura */}
+      <div className="pointer-events-none absolute -bottom-3 left-1/2 h-8 w-[74%] -translate-x-1/2 rounded-full bg-black/10 blur-[18px] dark:bg-black/30" aria-hidden="true" />
     </div>
   );
 }
@@ -173,20 +202,33 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
       >
         <div className="mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-10 px-4 py-20 sm:px-6 md:grid-cols-2 md:gap-12 md:px-8 lg:gap-16 md:py-28">
           <div className="flex justify-center">
-            <div className="w-[min(68vw,19rem)] md:w-[22rem]">
+            <div className="w-[min(92vw,28rem)] md:w-[34rem]">
               <AcrylicPlate />
             </div>
           </div>
           <div className="flex min-w-0 flex-col gap-4 text-center md:items-start md:text-left">
-            <p className="self-center font-mono text-[11px] uppercase tracking-[0.22em] text-[#ff2e6a] md:self-start">
+            <p className="self-center font-mono text-[11px] uppercase tracking-[0.22em] text-[#ff5c8a] md:self-start">
               Tecnologia física &amp; digital
             </p>
             <h2 id="showcase-title" className="break-words text-ink">
-              Placa Inteligente NexOS NFC &amp; QR Code
+              Placa Inteligente NexOS <span className="text-[#ff5c8a]">NFC &amp; QR Code</span>
             </h2>
-            <p className="mx-auto max-w-[52ch] break-words text-base leading-relaxed text-ink/70 md:mx-0">
-              Aproximação instantânea. Conecte clientes a cardápios, redes sociais e pagamentos em menos de 1 segundo.
+            <p className="mx-auto max-w-[52ch] break-words text-sm leading-relaxed text-ink/70 md:mx-0">
+              Aproximação instantânea. Conecte clientes a <span className="font-semibold text-[#ff5c8a]">cardápios, redes sociais e pagamentos</span> em menos de 1 segundo.
             </p>
+            <div className="grid w-full max-w-[36rem] grid-cols-3 gap-2 self-stretch md:self-start" role="list" aria-label="Destaques da placa">
+              {[
+                { k: '01', t: '< 1s', d: 'Aproximação' },
+                { k: '02', t: 'NFC+QR', d: 'Mesma placa' },
+                { k: '03', t: '3 dias', d: 'Envio útil' },
+              ].map((f) => (
+                <div key={f.k} className="rounded-2xl border border-ink/10 bg-white px-3 py-3 shadow-[0_8px_24px_rgba(0,0,0,0.04)] dark:border-white/10 dark:bg-white/[0.04]">
+                  <p className="font-mono text-[10px] tracking-[0.16em] text-ink/30 dark:text-white/30">{f.k}</p>
+                  <p className="mt-1 font-display text-sm font-bold tracking-tight text-ink dark:text-white">{f.t}</p>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink/50 dark:text-white/50">{f.d}</p>
+                </div>
+              ))}
+            </div>
             <div className="flex flex-wrap items-center justify-center gap-3 md:justify-start">
               <div
                 className="inline-flex items-center gap-1 rounded-full border border-ink/15 bg-ink/[0.03] p-1"
@@ -215,14 +257,19 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
                   <Plus size={15} strokeWidth={2.5} aria-hidden="true" />
                 </button>
               </div>
-              <p className="inline-flex flex-wrap items-center gap-2 font-mono text-sm font-semibold text-ink">
-                {totalLabel}
-                {activeTag && (
-                  <span className="rounded-full border border-[#ff2e6a]/40 bg-[#ff2e6a]/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#ff2e6a]">
-                    {activeTag} −{discountPct}%
-                  </span>
+              <div className="flex flex-col items-start gap-1">
+                {isDiscounted && (
+                  <span className="font-mono text-xs text-ink/35 line-through dark:text-white/35">Sem desconto {fmtBRL(basePrice * qty)}</span>
                 )}
-              </p>
+                <p className="inline-flex flex-wrap items-center gap-2 font-mono text-sm font-semibold text-ink">
+                  {totalLabel}
+                  {activeTag && (
+                    <span className="rounded-full border border-[#ff5c8a]/40 bg-[#ff5c8a]/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#ff5c8a]">
+                      {activeTag} −{discountPct}%
+                    </span>
+                  )}
+                </p>
+              </div>
             </div>
             <div className="flex flex-col gap-3 self-stretch sm:self-center md:self-start">
               <HoldButton
@@ -276,11 +323,6 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
       {/* Sem pin: scroll normal. A placa só anima ao entrar na viewport. */}
       <div className="relative w-full max-w-full">
         <div className="flex w-full max-w-full items-center justify-center">
-          {/* Brilho radial rosado ao fundo da placa */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute left-1/2 top-1/2 h-[80vmin] w-[80vmin] max-w-[100vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,46,106,0.2)_0%,transparent_65%)] blur-2xl"
-          />
           <div className="grid-pattern-subtle" aria-hidden="true" />
 
           <div className="relative mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-10 px-4 py-20 sm:px-6 md:grid-cols-2 md:gap-12 md:px-8 lg:gap-16 md:py-28">
@@ -293,7 +335,7 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
               style={{ transformPerspective: 1000 }}
               className="flex justify-center will-change-transform md:justify-center"
             >
-              <div className="w-[min(62vw,16rem)] sm:w-[min(50vw,18rem)] md:w-[22rem]">
+              <div className="w-[min(96vw,32rem)] sm:w-[min(84vw,30rem)] md:w-[36rem]">
                 <AcrylicPlate />
               </div>
             </motion.div>
@@ -306,16 +348,29 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
               transition={{ duration: 0.8, delay: 0.15, ease: FLUID_EASE }}
               className="flex min-w-0 flex-col gap-4 text-center will-change-transform md:items-start md:text-left"
             >
-              <p className="inline-flex items-center gap-2 self-center rounded-full border border-[#ff2e6a]/40 bg-[#ff2e6a]/10 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.22em] text-[#ff2e6a] md:self-start">
-                <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-[#ff2e6a]" aria-hidden="true" />
+              <p className="inline-flex items-center gap-2 self-center rounded-full border border-[#ff5c8a]/40 bg-[#ff5c8a]/10 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.22em] text-[#ff5c8a] md:self-start">
+                <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-[#ff5c8a]" aria-hidden="true" />
                 Tecnologia física &amp; digital
               </p>
               <h2 id="showcase-title" className="break-words text-ink">
-                Placa Inteligente NexOS NFC &amp; QR Code
+                Placa Inteligente NexOS <span className="text-[#ff5c8a]">NFC &amp; QR Code</span>
               </h2>
               <p className="mx-auto max-w-[52ch] break-words text-sm leading-relaxed text-ink/70 sm:text-base md:mx-0 md:text-lg">
                 Aproximação instantânea. Conecte clientes a cardápios, redes sociais e pagamentos em menos de 1 segundo.
               </p>
+              <div className="grid w-full max-w-[36rem] grid-cols-3 gap-2 self-stretch md:self-start" role="list" aria-label="Destaques da placa">
+                {[
+                  { k: '01', t: '< 1s', d: 'Aproximação' },
+                  { k: '02', t: 'NFC+QR', d: 'Mesma placa' },
+                  { k: '03', t: '3 dias', d: 'Envio útil' },
+                ].map((f) => (
+                  <div key={f.k} className="rounded-2xl border border-ink/10 bg-white px-3 py-3 shadow-[0_8px_24px_rgba(0,0,0,0.04)] dark:border-white/10 dark:bg-white/[0.04]">
+                    <p className="font-mono text-[10px] tracking-[0.16em] text-ink/30 dark:text-white/30">{f.k}</p>
+                    <p className="mt-1 font-display text-sm font-bold tracking-tight text-ink dark:text-white">{f.t}</p>
+                    <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink/50 dark:text-white/50">{f.d}</p>
+                  </div>
+                ))}
+              </div>
               <div className="flex flex-wrap items-center justify-center gap-3 md:justify-start">
                 <div
                   className="inline-flex items-center gap-1 rounded-full border border-ink/15 bg-ink/[0.03] p-1"
@@ -344,14 +399,19 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
                     <Plus size={15} strokeWidth={2.5} aria-hidden="true" />
                   </button>
                 </div>
-                <p className="inline-flex flex-wrap items-center gap-2 font-mono text-sm font-semibold text-ink">
-                {totalLabel}
-                {activeTag && (
-                  <span className="rounded-full border border-[#ff2e6a]/40 bg-[#ff2e6a]/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#ff2e6a]">
-                    {activeTag} −{discountPct}%
-                  </span>
-                )}
-              </p>
+                <div className="flex flex-col items-start gap-1">
+                  {isDiscounted && (
+                    <span className="font-mono text-xs text-ink/35 line-through dark:text-white/35">Sem desconto {fmtBRL(basePrice * qty)}</span>
+                  )}
+                  <p className="inline-flex flex-wrap items-center gap-2 font-mono text-sm font-semibold text-ink">
+                    {totalLabel}
+                    {activeTag && (
+                      <span className="rounded-full border border-[#ff5c8a]/40 bg-[#ff5c8a]/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#ff5c8a]">
+                        {activeTag} −{discountPct}%
+                      </span>
+                    )}
+                  </p>
+                </div>
               </div>
               <div className="flex flex-col gap-3 self-stretch sm:self-center md:self-start">
                 <HoldButton

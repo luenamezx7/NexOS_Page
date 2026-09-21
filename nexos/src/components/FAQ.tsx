@@ -94,7 +94,7 @@ function FAQAccordionItem({
         </span>
         <span
           className={`grid h-8 w-8 shrink-0 place-items-center rounded-full border transition-colors duration-300 ${
-            isOpen ? 'border-pink-500/40 bg-[#ff2e6a]/10 text-ink' : 'border-ink/10 bg-ink/[0.03] text-ink/50 group-hover:border-pink-500/20 group-hover:text-ink'
+            isOpen ? 'border-pink-500/40 bg-[#ff5c8a]/10 text-ink' : 'border-ink/10 bg-ink/[0.03] text-ink/50 group-hover:border-pink-500/20 group-hover:text-ink'
           }`}
           aria-hidden="true"
         >

@@ -78,7 +78,7 @@ export function LegalModal({ open, initialSlug = 'privacidade', onClose }: Legal
           >
             <div className={`relative flex items-start justify-between gap-4 border-b px-6 py-5 ${isDark ? 'border-white/10' : 'border-ink/10'}`}>
               <div className="flex min-w-0 items-center gap-3">
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-pink-500/30 bg-[#ff2e6a]/10 text-[#ff2e6a]" aria-hidden="true">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[#ff5c8a]/30 bg-[#ff5c8a]/10 text-[#ff5c8a]" aria-hidden="true">
                   <FileText size={17} strokeWidth={2} />
                 </span>
                 <div className="min-w-0">
@@ -117,7 +117,7 @@ export function LegalModal({ open, initialSlug = 'privacidade', onClose }: Legal
                     onClick={() => setSlug(d.slug)}
                     className={`shrink-0 rounded-lg px-3.5 py-2 font-mono text-[11px] uppercase tracking-[0.14em] transition ${
                       active
-                        ? 'bg-[#ff2e6a] text-white shadow-[0_0_16px_rgba(255,46,106,0.5)]'
+                        ? 'bg-[#ff5c8a] text-white shadow-[0_0_16px_rgba(255, 92, 138,0.5)]'
                         : isDark
                           ? 'bg-white/[0.05] text-white/55 hover:bg-white/10 hover:text-white'
                           : 'bg-ink/[0.04] text-ink/55 hover:bg-ink/10 hover:text-ink'

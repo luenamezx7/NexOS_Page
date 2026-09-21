@@ -104,7 +104,7 @@ function ValueRow({ card }: { card: ValueCard }) {
         {card.icon}
       </span>
       <div className="min-w-0">
-        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#ff2e6a]">
+        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#ff5c8a]">
           <span className="mr-2 text-ink/30">$</span>
           {card.overline}
           <span className="ml-2 hidden text-ink/30 sm:inline">{card.id}</span>

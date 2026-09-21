@@ -75,7 +75,7 @@ function ServiceCard({ service, reduceMotion, onCheckout }: ServiceCardProps) {
       <ul className="mb-7 space-y-2.5" role="list" aria-label={`${service.title} — características`}>
         {service.features.map((feature: string) => (
           <li key={feature} className="flex flex-row items-start gap-2.5 text-sm leading-relaxed text-ink/70">
-            <Check size={16} strokeWidth={2.5} className="mt-0.5 shrink-0 text-[#ff2e6a]" aria-hidden="true" />
+            <Check size={16} strokeWidth={2.5} className="mt-0.5 shrink-0 text-[#ff5c8a]" aria-hidden="true" />
             <span>{feature}</span>
           </li>
         ))}

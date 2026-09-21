@@ -48,11 +48,30 @@ function asaasHeaders(): Record<string, string> {
 
 async function asaasFetch(path: string, init: RequestInit): Promise<unknown> {
   const url = `${getApiBase()}${path}`;
-  const res = await fetch(url, {
-    ...init,
-    headers: { ...asaasHeaders(), ...(init.headers as Record<string, string> | undefined) },
-    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-  });
+  // No Windows local o CA do Node pode não conter o intermediário do Asaas (www.asaas.com),
+  // causando UNABLE_TO_VERIFY_LEAF_SIGNATURE. Em produção (Vercel) funciona.
+  // Tentamos fetch normal; se falhar por TLS, o erro será exposto para o caller
+  // com dica para rodar `npm run dev` (que já usa --use-system-ca).
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      ...init,
+      headers: { ...asaasHeaders(), ...(init.headers as Record<string, string> | undefined) },
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+    });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    const cause = (e as { cause?: { code?: string } })?.cause?.code ?? '';
+    if (msg.includes('UNABLE_TO_VERIFY_LEAF_SIGNATURE') || cause === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE' || msg.includes('fetch failed')) {
+      throw new Error(
+        `Falha de TLS ao conectar em ${getApiBase()}. Rode local com "npm run dev" (já usa --use-system-ca) ou faça deploy na Vercel. Detalhe: ${msg.slice(0, 200)}`
+      );
+    }
+    if (msg.includes('ECONNREFUSED') || msg.includes('conexão') || cause === 'ECONNREFUSED') {
+      throw new Error(`Conexão recusada em ${getApiBase()}. Verifique firewall/antivírus ou tente rede diferente. Detalhe: ${msg.slice(0, 200)}`);
+    }
+    throw e;
+  }
   const body: unknown = await res.json().catch(() => ({}));
   if (!res.ok) {
     const msg =

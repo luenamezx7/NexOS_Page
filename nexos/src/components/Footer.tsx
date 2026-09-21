@@ -72,7 +72,7 @@ function FooterColumn({ title, links, reduceMotion }: FooterColumnProps) {
               <ArrowUpRight
                 size={13}
                 strokeWidth={2}
-                className="text-[#ff2e6a] opacity-0 transition-all duration-300 group-hover:translate-x-px group-hover:opacity-100"
+                className="text-[#ff5c8a] opacity-0 transition-all duration-300 group-hover:translate-x-px group-hover:opacity-100"
                 aria-hidden="true"
               />
             </Link>

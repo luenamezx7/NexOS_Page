@@ -29,7 +29,7 @@ export function HoldButton({ label, ariaLabel, hintId, onConfirm, className = ''
     progress,
     [0, 1],
     [
-      'inset 0 1px 0 rgba(255,255,255,0.25), 0 0 0 1px rgba(255,46,106,0.28), 0 10px 28px -10px rgba(255,46,106,0.55), 0 0 20px rgba(255,46,106,0.28)',
+      'inset 0 1px 0 rgba(255,255,255,0.25), 0 0 0 1px rgba(255, 92, 138,0.28), 0 10px 28px -10px rgba(255, 92, 138,0.55), 0 0 20px rgba(255, 92, 138,0.28)',
       'inset 0 1px 0 rgba(255,255,255,0.22), 0 0 0 1px rgba(16,185,129,0.55), 0 10px 28px -10px rgba(16,185,129,0.55), 0 0 22px rgba(16,185,129,0.45)',
     ],
   );
