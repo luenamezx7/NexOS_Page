@@ -110,7 +110,7 @@ function IntroSection({ onComplete }: IntroSectionProps) {
           <span className="sr-only">Lamp background</span>
         </LampContainer>
       </div>
-      <div className="grid-pattern-subtle opacity-40" aria-hidden="true" />
+      <div className="grid-pattern-subtle opacity-80 dark:opacity-10" aria-hidden="true" />
 
       <motion.div
         initial={{ opacity: 0 }}

@@ -323,7 +323,7 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
       {/* Sem pin: scroll normal. A placa só anima ao entrar na viewport. */}
       <div className="relative w-full max-w-full">
         <div className="flex w-full max-w-full items-center justify-center">
-          <div className="grid-pattern-subtle" aria-hidden="true" />
+          <div className="grid-pattern-subtle opacity-80 dark:opacity-10" aria-hidden="true" />
 
           <div className="relative mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-10 px-4 py-20 sm:px-6 md:grid-cols-2 md:gap-12 md:px-8 lg:gap-16 md:py-28">
             {/* Placa — gira e se aproxima uma vez ao entrar na viewport */}

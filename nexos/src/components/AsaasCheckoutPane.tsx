@@ -128,12 +128,16 @@ export function AsaasCheckoutPane({
     stopPolling();
     triesRef.current = 0;
     setPollExpired(false);
-    timerRef.current = setInterval(async () => {
+    const tick = async () => {
+      if (document.visibilityState === 'hidden') { timerRef.current = setTimeout(tick, POLL_INTERVAL_MS) as never; return; }
       triesRef.current += 1;
       if (triesRef.current >= POLL_MAX_TRIES) { stopPolling(); setPollExpired(true); return; }
       const paid = await verifyPayment(id);
-      if (paid) { stopPolling(); onSuccess(); }
-    }, POLL_INTERVAL_MS);
+      if (paid) { stopPolling(); onSuccess(); return; }
+      const delay = triesRef.current < 10 ? 3000 : POLL_INTERVAL_MS;
+      timerRef.current = setTimeout(tick, delay) as never;
+    };
+    timerRef.current = setTimeout(tick, 3000) as never;
   }, [stopPolling, verifyPayment, onSuccess]);
 
   const handleGenerate = useCallback(async () => {
@@ -194,12 +198,7 @@ export function AsaasCheckoutPane({
 
   return (
     <div className="flex flex-col gap-5">
-      {/* Erros de topo */}
-      {(nameError || emailError || cpfError) && (
-        <p className="text-xs text-red-500" role="alert">{cpfError ?? nameError ?? emailError}</p>
-      )}
-
-      {/* Seletor de método — página única, todos visíveis */}
+      {/* Seletor de método — página única */}
       <div className="flex flex-col gap-2">
         <p className={`font-mono text-[11px] uppercase tracking-[0.14em] ${isDark ? 'text-white/55' : 'text-ink/55'}`}>Método de pagamento *</p>
         <div className="grid grid-cols-3 gap-2">
@@ -258,7 +257,7 @@ export function AsaasCheckoutPane({
             <span className="grid h-8 w-8 place-items-center rounded-lg border border-[#ff5c8a]/30 bg-[#ff5c8a]/10 text-[#ff5c8a]"><ShieldCheck size={16} /></span>
             <div>
               <p className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-ink'}`}>Cobrança {amountLabel} — {billingType === 'BOLETO' ? 'Boleto' : 'Cartão'}</p>
-              <p className={`text-xs ${isDark ? 'text-white/50' : 'text-ink/50'}`}>{installments > 1 ? `${installments}x` : 'à vista'} • confirmação automática</p>
+              <p className={`text-xs ${isDark ? 'text-white/50' : 'text-ink/50'}`}>{installments > 1 ? `${installments}x` : 'à vista'}</p>
             </div>
           </div>
 
@@ -321,8 +320,7 @@ export function AsaasCheckoutPane({
               Geramos cobrança de <span className={`font-semibold ${isDark ? 'text-white' : 'text-ink'}`}>{amountLabel}</span> {billingType === 'BOLETO' ? 'em boleto (linha + PDF embutido)' : billingType === 'CREDIT_CARD' && installments > 1 ? `em ${installments}x no cartão` : 'no Asaas'} — CPF junto ao pagamento, confirmação automática.
             </p>
             <div className="mt-3 flex flex-wrap gap-1.5">
-              <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] ${isDark ? 'border-white/10 bg-white/[0.04] text-white/60' : 'border-ink/10 bg-ink/[0.03] text-ink/60'}`}>{billingType === 'BOLETO' ? 'Boleto com linha' : billingType === 'CREDIT_CARD' ? `Cartão ${installments}x` : 'Pix em breve'}</span>
-              <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] ${isDark ? 'border-white/10 bg-white/[0.04] text-white/60' : 'border-ink/10 bg-ink/[0.03] text-ink/60'}`}>Mínimo R$ 5,00</span>
+              <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] ${isDark ? 'border-white/10 bg-white/[0.04] text-white/60' : 'border-ink/10 bg-ink/[0.03] text-ink/60'}`}>{billingType === 'BOLETO' ? 'Boleto' : billingType === 'CREDIT_CARD' ? `Cartão ${installments}x` : 'Pix em breve'}</span>
             </div>
           </div>
           {state === 'error' && fatal && <p className="text-xs text-red-500" role="alert">{fatal}</p>}
@@ -339,9 +337,7 @@ export function AsaasCheckoutPane({
               {state === 'generating' ? <><Loader2 size={18} className="animate-spin" /> Gerando {billingType === 'BOLETO' ? 'boleto' : 'checkout'}…</> : <><CreditCard size={16} /> Pagar {amountLabel}{billingType === 'CREDIT_CARD' && installments > 1 ? ` em ${installments}x` : ''}</>}
             </span>
           </motion.button>
-          <p className={`flex items-center justify-center gap-2 text-center font-mono text-[11px] uppercase tracking-[0.14em] ${isDark ? 'text-white/35' : 'text-ink/40'}`}>
-            <ShieldCheck size={14} /> Asaas embutido • seu backend não recebe cartão
-          </p>
+
         </>
       )}
     </div>

@@ -120,6 +120,7 @@ export function Services({ className = '' }: ServicesProps) {
         aria-labelledby="services-title"
         className={`relative w-full max-w-full overflow-x-clip border-t border-ink/10 bg-canvas ${className}`}
       >
+        <div className="grid-pattern-subtle opacity-80 dark:opacity-10" aria-hidden="true" />
         <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24 md:px-8 md:py-32">
           <motion.header
             initial={reduce ? { opacity: 0 } : { opacity: 0, y: 40, scale: 0.98 }}
