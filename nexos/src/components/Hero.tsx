@@ -243,7 +243,7 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
             />
           </div>
         )}
-        <div className="grid-pattern-subtle" aria-hidden="true" />
+        <div className="grid-pattern-subtle opacity-80 dark:opacity-10" aria-hidden="true" />
         <div
           className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-b from-transparent to-canvas"
           aria-hidden="true"

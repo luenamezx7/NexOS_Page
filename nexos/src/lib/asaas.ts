@@ -100,31 +100,36 @@ function onlyDigits(v: string): string {
   return v.replace(/\D/g, '');
 }
 
+// Cache em memória para evitar GET repetido no mesmo email durante burst
+const customerCache = new Map<string, string>();
+
 async function findOrCreateCustomer(name: string, email: string, cpfCnpj: string): Promise<string> {
+  const key = email.toLowerCase();
+  if (customerCache.has(key)) return customerCache.get(key)!;
   const cpf = onlyDigits(cpfCnpj);
-  // 1. Busca por email
   const search = (await asaasFetch(`/customers?email=${encodeURIComponent(email)}`, {
     method: 'GET',
   })) as { data?: AsaasCustomer[] };
   if (search.data && search.data.length > 0) {
     const existing = search.data[0];
-    // Se já existe mas sem CPF, atualiza
     if (!existing.cpfCnpj && cpf.length >= 11) {
       const updated = (await asaasFetch(`/customers/${existing.id}`, {
         method: 'POST',
         body: JSON.stringify({ name, cpfCnpj: cpf }),
       })) as AsaasCustomer;
-      return updated.id ?? existing.id;
+      const id = updated.id ?? existing.id;
+      customerCache.set(key, id);
+      return id;
     }
+    customerCache.set(key, existing.id);
     return existing.id;
   }
-
-  // 2. Cria com CPF/CNPJ
   const created = (await asaasFetch('/customers', {
     method: 'POST',
     body: JSON.stringify({ name, email, cpfCnpj: cpf }),
   })) as AsaasCustomer;
   if (!created.id) throw new Error('Falha ao criar cliente no Asaas');
+  customerCache.set(key, created.id);
   return created.id;
 }
 
@@ -167,14 +172,18 @@ export interface InstallmentOption {
   total: number;
 }
 
-/** Simula parcelas como o Asaas mostraria no redirect — sem juros para 1x, com juros Asaas aproximado para 2-12x */
+const installmentsCache = new Map<string, InstallmentOption[]>();
+
+/** Simula parcelas como o Asaas mostraria — cache por valor para evitar recomputação */
 export function simulateInstallments(value: number, maxInstallments = 12): InstallmentOption[] {
+  const k = `${value}:${maxInstallments}`;
+  if (installmentsCache.has(k)) return installmentsCache.get(k)!;
   const opts: InstallmentOption[] = [];
   for (let i = 1; i <= maxInstallments; i++) {
-    // Asaas cobra ~1.99% a.m. para parcelado no cartão — aproximamos para UI; backend Asaas recalcula exato
     const total = i === 1 ? value : Number((value * (1 + 0.0199 * i)).toFixed(2));
     opts.push({ installment: i, value: Number((total / i).toFixed(2)), total });
   }
+  installmentsCache.set(k, opts);
   return opts;
 }
 
