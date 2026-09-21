@@ -11,7 +11,7 @@ import { config } from '@/config';
 // bundle inicial. `ssr: false` porque canvas/WebGL não renderizam no
 // servidor. O fallback estático mantém o fundo idêntico durante o load.
 function VeilFallback() {
-  return <div className="absolute inset-0 bg-[radial-gradient(70%_60%_at_50%_35%,rgba(255,46,106,0.14),transparent_75%)]" aria-hidden="true" />;
+  return <div className="absolute inset-0 bg-[radial-gradient(70%_60%_at_50%_35%,rgba(255, 92, 138,0.14),transparent_75%)]" aria-hidden="true" />;
 }
 
 const DarkVeil = dynamic(() => import('./DarkVeil'), {
@@ -150,13 +150,13 @@ function BentoCard({ card, reduceMotion }: BentoCardProps) {
       whileHover={reduceMotion ? undefined : { y: -5 }}
       className={`bento-card will-change-transform group relative flex min-w-0 max-w-full flex-col p-5 transition-colors duration-300 hover:border-ink/25 sm:p-8 md:p-7 ${card.span} ${
         card.featured
-          ? '!border-pink-500/50 shadow-[0_0_28px_rgba(255,46,106,0.22),0_18px_60px_-24px_rgba(255,46,106,0.45)]'
+          ? '!border-pink-500/50 shadow-[0_0_28px_rgba(255, 92, 138,0.22),0_18px_60px_-24px_rgba(255, 92, 138,0.45)]'
           : ''
       }`}
       aria-labelledby={`bento-title-${card.id}`}
     >
       {card.featured && card.featuredBadge && (
-        <span className="absolute -top-3 left-5 inline-flex max-w-[calc(100%-2.5rem)] items-center gap-1.5 truncate rounded-full border border-pink-500/50 bg-[#ff2e6a] px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-white shadow-[0_0_16px_rgba(255,46,106,0.6)] sm:left-6">
+        <span className="absolute -top-3 left-5 inline-flex max-w-[calc(100%-2.5rem)] items-center gap-1.5 truncate rounded-full border border-pink-500/50 bg-[#ff5c8a] px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-white shadow-[0_0_16px_rgba(255, 92, 138,0.6)] sm:left-6">
           <span className="h-1.5 w-1.5 shrink-0 animate-pulse-dot rounded-full bg-white" aria-hidden="true" />
           {card.featuredBadge}
         </span>
@@ -174,7 +174,7 @@ function BentoCard({ card, reduceMotion }: BentoCardProps) {
         </span>
       </div>
 
-      <h3 id={`bento-title-${card.id}`} className="mb-2 break-words text-lg font-bold tracking-tight text-ink sm:text-xl">
+      <h3 id={`bento-title-${card.id}`} className="font-dirty mb-2 break-words text-lg font-bold tracking-tight text-ink sm:text-xl">
         {card.title}
       </h3>
       <p className="mb-5 break-words text-sm leading-relaxed text-ink/70">{card.description}</p>
@@ -212,9 +212,9 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
         className={`relative w-full max-w-full overflow-hidden overflow-x-clip bg-canvas ${className}`}
       >
         {theme === 'dark' ? (
-          <div className="veil-wrap" aria-hidden="true">
+          <div className="veil-wrap grayscale contrast-125" aria-hidden="true" style={{ filter: 'grayscale(1) contrast(1.15) brightness(0.95)' }}>
             <DarkVeil
-              hueShift={275}
+              hueShift={0}
               noiseIntensity={0.08}
               speed={0.5}
               scanlineFrequency={0.3}
@@ -225,7 +225,7 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
           <div className="veil-wrap" aria-hidden="true">
             <Grainient
               color1="#ffd6e7"
-              color2="#ff2e6a"
+              color2="#ff5c8a"
               color3="#ece7db"
               lightMode={true}
               timeSpeed={0.25}
@@ -270,9 +270,9 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
               whileInView={reduce ? { opacity: 1 } : ENTER.whileInView}
               viewport={{ once: true, amount: 0.5 }}
               transition={{ ...ENTER.transition, delay: 0.08 }}
-              className="w-full max-w-5xl text-balance break-words font-heavy text-[1.75rem] font-black leading-[1.08] tracking-[-0.02em] text-ink will-change-transform sm:text-4xl sm:leading-[1.02] md:text-6xl lg:text-7xl"
+              className="font-dirty w-full max-w-5xl text-balance break-words text-[1.75rem] font-black leading-[1.08] tracking-[-0.02em] text-ink will-change-transform sm:text-4xl sm:leading-[1.02] md:text-6xl lg:text-7xl"
             >
-              {config.hero.headline}
+              Construímos <span className="text-[#ff5c8a]">produtos digitais</span> que <span className="text-[#ff5c8a]">escalam</span>.
             </motion.h1>
 
             <motion.p
@@ -282,7 +282,7 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
               transition={{ ...ENTER.transition, delay: 0.16 }}
               className="mt-5 max-w-[62ch] break-words text-sm leading-relaxed text-ink/70 will-change-transform sm:text-base md:text-lg"
             >
-              {config.hero.subheadline}
+              Da ideia ao mercado. Desenvolvimento, design e estratégia para startups e empresas que precisam de <span className="font-semibold text-[#ff5c8a]">velocidade</span> sem abrir mão da qualidade.
             </motion.p>
 
             <motion.div

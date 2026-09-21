@@ -216,9 +216,9 @@ export function AsaasCheckoutPane({
               aria-pressed={billingType === m.id}
               aria-disabled={m.disabled}
               title={m.badge ?? m.label}
-              className={`relative flex flex-col items-center gap-1.5 rounded-xl border px-2 py-3.5 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff2e6a]/60
+              className={`relative flex flex-col items-center gap-1.5 rounded-xl border px-2 py-3.5 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff5c8a]/60
                 ${m.disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
-                ${billingType === m.id && !m.disabled ? 'border-[#ff2e6a]/40 bg-[#ff2e6a]/10 text-[#ff2e6a]' : isDark ? 'border-white/10 bg-white/[0.04] text-white/70 hover:bg-white/10' : 'border-ink/10 bg-ink/[0.03] text-ink/60 hover:bg-ink/10'}`}
+                ${billingType === m.id && !m.disabled ? 'border-[#ff5c8a]/40 bg-[#ff5c8a]/10 text-[#ff5c8a]' : isDark ? 'border-white/10 bg-white/[0.04] text-white/70 hover:bg-white/10' : 'border-ink/10 bg-ink/[0.03] text-ink/60 hover:bg-ink/10'}`}
             >
               {m.icon}
               {m.label}
@@ -255,7 +255,7 @@ export function AsaasCheckoutPane({
       {state === 'pending' && paymentUrl ? (
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: FLUID_EASE }} className={`rounded-xl border p-4 ${isDark ? 'border-white/10 bg-white/[0.03]' : 'border-ink/10 bg-ink/[0.03]'}`} aria-live="polite">
           <div className="flex items-center gap-2">
-            <span className="grid h-8 w-8 place-items-center rounded-lg border border-[#ff2e6a]/30 bg-[#ff2e6a]/10 text-[#ff2e6a]"><ShieldCheck size={16} /></span>
+            <span className="grid h-8 w-8 place-items-center rounded-lg border border-[#ff5c8a]/30 bg-[#ff5c8a]/10 text-[#ff5c8a]"><ShieldCheck size={16} /></span>
             <div>
               <p className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-ink'}`}>Cobrança {amountLabel} — {billingType === 'BOLETO' ? 'Boleto' : 'Cartão'}</p>
               <p className={`text-xs ${isDark ? 'text-white/50' : 'text-ink/50'}`}>{installments > 1 ? `${installments}x` : 'à vista'} • confirmação automática</p>
@@ -316,7 +316,7 @@ export function AsaasCheckoutPane({
           </div>
           <button type="button" onClick={handleReset} className={`mt-2 w-full text-xs underline underline-offset-4 ${isDark ? 'text-white/40 hover:text-white/70' : 'text-ink/40 hover:text-ink/70'}`}>Gerar nova cobrança</button>
           <p className={`mt-3 flex justify-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] ${isDark ? 'text-white/30' : 'text-ink/35'}`}>
-            {pollExpired ? <span className="normal-case tracking-normal text-xs">Não detectamos pagamento — clique em “Já paguei”</span> : <motion.span animate={reduce ? {} : { opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.6, repeat: Infinity }} className="inline-flex items-center gap-1.5"><Loader2 size={12} className="animate-spin text-[#ff2e6a]" /> Aguardando pagamento…</motion.span>}
+            {pollExpired ? <span className="normal-case tracking-normal text-xs">Não detectamos pagamento — clique em “Já paguei”</span> : <motion.span animate={reduce ? {} : { opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.6, repeat: Infinity }} className="inline-flex items-center gap-1.5"><Loader2 size={12} className="animate-spin text-[#ff5c8a]" /> Aguardando pagamento…</motion.span>}
           </p>
           <a href={paymentUrl} target="_blank" rel="noopener noreferrer" className="btn-secondary-nex mt-3 w-full !py-2.5 text-xs justify-center gap-1.5"><ExternalLink size={12} /> Abrir checkout em nova aba (fallback)</a>
         </motion.div>
@@ -324,7 +324,7 @@ export function AsaasCheckoutPane({
         <>
           <div className={`rounded-xl border p-4 ${isDark ? 'border-white/10 bg-white/[0.03]' : 'border-ink/10 bg-ink/[0.03]'}`}>
             <p className={`flex items-start gap-2.5 text-[13px] leading-relaxed ${isDark ? 'text-white/65' : 'text-ink/65'}`}>
-              {billingType === 'BOLETO' ? <Receipt size={18} className="mt-0.5 shrink-0 text-[#ff2e6a]" /> : billingType === 'CREDIT_CARD' ? <CreditCard size={18} className="mt-0.5 shrink-0 text-[#ff2e6a]" /> : <QrCode size={18} className="mt-0.5 shrink-0 text-[#ff2e6a]" />}
+              {billingType === 'BOLETO' ? <Receipt size={18} className="mt-0.5 shrink-0 text-[#ff5c8a]" /> : billingType === 'CREDIT_CARD' ? <CreditCard size={18} className="mt-0.5 shrink-0 text-[#ff5c8a]" /> : <QrCode size={18} className="mt-0.5 shrink-0 text-[#ff5c8a]" />}
               Geramos cobrança de <span className={`font-semibold ${isDark ? 'text-white' : 'text-ink'}`}>{amountLabel}</span> {billingType === 'BOLETO' ? 'em boleto (linha + PDF embutido)' : billingType === 'CREDIT_CARD' && installments > 1 ? `em ${installments}x no cartão` : 'no Asaas'} — CPF junto ao pagamento, confirmação automática.
             </p>
             <div className="mt-3 flex flex-wrap gap-1.5">

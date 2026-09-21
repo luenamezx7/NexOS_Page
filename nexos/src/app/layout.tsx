@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
+import localFont from "next/font/local";
 import { cn } from "@/lib/utils";
 import GlobalNoise from '@/components/GlobalNoise';
 import GradualBlur from '@/components/GradualBlur';
@@ -11,6 +12,12 @@ import { CookieConsentProvider } from '@/components/cookie-consent';
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans', display: 'swap' });
 const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap' });
 const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-display', display: 'swap' });
+const dirtyline = localFont({
+  src: '../../public/fonts/dirtyline.woff2',
+  variable: '--font-dirty',
+  display: 'swap',
+  weight: '400',
+});
 
 export const metadata: Metadata = {
   title: {
@@ -78,7 +85,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR" className={cn("font-sans dark", geist.variable, geistMono.variable, spaceGrotesk.variable)}>
+    <html lang="pt-BR" className={cn("font-sans dark", geist.variable, geistMono.variable, spaceGrotesk.variable, dirtyline.variable)}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

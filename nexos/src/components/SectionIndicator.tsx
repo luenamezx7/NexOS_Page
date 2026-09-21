@@ -24,7 +24,7 @@ function scrollToId(id: string): void {
 
 // ============================================================
 // NexOS — SectionIndicator minimalista (neon/cyberpunk sutil)
-// - Mantém paleta primária (pink #ff2e6a) com glow box-shadow discreto
+// - Mantém paleta primária (pink #ff5c8a) com glow box-shadow discreto
 // - Sem ping loops / pills / sub-pilares (eram camadas extras que
 //   forçavam repaint durante o scroll pelo Ecossistema)
 // - Progress só com transform scaleY (GPU). Observer com threshold
@@ -117,17 +117,17 @@ export function SectionIndicator() {
         {/* Progresso neon sutil — só transform (GPU) + glow estático */}
         <motion.div
           aria-hidden="true"
-          className="pointer-events-none absolute bottom-4 left-[7px] top-4 w-px origin-top bg-[#ff2e6a]"
+          className="pointer-events-none absolute bottom-4 left-[7px] top-4 w-px origin-top bg-[#ff5c8a]"
           style={
             reduce
               ? {
                   boxShadow:
-                    '0 0 8px rgba(255,46,106,0.45), 0 0 2px rgba(255,46,106,0.8)',
+                    '0 0 8px rgba(255, 92, 138,0.45), 0 0 2px rgba(255, 92, 138,0.8)',
                 }
               : ({
                   scaleY,
                   boxShadow:
-                    '0 0 8px rgba(255,46,106,0.45), 0 0 2px rgba(255,46,106,0.8)',
+                    '0 0 8px rgba(255, 92, 138,0.45), 0 0 2px rgba(255, 92, 138,0.8)',
                 } as unknown as React.CSSProperties)
           }
         />
@@ -143,7 +143,7 @@ export function SectionIndicator() {
                   onClick={() => handleClick(section.id)}
                   aria-label={`Ir para ${section.label}`}
                   aria-current={isActive ? 'true' : undefined}
-                  className="group flex max-w-[220px] items-center gap-3 rounded-md py-0.5 pl-0 pr-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff2e6a]/60"
+                  className="group flex max-w-[220px] items-center gap-3 rounded-md py-0.5 pl-0 pr-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff5c8a]/60"
                 >
                   <span className="relative grid h-4 w-4 shrink-0 place-items-center">
                     <span
@@ -152,15 +152,15 @@ export function SectionIndicator() {
                       style={
                         isActive
                           ? {
-                              backgroundColor: '#ff2e6a',
-                              borderColor: '#ff2e6a',
+                              backgroundColor: '#ff5c8a',
+                              borderColor: '#ff5c8a',
                               boxShadow:
-                                '0 0 8px rgba(255,46,106,0.55), 0 0 2px rgba(255,46,106,0.9)',
+                                '0 0 8px rgba(255, 92, 138,0.55), 0 0 2px rgba(255, 92, 138,0.9)',
                             }
                           : isPast
                             ? {
-                                backgroundColor: 'rgba(255,46,106,0.45)',
-                                borderColor: 'rgba(255,46,106,0.45)',
+                                backgroundColor: 'rgba(255, 92, 138,0.45)',
+                                borderColor: 'rgba(255, 92, 138,0.45)',
                               }
                             : {
                                 backgroundColor: 'transparent',
@@ -186,7 +186,7 @@ export function SectionIndicator() {
                       }`}
                       style={
                         isActive
-                          ? { textShadow: '0 0 12px rgba(255,46,106,0.35)' }
+                          ? { textShadow: '0 0 12px rgba(255, 92, 138,0.35)' }
                           : undefined
                       }
                     >

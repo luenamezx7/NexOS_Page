@@ -21,7 +21,7 @@ export function LegalPage({ slug }: { slug: string }) {
           Voltar ao site
         </Link>
 
-        <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.18em] text-[#ff2e6a]">NexOS · Legal</p>
+        <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.18em] text-[#ff5c8a]">NexOS · Legal</p>
         <h1 className="mt-2 text-ink">{doc.title}</h1>
         <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.16em] text-ink/40">{doc.updated}</p>
         <p className="mt-4 text-base leading-relaxed text-ink/70">{doc.intro}</p>
@@ -36,7 +36,7 @@ export function LegalPage({ slug }: { slug: string }) {
                 aria-current={active ? 'page' : undefined}
                 className={`rounded-lg px-4 py-2 font-mono text-[11px] uppercase tracking-[0.14em] transition ${
                   active
-                    ? 'bg-[#ff2e6a] text-white shadow-[0_0_16px_rgba(255,46,106,0.5)]'
+                    ? 'bg-[#ff5c8a] text-white shadow-[0_0_16px_rgba(255, 92, 138,0.5)]'
                     : isDark
                       ? 'border border-white/10 bg-white/[0.05] text-white/60 hover:bg-white/10 hover:text-white'
                       : 'border border-ink/10 bg-ink/[0.04] text-ink/60 hover:bg-ink/10 hover:text-ink'

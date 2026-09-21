@@ -197,7 +197,7 @@ const TextPressure: React.FC<TextPressureProps> = ({
   const styleElement = useMemo(() => {
     return (
       <style>{`
-        @import url('${fontUrl}');
+        ${fontUrl ? `@import url('${fontUrl}');` : ''}
 
         .text-pressure-title {
           color: ${textColor};

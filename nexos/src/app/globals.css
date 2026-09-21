@@ -16,8 +16,9 @@
    ============================================================ */
 
 @theme {
-  --font-display: "Space Grotesk", "Geist", "Plus Jakarta Sans", -apple-system, system-ui, "Segoe UI", sans-serif;
-  --font-heavy: "Satoshi", "Archivo Black", "Space Grotesk", "Geist", -apple-system, system-ui, sans-serif;
+  --font-display: "Space Grotesk", "Geist", -apple-system, system-ui, sans-serif;
+  --font-heavy: "Space Grotesk", "Geist", -apple-system, system-ui, sans-serif;
+  --font-dirty: "Dirtyline", "Space Grotesk", sans-serif;
   --font-sans: "Geist", "Inter", -apple-system, system-ui, "Segoe UI", sans-serif;
   --font-mono: "Geist Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
@@ -42,11 +43,11 @@
   --nex-black: #050505;
   --nex-white: #ffffff;
   --nex-pink: #db2777;
-  --nex-pink-hot: #ff2e6a;
+  --nex-pink-hot: #ff5c8a;
   --nex-hairline: rgba(255, 255, 255, 0.1);
-  --section-indicator: #ff2e6a;
-  --section-indicator-glow: rgba(255, 46, 106, 0.4);
-  --section-indicator-glow-soft: rgba(255, 46, 106, 0.18);
+  --section-indicator: #ff5c8a;
+  --section-indicator-glow: rgba(255, 92, 138, 0.4);
+  --section-indicator-glow-soft: rgba(255, 92, 138, 0.18);
 
   --ease-fluid: cubic-bezier(0.16, 1, 0.3, 1);
 
@@ -95,7 +96,15 @@
   --ring: oklch(0.556 0 0);
 }
 
-/* ---------- Self-hosted Satoshi (Fontshare, OFL) ---------- */
+/* ---------- Self-hosted Dirtyline + Satoshi ---------- */
+@font-face {
+  font-family: "Dirtyline";
+  src: url("/fonts/dirtyline.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+.font-dirty { font-family: var(--font-dirty) !important; }
 
 @font-face {
   font-family: "Satoshi";
@@ -409,9 +418,9 @@ button {
   border: 1px solid rgba(255, 255, 255, 0.14);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.25),
-    0 0 0 1px rgba(255, 46, 106, 0.28),
-    0 10px 28px -10px rgba(255, 46, 106, 0.55),
-    0 0 20px rgba(255, 46, 106, 0.28);
+    0 0 0 1px rgba(255, 92, 138, 0.28),
+    0 10px 28px -10px rgba(255, 92, 138, 0.55),
+    0 0 20px rgba(255, 92, 138, 0.28);
   transition: box-shadow 0.3s var(--ease-fluid), filter 0.3s var(--ease-fluid);
   max-width: 100%;
   white-space: nowrap;
@@ -422,9 +431,9 @@ button {
   filter: brightness(1.07);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.28),
-    0 0 0 1px rgba(255, 46, 106, 0.4),
-    0 12px 32px -10px rgba(255, 46, 106, 0.6),
-    0 0 26px rgba(255, 46, 106, 0.35);
+    0 0 0 1px rgba(255, 92, 138, 0.4),
+    0 12px 32px -10px rgba(255, 92, 138, 0.6),
+    0 0 26px rgba(255, 92, 138, 0.35);
 }
 
 @media (max-width: 639px) {
@@ -439,9 +448,9 @@ button {
   filter: brightness(1.07);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.28),
-    0 0 0 1px rgba(255, 46, 106, 0.4),
-    0 12px 32px -10px rgba(255, 46, 106, 0.6),
-    0 0 26px rgba(255, 46, 106, 0.35);
+    0 0 0 1px rgba(255, 92, 138, 0.4),
+    0 12px 32px -10px rgba(255, 92, 138, 0.6),
+    0 0 26px rgba(255, 92, 138, 0.35);
 }
 
 /* Featured presence (hero CTA): machined gradient + leve brilho rosado.
@@ -455,8 +464,8 @@ button {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.22),
     inset 0 -1px 0 rgba(0, 0, 0, 0.22),
-    0 0 18px rgba(255, 46, 106, 0.3),
-    0 8px 24px -12px rgba(255, 46, 106, 0.3);
+    0 0 18px rgba(255, 92, 138, 0.3),
+    0 8px 24px -12px rgba(255, 92, 138, 0.3);
 }
 
 .btn-primary-nex--featured:hover {
@@ -464,8 +473,8 @@ button {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.22),
     inset 0 -1px 0 rgba(0, 0, 0, 0.22),
-    0 0 22px rgba(255, 46, 106, 0.38),
-    0 10px 28px -12px rgba(255, 46, 106, 0.35);
+    0 0 22px rgba(255, 92, 138, 0.38),
+    0 10px 28px -12px rgba(255, 92, 138, 0.35);
 }
 
 .btn-primary-nex--featured .hold-bar {
@@ -492,7 +501,7 @@ button {
 
 .btn-secondary-nex:hover {
   background: color-mix(in srgb, var(--color-ink) 10%, transparent);
-  border-color: rgba(255, 46, 106, 0.55);
+  border-color: rgba(255, 92, 138, 0.55);
 }
 
 /* Light Sweep — diagonal, GPU only */
@@ -552,7 +561,7 @@ button {
   height: 8px;
   border-radius: 2px;
   background: var(--nex-pink-hot);
-  box-shadow: 0 0 10px rgba(255, 46, 106, 0.7);
+  box-shadow: 0 0 10px rgba(255, 92, 138, 0.7);
   flex-shrink: 0;
 }
 
@@ -577,7 +586,7 @@ button {
   height: 6px;
   border-radius: 9999px;
   background: var(--nex-pink-hot);
-  box-shadow: 0 0 8px rgba(255, 46, 106, 0.8);
+  box-shadow: 0 0 8px rgba(255, 92, 138, 0.8);
 }
 
 /* ---------- Form fields: thin industrial inputs ---------- */
@@ -599,7 +608,7 @@ button {
 
 .field-input:focus {
   outline: none;
-  border-color: rgba(255, 46, 106, 0.6);
+  border-color: rgba(255, 92, 138, 0.6);
   background: color-mix(in srgb, var(--color-ink) 5%, transparent);
 }
 

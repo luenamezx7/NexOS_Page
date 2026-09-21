@@ -231,7 +231,7 @@ export function EmbeddedCheckoutDrawer({ open, onClose, productId, productTitle,
 
             <div className={`relative flex items-start justify-between gap-4 border-b px-6 py-5 md:px-7 ${isDark ? 'border-white/10' : 'border-ink/10'}`}>
               <div className="flex min-w-0 flex-1 items-center gap-3">
-                <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-pink-500/30 bg-[#ff2e6a]/10 text-[#ff2e6a]`} aria-hidden="true">
+                <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-[#ff5c8a]/30 bg-[#ff5c8a]/10 text-[#ff5c8a]`} aria-hidden="true">
                   <QrCode size={22} strokeWidth={2} />
                 </span>
                 <div className="min-w-0">
@@ -283,16 +283,16 @@ export function EmbeddedCheckoutDrawer({ open, onClose, productId, productTitle,
                       initial={{ scale: 0.6, opacity: 0 }}
                       animate={{ scale: [0.6, 1.25, 1], opacity: [0, 0.25, 0] }}
                       transition={{ duration: 1.2, delay: 0.2, ease: FLUID_EASE }}
-                      className="absolute inset-0 rounded-full bg-[#ff2e6a]/20"
+                      className="absolute inset-0 rounded-full bg-[#ff5c8a]/20"
                     />
-                    <div className="grid h-16 w-16 place-items-center rounded-full border border-[#ff2e6a]/30 bg-[#ff2e6a]/10 text-[#ff2e6a] shadow-[0_0_28px_rgba(255,46,106,0.35)]">
+                    <div className="grid h-16 w-16 place-items-center rounded-full border border-[#ff5c8a]/30 bg-[#ff5c8a]/10 text-[#ff5c8a] shadow-[0_0_28px_rgba(255, 92, 138,0.35)]">
                       <motion.svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="overflow-visible">
                         <motion.path d="M 6 12.5 L 10.5 17 L 18 8" stroke="currentColor" strokeWidth={2.6} strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ duration: 0.55, delay: 0.4, ease: [0.16, 1, 0.3, 1] }} />
                       </motion.svg>
                     </div>
                     {!reduce && (
                       <>
-                        <motion.span animate={{ y: [-2, -10, -2], x: [-1, 1, -1], opacity: [0.7, 0, 0.7] }} transition={{ duration: 1.8, repeat: Infinity, delay: 0.6 }} className="absolute -right-1 -top-1 h-1.5 w-1.5 rounded-full bg-[#ff2e6a]" />
+                        <motion.span animate={{ y: [-2, -10, -2], x: [-1, 1, -1], opacity: [0.7, 0, 0.7] }} transition={{ duration: 1.8, repeat: Infinity, delay: 0.6 }} className="absolute -right-1 -top-1 h-1.5 w-1.5 rounded-full bg-[#ff5c8a]" />
                         <motion.span animate={{ y: [-1, -8, -1], x: [1, -1, 1], opacity: [0.6, 0, 0.6] }} transition={{ duration: 1.9, repeat: Infinity, delay: 0.8 }} className="absolute -left-1 top-2 h-1 w-1 rounded-full bg-white" />
                       </>
                     )}
