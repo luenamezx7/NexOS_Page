@@ -8,6 +8,7 @@ import { config } from '@/config';
 import type { Service } from '@/types';
 import { BULK_MAX_QTY, bulkTag, bulkUnitPrice } from '@/lib/bulk-pricing';
 import { HoldButton } from './HoldButton';
+import GradientText from './GradientText';
 
 
 // Drawer fora do bundle inicial: só baixa quando pede o checkout da placa.
@@ -114,7 +115,7 @@ function AcrylicPlate() {
       >
         <div className="pointer-events-none absolute inset-0 rounded-[2rem] bg-gradient-to-b from-white/30 to-transparent opacity-60 dark:from-white/10" />
         {/* Inner core */}
-        <div className="relative rounded-[calc(2rem-8px)] bg-white p-3 shadow-[inset_0_1px_1px_rgba(255,255,255,0.9),0_8px_32px_rgba(0,0,0,0.06)] dark:bg-[#0e0e0f] dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)]">
+        <div className="relative rounded-[calc(2rem-8px)] bg-[var(--color-card)] p-3 shadow-[inset_0_1px_1px_rgba(255,255,255,0.9),0_8px_32px_rgba(0,0,0,0.06)] dark:bg-[#0e0e0f] dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)]">
           <button
             type="button"
             onClick={() => setIdx((i) => (i + 1) % HERO_PLATE_IMAGES.length)}
@@ -211,10 +212,10 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
               Tecnologia física &amp; digital
             </p>
             <h2 id="showcase-title" className="break-words text-ink">
-              Placa Inteligente NexOS <span className="text-[#ff5c8a]">NFC &amp; QR Code</span>
+              Placa Inteligente NexOS <GradientText animationSpeed={6} className="!inline-flex !m-0 !p-0 !bg-transparent !backdrop-blur-0" showBorder={false}>NFC &amp; QR Code</GradientText>
             </h2>
             <p className="mx-auto max-w-[52ch] break-words text-sm leading-relaxed text-ink/70 md:mx-0">
-              Aproximação instantânea. Conecte clientes a <span className="font-semibold text-[#ff5c8a]">cardápios, redes sociais e pagamentos</span> em menos de 1 segundo.
+              Aproximação instantânea. Conecte clientes a <GradientText animationSpeed={6} className="!inline-flex !m-0 !p-0 !bg-transparent !backdrop-blur-0" showBorder={false}><span className="font-semibold">cardápios, redes sociais e pagamentos</span></GradientText> em menos de 1 segundo.
             </p>
             <div className="grid w-full max-w-[36rem] grid-cols-3 gap-2 self-stretch md:self-start" role="list" aria-label="Destaques da placa">
               {[
@@ -222,7 +223,7 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
                 { k: '02', t: 'NFC+QR', d: 'Mesma placa' },
                 { k: '03', t: '3 dias', d: 'Envio útil' },
               ].map((f) => (
-                <div key={f.k} className="rounded-2xl border border-ink/10 bg-white px-3 py-3 shadow-[0_8px_24px_rgba(0,0,0,0.04)] dark:border-white/10 dark:bg-white/[0.04]">
+                <div key={f.k} className="rounded-2xl border border-ink/10 bg-[var(--color-card)] px-3 py-3 shadow-[0_8px_24px_rgba(0,0,0,0.04)] dark:border-white/10 dark:bg-white/[0.04]">
                   <p className="font-mono text-[10px] tracking-[0.16em] text-ink/30 dark:text-white/30">{f.k}</p>
                   <p className="mt-1 font-display text-sm font-bold tracking-tight text-ink dark:text-white">{f.t}</p>
                   <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink/50 dark:text-white/50">{f.d}</p>
@@ -353,10 +354,10 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
                 Tecnologia física &amp; digital
               </p>
               <h2 id="showcase-title" className="break-words text-ink">
-                Placa Inteligente NexOS <span className="text-[#ff5c8a]">NFC &amp; QR Code</span>
+                Placa Inteligente NexOS <GradientText animationSpeed={6} className="!inline-flex !m-0 !p-0 !bg-transparent !backdrop-blur-0" showBorder={false}>NFC &amp; QR Code</GradientText>
               </h2>
               <p className="mx-auto max-w-[52ch] break-words text-sm leading-relaxed text-ink/70 sm:text-base md:mx-0 md:text-lg">
-                Aproximação instantânea. Conecte clientes a cardápios, redes sociais e pagamentos em menos de 1 segundo.
+                Aproximação instantânea. Conecte clientes a <GradientText animationSpeed={6} className="!inline-flex !m-0 !p-0 !bg-transparent !backdrop-blur-0" showBorder={false}><span className="font-semibold">cardápios, redes sociais e pagamentos</span></GradientText> em menos de 1 segundo.
               </p>
               <div className="grid w-full max-w-[36rem] grid-cols-3 gap-2 self-stretch md:self-start" role="list" aria-label="Destaques da placa">
                 {[
@@ -364,7 +365,7 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
                   { k: '02', t: 'NFC+QR', d: 'Mesma placa' },
                   { k: '03', t: '3 dias', d: 'Envio útil' },
                 ].map((f) => (
-                  <div key={f.k} className="rounded-2xl border border-ink/10 bg-white px-3 py-3 shadow-[0_8px_24px_rgba(0,0,0,0.04)] dark:border-white/10 dark:bg-white/[0.04]">
+                <div key={f.k} className="rounded-2xl border border-ink/10 bg-[var(--color-card)] px-3 py-3 shadow-[0_8px_24px_rgba(0,0,0,0.04)] dark:border-white/10 dark:bg-white/[0.04]">
                     <p className="font-mono text-[10px] tracking-[0.16em] text-ink/30 dark:text-white/30">{f.k}</p>
                     <p className="mt-1 font-display text-sm font-bold tracking-tight text-ink dark:text-white">{f.t}</p>
                     <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink/50 dark:text-white/50">{f.d}</p>

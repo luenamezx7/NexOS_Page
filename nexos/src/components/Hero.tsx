@@ -6,6 +6,10 @@ import { motion, useReducedMotion, type Variants } from 'motion/react';
 import { ArrowRight, ArrowUpRight, Zap, Layers, Gauge } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 import { config } from '@/config';
+import GradientText from './GradientText';
+
+
+
 
 // Lazy (abaixo): DarkVeil (WebGL/ogl ~700KB) e Grainient (canvas) saem do
 // bundle inicial. `ssr: false` porque canvas/WebGL não renderizam no
@@ -175,7 +179,13 @@ function BentoCard({ card, reduceMotion }: BentoCardProps) {
       </div>
 
       <h3 id={`bento-title-${card.id}`} className="font-dirty mb-2 break-words text-lg font-bold tracking-tight text-ink sm:text-xl">
-        {card.title}
+        {card.id === 'performance-valor' ? (
+          <>
+            Performance que gera valor <span className="font-sans font-bold tracking-tight">B2B</span>
+          </>
+        ) : (
+          card.title
+        )}
       </h3>
       <p className="mb-5 break-words text-sm leading-relaxed text-ink/70">{card.description}</p>
 
@@ -212,34 +222,28 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
         className={`relative w-full max-w-full overflow-hidden overflow-x-clip bg-canvas ${className}`}
       >
         {theme === 'dark' ? (
-          <div className="veil-wrap grayscale contrast-125" aria-hidden="true" style={{ filter: 'grayscale(1) contrast(1.15) brightness(0.95)' }}>
-            <DarkVeil
-              hueShift={0}
-              noiseIntensity={0.08}
-              speed={0.5}
-              scanlineFrequency={0.3}
-              warpAmount={3}
-            />
+          <div className="veil-wrap" aria-hidden="true">
+            <DarkVeil hueShift={340} noiseIntensity={0.08} speed={0.5} scanlineFrequency={0.3} warpAmount={3} />
           </div>
         ) : (
-          <div className="veil-wrap" aria-hidden="true">
+          <div className="veil-wrap opacity-35" aria-hidden="true">
             <Grainient
-              color1="#ffd6e7"
-              color2="#ff5c8a"
-              color3="#ece7db"
+              color1="#fdf6ec"
+              color2="#f5e6cc"
+              color3="#fffaf2"
               lightMode={true}
-              timeSpeed={0.25}
-              warpStrength={1.0}
-              warpFrequency={5.0}
-              warpSpeed={2.0}
-              warpAmplitude={50.0}
-              grainAmount={0.06}
+              timeSpeed={0.18}
+              warpStrength={0.6}
+              warpFrequency={3.0}
+              warpSpeed={1.0}
+              warpAmplitude={30.0}
+              grainAmount={0.03}
               grainScale={2.0}
               grainAnimated={false}
-              contrast={1.2}
+              contrast={1.05}
               gamma={1.0}
-              saturation={0.9}
-              zoom={0.9}
+              saturation={0.35}
+              zoom={0.95}
             />
           </div>
         )}
@@ -272,7 +276,15 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
               transition={{ ...ENTER.transition, delay: 0.08 }}
               className="font-dirty w-full max-w-5xl text-balance break-words text-[1.75rem] font-black leading-[1.08] tracking-[-0.02em] text-ink will-change-transform sm:text-4xl sm:leading-[1.02] md:text-6xl lg:text-7xl"
             >
-              Construímos <span className="text-[#ff5c8a]">produtos digitais</span> que <span className="text-[#ff5c8a]">escalam</span>.
+              Construímos{' '}
+              <GradientText animationSpeed={6} className="!inline-flex !m-0 !p-0 !bg-transparent !backdrop-blur-0" showBorder={false}>
+                produtos digitais
+              </GradientText>{' '}
+              que{' '}
+              <GradientText animationSpeed={6} className="!inline-flex !m-0 !p-0 !bg-transparent !backdrop-blur-0" showBorder={false}>
+                escalam
+              </GradientText>
+              .
             </motion.h1>
 
             <motion.p
@@ -282,7 +294,11 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
               transition={{ ...ENTER.transition, delay: 0.16 }}
               className="mt-5 max-w-[62ch] break-words text-sm leading-relaxed text-ink/70 will-change-transform sm:text-base md:text-lg"
             >
-              Da ideia ao mercado. Desenvolvimento, design e estratégia para startups e empresas que precisam de <span className="font-semibold text-[#ff5c8a]">velocidade</span> sem abrir mão da qualidade.
+              Da ideia ao mercado. Desenvolvimento, design e estratégia para startups e empresas que precisam de{' '}
+              <GradientText animationSpeed={6} className="!inline-flex !m-0 !p-0 !bg-transparent !backdrop-blur-0" showBorder={false}>
+                <span className="font-semibold">velocidade</span>
+              </GradientText>{' '}
+              sem abrir mão da qualidade.
             </motion.p>
 
             <motion.div

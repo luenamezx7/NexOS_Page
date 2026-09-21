@@ -12,7 +12,7 @@ export const config: SiteConfig = {
     headline: 'Construímos produtos digitais que escalam.',
     subheadline: 'Da ideia ao mercado. Desenvolvimento, design e estratégia para startups e empresas que precisam de velocidade sem abrir mão da qualidade.',
     ctaPrimary: { label: 'Iniciar Projeto', href: '#services' },
-    ctaSecondary: { label: 'Ver Cases', href: '#testimonials' },
+    ctaSecondary: { label: 'Ver Documentação', href: '#testimonials' },
   },
   services: [
     {
@@ -68,7 +68,7 @@ export const config: SiteConfig = {
   ],
   navigation: [
     { label: 'Serviços', href: '#services' },
-    { label: 'Cases', href: '#testimonials' },
+    { label: 'Documentos', href: '#testimonials' },
     { label: 'Contato', href: '#contact' },
   ],
   footer: {

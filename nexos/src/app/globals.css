@@ -22,20 +22,19 @@
   --font-sans: "Geist", "Inter", -apple-system, system-ui, "Segoe UI", sans-serif;
   --font-mono: "Geist Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
-  /* Semantic theme tokens — light defaults, `.dark` overrides below.
-     All components use these (bg-canvas, text-ink, border-ink/10, …). */
-  --color-canvas: #f4f4f1;
-  --color-ink: #131316;
-  --color-glass: rgba(255, 255, 255, 0.65);
-  --color-glass-strong: rgba(255, 255, 255, 0.88);
-  --color-card: #ffffff;
+  /* Semantic theme tokens — light crema suave, página toda uniforme */
+  --color-canvas: #fdf6ec;
+  --color-ink: #231b14;
+  --color-glass: rgba(253, 246, 236, 0.42);
+  --color-glass-strong: rgba(253, 246, 236, 0.68);
+  --color-card: #fffaf2;
 }
 
 .dark {
   --color-canvas: #050505;
   --color-ink: #ffffff;
-  --color-glass: rgba(0, 0, 0, 0.4);
-  --color-glass-strong: rgba(0, 0, 0, 0.8);
+  --color-glass: rgba(0, 0, 0, 0.28);
+  --color-glass-strong: rgba(0, 0, 0, 0.55);
   --color-card: rgba(255, 255, 255, 0.02);
 }
 
@@ -44,31 +43,36 @@
   --nex-white: #ffffff;
   --nex-pink: #db2777;
   --nex-pink-hot: #ff5c8a;
+  --nex-purple: #83358F;
   --nex-hairline: rgba(255, 255, 255, 0.1);
   --section-indicator: #ff5c8a;
   --section-indicator-glow: rgba(255, 92, 138, 0.4);
   --section-indicator-glow-soft: rgba(255, 92, 138, 0.18);
 
+  --nex-gradient-accent: linear-gradient(90deg, #ff5c8a 0%, #83358F 50%, #ff5c8a 100%);
+  --nex-gradient-accent-reverse: linear-gradient(90deg, #83358F 0%, #ff5c8a 50%, #83358F 100%);
+  --nex-gradient-accent-radial: radial-gradient(ellipse at center, #ff5c8a 0%, #83358F 70%, transparent 100%);
+
   --ease-fluid: cubic-bezier(0.16, 1, 0.3, 1);
 
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --background: #fdf6ec;
+  --foreground: #231b14;
+  --card: #fffaf2;
+  --card-foreground: #231b14;
+  --popover: #fffaf2;
+  --popover-foreground: #231b14;
+  --primary: #231b14;
+  --primary-foreground: #fdf6ec;
+  --secondary: #f5e6cc;
+  --secondary-foreground: #231b14;
+  --muted: #f5e6cc;
+  --muted-foreground: #8a7a65;
+  --accent: #f5e6cc;
+  --accent-foreground: #231b14;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: #e8dcc6;
+  --input: #e8dcc6;
+  --ring: #ff5c8a;
   --radius: 0.625rem;
 }
 
@@ -587,6 +591,98 @@ button {
   border-radius: 9999px;
   background: var(--nex-pink-hot);
   box-shadow: 0 0 8px rgba(255, 92, 138, 0.8);
+}
+
+/* Glass rosado suave — REVERSÍVEL: troque glass-highlight por chrome-highlight ou text-[#ff5c8a] */
+.glass-highlight {
+  background: rgba(255, 92, 138, 0.08);
+  backdrop-filter: blur(8px) saturate(1.2);
+  -webkit-backdrop-filter: blur(8px) saturate(1.2);
+  border: 1px solid rgba(255, 92, 138, 0.14);
+  border-radius: 0.5rem;
+  padding: 0.08em 0.32em 0.12em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  color: #ff5c8a;
+  font-weight: 600;
+}
+.dark .glass-highlight {
+  background: rgba(255, 92, 138, 0.10);
+  border-color: rgba(255, 92, 138, 0.18);
+  color: #ff8fab;
+}
+
+/* Accent Gradient Utilities */
+.gradient-accent {
+  background: var(--nex-gradient-accent);
+}
+
+.gradient-accent-text {
+  background: var(--nex-gradient-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.gradient-accent-border {
+  position: relative;
+}
+.gradient-accent-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: var(--nex-gradient-accent);
+  z-index: -1;
+}
+
+.gradient-accent-underline {
+  position: relative;
+}
+.gradient-accent-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--nex-gradient-accent);
+  border-radius: 1px;
+}
+
+.gradient-accent-glow {
+  box-shadow:
+    0 0 16px rgba(255, 92, 138, 0.4),
+    0 0 32px rgba(131, 53, 143, 0.3);
+}
+
+.gradient-accent-glow-soft {
+  box-shadow:
+    0 0 8px rgba(255, 92, 138, 0.25),
+    0 0 16px rgba(131, 53, 143, 0.15);
+}
+
+/* Accent radial for backgrounds */
+.bg-gradient-accent-radial {
+  background: var(--nex-gradient-accent-radial);
+}
+
+/* Pulse accent for CTAs */
+.animate-pulse-accent {
+  animation: pulse-accent 2.5s ease-in-out infinite;
+}
+
+@keyframes pulse-accent {
+  0%, 100% {
+    box-shadow:
+      0 0 16px rgba(255, 92, 138, 0.4),
+      0 0 32px rgba(131, 53, 143, 0.3);
+  }
+  50% {
+    box-shadow:
+      0 0 24px rgba(255, 92, 138, 0.6),
+      0 0 48px rgba(131, 53, 143, 0.5);
+  }
 }
 
 /* ---------- Form fields: thin industrial inputs ---------- */

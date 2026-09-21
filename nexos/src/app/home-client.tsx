@@ -17,6 +17,7 @@ import TextPressure from '@/components/TextPressure';
 import { useTheme } from '@/components/ThemeProvider';
 import { LampContainer } from '@/components/ui/lamp';
 
+
 // Mesmo lazy do Hero: WebGL/canvas fora do bundle inicial, com fallback
 // estático (a intro aparece após 2.2s de loading — tempo de sobra pro chunk).
 function VeilFallback() {
