@@ -381,9 +381,9 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
                   { k: '02', t: 'NFC+QR', d: 'Mesma placa' },
                   { k: '03', t: '3 dias', d: 'Envio útil' },
                 ].map((f) => (
-                <div key={f.k} className="rounded-2xl border border-ink/10 bg-[var(--color-card)] px-3 py-3 shadow-[0_8px_24px_rgba(0,0,0,0.04)] dark:border-white/10 dark:bg-white/[0.04]">
+                <div key={f.k} className="group rounded-2xl border border-ink/10 bg-[var(--color-card)] px-3 py-3 shadow-[0_8px_24px_rgba(0,0,0,0.04)] transition-colors hover:border-[#ff5c8a]/20 dark:border-white/10 dark:bg-white/[0.04]">
                     <p className="font-mono text-[10px] tracking-[0.16em] text-ink/30 dark:text-white/30">{f.k}</p>
-                    <p className="mt-1 font-display text-sm font-bold tracking-tight text-ink dark:text-white">{f.t}</p>
+                    <p className="mt-1 font-display text-base font-black tracking-tighter text-ink dark:text-white sm:text-lg">{f.t}</p>
                     <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink/50 dark:text-white/50">{f.d}</p>
                   </div>
                 ))}
@@ -420,14 +420,17 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
                   {isDiscounted && (
                     <span className="font-mono text-xs text-ink/35 line-through dark:text-white/35">Sem desconto {fmtBRL(basePrice * qty)}</span>
                   )}
-                  <p className="inline-flex flex-wrap items-center gap-2 font-mono text-sm font-semibold text-ink">
-                    {totalLabel}
+                  <p className="inline-flex flex-wrap items-baseline gap-2">
+                    <span className="font-display text-3xl font-black tracking-tighter leading-none">
+                      <GradientText animationSpeed={6} className="!inline-flex !m-0 !p-0 !bg-transparent !backdrop-blur-0" showBorder={false}>{totalLabel}</GradientText>
+                    </span>
                     {activeTag && (
-                      <span className="rounded-full border border-[#ff5c8a]/40 bg-[#ff5c8a]/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#ff5c8a]">
+                      <span className="rounded-full border border-[#ff5c8a]/50 bg-[#ff5c8a] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-white shadow-[0_0_12px_rgba(255,92,138,0.5)]">
                         {activeTag} −{discountPct}%
                       </span>
                     )}
                   </p>
+                  <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink/40">{fmtBRL(unitPrice)} /un.</span>
                 </div>
               </div>
               <div className="flex flex-col gap-3 self-stretch sm:self-center md:self-start">

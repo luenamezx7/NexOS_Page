@@ -112,12 +112,14 @@ function ServiceCard({ service, reduceMotion, onCheckout }: ServiceCardProps) {
       </h3>
       <p className="mb-6 break-words text-sm leading-relaxed text-ink/70">{service.description}</p>
 
-      {/* Métricas */}
+      {/* Métricas — valores em destaque */}
       {metrics.length > 0 && (
         <div className="mb-6 grid grid-cols-3 gap-3" role="list" aria-label={`Métricas de ${service.title}`}>
           {metrics.map((m) => (
-            <div key={m.label} className="rounded-xl border border-ink/10 bg-[var(--color-card)] px-3 py-3 text-center dark:border-white/10 dark:bg-white/[0.04]">
-              <p className="font-display text-lg font-bold tracking-tight text-ink dark:text-white sm:text-xl">{m.value}</p>
+            <div key={m.label} className="group/metric rounded-xl border border-ink/10 bg-[var(--color-card)] px-3 py-3 text-center shadow-[0_4px_12px_rgba(0,0,0,0.04)] transition-colors hover:border-[#ff5c8a]/20 dark:border-white/10 dark:bg-white/[0.04]">
+              <p className="font-display text-xl font-black tracking-tighter leading-none sm:text-2xl">
+                <span className="bg-gradient-to-r from-[#ff5c8a] via-[#83358F] to-[#ff5c8a] bg-clip-text text-transparent">{m.value}</span>
+              </p>
               <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.12em] text-ink/45 dark:text-white/45">{m.label}</p>
             </div>
           ))}
@@ -134,9 +136,9 @@ function ServiceCard({ service, reduceMotion, onCheckout }: ServiceCardProps) {
       </ul>
 
       <div className="mt-auto border-t border-ink/10 pt-5">
-        <div className="mb-4 flex items-baseline gap-2">
-          <span className="font-display text-2xl font-bold tracking-tight text-ink sm:text-3xl">
-            R$ {service.price.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+        <div className="mb-4 flex flex-wrap items-baseline gap-2">
+          <span className="font-display text-3xl font-black tracking-tighter leading-none sm:text-4xl">
+            <span className="bg-gradient-to-r from-[#ff5c8a] via-[#83358F] to-[#ff5c8a] bg-clip-text text-transparent">R$ {service.price.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </span>
           {service.id === 'dev' && (
             <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/45">/mês</span>
