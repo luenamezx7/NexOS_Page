@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { AnimatePresence, motion, useMotionValue, useReducedMotion, useTransform, type MotionValue } from 'motion/react';
+import { motion, useMotionValue, useReducedMotion, useTransform, type MotionValue } from 'motion/react';
 import { Minus, Nfc, Palette, Plus } from 'lucide-react';
 import { config } from '@/config';
 import type { Service } from '@/types';
@@ -94,67 +94,59 @@ function QrMatrix({ dark }: { dark: boolean }) {
   );
 }
 
-const HERO_PLATE_IMAGES = [
-  { src: '/placas/codex-1.png', alt: 'Placa NexOS — acrílico cristal' },
-  { src: '/placas/codex-2.png', alt: 'Placa NexOS — escala com luvas' },
-];
+const PLATE_IMAGE = { src: '/placas/codex-1.png', alt: 'Placa Inteligente NexOS — duas mãos segurando a plaquinha de acrílico cristal com NFC e QR Code' };
 
 function AcrylicPlate() {
   const reduce = useReducedMotion() ?? false;
-  const [idx, setIdx] = useState(0);
-  // Design read: premium hardware showcase for SMB, minimalist luxury roso, double-bezel + bento, VARIANCE 7 / MOTION 5
   return (
-    <div className="relative w-full">
-      {/* Outer shell — Doppelrand */}
+    <div className="relative w-full flex flex-col items-center">
       <motion.div
         initial={reduce ? { opacity: 0, y: 16 } : { opacity: 0, y: 24, scale: 0.98 }}
         whileInView={{ opacity: 1, y: 0, scale: 1 }}
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        className="relative rounded-[2rem] border border-ink/10 bg-ink/[0.02] p-2 shadow-[0_24px_60px_rgba(0,0,0,0.08)] backdrop-blur-sm dark:border-white/10 dark:bg-white/[0.04]"
+        className="relative will-change-transform"
       >
-        <div className="pointer-events-none absolute inset-0 rounded-[2rem] bg-gradient-to-b from-white/30 to-transparent opacity-60 dark:from-white/10" />
-        {/* Inner core */}
-        <div className="relative rounded-[calc(2rem-8px)] bg-[var(--color-card)] p-3 shadow-[inset_0_1px_1px_rgba(255,255,255,0.9),0_8px_32px_rgba(0,0,0,0.06)] dark:bg-[#0e0e0f] dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)]">
-          <button
-            type="button"
-            onClick={() => setIdx((i) => (i + 1) % HERO_PLATE_IMAGES.length)}
-            aria-label="Trocar modelo — clique"
-            className="group relative block w-full cursor-pointer overflow-hidden rounded-[18px] bg-[#f7f5f3] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff5c8a] dark:bg-black/20"
-          >
-            <div className="relative aspect-[16/10] w-full overflow-hidden">
-              <AnimatePresence mode="wait" initial={false}>
+        {/* Iluminação gradiente por trás do MacBook */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute left-1/2 top-1/2 h-[72%] w-[88%] -translate-x-1/2 -translate-y-1/2 rounded-[2rem] bg-gradient-to-r from-[#ff5c8a]/18 via-[#83358F]/16 to-[#ff5c8a]/18 blur-[28px]"
+        />
+        {/* MacBook Air 13 — mockup de tela, inspirado no Figma Community */}
+        <div className="relative w-[520px] max-w-[88vw] sm:w-[560px] md:w-[600px]">
+          {/* Tela — papel de parede roxo substituído harmonicamente pela placa */}
+          <div className="relative overflow-hidden rounded-t-[1.1rem] border-[7px] border-[#1e1e1e] border-b-0 bg-[#1e1e1e] p-1.5 pb-0 shadow-[0_18px_60px_rgba(0,0,0,0.22)]">
+            <div className="relative overflow-hidden rounded-t-[0.7rem] bg-gradient-to-br from-[#83358F] via-[#7c3aed] to-[#ff5c8a] aspect-[16/10] p-2">
+              <div className="relative h-full w-full overflow-hidden rounded-lg bg-white shadow-[inset_0_1px_8px_rgba(0,0,0,0.08)]">
                 <motion.img
-                  key={HERO_PLATE_IMAGES[idx].src}
-                  src={HERO_PLATE_IMAGES[idx].src}
-                  alt={HERO_PLATE_IMAGES[idx].alt}
+                  src={PLATE_IMAGE.src}
+                  alt={PLATE_IMAGE.alt}
                   initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 1.04 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.98 }}
-                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                   className="absolute inset-0 h-full w-full object-cover will-change-transform"
                   draggable={false}
                 />
-              </AnimatePresence>
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/18 via-transparent to-transparent" />
+              </div>
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-transparent via-white/06 to-white/14" />
+              {/* notch/câmera sutil */}
+              <div className="pointer-events-none absolute left-1/2 top-0 h-1.5 w-16 -translate-x-1/2 rounded-b-md bg-[#1e1e1e]" />
             </div>
-            <span className="pointer-events-none absolute left-2 top-2 inline-flex items-center gap-1.5 rounded-full bg-black/55 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-white/85 backdrop-blur">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#ff5c8a] shadow-[0_0_8px_rgba(255,92,138,0.6)]" /> {idx === 0 ? 'Acrílico' : 'Escala'} · {idx + 1}/2
-            </span>
-          </button>
-          <div className="mt-3 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <span className="grid h-7 w-7 place-items-center rounded-full bg-[#ff5c8a]/10 text-[#ff5c8a] dark:bg-[#ff5c8a]/15">
-                <Nfc size={14} strokeWidth={2} />
-              </span>
-              <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/60 dark:text-white/60">NFC · QR</span>
-            </div>
-            <span className="font-mono text-[10px] tracking-[0.12em] text-ink/30 dark:text-white/30">Toque para trocar</span>
           </div>
+          {/* Base */}
+          <div className="relative mx-auto h-3 w-[96%] rounded-b-[0.7rem] bg-gradient-to-b from-[#2a2a2a] to-[#1a1a1a] shadow-[0_8px_24px_rgba(0,0,0,0.18)]">
+            <div className="absolute left-1/2 top-1 h-1 w-24 -translate-x-1/2 rounded-full bg-black/40" />
+          </div>
+          <div className="mx-auto h-1.5 w-[72%] rounded-b-md bg-[#1a1a1a]/70 blur-[1px]" />
         </div>
       </motion.div>
-      {/* Sombra ambiente suave — não preta dura */}
-      <div className="pointer-events-none absolute -bottom-3 left-1/2 h-8 w-[74%] -translate-x-1/2 rounded-full bg-black/10 blur-[18px] dark:bg-black/30" aria-hidden="true" />
+      <div className="mt-6 flex items-center gap-2">
+        <span className="grid h-7 w-7 place-items-center rounded-full bg-[#ff5c8a]/10 text-[#ff5c8a] dark:bg-[#ff5c8a]/15">
+          <Nfc size={14} strokeWidth={2} />
+        </span>
+        <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/60 dark:text-white/60">NFC · QR</span>
+      </div>
     </div>
   );
 }
@@ -203,7 +195,7 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
       >
         <div className="mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-10 px-4 py-20 sm:px-6 md:grid-cols-2 md:gap-12 md:px-8 lg:gap-16 md:py-28">
           <div className="flex justify-center">
-            <div className="w-[min(92vw,28rem)] md:w-[34rem]">
+            <div className="w-[min(92vw,34rem)] md:w-[42rem]">
               <AcrylicPlate />
             </div>
           </div>
@@ -336,7 +328,7 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
               style={{ transformPerspective: 1000 }}
               className="flex justify-center will-change-transform md:justify-center"
             >
-              <div className="w-[min(96vw,32rem)] sm:w-[min(84vw,30rem)] md:w-[36rem]">
+              <div className="w-[min(96vw,38rem)] sm:w-[min(88vw,36rem)] md:w-[44rem]">
                 <AcrylicPlate />
               </div>
             </motion.div>

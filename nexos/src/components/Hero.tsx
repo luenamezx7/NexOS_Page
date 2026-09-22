@@ -278,11 +278,11 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
             >
               Construímos{' '}
               <GradientText animationSpeed={6} className="!inline-flex !m-0 !p-0 !bg-transparent !backdrop-blur-0" showBorder={false}>
-                produtos digitais
+                soluções digitais
               </GradientText>{' '}
-              que{' '}
+              para{' '}
               <GradientText animationSpeed={6} className="!inline-flex !m-0 !p-0 !bg-transparent !backdrop-blur-0" showBorder={false}>
-                escalam
+                seu negócio
               </GradientText>
               .
             </motion.h1>
