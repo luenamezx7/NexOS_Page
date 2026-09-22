@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { useTheme } from './ThemeProvider';
+import { RobotCycler } from './RobotCycler';
 
 const OS_NORM_X = 0.795;
 const OS_NORM_Y = 0.491;
@@ -27,7 +28,6 @@ export default function BrandEntrance({ onComplete }: { onComplete: () => void }
 
   const isDark = theme === 'dark';
   const logoSrc = isDark ? '/nexos-logo-dark.svg' : '/nexos-logo-light.svg';
-  const oSrc = '/nexos-O-personalizado.svg';
 
   const finish = useCallback(() => {
     if (completedRef.current || !canFinishRef.current) return;
@@ -124,7 +124,7 @@ export default function BrandEntrance({ onComplete }: { onComplete: () => void }
           <div ref={logoRef} className="relative" style={{ width: 'clamp(200px, 42vw, 460px)', aspectRatio: '1433 / 344' }}>
             <img src={logoSrc} alt="NexOS" className="h-full w-full object-contain" draggable={false} />
           </div>
-          <img src={oSrc} alt="" aria-hidden="true" className="shrink-0 object-contain" style={{ width: iconW || 88, height: iconH || 74, rotate: '90deg' }} draggable={false} />
+          <RobotCycler className="logo-invert shrink-0" style={{ width: iconW || 88, height: iconH || 74 }} intervalMs={1600} fadeMs={600} />
         </div>
       </motion.div>
     );
@@ -227,28 +227,27 @@ export default function BrandEntrance({ onComplete }: { onComplete: () => void }
             <motion.div
               aria-hidden="true"
               className="pointer-events-none absolute left-0 top-0 rounded-full bg-gradient-to-br from-[#ff5c8a]/22 via-[#83358F]/18 to-transparent blur-[14px] will-change-transform"
-              style={{ width: iconW * 1.5, height: iconH * 1.5, rotate: '90deg' }}
+              style={{ width: iconW * 1.5, height: iconH * 1.5 }}
               initial={{ opacity: 0, x: oX - iconW * 0.25, y: oY - iconH * 0.25, scale: 0.92 }}
               animate={{ opacity: [0, 0, 0.9, 0.9, 0.75], scale: [0.92, 0.92, 1, 1, 1], x: [oX - iconW * 0.25, oX - iconW * 0.25, oX - iconW * 0.25, oX - iconW * 0.25, finalX - iconW * 0.25], y: [oY - iconH * 0.25, oY - iconH * 0.25, oY - iconH * 0.25, oY - iconH * 0.25, finalY - iconH * 0.25] }}
               transition={{ duration: 2.8, times: [0, 0.32, 0.42, 0.62, 1], ease: 'linear' }}
             />
-            <motion.img
-              src={oSrc}
-              alt=""
+            <motion.div
               aria-hidden="true"
-              draggable={false}
-              className="absolute left-0 top-0 object-contain will-change-transform drop-shadow-[0_0_14px_rgba(255,92,138,0.35)]"
-              style={{ width: iconW, height: iconH, rotate: '90deg' }}
-              initial={{ opacity: 0, x: oX, y: oY, scale: 0.92, filter: 'blur(4px)' }}
+              className="logo-invert absolute left-0 top-0 will-change-transform drop-shadow-[0_0_14px_rgba(255,92,138,0.35)]"
+              style={{ width: iconW, height: iconH }}
+              initial={{ opacity: 0, x: oX, y: oY, scale: 0.92, filter: 'blur(4px)' as any }}
               animate={{
                 opacity: [0, 0, 1, 1, 1],
                 scale: [0.92, 0.92, 1, 1, 1],
                 filter: ['blur(4px)', 'blur(4px)', 'blur(0px)', 'blur(0px)', 'blur(0px)'] as any,
                 x: [oX, oX, oX, oX, finalX],
                 y: [oY, oY, oY, oY, finalY],
-              }}
-              transition={{ duration: 2.8, times: [0, 0.32, 0.42, 0.62, 1], ease: 'linear' }}
-            />
+              } as any}
+              transition={{ duration: 2.8, times: [0, 0.32, 0.42, 0.62, 1], ease: 'linear' as any }}
+            >
+              <RobotCycler className="h-full w-full" intervalMs={1550} fadeMs={700} />
+            </motion.div>
           </>
         )}
         {/* Sombra ambiente suave sob o conjunto, como AcrylicPlate */}

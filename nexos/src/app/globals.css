@@ -19,6 +19,7 @@
   --font-display: "Space Grotesk", "Geist", -apple-system, system-ui, sans-serif;
   --font-heavy: "Space Grotesk", "Geist", -apple-system, system-ui, sans-serif;
   --font-dirty: "Dirtyline", "Space Grotesk", sans-serif;
+  --font-old-english: "Old English", serif;
   --font-sans: "Geist", "Inter", -apple-system, system-ui, "Segoe UI", sans-serif;
   --font-mono: "Geist Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
@@ -100,7 +101,16 @@
   --ring: oklch(0.556 0 0);
 }
 
-/* ---------- Self-hosted Dirtyline + Satoshi ---------- */
+/* ---------- Self-hosted Dirtyline + Satoshi + Old English ---------- */
+@font-face {
+  font-family: "Old English";
+  src: url("/fonts/old-english.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+.font-old-english { font-family: "Old English", serif !important; }
+
 @font-face {
   font-family: "Dirtyline";
   src: url("/fonts/dirtyline.woff2") format("woff2");

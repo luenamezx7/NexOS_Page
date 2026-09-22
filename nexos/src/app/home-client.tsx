@@ -120,17 +120,17 @@ function IntroSection({ onComplete }: IntroSectionProps) {
       >
         <TextPressure
           text={INTRO_TEXT}
-          fontFamily="Dirtyline"
+          fontFamily="Old English"
           fontUrl=""
-          width={true}
-          weight={true}
+          width={false}
+          weight={false}
           italic={false}
-          alpha={true}
+          alpha={false}
           stroke={false}
           scale={false}
           textColor={theme === 'dark' ? '#FFFFFF' : '#131316'}
           strokeColor={theme === 'dark' ? '#FFFFFF' : '#131316'}
-          minFontSize={24}
+          minFontSize={28}
         />
       </motion.div>
 
