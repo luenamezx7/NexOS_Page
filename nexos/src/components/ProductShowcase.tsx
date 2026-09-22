@@ -9,6 +9,7 @@ import type { Service } from '@/types';
 import { BULK_MAX_QTY, bulkTag, bulkUnitPrice } from '@/lib/bulk-pricing';
 import { HoldButton } from './HoldButton';
 import GradientText from './GradientText';
+import { MacBookMockup } from './MacBookMockup';
 
 
 // Drawer fora do bundle inicial: só baixa quando pede o checkout da placa.
@@ -126,50 +127,16 @@ function AcrylicPlate() {
           transition={reduce ? undefined : { duration: 3.2, ease: 'easeInOut', repeat: Infinity, repeatType: 'mirror' }}
           className="pointer-events-none absolute left-1/2 top-1/2 h-[42%] w-[58%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-[#ff5c8a]/30 via-[#ff5c8a]/18 to-transparent blur-[22px] will-change-transform"
         />
-        {/* MacBook Air 13 — mais distante, flutuando, com brilho gradiente atrás */}
-        <motion.div
-          animate={reduce ? undefined : { y: [0, -9, 0] }}
-          transition={reduce ? undefined : { duration: 4.8, ease: [0.45, 0, 0.55, 1], repeat: Infinity, repeatType: 'mirror' }}
-          className="relative w-[500px] max-w-[88vw] will-change-transform sm:w-[540px] md:w-[580px]"
-        >
-          {/* Tela */}
-          <div className="relative overflow-hidden rounded-t-[1.15rem] border-[8px] border-[#1e1e1e] border-b-0 bg-[#1e1e1e] p-1.5 pb-0 shadow-[0_22px_70px_rgba(0,0,0,0.24)]">
-            <div className="relative overflow-hidden rounded-t-[0.75rem] bg-gradient-to-br from-[#83358F] via-[#7c3aed] to-[#ff5c8a] aspect-[16/10] p-[7px]">
-              <div className="relative h-full w-full overflow-hidden rounded-[0.6rem] bg-white shadow-[inset_0_1px_10px_rgba(0,0,0,0.09)]">
-                <motion.img
-                  src={PLATE_IMAGE.src}
-                  alt={PLATE_IMAGE.alt}
-                  initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 1.04 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                  className="absolute inset-0 h-full w-full object-cover will-change-transform"
-                  draggable={false}
-                />
-              </div>
-              <div className="pointer-events-none absolute inset-0 rounded-t-[0.7rem] bg-gradient-to-tr from-white/10 via-transparent to-white/08" />
-              <div className="pointer-events-none absolute left-1/2 top-0 h-1.5 w-16 -translate-x-1/2 rounded-b-md bg-[#1e1e1e] shadow-sm" />
-            </div>
-            {/* Brilho superior da tampa */}
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-white/08 to-transparent" />
-          </div>
-          {/* Dobradiça */}
-          <div className="relative mx-auto h-[2px] w-[96%] bg-[#1a1a1a]" />
-          {/* Base — wedge Air */}
-          <div className="relative mx-auto w-[98%]">
-            <div className="relative h-[16px] rounded-b-[0.9rem] bg-gradient-to-b from-[#3a3a3a] via-[#2a2a2a] to-[#1e1e1e] shadow-[0_10px_28px_rgba(0,0,0,0.20)] border-t border-white/08">
-              <div className="pointer-events-none absolute inset-x-10 top-[5px] h-px bg-gradient-to-r from-transparent via-white/08 to-transparent" />
-              <div className="absolute left-1/2 top-[6px] h-[7px] w-28 -translate-x-1/2 rounded-[3px] bg-[#111111] border border-white/05 shadow-inner" />
-            </div>
-            <div className="mx-auto h-[5px] w-[84%] rounded-b-[5px] bg-[#141414] blur-[0.5px] opacity-90" />
-          </div>
-        </motion.div>
+        <div className="relative flex w-full justify-center will-change-transform">
+          <MacBookMockup scale={0.9} wallpaperSrc={PLATE_IMAGE.src} wallpaperAlt={PLATE_IMAGE.alt} className="hidden sm:block" />
+          <MacBookMockup scale={0.58} wallpaperSrc={PLATE_IMAGE.src} wallpaperAlt={PLATE_IMAGE.alt} className="sm:hidden" />
+        </div>
       </motion.div>
       <div className="mt-6 flex items-center gap-2">
         <span className="grid h-7 w-7 place-items-center rounded-full bg-[#ff5c8a]/10 text-[#ff5c8a] dark:bg-[#ff5c8a]/15">
           <Nfc size={14} strokeWidth={2} />
         </span>
-        <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/60 dark:text-white/60">NFC · QR</span>
+        <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/60 dark:text-white/60">NFC · QR · só Figma</span>
       </div>
     </div>
   );

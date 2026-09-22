@@ -6,6 +6,7 @@ import { motion, AnimatePresence, useReducedMotion, useScroll, useMotionValueEve
 import { Menu, X, Sun, Moon } from 'lucide-react';
 import { config } from '@/config';
 import { useTheme } from './ThemeProvider';
+import { RobotCycler } from './RobotCycler';
 
 interface NavItem {
   label: string;
@@ -106,7 +107,7 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
   const reduce = useReducedMotion();
   const { scrollY } = useScroll();
-  const oSrc = '/nexos-O-personalizado.svg';
+  // cycler usa /nexosrobot-1/2/3.svg
 
   useMotionValueEvent(scrollY, 'change', (latest: number) => {
     setScrolled(latest > 10);
@@ -150,14 +151,10 @@ export function Header() {
             className="logo-invert h-6 w-auto object-contain md:h-7"
             priority
           />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={oSrc}
-            alt=""
-            aria-hidden="true"
-            className="h-6 w-auto object-contain opacity-90 drop-shadow-[0_0_8px_rgba(255,92,138,0.35)] md:h-7"
-            style={{ rotate: '90deg' }}
-            draggable={false}
+          <RobotCycler
+            className="logo-invert h-6 shrink-0 opacity-90 drop-shadow-[0_0_8px_rgba(255,92,138,0.35)] md:h-7"
+            intervalMs={1600}
+            fadeMs={650}
           />
         </a>
 
