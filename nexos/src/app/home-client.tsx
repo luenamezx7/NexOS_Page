@@ -16,7 +16,6 @@ import { ThinkingOrbWrapper } from '@/components/ThinkingOrbWrapper';
 import TextPressure from '@/components/TextPressure';
 import BrandEntrance from '@/components/BrandEntrance';
 import { useTheme } from '@/components/ThemeProvider';
-import { LampContainer } from '@/components/ui/lamp';
 
 
 // Mesmo lazy do Hero: WebGL/canvas fora do bundle inicial, com fallback
@@ -108,9 +107,7 @@ function IntroSection({ onComplete }: IntroSectionProps) {
       className="fixed inset-0 z-[900] flex min-h-dvh flex-col justify-center overflow-hidden overflow-x-clip bg-canvas will-change-transform"
     >
       <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-        <LampContainer className="!min-h-dvh !rounded-none border-0 !bg-canvas">
-          <span className="sr-only">Lamp background</span>
-        </LampContainer>
+        {theme === 'dark' ? <DarkVeil /> : <Grainient />}
       </div>
       <div className="grid-pattern-subtle opacity-80 dark:opacity-10" aria-hidden="true" />
 
