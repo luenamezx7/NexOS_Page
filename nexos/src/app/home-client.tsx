@@ -14,6 +14,7 @@ import { Footer } from '@/components/Footer';
 import { SectionIndicator } from '@/components/SectionIndicator';
 import { ThinkingOrbWrapper } from '@/components/ThinkingOrbWrapper';
 import TextPressure from '@/components/TextPressure';
+import BrandEntrance from '@/components/BrandEntrance';
 import { useTheme } from '@/components/ThemeProvider';
 import { LampContainer } from '@/components/ui/lamp';
 
@@ -34,7 +35,7 @@ const Grainient = dynamic(() => import('@/components/Grainient'), {
   loading: VeilFallback,
 });
 
-type Stage = 'loading' | 'intro' | 'main';
+type Stage = 'loading' | 'intro' | 'brand' | 'main';
 
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const LOADING_MS = 2200;
@@ -160,10 +161,17 @@ export default function HomeClient() {
   const [stage, setStage] = useState<Stage>('loading');
   const heroRef = useRef<HTMLElement>(null);
   const introDoneRef = useRef<boolean>(false);
+  const brandDoneRef = useRef<boolean>(false);
 
   const handleIntroComplete = useCallback(() => {
     if (introDoneRef.current) return;
     introDoneRef.current = true;
+    setStage('brand');
+  }, []);
+
+  const handleBrandComplete = useCallback(() => {
+    if (brandDoneRef.current) return;
+    brandDoneRef.current = true;
     setStage('main');
   }, []);
 
@@ -192,6 +200,8 @@ export default function HomeClient() {
       <AnimatePresence>{stage === 'loading' && <LoadingScreen key="loading" />}</AnimatePresence>
 
       <AnimatePresence>{stage === 'intro' && <IntroSection key="intro" onComplete={handleIntroComplete} />}</AnimatePresence>
+
+      <AnimatePresence>{stage === 'brand' && <BrandEntrance key="brand" onComplete={handleBrandComplete} />}</AnimatePresence>
 
       {stage === 'main' && (
         <>

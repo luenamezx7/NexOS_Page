@@ -9,7 +9,7 @@ export const config: SiteConfig = {
   
   
   hero: {
-    headline: 'Construímos produtos digitais que escalam.',
+    headline: 'Construímos soluções digitais para seu negócio.',
     subheadline: 'Da ideia ao mercado. Desenvolvimento, design e estratégia para startups e empresas que precisam de velocidade sem abrir mão da qualidade.',
     ctaPrimary: { label: 'Iniciar Projeto', href: '#services' },
     ctaSecondary: { label: 'Ver Documentação', href: '#testimonials' },
@@ -18,9 +18,9 @@ export const config: SiteConfig = {
     {
       id: 'dev',
       title: 'Desenvolvimento NexOS',
-      description: 'Desenvolvimento sob medida com arquitetura moderna, performance e escalabilidade.',
+      description: 'Desenvolvimento sob medida com arquitetura moderna, performance e escalabilidade. Focado em portfólios, cardápios, apresentações e landing pages que convertem.',
       price: 499.9,
-      features: ['Arquitetura limpa e testável', 'CI/CD automatizado', 'Observabilidade nativa', 'Documentação técnica'],
+      features: ['Portfólios e cardápios digitais', 'Apresentações interativas', 'Landing pages de alta conversão', 'Arquitetura limpa e testável', 'CI/CD automatizado', 'Observabilidade nativa'],
       ctaText: 'Contratar Desenvolvimento',
     },
     {

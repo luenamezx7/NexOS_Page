@@ -106,6 +106,7 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
   const reduce = useReducedMotion();
   const { scrollY } = useScroll();
+  const oSrc = '/nexos-O-personalizado.svg';
 
   useMotionValueEvent(scrollY, 'change', (latest: number) => {
     setScrolled(latest > 10);
@@ -138,15 +139,25 @@ export function Header() {
             e.preventDefault();
             handleNav('#hero');
           }}
-          className="relative z-10 flex items-center rounded-full transition-opacity duration-300 hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
+          className="relative z-10 flex items-center gap-2 rounded-full transition-opacity duration-300 hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
         >
+          <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 rounded-full bg-gradient-to-r from-[#ff5c8a]/18 via-[#83358F]/12 to-[#ff5c8a]/18 blur-[10px]" />
           <Image
-            src="/logo_nexOS.png"
+            src="/nexos-branca-transparente.svg"
             alt="NexOS"
             width={112}
             height={28}
             className="logo-invert h-6 w-auto object-contain md:h-7"
             priority
+          />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={oSrc}
+            alt=""
+            aria-hidden="true"
+            className="h-6 w-auto object-contain opacity-90 drop-shadow-[0_0_8px_rgba(255,92,138,0.35)] md:h-7"
+            style={{ rotate: '90deg' }}
+            draggable={false}
           />
         </a>
 
@@ -162,7 +173,7 @@ export function Header() {
               className="group relative rounded-lg px-4 py-2 text-sm font-medium tracking-[-0.01em] text-ink/70 transition-colors duration-300 hover:bg-ink/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink touch-target"
             >
               {item.label}
-              <span className="pointer-events-none absolute inset-x-3 bottom-1 h-px w-0 bg-gradient-to-r from-[#ff5c8a] via-[#83358F] to-transparent opacity-0 shadow-[0_0_8px_rgba(255,92,138,0.6)] transition-all duration-300 group-hover:w-[calc(100%-1.5rem)] group-hover:opacity-100" aria-hidden="true" />
+              <span className="pointer-events-none absolute inset-x-3 bottom-1 z-20 h-px w-0 bg-gradient-to-r from-[#ff5c8a] via-[#83358F] to-[#ff5c8a] opacity-0 shadow-[0_0_8px_#ff5c8a,0_0_16px_rgba(255,92,138,0.4)] transition-all duration-300 group-hover:w-[calc(100%-1.5rem)] group-hover:opacity-100" aria-hidden="true" />
             </a>
           ))}
         </nav>
