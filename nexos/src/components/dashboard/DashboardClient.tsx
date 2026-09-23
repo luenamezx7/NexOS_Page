@@ -48,7 +48,7 @@ export function DashboardClient({ user, isAllowed, diagnostics }: {
     try {
       const response = await fetch('/api/auth/logout', { method: 'POST', signal: AbortSignal.timeout(15000) });
       if (!response.ok) throw new Error();
-      router.replace('/login'); router.refresh();
+      router.replace('/admin-dashboard-su/secure-entry'); router.refresh();
     } catch { setMsg('Não foi possível sair. Tente novamente.'); }
     finally { setLoading(false); }
   };

@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function AccountPage() {
   const access = await getUserAccess();
-  if (!access.ok) redirect('/entrar');
+  if (!access.ok) redirect('/portal/acesso');
   return <main className="min-h-[100dvh] bg-canvas px-6 py-12 text-ink">
     <div className="mx-auto flex max-w-3xl flex-col gap-8">
       <Link href="/" className="font-display text-2xl font-bold">NexOS.</Link>

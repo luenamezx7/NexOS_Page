@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
 export async function GET(request: NextRequest) {
-  const target = new URL('/entrar', process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || request.url);
+  const target = new URL('/portal/acesso', process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || request.url);
   const code = request.nextUrl.searchParams.get('code');
   let success = false;
   if (code && code.length <= 2048) {

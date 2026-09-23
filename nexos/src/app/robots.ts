@@ -9,7 +9,17 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/', '/sucesso', '/cancelado', '/_next/'],
+        disallow: [
+          '/api/',
+          '/sucesso',
+          '/cancelado',
+          '/_next/',
+          '/conta',
+          '/portal/',
+          '/admin-dashboard-su/',
+          '/dashboard',
+          '/auth/',
+        ],
       },
     ],
     sitemap: `${base}/sitemap.xml`,

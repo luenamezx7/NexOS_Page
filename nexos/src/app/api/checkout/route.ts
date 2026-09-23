@@ -8,6 +8,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { createHash, createHmac } from 'node:crypto';
 import { issueStatusToken } from '@/lib/status-token';
 import { isSameOrigin, readJsonBody, RequestError } from '@/lib/request-security';
+import { getUserAccess } from '@/lib/auth/user';
 
 // ============================================================
 // NexOS — Checkout via Asaas (PIX / Boleto / Cartão)
@@ -88,6 +89,21 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   if (!isSameOrigin(req)) return NextResponse.json({ error: 'Origem inválida.' }, { status: 403 });
+  // Regra de negócio: checkout exige conta criada + login (e e-mail confirmado).
+  // 401/403 com callbackUrl sinaliza o client para redirecionar e voltar após o auth.
+  const access = await getUserAccess();
+  if (!access.ok) {
+    return NextResponse.json(
+      {
+        error: access.reason === 'mfa'
+          ? 'Confirme a autenticação em duas etapas para continuar.'
+          : 'Faça login ou crie sua conta para finalizar a compra.',
+        callbackUrl: '/portal/acesso',
+        reason: access.reason ?? 'unauthenticated',
+      },
+      { status: access.status === 503 ? 503 : 401, headers: securityHeaders() },
+    );
+  }
   const idempotencyKey = req.headers.get('idempotency-key');
   if (!idempotencyKey || !z.string().uuid().safeParse(idempotencyKey).success) {
     return NextResponse.json({ error: 'Chave de tentativa inválida.' }, { status: 400 });

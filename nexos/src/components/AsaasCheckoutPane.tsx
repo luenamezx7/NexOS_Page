@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, useReducedMotion } from 'motion/react';
 import { QrCode, CreditCard, Receipt, ExternalLink, Loader2, Check, Copy, RefreshCw, ShieldCheck, Info } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
@@ -68,6 +69,7 @@ export function AsaasCheckoutPane({
 }: AsaasCheckoutPaneProps) {
   const reduce = useReducedMotion() ?? false;
   const { theme } = useTheme();
+  const router = useRouter();
   const isDark = theme === 'dark';
   const [state, setState] = useState<PixState>('idle');
   const [fatal, setFatal] = useState<string | null>(null);
@@ -173,7 +175,7 @@ export function AsaasCheckoutPane({
     }
     if (billingType === 'PIX') { setFatal('Pix em desenvolvimento — liberação pendente no Asaas.'); return; }
     if (turnstileRequired && !turnstileToken) {
-      setFatal('Verificação de segurança obrigatória. Atualize a página e tente novamente.');
+      setFatal('Conclua a verificação de segurança (captcha) antes de continuar.');
       return;
     }
     setState('generating');
@@ -189,7 +191,13 @@ export function AsaasCheckoutPane({
         }),
         signal: AbortSignal.timeout(25000),
       });
-      const body: { paymentUrl?: string; paymentId?: string; externalReference?: string; statusToken?: string; bankSlipUrl?: string; identificationField?: string; error?: string } = await res.json().catch(() => ({}));
+      const body: { paymentUrl?: string; paymentId?: string; externalReference?: string; statusToken?: string; bankSlipUrl?: string; identificationField?: string; error?: string; callbackUrl?: string } = await res.json().catch(() => ({}));
+      if (body.callbackUrl && (res.status === 401 || res.status === 403)) {
+        const back = encodeURIComponent(window.location.pathname + window.location.search);
+        router.replace(`${body.callbackUrl}?callbackUrl=${back}`);
+        router.refresh();
+        return;
+      }
       if ([400, 403, 429].includes(res.status)) attemptRef.current = null;
       if (!res.ok || !body.paymentUrl || !body.paymentId || !body.externalReference || !body.statusToken) throw new Error(body.error ?? 'Falha ao gerar cobrança.');
       credentialsRef.current = { externalReference: body.externalReference, statusToken: body.statusToken };
@@ -210,7 +218,7 @@ export function AsaasCheckoutPane({
       generatingRef.current = false;
       setCaptchaKey(v => v + 1);
     }
-  }, [name, email, cpfCnpj, productId, quantity, billingType, installments, turnstileToken, turnstileRequired, onNameError, onEmailError, onCpfError, startPolling]);
+  }, [name, email, cpfCnpj, productId, quantity, billingType, installments, turnstileToken, turnstileRequired, onNameError, onEmailError, onCpfError, startPolling, router]);
 
   const handleManualCheck = useCallback(async () => {
     if (!paymentId || checking) return;
@@ -361,13 +369,13 @@ export function AsaasCheckoutPane({
           {fatal && <p className="text-sm" role="alert">{fatal}</p>}
           {turnstileRequired && (
             <div className="mt-4">
-              <Turnstile key={captchaKey} onVerify={setTurnstileToken} onExpire={() => setTurnstileToken(null)} onError={() => setTurnstileToken(null)} />
+              <Turnstile key={captchaKey} onVerify={setTurnstileToken} onExpire={() => { setTurnstileToken(null); setFatal('A verificação de segurança expirou. Resolva o captcha novamente.'); }} onError={() => { setTurnstileToken(null); setFatal('Verificação de segurança indisponível. Recarregue a página.'); }} />
             </div>
           )}
           <motion.button
             type="button"
             onClick={handleGenerate}
-            disabled={state === 'generating' || !productId}
+            disabled={state === 'generating' || !productId || (turnstileRequired && !turnstileToken)}
             whileTap={reduce ? undefined : { scale: 0.98 }}
             transition={{ duration: 0.2, ease: FLUID_EASE }}
             className="btn-primary-nex w-full justify-center py-3.5 text-sm font-semibold disabled:opacity-60"

@@ -4,12 +4,13 @@ test('login hydrates with nonce CSP; controls work in desktop and mobile themes'
   const violations: string[] = [];
   page.on('pageerror', error => violations.push(error.message));
   page.on('console', message => { if (/violates.*Content Security Policy|hydration/i.test(message.text())) violations.push(message.text()); });
-  const response = await page.goto('/login');
+  const response = await page.goto('/admin-dashboard-su/secure-entry');
   const csp = response?.headers()['content-security-policy'];
   expect(csp).toContain("'nonce-");
   expect(csp).not.toContain("'unsafe-eval'");
   expect(response?.headers()['cache-control']).toContain('no-store');
-  await expect(page.getByRole('heading', { name: 'Entrar na sua conta' })).toBeVisible();
+  expect(response?.headers()['x-powered-by']).toBeUndefined();
+  await expect(page.getByRole('heading', { name: 'Entrada do operador' })).toBeVisible();
   await page.getByLabel('Senha', { exact: true }).fill('test-password');
   await page.getByRole('button', { name: 'Mostrar senha' }).click();
   await expect(page.getByLabel('Senha', { exact: true })).toHaveAttribute('type', 'text');
@@ -24,9 +25,18 @@ test('login hydrates with nonce CSP; controls work in desktop and mobile themes'
   expect(violations).toEqual([]);
 });
 
+test('legacy auth routes permanently redirect to the new opaque routes', async ({ request }) => {
+  const user = await request.get('/entrar', { maxRedirects: 0 });
+  expect(user.status()).toBe(308);
+  expect(user.headers().location).toContain('/portal/acesso');
+  const admin = await request.get('/login', { maxRedirects: 0 });
+  expect(admin.status()).toBe(308);
+  expect(admin.headers().location).toContain('/admin-dashboard-su/secure-entry');
+});
+
 test('private dashboard redirects and public requests cannot authorize themselves', async ({ page, request }) => {
   await page.goto('/dashboard');
-  await expect(page).toHaveURL(/\/login$/);
+  await expect(page).toHaveURL(/\/admin-dashboard-su\/secure-entry$/);
   const csrf = await request.post('/api/auth/login', { headers: { Origin: 'https://attacker.example' }, data: { email: 'test@example.com', password: 'test' } });
   expect(csrf.status()).toBe(403);
   const admin = await request.get('/api/cloudflare/verify');
@@ -37,11 +47,21 @@ test('private dashboard redirects and public requests cannot authorize themselve
   expect(payment.status()).toBe(403);
 });
 
+test('checkout rejects anonymous purchase attempts with a login callback', async ({ request }) => {
+  const checkout = await request.post('/api/checkout', {
+    headers: { Origin: 'http://localhost:3100', 'Idempotency-Key': '00000000-0000-4000-8000-000000000099' },
+    data: { productId: 'teste', name: 'Cliente Teste', email: 'anon@example.com', cpfCnpj: '12345678901' },
+  });
+  expect(checkout.status()).toBe(401);
+  const body = await checkout.json();
+  expect(body.callbackUrl).toContain('/portal/acesso');
+});
+
 test('MFA enrollment and code errors render accessibly (UI contract)', async ({ page }) => {
   await page.route('**/api/auth/login', route => route.fulfill({ json: { enrollmentRequired: true } }));
   await page.route('**/api/auth/enroll', route => route.fulfill({ json: { factorId: '00000000-0000-4000-8000-000000000001' } }));
   await page.route('**/api/auth/verify', route => route.fulfill({ status: 400, json: { error: 'Código inválido ou expirado. Tente novamente.' } }));
-  await page.goto('/login');
+  await page.goto('/admin-dashboard-su/secure-entry');
   await page.getByLabel('E-mail', { exact: true }).fill('test@example.com');
   await page.getByLabel('Senha', { exact: true }).fill('test-password');
   await page.getByRole('button', { name: 'Entrar', exact: true }).click();
@@ -51,9 +71,9 @@ test('MFA enrollment and code errors render accessibly (UI contract)', async ({ 
   await expect(page.getByRole('main').getByRole('alert')).toHaveText('Código inválido ou expirado. Tente novamente.');
 });
 
-test('customer signup, confirmation message and mobile layout (UI contract)', async ({ page }) => {
+test('customer signup enforces password strength and mobile layout (UI contract)', async ({ page }) => {
   await page.route('**/api/auth/user-signup', route => route.fulfill({ json: { message: 'Confira seu e-mail para confirmar a conta.' } }));
-  await page.goto('/entrar');
+  await page.goto('/portal/acesso');
   await page.getByRole('button', { name: 'Criar uma conta', exact: true }).click();
   await page.getByLabel('E-mail', { exact: true }).fill('customer@example.com');
   await page.getByLabel('Senha', { exact: true }).fill('a-unique-long-passphrase');
@@ -61,6 +81,10 @@ test('customer signup, confirmation message and mobile layout (UI contract)', as
   await page.getByRole('button', { name: 'Criar conta', exact: true }).click();
   await expect(page.getByRole('main').getByRole('alert')).toHaveText('As senhas precisam ser iguais.');
   await page.getByLabel('Confirmar senha', { exact: true }).fill('a-unique-long-passphrase');
+  await page.getByRole('button', { name: 'Criar conta', exact: true }).click();
+  await expect(page.getByRole('main').getByRole('alert')).toContainText('12+ caracteres');
+  await page.getByLabel('Senha', { exact: true }).fill('Strong-Passw0rd!xyz');
+  await page.getByLabel('Confirmar senha', { exact: true }).fill('Strong-Passw0rd!xyz');
   await page.getByRole('button', { name: 'Criar conta', exact: true }).click();
   await expect(page.getByRole('status')).toHaveText('Confira seu e-mail para confirmar a conta.');
   await expect(page.getByLabel('Senha', { exact: true })).toHaveValue('');
@@ -71,7 +95,7 @@ test('customer signup, confirmation message and mobile layout (UI contract)', as
 
 test('customer APIs and callbacks fail closed', async ({ page, request }) => {
   await page.goto('/conta');
-  await expect(page).toHaveURL(/\/entrar$/);
+  await expect(page).toHaveURL(/\/portal\/acesso$/);
   const csrf = await request.post('/api/auth/user-login', { headers: { Origin: 'https://attacker.example' }, data: {} });
   expect(csrf.status()).toBe(403);
   const malformed = await request.post('/api/auth/user-login', { headers: { Origin: 'http://localhost:3100' }, data: '{' });
@@ -80,5 +104,8 @@ test('customer APIs and callbacks fail closed', async ({ page, request }) => {
   expect(oversized.status()).toBe(413);
   const callback = await request.get('/auth/callback?next=https://attacker.example', { maxRedirects: 0 });
   expect(callback.status()).toBe(303);
-  expect(callback.headers().location).toBe('http://localhost:3100/entrar?confirmation=error');
+  expect(callback.headers().location).toBe('http://localhost:3100/portal/acesso?confirmation=error');
+  const weak = await request.post('/api/auth/user-signup', { headers: { Origin: 'http://localhost:3100' }, data: { email: 'weak@example.com', password: 'aaaaaaaaaaaaaaa' } });
+  expect(weak.status()).toBe(400);
+  expect((await weak.json()).error).toContain('12+ caracteres');
 });

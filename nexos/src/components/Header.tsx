@@ -160,7 +160,7 @@ export function Header() {
         </a>
 
         <nav className="relative z-10 hidden items-center gap-1 md:flex" aria-label="Navegação principal">
-          <Link href="/entrar" className="rounded-lg px-3 py-2 text-sm font-medium text-ink/75 hover:text-ink">Minha conta</Link>
+          <Link href="/portal/acesso" className="rounded-lg px-3 py-2 text-sm font-medium text-ink/75 hover:text-ink">Minha conta</Link>
           {NAV_ITEMS.map((item: NavItem) => (
             <a
               key={item.href}
@@ -253,7 +253,7 @@ export function Header() {
             className="fixed left-1/2 top-[calc(4rem+env(safe-area-inset-top)+1rem)] z-50 max-h-[calc(100dvh-6rem)] w-[calc(100vw-2rem)] max-w-sm -translate-x-1/2 overflow-y-auto rounded-3xl border border-ink/10 bg-glass-strong p-5 shadow-[0_32px_96px_rgba(0,0,0,0.35)] backdrop-blur-2xl will-change-transform dark:border-white/10 dark:bg-black/80 md:hidden"
           >
             <div className="grid gap-1">
-              <Link href="/entrar" onClick={() => setMobileOpen(false)} className="rounded-xl px-5 py-4 text-base font-medium text-ink/85">Minha conta</Link>
+              <Link href="/portal/acesso" onClick={() => setMobileOpen(false)} className="rounded-xl px-5 py-4 text-base font-medium text-ink/85">Minha conta</Link>
               {NAV_ITEMS.map((item: NavItem, i: number) => (
                 <motion.a
                   key={item.href}

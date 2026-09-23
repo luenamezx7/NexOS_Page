@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 export default async function DashboardPage() {
   const access = await getAdminAccess();
   if (!access.ok) {
-    redirect('/login');
+    redirect('/admin-dashboard-su/secure-entry');
   }
   const diagnostics = await adminDiagnostics();
   return <DashboardClient user={{ email: access.email, is_anonymous: false }} isAllowed diagnostics={diagnostics} />;
