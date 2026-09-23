@@ -48,5 +48,37 @@ test('MFA enrollment and code errors render accessibly (UI contract)', async ({ 
   await page.getByRole('button', { name: 'Configurar autenticador' }).click();
   await page.getByLabel('Código do autenticador').fill('123456');
   await page.getByRole('button', { name: 'Confirmar acesso' }).click();
-  await expect(page.getByRole('alert')).toHaveText('Código inválido ou expirado. Tente novamente.');
+  await expect(page.getByRole('main').getByRole('alert')).toHaveText('Código inválido ou expirado. Tente novamente.');
+});
+
+test('customer signup, confirmation message and mobile layout (UI contract)', async ({ page }) => {
+  await page.route('**/api/auth/user-signup', route => route.fulfill({ json: { message: 'Confira seu e-mail para confirmar a conta.' } }));
+  await page.goto('/entrar');
+  await page.getByRole('button', { name: 'Criar uma conta', exact: true }).click();
+  await page.getByLabel('E-mail', { exact: true }).fill('customer@example.com');
+  await page.getByLabel('Senha', { exact: true }).fill('a-unique-long-passphrase');
+  await page.getByLabel('Confirmar senha', { exact: true }).fill('another-long-passphrase');
+  await page.getByRole('button', { name: 'Criar conta', exact: true }).click();
+  await expect(page.getByRole('main').getByRole('alert')).toHaveText('As senhas precisam ser iguais.');
+  await page.getByLabel('Confirmar senha', { exact: true }).fill('a-unique-long-passphrase');
+  await page.getByRole('button', { name: 'Criar conta', exact: true }).click();
+  await expect(page.getByRole('status')).toHaveText('Confira seu e-mail para confirmar a conta.');
+  await expect(page.getByLabel('Senha', { exact: true })).toHaveValue('');
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.screenshot({ path: 'test-results/customer-mobile.png', fullPage: true });
+});
+
+test('customer APIs and callbacks fail closed', async ({ page, request }) => {
+  await page.goto('/conta');
+  await expect(page).toHaveURL(/\/entrar$/);
+  const csrf = await request.post('/api/auth/user-login', { headers: { Origin: 'https://attacker.example' }, data: {} });
+  expect(csrf.status()).toBe(403);
+  const malformed = await request.post('/api/auth/user-login', { headers: { Origin: 'http://localhost:3100' }, data: '{' });
+  expect(malformed.status()).toBe(400);
+  const oversized = await request.post('/api/auth/user-login', { headers: { Origin: 'http://localhost:3100' }, data: 'x'.repeat(9000) });
+  expect(oversized.status()).toBe(413);
+  const callback = await request.get('/auth/callback?next=https://attacker.example', { maxRedirects: 0 });
+  expect(callback.status()).toBe(303);
+  expect(callback.headers().location).toBe('http://localhost:3100/entrar?confirmation=error');
 });

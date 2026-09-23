@@ -5,7 +5,7 @@ import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
 import localFont from "next/font/local";
 import { cn } from "@/lib/utils";
 import GlobalNoise from '@/components/GlobalNoise';
-import GradualBlur from '@/components/GradualBlur';
+import { PageBlur } from '@/components/PageBlur';
 import { SmoothScrollProvider } from '@/components/SmoothScrollProvider';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { CookieConsentProvider } from '@/components/cookie-consent';
@@ -111,18 +111,7 @@ export default async function RootLayout({
           scanlineFrequency={1.0}
           speed={1.0}
         />
-        <GradualBlur
-          target="page"
-          position="bottom"
-          height="6rem"
-          strength={5}
-          divCount={1}
-          curve="bezier"
-          exponential={true}
-          opacity={1}
-          animated="scroll"
-          hideAtSelector="footer"
-        />
+        <PageBlur />
       </body>
     </html>
   );

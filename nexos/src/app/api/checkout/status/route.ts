@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { getPaymentStatus, isAsaasConfigured } from '@/lib/asaas';
 import { getAdminAccess } from '@/lib/auth/admin';
 import { verifyStatusToken } from '@/lib/status-token';
+import { readJsonBody, RequestError } from '@/lib/request-security';
 
 const bodySchema = z
   .object({
@@ -29,7 +30,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const body: unknown = await req.json();
+    const body = await readJsonBody(req);
     const parsed = bodySchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json({ error: 'Identificador inválido' }, { status: 400, headers: securityHeaders() });
@@ -56,7 +57,8 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ error: 'Identificador inválido' }, { status: 400, headers: securityHeaders() });
-  } catch {
+  } catch (error) {
+    if (error instanceof RequestError) return NextResponse.json({ error: error.message }, { status: error.status, headers: securityHeaders() });
     return NextResponse.json({ error: 'Falha ao verificar pagamento.' }, { status: 500, headers: securityHeaders() });
   }
 }

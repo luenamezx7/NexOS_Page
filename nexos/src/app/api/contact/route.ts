@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { isTurnstileEnforced, verifyTurnstileToken } from '@/lib/turnstile';
 import { getAdminAccess, deniedJson, privateJson } from '@/lib/auth/admin';
 import { notionHealth } from '@/lib/admin-health';
+import { isSameOrigin, readJsonBody, RequestError } from '@/lib/request-security';
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Nome é obrigatório').max(100),
@@ -40,8 +41,9 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  if (!isSameOrigin(req)) return privateJson({ error: 'Origem inválida.' }, 403);
   try {
-    const body: unknown = await req.json();
+    const body = await readJsonBody(req, 32768);
     const parsed = contactSchema.safeParse(body);
 
     if (!parsed.success) {
@@ -73,7 +75,7 @@ export async function POST(req: Request) {
     if (!token || !rawDatabaseId) {
       console.error('[api/contact] NOTION_TOKEN ou NOTION_DATABASE_ID não configurados', { hasToken: !!token, hasDatabaseId: !!rawDatabaseId });
       return NextResponse.json(
-        { error: 'Integração Notion não configurada no servidor. Configure NOTION_TOKEN e NOTION_DATABASE_ID no Vercel → Settings → Environment Variables e faça Redeploy.' },
+        { error: 'Contato temporariamente indisponível. Tente novamente mais tarde.' },
         { status: 500 }
       );
     }
@@ -91,7 +93,7 @@ export async function POST(req: Request) {
       Email: { email: data.email },
       Companhia: { rich_text: [{ text: { content: data.company || '-' } }] },
       Serviço: { rich_text: [{ text: { content: serviceLabel } }] },
-      Mensagem: { rich_text: [{ text: { content: data.message } }] },
+      Mensagem: { rich_text: (data.message.match(/[\s\S]{1,2000}/g) ?? []).map(content => ({ text: { content } })) },
     } as unknown as Record<string, never>;
 
     // tenta database_id primeiro, fallback para data_source_id (novo modelo Notion)
@@ -124,7 +126,8 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ ok: true }, { status: 200 });
-  } catch {
+  } catch (error) {
+    if (error instanceof RequestError) return privateJson({ error: error.message }, error.status);
     console.error('[api/contact] request_failure');
     return NextResponse.json({ error: 'Não foi possível processar a solicitação.' }, { status: 500 });
   }

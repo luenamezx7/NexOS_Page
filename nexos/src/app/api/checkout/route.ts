@@ -7,6 +7,7 @@ import { isTurnstileEnforced, verifyTurnstileToken } from '@/lib/turnstile';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { createHash, createHmac } from 'node:crypto';
 import { issueStatusToken } from '@/lib/status-token';
+import { isSameOrigin, readJsonBody, RequestError } from '@/lib/request-security';
 
 // ============================================================
 // NexOS — Checkout via Asaas (PIX / Boleto / Cartão)
@@ -42,6 +43,10 @@ function getClientIp(req: NextRequest): string {
 
 function isRateLimited(ip: string): boolean {
   const now = Date.now();
+  if (buckets.size >= 5000) {
+    for (const [key, times] of buckets) if (times.every(t => now - t >= WINDOW_MS)) buckets.delete(key);
+    if (buckets.size >= 5000 && !buckets.has(ip)) return true;
+  }
   const timestamps = buckets.get(ip) ?? [];
   const valid = timestamps.filter((t) => now - t < WINDOW_MS);
   if (valid.length >= MAX_REQ) {
@@ -82,8 +87,7 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const origin = new URL(process.env.NEXT_PUBLIC_SITE_URL ?? req.url).origin;
-  if (req.headers.get('origin') !== origin) return NextResponse.json({ error: 'Origem inválida.' }, { status: 403 });
+  if (!isSameOrigin(req)) return NextResponse.json({ error: 'Origem inválida.' }, { status: 403 });
   const idempotencyKey = req.headers.get('idempotency-key');
   if (!idempotencyKey || !z.string().uuid().safeParse(idempotencyKey).success) {
     return NextResponse.json({ error: 'Chave de tentativa inválida.' }, { status: 400 });
@@ -107,13 +111,14 @@ export async function POST(req: NextRequest) {
   let quantity: number;
   let turnstileToken: string | undefined;
   try {
-    const body: unknown = await req.json();
+    const body = await readJsonBody(req);
     const parsed = bodySchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json({ error: 'Dados inválidos' }, { status: 400, headers: securityHeaders() });
     }
     ({ productId, name, email, cpfCnpj, billingType, installments, quantity, turnstileToken } = parsed.data);
-  } catch {
+  } catch (error) {
+    if (error instanceof RequestError) return NextResponse.json({ error: error.message }, { status: error.status, headers: securityHeaders() });
     return NextResponse.json({ error: 'Payload inválido' }, { status: 400, headers: securityHeaders() });
   }
 

@@ -8,7 +8,7 @@ export default defineConfig({
     command: 'node --use-system-ca node_modules/next/dist/bin/next start -p 3100',
     url: 'http://localhost:3100/login',
     reuseExistingServer: false,
-    env: { NEXT_PUBLIC_SITE_URL: 'http://localhost:3100' },
+    env: { SITE_URL: 'http://localhost:3100' },
     timeout: 60000,
   },
 });
