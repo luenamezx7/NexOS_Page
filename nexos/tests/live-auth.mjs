@@ -70,7 +70,7 @@ try {
   server.on('error', error => { throw error; });
   let ready = false;
   for (let attempt = 0; attempt < 40; attempt++) {
-    try { ready = (await fetch(`${origin}/login`, { signal: AbortSignal.timeout(2000) })).ok; } catch {}
+    try {       ready = (await fetch(`${origin}/admin-dashboard-su/secure-entry`, { signal: AbortSignal.timeout(2000) })).ok; } catch {}
     if (ready) break;
     await new Promise(resolve => setTimeout(resolve, 500));
   }

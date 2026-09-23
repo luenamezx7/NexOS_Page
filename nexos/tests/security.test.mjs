@@ -4,6 +4,8 @@ import { issueStatusToken, verifyStatusToken } from '../src/lib/status-token.ts'
 import { matchesWebhookSecret } from '../src/lib/webhook-auth.ts';
 import { summarizePayments } from '../src/lib/payment-status.ts';
 import { readJsonBody, isSameOrigin } from '../src/lib/request-security.ts';
+import { evaluatePassword } from '../src/lib/auth/password-strength.ts';
+import { sanitizeCallbackPath } from '../src/lib/auth/callback.ts';
 
 process.env.CHECKOUT_STATUS_SECRET = 'test-only-secret-'.repeat(4);
 
@@ -84,4 +86,25 @@ test('webhook authentication rejects missing, wrong and oversized credentials', 
   assert.equal(matchesWebhookSecret('secret', undefined), false);
   assert.equal(matchesWebhookSecret('wrong', 'secret'), false);
   assert.equal(matchesWebhookSecret('x'.repeat(1025), 'secret'), false);
+});
+
+test('password strength requires length, cases, number and symbol', () => {
+  assert.equal(evaluatePassword('').acceptable, false);
+  assert.equal(evaluatePassword('aaaaaaaaaaaaaaa').acceptable, false);
+  assert.equal(evaluatePassword('Aa1!short').acceptable, false);
+  assert.equal(evaluatePassword('Aa1!longenoughxx').acceptable, true);
+  assert.equal(evaluatePassword('Strong-Passw0rd!xyz').acceptable, true);
+  assert.equal(evaluatePassword('Strong-Passw0rd!xyz').score, 4);
+  assert.ok(evaluatePassword('Aa1!longenoughxx').requirements.every(r => r.met));
+});
+
+test('callback URLs only accept internal paths (no open redirect)', () => {
+  assert.equal(sanitizeCallbackPath('/checkout?step=1'), '/checkout?step=1');
+  assert.equal(sanitizeCallbackPath('//evil.example'), null);
+  assert.equal(sanitizeCallbackPath('/\\evil.example'), null);
+  assert.equal(sanitizeCallbackPath('https://evil.example'), null);
+  assert.equal(sanitizeCallbackPath('javascript:alert(1)'), null);
+  assert.equal(sanitizeCallbackPath(''), null);
+  assert.equal(sanitizeCallbackPath(null), null);
+  assert.equal(sanitizeCallbackPath('/'.repeat(600)), null);
 });

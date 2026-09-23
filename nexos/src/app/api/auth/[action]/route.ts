@@ -7,6 +7,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { createHmac } from 'node:crypto';
 import { getUserAccess } from '@/lib/auth/user';
 import { isSameOrigin, readJsonBody, RequestError } from '@/lib/request-security';
+import { evaluatePassword } from '@/lib/auth/password-strength';
 
 // Supplemental per-instance limit. Supabase Auth also enforces its own limits.
 const attempts = new Map<string, { count: number; until: number }>();
@@ -29,7 +30,7 @@ export async function POST(req: NextRequest, context: { params: Promise<{ action
   const { action: routeAction } = await context.params;
   const userFlow = routeAction.startsWith('user-');
   const action = userFlow ? routeAction.slice(5) : routeAction;
-  const allowedActions = userFlow ? ['login', 'logout', 'factor', 'enroll', 'verify', 'signup', 'resend'] : ['login', 'logout', 'factor', 'enroll', 'verify'];
+  const allowedActions = userFlow ? ['login', 'logout', 'factor', 'enroll', 'verify', 'signup', 'resend', 'otp', 'otp-verify'] : ['login', 'logout', 'factor', 'enroll', 'verify'];
   if (!allowedActions.includes(action)) return privateJson({ error: 'Rota inválida.' }, 404);
   const now = Date.now();
   for (const [key, bucket] of attempts) if (bucket.until <= now) attempts.delete(key);
@@ -48,16 +49,31 @@ export async function POST(req: NextRequest, context: { params: Promise<{ action
       const { error } = await client.auth.signOut({ scope: 'local' });
       return error ? privateJson({ error: 'Não foi possível sair. Tente novamente.' }, 503) : privateJson({ ok: true });
     }
-    if (['login', 'signup', 'resend'].includes(action)) {
-      const schema = action === 'resend' ? emailSchema : action === 'signup' ? loginSchema.extend({ password: z.string().min(12).max(256) }) : loginSchema;
+    if (action === 'otp-verify') {
+      const otpParsed = z.object({ email: z.email().max(254), token: z.string().regex(/^\d{6}$/) }).safeParse(body);
+      if (!otpParsed.success) return privateJson({ error: 'Informe o código de seis dígitos.' }, 400);
+      const { email, token } = otpParsed.data;
+      if (!(await consumeAttempt(`auth:account:otp-verify:${email.toLowerCase()}`, 10, 900))) return privateJson({ error: 'Não foi possível concluir. Aguarde alguns minutos.' }, 429);
+      const { error } = await client.auth.verifyOtp({ email, token, type: 'email' });
+      if (error) return privateJson({ error: 'Código inválido ou expirado. Solicite outro.' }, 401);
+    } else if (['login', 'signup', 'resend', 'otp'].includes(action)) {
+      const schema = action === 'resend' || action === 'otp' ? emailSchema : action === 'signup' ? loginSchema.extend({ password: z.string().min(12).max(256) }) : loginSchema;
       const parsed = schema.safeParse(body);
       if (!parsed.success) return privateJson({ error: 'Confira o e-mail e a senha.' }, 400);
       const { email, captcha } = parsed.data;
       const password = 'password' in parsed.data ? parsed.data.password as string : '';
+      if (action === 'signup' && !evaluatePassword(password).acceptable) {
+        return privateJson({ error: 'A senha precisa de: 12+ caracteres, maiúscula, minúscula, número e símbolo.' }, 400);
+      }
       if (!(await consumeAttempt(`auth:account:${action}:${email.toLowerCase()}`, action === 'login' ? 10 : 3, 900))) return privateJson({ error: 'Não foi possível concluir. Aguarde alguns minutos.' }, 429);
       if (isTurnstileEnforced()) {
         if (!isTurnstileConfigured()) return privateJson({ error: 'Verificação de segurança indisponível. Contate a equipe.' }, 503);
         if (!captcha || !(await verifyTurnstileToken(captcha)).success) return privateJson({ error: 'Confirme a verificação de segurança.' }, 400);
+      }
+      if (action === 'otp') {
+        // Sempre resposta genérica — não revela existência da conta (anti-enumeration).
+        await client.auth.signInWithOtp({ email, options: { shouldCreateUser: false } }).catch(() => undefined);
+        return privateJson({ message: 'Se houver uma conta ativa para este e-mail, você receberá um código de 6 dígitos. Confira também o spam.' });
       }
       if (action === 'signup' || action === 'resend') {
         const emailRedirectTo = new URL('/auth/callback', process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || req.url).toString();
