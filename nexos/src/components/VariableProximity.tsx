@@ -142,7 +142,7 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
               <motion.span
                 key={currentLetterIndex}
                 ref={el => { letterRefs.current[currentLetterIndex] = el; }}
-                style={{ display: 'inline-block', fontVariationSettings: interpolatedSettingsRef.current[currentLetterIndex] }}
+                style={{ display: 'inline-block', fontVariationSettings: fromFontVariationSettings }}
                 aria-hidden="true"
               >
                 {letter}

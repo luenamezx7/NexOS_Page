@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { headers } from 'next/headers';
 import './globals.css';
 import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
 import localFont from "next/font/local";
@@ -20,6 +21,7 @@ const dirtyline = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://nexoslab.online'),
   title: {
     default: 'NexOS — Serviços Digitais de Escala',
     template: '%s | NexOS',
@@ -76,22 +78,26 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const headersList = await headers();
+  const nonce = headersList.get('x-nonce');
+  const themeScriptContent = `(function(){try{var t=localStorage.getItem('nexos-theme');var s=t==='light'?'light':'dark';if(t==='light'){document.documentElement.classList.remove('dark');}else{document.documentElement.classList.add('dark');}document.documentElement.style.colorScheme='only '+s;var m=document.querySelector('meta[name=color-scheme]');if(m)m.content=s;}catch(e){}})()`;
+
   return (
-    <html lang="pt-BR" className={cn("font-sans dark", geist.variable, geistMono.variable, spaceGrotesk.variable, dirtyline.variable)}>
+    <html lang="pt-BR" suppressHydrationWarning className={cn("font-sans dark", geist.variable, geistMono.variable, spaceGrotesk.variable, dirtyline.variable)}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <meta name="color-scheme" content="dark" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('nexos-theme');var s=t==='light'?'light':'dark';if(t==='light'){document.documentElement.classList.remove('dark');}else{document.documentElement.classList.add('dark');}document.documentElement.style.colorScheme='only '+s;var m=document.querySelector('meta[name=color-scheme]');if(m)m.content=s;}catch(e){}})()`,
-          }}
-        />
+        {nonce ? (
+          <script nonce={nonce} dangerouslySetInnerHTML={{ __html: themeScriptContent }} />
+        ) : (
+          <script dangerouslySetInnerHTML={{ __html: themeScriptContent }} />
+        )}
       </head>
       <body className="min-h-screen min-h-dvh w-full max-w-full overflow-x-clip antialiased">
         <ThemeProvider>

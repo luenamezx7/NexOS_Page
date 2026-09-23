@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from 'motion/react';
 import { QrCode, CreditCard, Receipt, ExternalLink, Loader2, Check, Copy, RefreshCw, ShieldCheck, Info } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 import { bulkUnitPrice } from '@/lib/bulk-pricing';
+import { Turnstile } from './Turnstile';
 
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const POLL_INTERVAL_MS = 5000;
@@ -63,9 +64,6 @@ export function AsaasCheckoutPane({
   onNameError,
   onEmailError,
   onCpfError,
-  nameError,
-  emailError,
-  cpfError,
   onSuccess,
 }: AsaasCheckoutPaneProps) {
   const reduce = useReducedMotion() ?? false;
@@ -84,9 +82,24 @@ export function AsaasCheckoutPane({
   const [checking, setChecking] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
   const [pollExpired, setPollExpired] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileRequired, setTurnstileRequired] = useState(!!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
+  const [captchaKey, setCaptchaKey] = useState(0);
+  const credentialsRef = useRef<{ externalReference: string; statusToken: string } | null>(null);
+  const attemptRef = useRef<string | null>(null);
+  const generatingRef = useRef(false);
+  const pollingRef = useRef(0);
   const triesRef = useRef(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const inFlightRef = useRef(false);
+
+  useEffect(() => {
+    let active = true;
+    void fetch('/api/checkout').then(r => r.json()).then(data => {
+      if (active) setTurnstileRequired(data.turnstileRequired === true);
+    }).catch(() => {});
+    return () => { active = false; };
+  }, []);
 
   const amount = bulkUnitPrice(productPrice, quantity, productId ?? undefined) * quantity;
   const amountLabel = `R$ ${amount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -105,18 +118,21 @@ export function AsaasCheckoutPane({
   }, [productId, quantity, billingType]);
 
   const stopPolling = useCallback(() => {
+    pollingRef.current += 1;
     if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
   }, []);
   useEffect(() => stopPolling, [stopPolling]);
 
   const verifyPayment = useCallback(async (id: string): Promise<boolean> => {
+    const credentials = credentialsRef.current;
+    if (!credentials || !id) return false;
     if (inFlightRef.current) return false;
     inFlightRef.current = true;
     try {
       const res = await fetch('/api/checkout/status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ paymentId: id }),
+        body: JSON.stringify(credentials),
         signal: AbortSignal.timeout(20000),
       });
       const body: { paid?: boolean } = await res.json().catch(() => ({}));
@@ -126,13 +142,16 @@ export function AsaasCheckoutPane({
 
   const startPolling = useCallback((id: string) => {
     stopPolling();
+    const generation = pollingRef.current;
     triesRef.current = 0;
     setPollExpired(false);
     const tick = async () => {
+      if (generation !== pollingRef.current) return;
       if (document.visibilityState === 'hidden') { timerRef.current = setTimeout(tick, POLL_INTERVAL_MS) as never; return; }
       triesRef.current += 1;
       if (triesRef.current >= POLL_MAX_TRIES) { stopPolling(); setPollExpired(true); return; }
       const paid = await verifyPayment(id);
+      if (generation !== pollingRef.current) return;
       if (paid) { stopPolling(); onSuccess(); return; }
       const delay = triesRef.current < 10 ? 3000 : POLL_INTERVAL_MS;
       timerRef.current = setTimeout(tick, delay) as never;
@@ -141,6 +160,7 @@ export function AsaasCheckoutPane({
   }, [stopPolling, verifyPayment, onSuccess]);
 
   const handleGenerate = useCallback(async () => {
+    if (generatingRef.current) return;
     const nErr = validateNameField(name);
     const eErr = validateEmailField(email);
     const cErr = validateCpfField(cpfCnpj);
@@ -152,19 +172,29 @@ export function AsaasCheckoutPane({
       return;
     }
     if (billingType === 'PIX') { setFatal('Pix em desenvolvimento — liberação pendente no Asaas.'); return; }
+    if (turnstileRequired && !turnstileToken) {
+      setFatal('Verificação de segurança obrigatória. Atualize a página e tente novamente.');
+      return;
+    }
     setState('generating');
+    generatingRef.current = true;
+    attemptRef.current ??= crypto.randomUUID();
     try {
       const res = await fetch('/api/checkout', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Idempotency-Key': attemptRef.current },
         body: JSON.stringify({
           productId, name: name.trim(), email: email.trim(), cpfCnpj: cpfCnpj.trim(),
-          billingType, installments, quantity,
+          billingType, installments, quantity, turnstileToken,
         }),
         signal: AbortSignal.timeout(25000),
       });
-      const body: { paymentUrl?: string; paymentId?: string; externalReference?: string; bankSlipUrl?: string; identificationField?: string; error?: string } = await res.json().catch(() => ({}));
-      if (!res.ok || !body.paymentUrl || !body.paymentId) throw new Error(body.error ?? 'Falha ao gerar cobrança.');
+      const body: { paymentUrl?: string; paymentId?: string; externalReference?: string; statusToken?: string; bankSlipUrl?: string; identificationField?: string; error?: string } = await res.json().catch(() => ({}));
+      if ([400, 403, 429].includes(res.status)) attemptRef.current = null;
+      if (!res.ok || !body.paymentUrl || !body.paymentId || !body.externalReference || !body.statusToken) throw new Error(body.error ?? 'Falha ao gerar cobrança.');
+      credentialsRef.current = { externalReference: body.externalReference, statusToken: body.statusToken };
+      try { sessionStorage.setItem(`nexos-payment:${body.externalReference}`, JSON.stringify(credentialsRef.current)); sessionStorage.setItem(`nexos-payment:${body.paymentId}`, JSON.stringify(credentialsRef.current)); } catch {}
+      setTurnstileToken(null);
       setPaymentUrl(body.paymentUrl);
       setPaymentId(body.paymentId);
       setExternalReference(body.externalReference ?? null);
@@ -175,8 +205,12 @@ export function AsaasCheckoutPane({
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Erro ao gerar cobrança.';
       setFatal(msg); setState('error');
+      setTurnstileToken(null);
+    } finally {
+      generatingRef.current = false;
+      setCaptchaKey(v => v + 1);
     }
-  }, [name, email, cpfCnpj, productId, quantity, billingType, installments, onNameError, onEmailError, onCpfError, startPolling]);
+  }, [name, email, cpfCnpj, productId, quantity, billingType, installments, turnstileToken, turnstileRequired, onNameError, onEmailError, onCpfError, startPolling]);
 
   const handleManualCheck = useCallback(async () => {
     if (!paymentId || checking) return;
@@ -193,7 +227,8 @@ export function AsaasCheckoutPane({
   }, []);
 
   const handleReset = useCallback(() => {
-    stopPolling(); setPaymentUrl(null); setPaymentId(null); setBankSlipUrl(null); setIdentificationField(null); setExternalReference(null); setFatal(null); setPollExpired(false); setState('idle');
+    attemptRef.current = null; credentialsRef.current = null;
+    stopPolling(); setPaymentUrl(null); setPaymentId(null); setBankSlipUrl(null); setIdentificationField(null); setExternalReference(null); setFatal(null); setPollExpired(false); setState('idle'); setTurnstileToken(null);
   }, [stopPolling]);
 
   return (
@@ -246,7 +281,7 @@ export function AsaasCheckoutPane({
               </option>
             ))}
           </select>
-          <p className={`text-[11px] ${isDark ? 'text-white/35' : 'text-ink/35'}`}>Parcelamento exibido como no checkout Asaas. Juros oficiais aplicados pelo Asaas.</p>
+          <p className={`text-[11px] ${isDark ? 'text-white/60' : 'text-ink/70'}`}>Parcelas sem juros. Confira o total na página de pagamento.</p>
         </div>
       )}
 
@@ -323,7 +358,12 @@ export function AsaasCheckoutPane({
               <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] ${isDark ? 'border-white/10 bg-white/[0.04] text-white/60' : 'border-ink/10 bg-ink/[0.03] text-ink/60'}`}>{billingType === 'BOLETO' ? 'Boleto' : billingType === 'CREDIT_CARD' ? `Cartão ${installments}x` : 'Pix em breve'}</span>
             </div>
           </div>
-          {state === 'error' && fatal && <p className="text-xs text-red-500" role="alert">{fatal}</p>}
+          {fatal && <p className="text-sm" role="alert">{fatal}</p>}
+          {turnstileRequired && (
+            <div className="mt-4">
+              <Turnstile key={captchaKey} onVerify={setTurnstileToken} onExpire={() => setTurnstileToken(null)} onError={() => setTurnstileToken(null)} />
+            </div>
+          )}
           <motion.button
             type="button"
             onClick={handleGenerate}

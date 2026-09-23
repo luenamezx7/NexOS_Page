@@ -184,7 +184,7 @@ export const Plasma: React.FC<PlasmaProps> = ({
     setSize();
     let raf = 0; let contextLost = false; let isVisible = true; let tabVisible = document.visibilityState !== 'hidden';
     const t0 = performance.now(); const frameInterval = 1000 / targetFps; let lastFrameTime = 0;
-    const renderStaticFrame = () => { (program.uniforms.iTime as any).value = 0; renderer.render({ scene: mesh }); };
+    const renderStaticFrame = () => { program.uniforms.iTime.value = 0; renderer.render({ scene: mesh }); };
     const loop = (t: number) => {
       if (contextLost || !isVisible || !tabVisible) return;
       if (t - lastFrameTime < frameInterval) { raf = requestAnimationFrame(loop); return; }
@@ -194,14 +194,14 @@ export const Plasma: React.FC<PlasmaProps> = ({
         const mouseUniform = program.uniforms.uMouse.value as Float32Array;
         mouseUniform[0] = mousePos.current.x; mouseUniform[1] = mousePos.current.y;
       }
-      let timeValue = (t - t0) * 0.001;
+      const timeValue = (t - t0) * 0.001;
       if (direction === 'pingpong') {
         const pingpongDuration = 10; const segmentTime = timeValue % pingpongDuration;
         const isForward = Math.floor(timeValue / pingpongDuration) % 2 === 0;
         const u = segmentTime / pingpongDuration; const smooth = u * u * (3 - 2 * u);
         const pingpongTime = isForward ? smooth * pingpongDuration : (1 - smooth) * pingpongDuration;
-        (program.uniforms.uDirection as any).value = 1.0; (program.uniforms.iTime as any).value = pingpongTime;
-      } else { (program.uniforms.iTime as any).value = timeValue; }
+        program.uniforms.uDirection.value = 1.0; program.uniforms.iTime.value = pingpongTime;
+      } else { program.uniforms.iTime.value = timeValue; }
       renderer.render({ scene: mesh });
       raf = requestAnimationFrame(loop);
     };

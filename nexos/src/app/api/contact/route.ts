@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { Client } from '@notionhq/client';
 import { z } from 'zod';
 import { isTurnstileEnforced, verifyTurnstileToken } from '@/lib/turnstile';
+import { getAdminAccess, deniedJson, privateJson } from '@/lib/auth/admin';
+import { notionHealth } from '@/lib/admin-health';
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Nome é obrigatório').max(100),
@@ -32,35 +34,9 @@ function getServiceLabel(serviceId: string): string {
 }
 
 export async function GET() {
-  const hasToken = !!process.env.NOTION_TOKEN;
-  const rawId = process.env.NOTION_DATABASE_ID ?? '';
-  // diagnostico sem vazar token completo
-  const tokenPreview = process.env.NOTION_TOKEN ? `${process.env.NOTION_TOKEN.slice(0, 6)}...${process.env.NOTION_TOKEN.slice(-4)}` : null;
-
-  if (!hasToken || !rawId) {
-    return NextResponse.json(
-      { ok: false, hasToken, hasDatabaseId: !!rawId, tokenPreview, error: 'NOTION_TOKEN ou NOTION_DATABASE_ID faltando no Vercel' },
-      { status: 500 }
-    );
-  }
-
-  try {
-    const notion = getNotionClient()!;
-    const dbId = rawId.trim();
-    // tenta via database_id
-    try {
-      const db = await notion.databases.retrieve({ database_id: dbId }) as unknown as { title: unknown; data_sources?: { id: string }[] };
-      const dsId: string | undefined = db.data_sources?.[0]?.id;
-      return NextResponse.json({ ok: true, hasToken, hasDatabaseId: true, tokenPreview, databaseId: dbId, dataSourceId: dsId ?? null, title: db.title });
-    } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : String(e);
-      const body = (e as unknown as { body?: unknown })?.body;
-      return NextResponse.json({ ok: false, hasToken, hasDatabaseId: true, tokenPreview, databaseId: dbId, error: msg, body }, { status: 500 });
-    }
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    return NextResponse.json({ ok: false, error: msg }, { status: 500 });
-  }
+  const access = await getAdminAccess();
+  if (!access.ok) return deniedJson(access.status);
+  return privateJson(await notionHealth());
 }
 
 export async function POST(req: Request) {
@@ -126,29 +102,21 @@ export async function POST(req: Request) {
     try {
       await tryCreate({ database_id: databaseId });
     } catch (firstError: unknown) {
-      const firstMsg = firstError instanceof Error ? firstError.message : String(firstError);
-      const firstBody = (firstError as unknown as { body?: unknown })?.body ?? (firstError as unknown as { code?: string })?.code;
-      console.error('[api/contact] Notion create via database_id failed:', firstMsg, firstBody);
 
       // tenta via data_source_id se o database usa novo modelo
       try {
         const db = await notion.databases.retrieve({ database_id: databaseId }) as unknown as { data_sources?: { id: string }[] };
         const dsId: string | undefined = db.data_sources?.[0]?.id;
         if (dsId) {
-          console.log('[api/contact] retry via data_source_id', dsId);
           await tryCreate({ data_source_id: dsId });
         } else {
           throw firstError;
         }
-      } catch (secondError: unknown) {
-        const msg = secondError instanceof Error ? secondError.message : String(secondError);
-        const body = (secondError as unknown as { body?: unknown })?.body ?? msg;
-        console.error('[api/contact] Notion retry failed:', msg, body);
+      } catch {
+        console.error('[api/contact] provider_failure');
         return NextResponse.json(
           {
-            error: 'Erro ao salvar no Notion',
-            details: typeof body === 'string' ? body : JSON.stringify(body),
-            hint: 'Verifique se a Integration tem acesso ao database (Connections) e se as colunas são: Nome (title), Email (email), Companhia (rich_text), Serviço (rich_text), Mensagem (rich_text).',
+            error: 'Não foi possível enviar a mensagem. Tente novamente mais tarde.',
           },
           { status: 500 }
         );
@@ -156,9 +124,8 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ ok: true }, { status: 200 });
-  } catch (err) {
-    console.error('[api/contact] unexpected', err);
-    const msg = err instanceof Error ? err.message : String(err);
-    return NextResponse.json({ error: 'Erro interno', details: msg }, { status: 500 });
+  } catch {
+    console.error('[api/contact] request_failure');
+    return NextResponse.json({ error: 'Não foi possível processar a solicitação.' }, { status: 500 });
   }
 }

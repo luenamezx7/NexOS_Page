@@ -13,8 +13,7 @@ export default function BrandReveal() {
   const { theme } = useTheme();
   const sectionRef = useRef<HTMLElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(sectionRef, { once: true, amount: 0.4 });
-  const [inView, setInView] = useState(false);
+  const inView = useInView(sectionRef, { once: true, amount: 0.4 });
   const [ready, setReady] = useState(false);
   const [oX, setOX] = useState(0);
   const [iconW, setIconW] = useState(0);
@@ -60,10 +59,6 @@ export default function BrandReveal() {
       ro.disconnect();
     };
   }, [measure]);
-
-  useEffect(() => {
-    if (isInView) setInView(true);
-  }, [isInView]);
 
   if (reduce) {
     return (

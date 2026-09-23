@@ -42,13 +42,10 @@ export function HoldButton({ label, ariaLabel, hintId, onConfirm, className = ''
   const reduce = useReducedMotion() ?? false;
 
   // --- hover scramble (fixed, sem bugar) ---
-  const [display, setDisplay] = useState<string>(label);
+  const [scrambled, setDisplay] = useState<string | null>(null);
+  const display = scrambled ?? label;
   const scrambleRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isScramblingRef = useRef<boolean>(false);
-
-  useEffect(() => {
-    setDisplay(label);
-  }, [label]);
 
   useEffect(() => {
     return () => {
@@ -88,7 +85,7 @@ export function HoldButton({ label, ariaLabel, hintId, onConfirm, className = ''
       if (frame >= totalFrames) {
         if (scrambleRef.current) clearInterval(scrambleRef.current);
         scrambleRef.current = null;
-        setDisplay(baseLabel);
+        setDisplay(null);
         // debounce: libera após 350ms para não retriggerar se mouse tremer dentro do botão
         setTimeout(() => {
           isScramblingRef.current = false;
