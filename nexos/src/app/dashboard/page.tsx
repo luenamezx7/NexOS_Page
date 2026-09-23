@@ -11,5 +11,5 @@ export default async function DashboardPage() {
     redirect('/login');
   }
   const diagnostics = await adminDiagnostics();
-  return <DashboardClient user={{ email: 'Administrador', is_anonymous: false }} isAllowed diagnostics={diagnostics} />;
+  return <DashboardClient user={{ email: access.email, is_anonymous: false }} isAllowed diagnostics={diagnostics} />;
 }

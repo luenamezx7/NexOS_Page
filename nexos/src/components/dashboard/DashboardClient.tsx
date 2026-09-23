@@ -22,10 +22,11 @@ function Card({ title, ok, detail, sub }: { title: string; ok: boolean | null; d
 }
 
 type Diagnostics = {
+  checkedAt: string;
   supabase: { ok?: boolean };
   notion: { ok?: boolean; configured?: boolean; error?: string };
   cloudflare: { ok?: boolean; configured?: boolean };
-  asaas: { configured?: boolean };
+  asaas: { configured?: boolean; environment?: string };
 };
 
 export function DashboardClient({ user, isAllowed, diagnostics }: {
@@ -40,11 +41,12 @@ export function DashboardClient({ user, isAllowed, diagnostics }: {
   const supaDiag = diagnostics?.supabase;
   const notionDiag = diagnostics?.notion;
   const asaasDiag = diagnostics?.asaas;
+  const cloudflareDiag = diagnostics?.cloudflare;
 
   const handleLogout = async () => {
     setLoading(true); setMsg(null);
     try {
-      const response = await fetch('/api/auth/logout', { method: 'POST' });
+      const response = await fetch('/api/auth/logout', { method: 'POST', signal: AbortSignal.timeout(15000) });
       if (!response.ok) throw new Error();
       router.replace('/login'); router.refresh();
     } catch { setMsg('Não foi possível sair. Tente novamente.'); }
@@ -57,7 +59,7 @@ export function DashboardClient({ user, isAllowed, diagnostics }: {
 
   const supaOk = supaDiag?.ok ?? null;
   const notionOk = notionDiag?.ok ?? null;
-  const asaasOk = asaasDiag?.configured ?? null;
+  const asaasOk = asaasDiag?.configured ? null : false;
 
   return (
     <div className="min-h-screen bg-canvas">
@@ -65,7 +67,7 @@ export function DashboardClient({ user, isAllowed, diagnostics }: {
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
           <div>
             <h1 className="font-display text-lg font-black tracking-tighter">NexOS — Dashboard Técnica</h1>
-            <p className="font-mono text-[11px] text-ink/40">{user.email} • {new Date().toLocaleString('pt-BR')}</p>
+            <p className="font-mono text-[11px] text-ink/60">{user.email} • Atualizado: {diagnostics?.checkedAt.replace('T', ' ').slice(0, 19)} UTC</p>
           </div>
           <button disabled={loading} onClick={handleLogout} className="btn-secondary-nex !px-4 !py-2 text-xs">{loading ? 'Saindo…' : 'Sair'}</button>
         </div>
@@ -74,10 +76,10 @@ export function DashboardClient({ user, isAllowed, diagnostics }: {
       <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
         {msg && <p role="alert" className="mb-4 text-sm">{msg}</p>}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card title="Supabase" ok={supaOk} detail={supaOk ? 'Conectado' : 'Falha — verifique publishable key'} sub={supaDiag?.ok !== undefined ? `status: ${supaDiag.ok ? 'ok' : 'error'}` : ''} />
-          <Card title="Notion (contato)" ok={notionOk} detail={notionOk ? 'Token + Database OK' : (notionDiag?.error ?? 'Desconfigurado')} sub={`configured:${String(notionDiag?.configured)}`} />
-          <Card title="Asaas (checkout)" ok={asaasOk} detail={asaasOk ? 'production • key OK' : 'ASAAS_API_KEY faltando'} />
-          <Card title="Cloudflare" ok={null} detail="nexoslab.online Pending — verificando nameservers (segundo plano)" sub="A 216.198.79.1 + CNAME www Proxied, _domainconnect removido" />
+          <Card title="Supabase" ok={supaOk} detail={supaOk ? 'Consulta de pedidos pelo servidor: OK' : 'Falha na consulta: confira chave secreta, schema e permissões.'} />
+          <Card title="Notion (contato)" ok={notionOk} detail={notionOk ? 'Token e acesso ao database: OK' : notionDiag?.configured ? 'Configurado, mas a consulta falhou.' : 'Integração não configurada.'} />
+          <Card title="Asaas (checkout)" ok={asaasOk} detail={asaasDiag?.configured ? `Chave presente • ${asaasDiag.environment}. Conectividade não testada.` : 'ASAAS_API_KEY faltando'} />
+          <Card title="Cloudflare" ok={cloudflareDiag?.ok ?? null} detail={cloudflareDiag?.ok ? 'Token verificado e ativo.' : cloudflareDiag?.configured ? 'Falha ao verificar o token.' : 'Token não configurado.'} />
         </div>
 
         <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
@@ -88,22 +90,19 @@ export function DashboardClient({ user, isAllowed, diagnostics }: {
           <div className="bento-card p-5">
             <h2 className="text-sm font-bold">Ações</h2>
             <div className="mt-3 flex flex-col gap-2">
+              <button onClick={() => router.refresh()} className="btn-secondary-nex justify-center text-xs">Atualizar diagnóstico</button>
               <a href="/api/supabase/health" target="_blank" rel="noreferrer" className="btn-secondary-nex justify-center text-xs">Abrir /api/supabase/health</a>
               <a href="/api/cloudflare/verify" target="_blank" rel="noreferrer" className="btn-secondary-nex justify-center text-xs">Abrir /api/cloudflare/verify</a>
               <a href="https://supabase.com/dashboard/project/lgfttyeezviecfqbbmqk" target="_blank" rel="noreferrer" className="btn-secondary-nex justify-center text-xs">Supabase Dashboard</a>
               <a href="https://dash.cloudflare.com" target="_blank" rel="noreferrer" className="btn-secondary-nex justify-center text-xs">Cloudflare Dash</a>
             </div>
-            <p className="mt-4 font-mono text-[10px] text-ink/35">Constituição: .agents/skills/SKILL-SUPABASE/CONSTITUICAO-SUPABASE.md (contexto NexOS preenchido). RLS: ativar em tabelas públicas antes de expor via Data API.</p>
+            <p className="mt-4 text-xs text-ink/60">Diagnósticos disponíveis apenas para administradores autorizados com e-mail confirmado e MFA.</p>
           </div>
         </div>
 
         <div className="mt-6 bento-card p-5">
-          <h2 className="text-sm font-bold">Próximos passos (constituição §13)</h2>
-          <ul className="mt-2 list-disc space-y-1 pl-5 text-xs leading-relaxed text-ink/60">
-            <li>Criar tabelas `contacts`/`orders` com RLS + policies `TO authenticated` + `USING (auth.uid()=owner)` — não usar `auth.role()`.</li>
-            <li>Quando Cloudflare virar `Active`, habilitar `Full (strict)` + `WAF ON` + `Bot Fight Mode`.</li>
-            <li>Definir `DASHBOARD_ADMIN_USER_IDS` no Vercel para allowlist.</li>
-          </ul>
+          <h2 className="text-sm font-bold">Escopo do diagnóstico</h2>
+          <p className="mt-2 text-xs leading-relaxed text-ink/60">Esta tela verifica acesso às integrações. A presença de uma chave não garante que pagamentos, DNS ou envio de e-mails estejam operacionais. Consulte SECURITY.md para os requisitos de implantação.</p>
         </div>
       </main>
     </div>

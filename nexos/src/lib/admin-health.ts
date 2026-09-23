@@ -2,7 +2,7 @@ import 'server-only';
 import { Client } from '@notionhq/client';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { isCloudflareConfigured, verifyToken } from '@/lib/cloudflare';
-import { isAsaasConfigured } from '@/lib/asaas';
+import { getAsaasEnv, isAsaasConfigured } from '@/lib/asaas';
 
 export async function publicHealth() {
   const [supabase, asaas] = await Promise.all([
@@ -28,7 +28,10 @@ export async function adminDiagnostics() {
     notionHealth(),
     cloudflareHealth(),
   ]);
-  return { supabase, notion, cloudflare, asaas: { configured: isAsaasConfigured() } };
+  return {
+    checkedAt: new Date().toISOString(), supabase, notion, cloudflare,
+    asaas: { configured: isAsaasConfigured(), environment: getAsaasEnv() },
+  };
 }
 
 async function supabaseAdminHealth() {

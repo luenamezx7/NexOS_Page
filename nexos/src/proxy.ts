@@ -21,7 +21,7 @@ function getIp(req: NextRequest): string {
 
 export async function proxy(req: NextRequest) {
   const nonce = getNonce();
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
   const origin = url ? new URL(url).origin : '';
   const csp = [
     "default-src 'self'", "object-src 'none'", "base-uri 'self'",
@@ -38,6 +38,10 @@ export async function proxy(req: NextRequest) {
   if (req.nextUrl.pathname.startsWith('/api/contact') || req.nextUrl.pathname.startsWith('/api/checkout')) {
     const ip = getIp(req);
     const now = Date.now();
+    if (buckets.size >= 5000) {
+      for (const [key, times] of buckets) if (times.every(t => now - t >= WINDOW_MS)) buckets.delete(key);
+      if (buckets.size >= 5000 && !buckets.has(ip)) return NextResponse.json({ error: 'Muitas requisições.' }, { status: 429 });
+    }
     const arr = buckets.get(ip) ?? [];
     const valid = arr.filter((t) => now - t < WINDOW_MS);
     if (valid.length >= MAX_REQ) {
@@ -55,7 +59,7 @@ export async function proxy(req: NextRequest) {
   // ── Supabase: refresh session (SSR) ──
   // Mantém auth cookies atualizados em toda rota (necessário para RLS)
   let supabaseResponse = NextResponse.next({ request: req });
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  const key = process.env.SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
   if (url && key) {
     const supabase = createServerClient(url, key, {
       cookieOptions: { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/' },

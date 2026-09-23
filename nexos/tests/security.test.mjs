@@ -3,8 +3,41 @@ import assert from 'node:assert/strict';
 import { issueStatusToken, verifyStatusToken } from '../src/lib/status-token.ts';
 import { matchesWebhookSecret } from '../src/lib/webhook-auth.ts';
 import { summarizePayments } from '../src/lib/payment-status.ts';
+import { readJsonBody, isSameOrigin } from '../src/lib/request-security.ts';
 
 process.env.CHECKOUT_STATUS_SECRET = 'test-only-secret-'.repeat(4);
+
+test('request limits reject oversized chunks without trusting Content-Length', async () => {
+  let cancelled = false;
+  const stream = new ReadableStream({
+    start(controller) { controller.enqueue(new TextEncoder().encode('x'.repeat(65))); },
+    cancel() { cancelled = true; },
+  });
+  const request = new Request('http://localhost/api', { method: 'POST', body: stream, duplex: 'half' });
+  await assert.rejects(readJsonBody(request, 64), { status: 413 });
+  assert.equal(cancelled, true);
+});
+
+test('JSON limits count UTF-8 bytes and reject malformed JSON', async () => {
+  await assert.rejects(readJsonBody(new Request('http://localhost', { method: 'POST', body: '"ááá"' }), 7), { status: 413 });
+  await assert.rejects(readJsonBody(new Request('http://localhost', { method: 'POST', body: '{' })), { status: 400 });
+  assert.deepEqual(await readJsonBody(new Request('http://localhost', { method: 'POST', body: '{"ok":true}' })), { ok: true });
+});
+
+test('same-origin protection rejects missing, foreign and cross-site origins', () => {
+  const previous = process.env.NEXT_PUBLIC_SITE_URL;
+  process.env.NEXT_PUBLIC_SITE_URL = 'https://nexos.example';
+  try {
+    const make = headers => new Request('https://nexos.example/api/auth/login', { headers });
+    assert.equal(isSameOrigin(make({ Origin: 'https://nexos.example' })), true);
+    assert.equal(isSameOrigin(make({})), false);
+    assert.equal(isSameOrigin(make({ Origin: 'https://attacker.example' })), false);
+    assert.equal(isSameOrigin(make({ Origin: 'https://nexos.example', 'Sec-Fetch-Site': 'cross-site' })), false);
+  } finally {
+    if (previous === undefined) delete process.env.NEXT_PUBLIC_SITE_URL;
+    else process.env.NEXT_PUBLIC_SITE_URL = previous;
+  }
+});
 
 test('installments require every charge to settle and aggregate the original amount', () => {
   const first = { id: 'one', status: 'CONFIRMED', value: 3.33, billingType: 'CREDIT_CARD' };

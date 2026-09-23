@@ -44,5 +44,21 @@ do $$ begin
   if exists (select 1 from public.orders where external_reference='nexos-security-transaction-test') then raise exception 'Guest order exposed'; end if;
 end $$;
 reset role;
+insert into auth.users(id, email) values ('00000000-0000-4000-8000-000000000a11', 'rls-fixture@example.invalid');
+update public.orders set owner_id = '00000000-0000-4000-8000-000000000a11' where external_reference='nexos-security-transaction-test';
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-4000-8000-000000000a11","role":"authenticated","aal":"aal1"}', true);
+do $$ begin
+  if exists (select 1 from public.orders where external_reference='nexos-security-transaction-test') then raise exception 'MFA bypass'; end if;
+end $$;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-4000-8000-000000000a11","role":"authenticated","aal":"aal2"}', true);
+do $$ begin
+  if not exists (select 1 from public.orders where external_reference='nexos-security-transaction-test') then raise exception 'Owner AAL2 denied'; end if;
+end $$;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-4000-8000-000000000b22","role":"authenticated","aal":"aal2"}', true);
+do $$ begin
+  if exists (select 1 from public.orders where external_reference='nexos-security-transaction-test') then raise exception 'Cross-user access'; end if;
+end $$;
+reset role;
 rollback;
 select 'PASS: RLS, grants, deduplication, rollback, monotonic status and refunds' as result;

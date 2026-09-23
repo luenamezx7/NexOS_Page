@@ -13,11 +13,10 @@ export function isTurnstileConfigured(): boolean {
 }
 
 export function isTurnstileEnforced(): boolean {
-  // Se não configurado, não bloqueia (modo permissivo para dev)
-  // Defina TURNSTILE_ENFORCED=true para exigir em produção
+   // Produção exige anti-bot por padrão; falha fechada sem configuração.
   if (process.env.TURNSTILE_ENFORCED === "true") return true;
   if (process.env.TURNSTILE_ENFORCED === "false") return false;
-  // Auto: exige apenas se secret estiver configurado
+   // Em desenvolvimento, exige quando há secret configurado.
   return process.env.NODE_ENV === 'production' || !!process.env.TURNSTILE_SECRET_KEY;
 }
 
@@ -45,7 +44,7 @@ export async function verifyTurnstileToken(token: string, remoteIp?: string): Pr
 
   if (!res.ok) return { success: false };
   const data = (await res.json()) as TurnstileVerifyResult;
-  const site = process.env.NEXT_PUBLIC_SITE_URL;
+  const site = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL;
   if (data.success && site && data.hostname !== new URL(site).hostname) return { success: false };
   return data;
 }

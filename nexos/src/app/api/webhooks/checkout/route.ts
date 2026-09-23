@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { matchesWebhookSecret } from '@/lib/webhook-auth';
 import { processWebhookEvent } from '@/lib/webhook-processor';
+import { readJsonBody, RequestError } from '@/lib/request-security';
 
 const webhookSchema = z.object({
   id: z.string().min(1).max(100),
@@ -27,12 +28,9 @@ export async function POST(req: NextRequest) {
 
   let payload: unknown;
   try {
-    const bytes = await req.arrayBuffer();
-    if (bytes.byteLength > 102400) {
-      return NextResponse.json({ error: 'Payload excessivo.' }, { status: 413 });
-    }
-    payload = JSON.parse(new TextDecoder().decode(bytes));
-  } catch {
+    payload = await readJsonBody(req, 102400);
+  } catch (error) {
+    if (error instanceof RequestError) return NextResponse.json({ error: error.message }, { status: error.status });
     return NextResponse.json({ error: 'Payload inválido' }, { status: 400 });
   }
 
