@@ -34,9 +34,7 @@ function useAsaasVerification(
         const res = await fetch('/api/checkout/status', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(
-            paymentId ? { paymentId } : { externalReference },
-          ),
+          body: sessionStorage.getItem(`nexos-payment:${paymentId ?? externalReference}`) ?? '{}',
           signal: AbortSignal.timeout(20000),
         });
         const body: { paid?: boolean } = await res.json().catch(() => ({}));

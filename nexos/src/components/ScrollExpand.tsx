@@ -81,7 +81,7 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
   const propsRef = useRef<Required<Pick<ScrollExpandProps, ConfigKey>>>(
     {} as Required<Pick<ScrollExpandProps, ConfigKey>>
   );
-  propsRef.current = {
+  useEffect(() => { propsRef.current = {
     startWidth,
     startHeight,
     startRadius,
@@ -93,7 +93,7 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
     overlayScrim,
     useWindowScroll,
     enabled
-  };
+  }; }, [startWidth, startHeight, startRadius, endRadius, mediaZoom, scrollDistance, holdDistance, smoothing, overlayScrim, useWindowScroll, enabled]);
 
   const applyProgress = useCallback((p: number) => {
     const frame = frameRef.current;

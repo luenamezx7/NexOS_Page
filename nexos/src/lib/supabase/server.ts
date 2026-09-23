@@ -1,3 +1,4 @@
+import 'server-only';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
@@ -8,6 +9,7 @@ export async function createClient() {
   if (!url || !key) throw new Error('NEXT_PUBLIC_SUPABASE_URL ou NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY faltando');
 
   return createServerClient(url, key, {
+    cookieOptions: { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/' },
     cookies: {
       getAll() {
         return cookieStore.getAll();

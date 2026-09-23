@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useSyncExternalStore, type ReactNode } from 'react';
 
 export type Theme = 'dark' | 'light';
 
@@ -24,32 +24,30 @@ function applyTheme(theme: Theme): void {
   if (meta) meta.setAttribute('content', theme);
 }
 
+function subscribe(callback: () => void) {
+  window.addEventListener('storage', callback);
+  window.addEventListener('nexos-theme-change', callback);
+  return () => { window.removeEventListener('storage', callback); window.removeEventListener('nexos-theme-change', callback); };
+}
+let fallback: Theme = 'dark';
+function snapshot(): Theme {
+  try { const stored = localStorage.getItem(STORAGE_KEY); if (stored === 'light' || stored === 'dark') return stored; } catch {}
+  return fallback;
+}
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('dark');
-
-  useEffect(() => {
-    try {
-      const stored: string | null = localStorage.getItem(STORAGE_KEY);
-      if (stored === 'light' || stored === 'dark') {
-        setTheme(stored);
-        applyTheme(stored);
-      }
-    } catch {
-      /* storage unavailable */
-    }
-  }, []);
+  const theme = useSyncExternalStore(subscribe, snapshot, () => 'dark' as Theme);
+  useEffect(() => { applyTheme(theme); }, [theme]);
 
   const toggle = useCallback(() => {
-    setTheme((prev: Theme) => {
-      const next: Theme = prev === 'dark' ? 'light' : 'dark';
+      const next: Theme = snapshot() === 'dark' ? 'light' : 'dark';
+      fallback = next;
       applyTheme(next);
       try {
         localStorage.setItem(STORAGE_KEY, next);
       } catch {
         /* storage unavailable */
       }
-      return next;
-    });
+      window.dispatchEvent(new Event('nexos-theme-change'));
   }, []);
 
   return <ThemeContext.Provider value={{ theme, toggle }}>{children}</ThemeContext.Provider>;

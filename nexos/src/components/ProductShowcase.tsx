@@ -170,10 +170,10 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
   const qtyLabel: string = `${qty} ${qty === 1 ? 'unidade' : 'unidades'}`;
   const totalLabel: string = fmtBRL(unitPrice * qty);
 
-  const openCheckout = useCallback(() => {
+  const openCheckout = () => {
     if (!placa) return;
     setCheckoutOpen(true);
-  }, [placa]);
+  };
 
   const closeCheckout = useCallback(() => {
     setCheckoutOpen(false);

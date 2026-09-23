@@ -1,3 +1,4 @@
+import 'server-only';
 // ============================================================
 // NexOS — Cloudflare Turnstile (proteção anti-bot)
 // Docs: https://developers.cloudflare.com/turnstile/
@@ -17,7 +18,7 @@ export function isTurnstileEnforced(): boolean {
   if (process.env.TURNSTILE_ENFORCED === "true") return true;
   if (process.env.TURNSTILE_ENFORCED === "false") return false;
   // Auto: exige apenas se secret estiver configurado
-  return !!process.env.TURNSTILE_SECRET_KEY;
+  return process.env.NODE_ENV === 'production' || !!process.env.TURNSTILE_SECRET_KEY;
 }
 
 export interface TurnstileVerifyResult {
@@ -42,6 +43,9 @@ export async function verifyTurnstileToken(token: string, remoteIp?: string): Pr
     signal: AbortSignal.timeout(8000),
   });
 
+  if (!res.ok) return { success: false };
   const data = (await res.json()) as TurnstileVerifyResult;
+  const site = process.env.NEXT_PUBLIC_SITE_URL;
+  if (data.success && site && data.hostname !== new URL(site).hostname) return { success: false };
   return data;
 }

@@ -1,14 +1,9 @@
-// ============================================================
-// NexOS — Asaas (Pix / Boleto / Cartão) — helper server-side
-// Docs: https://docs.asaas.com/
-// API v3: sandbox https://sandbox.asaas.com/api/v3
-//         prod    https://www.asaas.com/api/v3
-// Preço NUNCA vem do client: amount resolvido no servidor a
-// partir do catálogo em config.services (id do produto).
-// ============================================================
+import 'server-only';
+import { randomBytes } from 'node:crypto';
+import { summarizePayments, type ProviderPayment } from './payment-status';
 
-const SANDBOX_URL = 'https://sandbox.asaas.com/api/v3';
-const PROD_URL = 'https://www.asaas.com/api/v3';
+const SANDBOX_URL = 'https://api-sandbox.asaas.com/v3';
+const PROD_URL = 'https://api.asaas.com/v3';
 const FETCH_TIMEOUT_MS = 15_000;
 
 function getApiBase(): string {
@@ -31,9 +26,8 @@ export function getAsaasEnv(): 'sandbox' | 'production' {
   return getApiBase() === PROD_URL ? 'production' : 'sandbox';
 }
 
-/** externalReference único — usado para conciliação. */
 export function generateExternalReference(): string {
-  const rand = Math.random().toString(36).slice(2, 8);
+  const rand = randomBytes(32).toString('base64url').slice(0, 18);
   return `nexos-${Date.now().toString(36)}-${rand}`.slice(0, 36);
 }
 
@@ -43,6 +37,7 @@ function asaasHeaders(): Record<string, string> {
   return {
     access_token: key,
     'Content-Type': 'application/json',
+    'User-Agent': 'NexOS/1.0',
   };
 }
 
@@ -74,8 +69,8 @@ async function asaasFetch(path: string, init: RequestInit): Promise<unknown> {
       const cause = (e as { cause?: { code?: string } })?.cause?.code ?? '';
       const isTls = msg.includes('UNABLE_TO_VERIFY_LEAF_SIGNATURE') || cause === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE' || msg.includes('fetch failed');
       const isConn = msg.includes('ECONNREFUSED') || cause === 'ECONNREFUSED';
-      // Se for erro de TLS/conexão e ainda há base alternativa, tenta a próxima
-      if ((isTls || isConn) && base !== bases[bases.length - 1]) continue;
+      // A failed POST may already have created a charge. Never retry it automatically.
+      if (init.method === 'GET' && (isTls || isConn) && base !== bases[bases.length - 1]) continue;
       if (isTls) {
         throw new Error(`Falha de TLS ao conectar em ${base}. Rode local com "npm run dev" (--use-system-ca) ou faça deploy na Vercel. Detalhe: ${msg.slice(0, 200)}`);
       }
@@ -88,7 +83,7 @@ async function asaasFetch(path: string, init: RequestInit): Promise<unknown> {
   throw lastErr instanceof Error ? lastErr : new Error(String(lastErr));
 }
 
-// ── Customers ───────────────────────────────────────────────
+// ── Customer identity ──────────────────────────────
 
 interface AsaasCustomer {
   id: string;
@@ -100,50 +95,51 @@ function onlyDigits(v: string): string {
   return v.replace(/\D/g, '');
 }
 
-// Cache em memória para evitar GET repetido no mesmo email durante burst
-const customerCache = new Map<string, string>();
+export type VerifiedCustomerBinding = {
+  applicationUserId: string;
+  providerCustomerId: string;
+};
 
-async function findOrCreateCustomer(name: string, email: string, cpfCnpj: string): Promise<string> {
-  const key = email.toLowerCase();
-  if (customerCache.has(key)) return customerCache.get(key)!;
+export type CheckoutIdentity =
+  | { kind: 'verified-user'; binding: VerifiedCustomerBinding }
+  | { kind: 'guest'; checkoutSessionId: string };
+
+async function createCustomer(name: string, email: string, cpfCnpj: string): Promise<string> {
   const cpf = onlyDigits(cpfCnpj);
-  const search = (await asaasFetch(`/customers?email=${encodeURIComponent(email)}`, {
-    method: 'GET',
-  })) as { data?: AsaasCustomer[] };
-  if (search.data && search.data.length > 0) {
-    const existing = search.data[0];
-    if (!existing.cpfCnpj && cpf.length >= 11) {
-      const updated = (await asaasFetch(`/customers/${existing.id}`, {
-        method: 'POST',
-        body: JSON.stringify({ name, cpfCnpj: cpf }),
-      })) as AsaasCustomer;
-      const id = updated.id ?? existing.id;
-      customerCache.set(key, id);
-      return id;
-    }
-    customerCache.set(key, existing.id);
-    return existing.id;
-  }
   const created = (await asaasFetch('/customers', {
     method: 'POST',
     body: JSON.stringify({ name, email, cpfCnpj: cpf }),
   })) as AsaasCustomer;
   if (!created.id) throw new Error('Falha ao criar cliente no Asaas');
-  customerCache.set(key, created.id);
   return created.id;
 }
 
-// ── Payments ────────────────────────────────────────────────
+export async function resolveCustomerIdentity(input: {
+  name: string;
+  email: string;
+  cpfCnpj: string;
+  applicationUserId?: string;
+  checkoutSessionId?: string;
+}): Promise<{ customerId: string; identity: CheckoutIdentity }> {
+  const customerId = await createCustomer(input.name, input.email, input.cpfCnpj);
+  const identity: CheckoutIdentity = input.applicationUserId
+    ? { kind: 'verified-user', binding: { applicationUserId: input.applicationUserId, providerCustomerId: customerId } }
+    : { kind: 'guest', checkoutSessionId: input.checkoutSessionId ?? randomBytes(32).toString('base64url') };
+  return { customerId, identity };
+}
+
+// ── Payments ────────────────────────────────────────
 
 export interface CreatePaymentInput {
-  amount: number; // em reais (ex: 69.90) — Asaas usa decimais
+  amount: number;
   description: string;
   externalReference: string;
   customerName: string;
   customerEmail: string;
   cpfCnpj: string;
-  dueDate?: string; // YYYY-MM-DD, default amanhã
+  dueDate?: string;
   billingType?: 'PIX' | 'BOLETO' | 'CREDIT_CARD' | 'UNDEFINED';
+  installments?: number;
 }
 
 export interface CreatePaymentResult {
@@ -157,12 +153,9 @@ export interface CreatePaymentResult {
   pixQrCodePayload?: string | null;
 }
 
-/** Flag para desabilitar Pix enquanto conta não aprovada — controla UI "Em desenvolvimento..." */
 export function isPixEnabled(): boolean {
-  // Quando Asaas liberar Pix, set ASAAS_PIX_ENABLED=true ou ASAAS_ENV=production com conta aprovada
   if (process.env.ASAAS_PIX_ENABLED === 'true') return true;
   if (process.env.ASAAS_PIX_ENABLED === 'false') return false;
-  // Auto-detect: se ASAAS_ENV=production mas Pix falhou antes, mantém desabilitado por padrão até manual
   return false;
 }
 
@@ -172,18 +165,12 @@ export interface InstallmentOption {
   total: number;
 }
 
-const installmentsCache = new Map<string, InstallmentOption[]>();
-
-/** Simula parcelas como o Asaas mostraria — cache por valor para evitar recomputação */
 export function simulateInstallments(value: number, maxInstallments = 12): InstallmentOption[] {
-  const k = `${value}:${maxInstallments}`;
-  if (installmentsCache.has(k)) return installmentsCache.get(k)!;
   const opts: InstallmentOption[] = [];
   for (let i = 1; i <= maxInstallments; i++) {
-    const total = i === 1 ? value : Number((value * (1 + 0.0199 * i)).toFixed(2));
+    const total = value;
     opts.push({ installment: i, value: Number((total / i).toFixed(2)), total });
   }
-  installmentsCache.set(k, opts);
   return opts;
 }
 
@@ -196,12 +183,14 @@ function tomorrowISO(): string {
 export async function createAsaasPayment(input: CreatePaymentInput): Promise<CreatePaymentResult> {
   if (!isAsaasConfigured()) throw new Error('ASAAS_API_KEY não configurado');
 
-  const customerId = await findOrCreateCustomer(input.customerName, input.customerEmail, input.cpfCnpj);
+  const customerId = await createCustomer(input.customerName, input.customerEmail, input.cpfCnpj);
 
   const payload = {
     customer: customerId,
     billingType: input.billingType ?? 'UNDEFINED',
-    value: input.amount,
+    ...(input.installments && input.installments > 1 && input.billingType === 'CREDIT_CARD'
+      ? { totalValue: input.amount, installmentCount: input.installments }
+      : { value: input.amount }),
     dueDate: input.dueDate ?? tomorrowISO(),
     description: input.description.slice(0, 120),
     externalReference: input.externalReference,
@@ -239,6 +228,7 @@ export interface PaymentStatusResult {
   paid: boolean;
   value: number | null;
   billingType: string | null;
+  paymentIds: string[];
 }
 
 export async function getPaymentBillingInfo(paymentId: string): Promise<{ bankSlipUrl: string | null; identificationField: string | null; invoiceUrl: string | null }> {
@@ -260,25 +250,20 @@ export async function getPaymentStatus(
 ): Promise<PaymentStatusResult> {
   if (!isAsaasConfigured()) throw new Error('ASAAS_API_KEY não configurado');
 
-  let payment: { id: string; status: string; value: number; billingType: string } | null = null;
+  let payments: ProviderPayment[];
 
   if (by === 'externalReference') {
-    const list = (await asaasFetch(`/payments?externalReference=${encodeURIComponent(idOrRef)}`, {
+    const list = (await asaasFetch(`/payments?externalReference=${encodeURIComponent(idOrRef)}&limit=100`, {
       method: 'GET',
-    })) as { data?: Array<{ id: string; status: string; value: number; billingType: string }> };
-    payment = list.data?.[0] ?? null;
-    if (!payment) return { status: 'NOT_FOUND', paid: false, value: null, billingType: null };
+    })) as { data?: ProviderPayment[]; hasMore?: boolean };
+    if (list.hasMore) throw new Error('Número inesperado de cobranças para o pedido.');
+    payments = list.data ?? [];
   } else {
-    payment = (await asaasFetch(`/payments/${encodeURIComponent(idOrRef)}`, {
+    const payment = (await asaasFetch(`/payments/${encodeURIComponent(idOrRef)}`, {
       method: 'GET',
-    })) as { id: string; status: string; value: number; billingType: string };
+    })) as ProviderPayment;
+    payments = [payment];
   }
 
-  const paidStatuses = new Set(['RECEIVED', 'CONFIRMED', 'RECEIVED_IN_CASH']);
-  return {
-    status: payment.status,
-    paid: paidStatuses.has(payment.status),
-    value: payment.value ?? null,
-    billingType: payment.billingType ?? null,
-  };
+  return summarizePayments(payments);
 }

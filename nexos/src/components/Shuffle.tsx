@@ -71,10 +71,9 @@ const Shuffle: React.FC<ShuffleProps> = ({
   const hoverHandlerRef = useRef<((e: Event) => void) | null>(null);
 
   useEffect(() => {
-    if ('fonts' in document) {
-      if (document.fonts.status === 'loaded') setFontsLoaded(true);
-      else document.fonts.ready.then(() => setFontsLoaded(true));
-    } else setFontsLoaded(true);
+    let active = true;
+    void Promise.resolve(document.fonts?.ready).then(() => { if (active) setFontsLoaded(true); });
+    return () => { active = false; };
   }, []);
 
   const scrollTriggerStart = useMemo(() => {

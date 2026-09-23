@@ -4,6 +4,9 @@ import { config } from '@/config';
 import { BULK_MAX_QTY, bulkUnitPrice } from '@/lib/bulk-pricing';
 import { createAsaasPayment, generateExternalReference, isAsaasConfigured } from '@/lib/asaas';
 import { isTurnstileEnforced, verifyTurnstileToken } from '@/lib/turnstile';
+import { createAdminClient } from '@/lib/supabase/admin';
+import { createHash, createHmac } from 'node:crypto';
+import { issueStatusToken } from '@/lib/status-token';
 
 // ============================================================
 // NexOS — Checkout via Asaas (PIX / Boleto / Cartão)
@@ -61,6 +64,7 @@ function securityHeaders(): Record<string, string> {
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'SAMEORIGIN',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Cache-Control': 'private, no-store',
   };
 }
 
@@ -70,6 +74,7 @@ export async function GET() {
       ok: isAsaasConfigured(),
       provider: 'asaas',
       hasKey: isAsaasConfigured(),
+      turnstileRequired: isTurnstileEnforced(),
       products: config.services.map((s) => ({ id: s.id, title: s.title, price: s.price })),
     },
     { headers: securityHeaders() },
@@ -77,6 +82,12 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  const origin = new URL(process.env.NEXT_PUBLIC_SITE_URL ?? req.url).origin;
+  if (req.headers.get('origin') !== origin) return NextResponse.json({ error: 'Origem inválida.' }, { status: 403 });
+  const idempotencyKey = req.headers.get('idempotency-key');
+  if (!idempotencyKey || !z.string().uuid().safeParse(idempotencyKey).success) {
+    return NextResponse.json({ error: 'Chave de tentativa inválida.' }, { status: 400 });
+  }
   const ip = getClientIp(req);
   if (isRateLimited(ip)) {
     return NextResponse.json({ error: 'Muitas tentativas. Aguarde um minuto e tente novamente.' }, { status: 429, headers: securityHeaders() });
@@ -99,7 +110,7 @@ export async function POST(req: NextRequest) {
     const body: unknown = await req.json();
     const parsed = bodySchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400, headers: securityHeaders() });
+      return NextResponse.json({ error: 'Dados inválidos' }, { status: 400, headers: securityHeaders() });
     }
     ({ productId, name, email, cpfCnpj, billingType, installments, quantity, turnstileToken } = parsed.data);
   } catch {
@@ -111,9 +122,9 @@ export async function POST(req: NextRequest) {
     if (!turnstileToken) {
       return NextResponse.json({ error: 'Verificação de segurança obrigatória.' }, { status: 400, headers: securityHeaders() });
     }
-    const v = await verifyTurnstileToken(turnstileToken, ip);
+    const v = await verifyTurnstileToken(turnstileToken, ip).catch(() => ({ success: false }));
     if (!v.success) {
-      return NextResponse.json({ error: 'Falha na verificação anti-bot.', details: v['error-codes']?.join(', ') }, { status: 403, headers: securityHeaders() });
+      return NextResponse.json({ error: 'Falha na verificação anti-bot.' }, { status: 403, headers: securityHeaders() });
     }
   }
 
@@ -142,8 +153,26 @@ export async function POST(req: NextRequest) {
   // Parcelas: Asaas recebe value + installmentCount via API transparente; para UNDEFINED/BOLETO é sempre 1x
   const effectiveBillingType = billingType === 'CREDIT_CARD' ? 'CREDIT_CARD' : billingType === 'BOLETO' ? 'BOLETO' : 'UNDEFINED';
 
+  const keyHash = createHash('sha256').update(idempotencyKey).digest('hex');
+  let reserved = false;
   try {
     const externalReference = generateExternalReference();
+    // Validate signing configuration before any external charge is created.
+    const { token: statusToken } = issueStatusToken(externalReference);
+    const db = createAdminClient();
+    const payloadHash = createHmac('sha256', process.env.CHECKOUT_STATUS_SECRET || process.env.SUPABASE_SECRET_KEY!).update(JSON.stringify({ productId, name, email, cpfDigits, billingType, installments, quantity })).digest('hex');
+    const { error: reservationError } = await db.from('idempotency_keys').insert({ key_hash: keyHash, payload_hash: payloadHash, provider_reference: externalReference });
+    if (reservationError) {
+      if (reservationError.code !== '23505') throw reservationError;
+      const { data: previous, error } = await db.from('idempotency_keys').select('payload_hash,status,result').eq('key_hash', keyHash).single();
+      if (error) throw error;
+      if (previous.payload_hash !== payloadHash) return NextResponse.json({ error: 'Esta tentativa já foi usada com outros dados.' }, { status: 409, headers: securityHeaders() });
+      if (previous.status === 'succeeded' && previous.result) return NextResponse.json(previous.result, { headers: securityHeaders() });
+      return NextResponse.json({ error: 'Cobrança em processamento ou aguardando conciliação. Não gere outra tentativa.' }, { status: 409, headers: securityHeaders() });
+    }
+    reserved = true;
+    const { error: orderError } = await db.from('orders').insert({ amount_cents: Math.round(amount * 100), product_id: productId, quantity, billing_type: effectiveBillingType, external_reference: externalReference });
+    if (orderError) throw orderError;
 
     const result = await createAsaasPayment({
       amount,
@@ -153,29 +182,33 @@ export async function POST(req: NextRequest) {
       customerEmail: email,
       cpfCnpj: cpfDigits,
       billingType: effectiveBillingType,
+      installments: effectiveBillingType === 'CREDIT_CARD' ? installments : undefined,
     });
 
     // Para cartão com parcelas, o invoiceUrl já abre com parcelamento selecionado no iframe
     // O valor de parcelas é exibido no front via /api/checkout/installments, o Asaas calcula o total na página deles
-    return NextResponse.json(
-      {
+    const responseBody = {
         paymentUrl: result.invoiceUrl,
         paymentId: result.id,
         externalReference,
+        statusToken,
         amount: Math.round(amount * 100),
         currency: 'brl',
         billingType: result.billingType,
         bankSlipUrl: result.bankSlipUrl ?? null,
         identificationField: result.identificationField ?? null,
         installments: effectiveBillingType === 'CREDIT_CARD' ? installments : 1,
-      },
-      { status: 200, headers: securityHeaders() },
-    );
+      };
+    const { error: updateError } = await db.from('orders').update({ payment_id: result.id, status: 'processing' }).eq('external_reference', externalReference);
+    if (updateError) throw updateError;
+    const { error: saveError } = await db.from('idempotency_keys').update({ status: 'succeeded', result: responseBody }).eq('key_hash', keyHash);
+    if (saveError) throw saveError;
+    return NextResponse.json(responseBody, { status: 200, headers: securityHeaders() });
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    console.error('[api/checkout] Asaas error', msg);
-    // Expõe detalhes de validação do Asaas (ex: CPF obrigatório, valor mínimo) sem vazar stack
-    const isValidation = msg.includes('invalid_') || msg.includes('CPF') || msg.includes('mínimo') || msg.includes('R$ 5');
-    return NextResponse.json({ error: isValidation ? msg.slice(0, 300) : 'Erro ao gerar cobrança. Tente novamente.' }, { status: 500, headers: securityHeaders() });
+    if (reserved) {
+      try { await createAdminClient().from('idempotency_keys').update({ status: 'unknown' }).eq('key_hash', keyHash); } catch {}
+    }
+    console.error('[api/checkout] falha na cobrança', err instanceof Error ? err.name : 'ProviderError');
+    return NextResponse.json({ error: reserved ? 'Não foi possível confirmar a cobrança. Aguarde a conciliação antes de gerar outra.' : 'Pagamentos temporariamente indisponíveis.' }, { status: 503, headers: securityHeaders() });
   }
 }

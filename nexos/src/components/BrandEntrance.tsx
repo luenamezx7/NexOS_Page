@@ -173,15 +173,15 @@ export default function BrandEntrance({ onComplete }: { onComplete: () => void }
             aria-hidden="true"
             className="absolute left-0 top-0 will-change-transform drop-shadow-[0_0_14px_rgba(255,92,138,0.35)]"
             style={{ width: iconW, height: iconH }}
-            initial={{ opacity: 0, x: oX, y: oY, scale: 0.92, filter: 'blur(4px)' as any }}
+            initial={{ opacity: 0, x: oX, y: oY, scale: 0.92, filter: 'blur(4px)' }}
             animate={{
               opacity: [0, 0, 1, 1, 1],
               scale: [0.92, 0.92, 1, 1, 1],
-              filter: ['blur(4px)', 'blur(4px)', 'blur(0px)', 'blur(0px)', 'blur(0px)'] as any,
+              filter: ['blur(4px)', 'blur(4px)', 'blur(0px)', 'blur(0px)', 'blur(0px)'],
               x: [oX, oX, oX, oX, finalX],
               y: [oY, oY, oY, oY, finalY],
-            } as any}
-            transition={{ duration: 2.8, times: [0, 0.32, 0.42, 0.62, 1], ease: 'linear' as any }}
+            }}
+            transition={{ duration: 2.8, times: [0, 0.32, 0.42, 0.62, 1], ease: 'linear' }}
           >
             <RobotCycler className="h-full w-full" intervalMs={1550} fadeMs={700} />
           </motion.div>
