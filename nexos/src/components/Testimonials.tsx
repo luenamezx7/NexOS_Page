@@ -169,7 +169,7 @@ export function Testimonials({ className = '' }: TestimonialsProps) {
       style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 640px' }}
     >
       <div className="grid-pattern-subtle opacity-80 dark:opacity-10" aria-hidden="true" />
-      <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24 md:px-8 md:py-32">
+      <div className="mx-auto w-full max-w-6xl px-4 py-24 sm:px-6 md:px-8 lg:py-32">
         <motion.header
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 24 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}

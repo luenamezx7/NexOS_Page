@@ -15,6 +15,7 @@ import { SectionIndicator } from '@/components/SectionIndicator';
 import { ThinkingOrbWrapper } from '@/components/ThinkingOrbWrapper';
 import TextPressure from '@/components/TextPressure';
 import BrandEntrance from '@/components/BrandEntrance';
+import Topography from '@/components/Topography';
 import { useTheme } from '@/components/ThemeProvider';
 
 
@@ -159,6 +160,8 @@ export default function HomeClient() {
   const heroRef = useRef<HTMLElement>(null);
   const introDoneRef = useRef<boolean>(false);
   const brandDoneRef = useRef<boolean>(false);
+  const { theme: mainTheme } = useTheme();
+  const mainReduce = useReducedMotion();
 
   const handleIntroComplete = useCallback(() => {
     if (introDoneRef.current) return;
@@ -204,6 +207,35 @@ export default function HomeClient() {
         <>
           <Header />
           <SectionIndicator />
+          {/* Topography global — apenas no modo claro, discorre por toda a página */}
+          {mainTheme !== 'dark' && (
+            <div className="pointer-events-none fixed inset-0 -z-10 opacity-100" aria-hidden="true">
+              <Topography
+                lowColor="#fdf6ec"
+                midColor="#ff8fab"
+                highColor="#231b14"
+                speed={mainReduce ? 0 : 0.18}
+                morphAmount={2.4}
+                morphSpeed={0.035}
+                bands={1.8}
+                thickness={0.006}
+                scale={2.6}
+                pixelSize={1}
+                glow={0.28}
+                colorMode="elevation"
+                contrast={2.0}
+                brightness={0.9}
+                fillBands={false}
+                opacity={0.14}
+                grain={true}
+                grainIntensity={0.025}
+                mouseInteraction={!mainReduce}
+                mouseRadius={0.28}
+                mouseStrength={0.22}
+                lightMode={true}
+              />
+            </div>
+          )}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}

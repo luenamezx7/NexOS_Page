@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from 'motion/react';
 import { Mail, Phone, MessageSquare, MapPin, ArrowRight, Send } from 'lucide-react';
 import { config } from '@/config';
 import { Button } from './ui/Button';
+import { Turnstile } from './Turnstile';
 
 interface FormData {
   name: string;
@@ -44,6 +45,8 @@ export function Contact({ className = '' }: ContactProps) {
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const hasTurnstile = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
   const whatsappUrl: string = `https://wa.me/${config.whatsapp.number}?text=${encodeURIComponent(config.whatsapp.message)}`;
 
@@ -72,7 +75,7 @@ export function Contact({ className = '' }: ContactProps) {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, turnstileToken }),
       });
 
       const body: { error?: string; details?: unknown; hint?: string } = await res.json().catch(() => ({}));
@@ -185,7 +188,7 @@ export function Contact({ className = '' }: ContactProps) {
       className={`relative w-full max-w-full overflow-x-clip border-t border-ink/10 bg-canvas ${className}`}
     >
       <div className="grid-pattern-subtle opacity-80 dark:opacity-10" aria-hidden="true" />
-      <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24 md:px-8 md:py-32">
+      <div className="mx-auto w-full max-w-6xl px-4 py-24 sm:px-6 md:px-8 lg:py-32">
         <motion.header
           initial={reveal.initial}
           whileInView={reveal.whileInView}
@@ -305,11 +308,26 @@ export function Contact({ className = '' }: ContactProps) {
               {errors.message && <p id="contact-message-error" className="text-xs text-[#ff5c8a]" role="alert">{errors.message}</p>}
             </div>
 
+            {hasTurnstile && (
+              <div className="mt-5">
+                <Turnstile onVerify={setTurnstileToken} onExpire={() => setTurnstileToken(null)} onError={() => setTurnstileToken(null)} />
+              </div>
+            )}
+
             <div className="mt-6 border-t border-ink/10 pt-5">
-              <Button type="submit" variant="primary" size="lg" fullWidth loading={submitting}>
-                {submitting ? 'Enviando...' : 'Enviar projeto'}
-                <Send size={18} strokeWidth={2.5} aria-hidden="true" />
-              </Button>
+              <motion.button
+                type="submit"
+                disabled={submitting}
+                aria-busy={submitting}
+                whileTap={{ scale: 0.98 }}
+                transition={{ duration: 0.2, ease: [0.32, 0.72, 0, 1] }}
+                className="group relative flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-b from-[#f04484] via-pink-600 to-[#c2185b] py-2 pl-6 pr-2 text-sm font-bold tracking-[0.03em] text-white shadow-[0_0_0_1px_rgba(255,92,138,0.28),0_10px_28px_-10px_rgba(255,92,138,0.55)] transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:brightness-[1.07] active:scale-[0.98] disabled:opacity-40"
+              >
+                <span>{submitting ? 'Enviando...' : 'Enviar projeto'}</span>
+                <span className="grid h-8 w-8 place-items-center rounded-full bg-white/15 transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:scale-105" aria-hidden="true">
+                  <Send size={14} strokeWidth={2.5} />
+                </span>
+              </motion.button>
             </div>
 
             {submitError && <p className="mt-3 text-xs text-[#ff5c8a]" role="alert">{submitError}</p>}

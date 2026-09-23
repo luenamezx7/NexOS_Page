@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { motion, useMotionValue, useReducedMotion, useTransform, type MotionValue } from 'motion/react';
+import { ArrowRight } from 'lucide-react';
 
 const HOLD_MS = 1500;
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
@@ -160,15 +161,18 @@ export function HoldButton({ label, ariaLabel, hintId, onConfirm, className = ''
       whileTap={reduce ? undefined : { scale: 0.98 }}
       transition={{ duration: 0.2, ease: FLUID_EASE }}
       style={ringStyle}
-      className={`btn-primary-nex touch-pan-y select-none ${featured ? 'btn-primary-nex--featured' : ''} ${className}`}
+      className={`btn-primary-nex group touch-pan-y select-none rounded-full !py-2 !pl-6 !pr-2 active:scale-[0.98] ${featured ? 'btn-primary-nex--featured' : ''} ${className}`}
     >
       {background && (
         <span aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
           {background}
         </span>
       )}
-      <span className={`relative z-10 inline-flex min-h-[1.25em] min-w-0 items-center break-words text-center font-medium ${background ? '[text-shadow:0_1px_10px_rgba(0,0,0,0.45)]' : ''}`}>
-        {display}
+      <span className={`relative z-10 inline-flex min-h-[1.25em] min-w-0 items-center gap-2 break-words text-center font-medium ${background ? '[text-shadow:0_1px_10px_rgba(0,0,0,0.45)]' : ''}`}>
+        <span>{display}</span>
+        <span className="grid h-8 w-8 place-items-center rounded-full bg-white/15 transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:scale-105" aria-hidden="true">
+          <ArrowRight size={14} strokeWidth={2} />
+        </span>
       </span>
       <motion.span
         aria-hidden="true"
