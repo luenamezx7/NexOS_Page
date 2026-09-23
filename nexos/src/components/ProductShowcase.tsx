@@ -10,6 +10,8 @@ import { BULK_MAX_QTY, bulkTag, bulkUnitPrice } from '@/lib/bulk-pricing';
 import { HoldButton } from './HoldButton';
 import GradientText from './GradientText';
 import { MacBookMockup } from './MacBookMockup';
+import { useTheme } from './ThemeProvider';
+import Topography from './Topography';
 
 
 // Drawer fora do bundle inicial: só baixa quando pede o checkout da placa.
@@ -148,6 +150,7 @@ interface ProductShowcaseProps {
 
 export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
   const reduce: boolean = useReducedMotion() ?? false;
+  const { theme } = useTheme();
   const [checkoutOpen, setCheckoutOpen] = useState<boolean>(false);
 
   const placa: Service | undefined = config.services.find((s) => s.id === 'placa');
@@ -184,6 +187,32 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
         aria-labelledby="showcase-title"
         className={`relative w-full max-w-full overflow-x-clip border-t border-ink/10 bg-canvas ${className}`}
       >
+        {theme !== 'dark' && (
+          <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+            <Topography
+              lowColor="#fdf6ec"
+              midColor="#ff8fab"
+              highColor="#231b14"
+              speed={0}
+              morphAmount={2.0}
+              morphSpeed={0.035}
+              bands={1.7}
+              thickness={0.006}
+              scale={2.4}
+              pixelSize={1}
+              glow={0.28}
+              colorMode="elevation"
+              contrast={2.0}
+              brightness={0.9}
+              fillBands={false}
+              opacity={0.13}
+              grain={true}
+              grainIntensity={0.025}
+              mouseInteraction={false}
+              lightMode={true}
+            />
+          </div>
+        )}
         <div className="mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-10 px-4 py-20 sm:px-6 md:grid-cols-2 md:gap-12 md:px-8 lg:gap-16 md:py-28">
           <div className="flex justify-center">
             <div className="w-[min(92vw,34rem)] md:w-[42rem]">
@@ -304,6 +333,34 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
       aria-labelledby="showcase-title"
       className={`relative w-full max-w-full overflow-x-clip border-t border-ink/10 bg-canvas ${className}`}
     >
+      {theme !== 'dark' && (
+        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+          <Topography
+            lowColor="#fdf6ec"
+            midColor="#ff8fab"
+            highColor="#231b14"
+            speed={reduce ? 0 : 0.18}
+            morphAmount={2.2}
+            morphSpeed={0.04}
+            bands={1.7}
+            thickness={0.006}
+            scale={2.4}
+            pixelSize={1}
+            glow={0.28}
+            colorMode="elevation"
+            contrast={2.0}
+            brightness={0.9}
+            fillBands={false}
+            opacity={0.13}
+            grain={true}
+            grainIntensity={0.025}
+            mouseInteraction={!reduce}
+            mouseRadius={0.24}
+            mouseStrength={0.22}
+            lightMode={true}
+          />
+        </div>
+      )}
       {/* Sem pin: scroll normal. A placa só anima ao entrar na viewport. */}
       <div className="relative w-full max-w-full">
         <div className="flex w-full max-w-full items-center justify-center">
@@ -388,7 +445,7 @@ export function ProductShowcase({ className = '' }: ProductShowcaseProps) {
                     <span className="font-mono text-xs text-ink/35 line-through dark:text-white/35">Sem desconto {fmtBRL(basePrice * qty)}</span>
                   )}
                   <p className="inline-flex flex-wrap items-baseline gap-2">
-                    <span className="font-display text-3xl font-black tracking-tighter leading-none">
+                    <span className="text-3xl font-black tracking-tighter leading-none" style={{ fontFamily: '"Satoshi", sans-serif', fontWeight: 900 }}>
                       <GradientText animationSpeed={6} className="!inline-flex !m-0 !p-0 !bg-transparent !backdrop-blur-0" showBorder={false}>{totalLabel}</GradientText>
                     </span>
                     {activeTag && (

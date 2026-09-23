@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { config } from '@/config';
 import { BULK_MAX_QTY, bulkUnitPrice } from '@/lib/bulk-pricing';
 import { createAsaasPayment, generateExternalReference, isAsaasConfigured } from '@/lib/asaas';
+import { isTurnstileEnforced, verifyTurnstileToken } from '@/lib/turnstile';
 
 // ============================================================
 // NexOS — Checkout via Asaas (PIX / Boleto / Cartão)
@@ -20,6 +21,7 @@ const bodySchema = z.object({
   billingType: z.enum(['PIX', 'BOLETO', 'CREDIT_CARD', 'UNDEFINED']).optional().default('UNDEFINED'),
   installments: z.coerce.number().int().min(1).max(12).optional().default(1),
   quantity: z.coerce.number().int().min(1).max(BULK_MAX_QTY).optional().default(1),
+  turnstileToken: z.string().optional(),
 });
 
 const WINDOW_MS = 60_000;
@@ -92,15 +94,27 @@ export async function POST(req: NextRequest) {
   let billingType: 'PIX' | 'BOLETO' | 'CREDIT_CARD' | 'UNDEFINED';
   let installments: number;
   let quantity: number;
+  let turnstileToken: string | undefined;
   try {
     const body: unknown = await req.json();
     const parsed = bodySchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400, headers: securityHeaders() });
     }
-    ({ productId, name, email, cpfCnpj, billingType, installments, quantity } = parsed.data);
+    ({ productId, name, email, cpfCnpj, billingType, installments, quantity, turnstileToken } = parsed.data);
   } catch {
     return NextResponse.json({ error: 'Payload inválido' }, { status: 400, headers: securityHeaders() });
+  }
+
+  // Turnstile anti-bot (se configurado)
+  if (isTurnstileEnforced()) {
+    if (!turnstileToken) {
+      return NextResponse.json({ error: 'Verificação de segurança obrigatória.' }, { status: 400, headers: securityHeaders() });
+    }
+    const v = await verifyTurnstileToken(turnstileToken, ip);
+    if (!v.success) {
+      return NextResponse.json({ error: 'Falha na verificação anti-bot.', details: v['error-codes']?.join(', ') }, { status: 403, headers: securityHeaders() });
+    }
   }
 
   const cpfDigits = cpfCnpj.replace(/\D/g, '');

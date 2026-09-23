@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Client } from '@notionhq/client';
 import { z } from 'zod';
+import { isTurnstileEnforced, verifyTurnstileToken } from '@/lib/turnstile';
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Nome é obrigatório').max(100),
@@ -8,6 +9,7 @@ const contactSchema = z.object({
   company: z.string().max(100).optional().default(''),
   service: z.string().max(100).optional().default(''),
   message: z.string().min(5, 'Mensagem é obrigatória').max(5000),
+  turnstileToken: z.string().optional(),
 });
 
 type ContactPayload = z.infer<typeof contactSchema>;
@@ -75,6 +77,19 @@ export async function POST(req: Request) {
     }
 
     const data: ContactPayload = parsed.data;
+
+    // ── Turnstile (Cloudflare) ──
+    if (isTurnstileEnforced()) {
+      const token = (data as unknown as { turnstileToken?: string }).turnstileToken;
+      if (!token) {
+        return NextResponse.json({ error: 'Verificação de segurança obrigatória. Atualize a página e tente novamente.' }, { status: 400 });
+      }
+      const ip = req.headers.get('cf-connecting-ip') ?? req.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
+      const result = await verifyTurnstileToken(token, ip ?? undefined);
+      if (!result.success) {
+        return NextResponse.json({ error: 'Falha na verificação anti-bot. Tente novamente.', details: result['error-codes']?.join(', ') }, { status: 403 });
+      }
+    }
 
     const token = process.env.NOTION_TOKEN?.trim();
     const rawDatabaseId = process.env.NOTION_DATABASE_ID?.trim();

@@ -8,6 +8,8 @@ import { config } from '@/config';
 import type { Service } from '@/types';
 import { HoldButton } from './HoldButton';
 import GradientText from './GradientText';
+import { useTheme } from './ThemeProvider';
+import Topography from './Topography';
 
 // Drawer fora do bundle inicial E fora do DOM: o chunk só baixa quando
 // o usuário segura o botão de compra (mount condicional abaixo).
@@ -135,16 +137,16 @@ function ServiceCard({ service, reduceMotion, onCheckout }: ServiceCardProps) {
         ))}
       </ul>
 
-      <div className="mt-auto border-t border-ink/10 pt-5">
+      <div className="mt-auto pt-5">
         <div className="mb-4 flex flex-wrap items-baseline gap-2">
-          <span className="font-display text-3xl font-black tracking-tighter leading-none sm:text-4xl">
+          <span className="text-3xl font-black tracking-tighter leading-none sm:text-4xl" style={{ fontFamily: '"Satoshi", sans-serif', fontWeight: 900 }}>
             <span className="bg-gradient-to-r from-[#ff5c8a] via-[#83358F] to-[#ff5c8a] bg-clip-text text-transparent">R$ {service.price.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </span>
           {service.id === 'dev' && (
-            <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/45">/mês</span>
+            <span className="font-mono text-[11px] font-black uppercase tracking-[0.14em] text-ink/70">/mês</span>
           )}
           {service.id === 'placa' && (
-            <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/45">/unidade</span>
+            <span className="font-mono text-[11px] font-black uppercase tracking-[0.14em] text-ink/70">/unidade</span>
           )}
         </div>
         <HoldButton
@@ -191,6 +193,7 @@ interface ServicesProps {
 
 export function Services({ className = '' }: ServicesProps) {
   const reduce = useReducedMotion() ?? false;
+  const { theme } = useTheme();
   const [activeService, setActiveService] = useState<Service | null>(null);
 
   const handleCheckout = useCallback((service: Service) => {
@@ -208,8 +211,36 @@ export function Services({ className = '' }: ServicesProps) {
         aria-labelledby="services-title"
         className={`relative w-full max-w-full overflow-x-clip border-t border-ink/10 bg-canvas ${className}`}
       >
+        {theme !== 'dark' && (
+          <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+            <Topography
+              lowColor="#fdf6ec"
+              midColor="#ff8fab"
+              highColor="#231b14"
+              speed={reduce ? 0 : 0.16}
+              morphAmount={2.2}
+              morphSpeed={0.035}
+              bands={1.6}
+              thickness={0.006}
+              scale={2.5}
+              pixelSize={1}
+              glow={0.26}
+              colorMode="elevation"
+              contrast={2.0}
+              brightness={0.9}
+              fillBands={false}
+              opacity={0.11}
+              grain={true}
+              grainIntensity={0.02}
+              mouseInteraction={!reduce}
+              mouseRadius={0.26}
+              mouseStrength={0.2}
+              lightMode={true}
+            />
+          </div>
+        )}
         <div className="grid-pattern-subtle opacity-80 dark:opacity-10" aria-hidden="true" />
-        <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24 md:px-8 md:py-32">
+        <div className="mx-auto w-full max-w-6xl px-4 py-24 sm:px-6 md:px-8 lg:py-32">
           {/* Header da seção */}
           <motion.header
             initial={reduce ? { opacity: 0 } : { opacity: 0, y: 40, scale: 0.98 }}
@@ -218,10 +249,6 @@ export function Services({ className = '' }: ServicesProps) {
             transition={{ duration: 0.8, ease: FLUID_EASE }}
             className="mb-12 max-w-2xl will-change-transform md:mb-16"
           >
-            <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#ff5c8a]/40 bg-[#ff5c8a]/10 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.22em] text-[#ff5c8a]">
-              <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-[#ff5c8a]" aria-hidden="true" />
-              Soluções completas
-            </p>
             <h2 id="services-title" className="flex flex-row items-start gap-3 text-ink">
               <span className="pink-marker mt-[0.28em]" aria-hidden="true" />
               <span>
@@ -299,7 +326,7 @@ export function Services({ className = '' }: ServicesProps) {
                   whileInView={reduce ? { opacity: 1 } : undefined}
                   viewport={{ once: true, amount: 0.3 }}
                   transition={reduce ? { duration: 0.4 } : undefined}
-                  className="flex flex-col items-center rounded-2xl border border-ink/10 bg-[var(--color-card)] px-5 py-6 text-center transition-colors duration-300 hover:border-ink/20 dark:border-white/10 dark:bg-white/[0.04] dark:hover:border-white/20"
+                  className={`flex flex-col items-center rounded-2xl border px-5 py-6 text-center transition-colors duration-300 ${i === 0 || i === 2 ? 'border-[#ff5c8a]/15 bg-gradient-to-br from-[#ff5c8a]/08 via-transparent to-transparent dark:border-[#ff5c8a]/15 dark:from-[#ff5c8a]/10' : 'border-ink/10 bg-[var(--color-card)] dark:border-white/10 dark:bg-white/[0.04] hover:border-ink/20 dark:hover:border-white/20'}`}
                 >
                   <span className="mb-3 grid h-10 w-10 place-items-center rounded-lg bg-[#ff5c8a]/10 text-[#ff5c8a]">
                     {d.icon}

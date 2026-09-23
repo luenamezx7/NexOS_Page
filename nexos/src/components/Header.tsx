@@ -182,7 +182,7 @@ export function Header() {
             ariaLabel="Entrar em contato"
             onClick={() => handleNav('#contact')}
           />
-          <PrimaryCta
+          <SecondaryCta
             label="Começar Agora"
             ariaLabel="Começar agora"
             onClick={() => handleNav('#services')}
@@ -190,7 +190,7 @@ export function Header() {
         </div>
 
         <div className="relative z-10 flex flex-row items-center gap-2 md:hidden">
-          <PrimaryCta
+          <SecondaryCta
             label="Começar"
             ariaLabel="Começar agora"
             onClick={() => handleNav('#services')}
@@ -275,7 +275,7 @@ export function Header() {
                 onClick={() => handleNav('#contact')}
                 className="w-full py-3"
               />
-              <PrimaryCta
+              <SecondaryCta
                 label="Começar"
                 ariaLabel="Começar agora"
                 onClick={() => handleNav('#services')}
