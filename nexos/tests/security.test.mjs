@@ -32,9 +32,12 @@ test('same-origin protection rejects missing, foreign and cross-site origins', (
   try {
     const make = headers => new Request('https://nexos.example/api/auth/login', { headers });
     assert.equal(isSameOrigin(make({ Origin: 'https://nexos.example' })), true);
+    assert.equal(isSameOrigin(make({ Origin: 'https://www.nexos.example' })), true);
     assert.equal(isSameOrigin(make({})), false);
+    assert.equal(isSameOrigin(make({ Origin: null })), false);
     assert.equal(isSameOrigin(make({ Origin: 'https://attacker.example' })), false);
     assert.equal(isSameOrigin(make({ Origin: 'https://nexos.example', 'Sec-Fetch-Site': 'cross-site' })), false);
+    assert.equal(isSameOrigin(make({ Origin: 'http://nexos.example' })), false);
   } finally {
     if (previous === undefined) delete process.env.NEXT_PUBLIC_SITE_URL;
     else process.env.NEXT_PUBLIC_SITE_URL = previous;
