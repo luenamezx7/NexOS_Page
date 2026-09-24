@@ -29,6 +29,13 @@ const nextConfig: NextConfig = {
   experimental: { optimizePackageImports: ['lucide-react'] },
   async redirects() {
     return [
+      // Turnstile só aceita o apex — evita login/origem quebrados no www.
+      {
+        source: '/(.*)',
+        has: [{ type: 'host', value: 'www.nexoslab.online' }],
+        destination: 'https://nexoslab.online/:path*',
+        permanent: true,
+      },
       { source: '/entrar', destination: '/portal/acesso', permanent: true },
       { source: '/login', destination: '/admin-dashboard-su/secure-entry', permanent: true },
     ];

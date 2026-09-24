@@ -29,11 +29,23 @@ export async function readJsonBody(request: Request, maxBytes = 8192): Promise<u
   catch { throw new RequestError('JSON inválido.', 400); }
 }
 
+function allowedOrigins(site: string | undefined, fallbackUrl: string): Set<string> {
+  const origins = new Set<string>();
+  const base = new URL(site || fallbackUrl);
+  origins.add(base.origin);
+  const host = base.hostname;
+  if (host.startsWith('www.')) origins.add(`${base.protocol}//${host.slice(4)}`);
+  else origins.add(`${base.protocol}//www.${host}`);
+  return origins;
+}
+
 export function isSameOrigin(request: Request): boolean {
   const site = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL;
   if (!site && process.env.NODE_ENV === 'production') return false;
   try {
-    return request.headers.get('origin') === new URL(site || request.url).origin &&
+    const origin = request.headers.get('origin');
+    if (!origin || origin === 'null') return false;
+    return allowedOrigins(site, request.url).has(origin) &&
       request.headers.get('sec-fetch-site') !== 'cross-site';
   } catch { return false; }
 }
