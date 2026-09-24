@@ -93,6 +93,30 @@ test('customer signup enforces password strength and mobile layout (UI contract)
   await page.screenshot({ path: 'test-results/customer-mobile.png', fullPage: true });
 });
 
+test('social login buttons render on both auth screens and OAuth API fails closed', async ({ page, request }) => {
+  await page.goto('/portal/acesso');
+  await expect(page.getByRole('button', { name: 'Google' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'GitHub' })).toBeVisible();
+  await page.goto('/admin-dashboard-su/secure-entry');
+  await expect(page.getByRole('button', { name: 'Google' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'GitHub' })).toBeVisible();
+
+  const csrf = await request.post('/api/auth/user-oauth', { headers: { Origin: 'https://attacker.example' }, data: { provider: 'google' } });
+  expect(csrf.status()).toBe(403);
+  const badProvider = await request.post('/api/auth/user-oauth', { headers: { Origin: 'http://localhost:3100' }, data: { provider: 'facebook' } });
+  expect(badProvider.status()).toBe(400);
+  const oauth = await request.post('/api/auth/user-oauth', { headers: { Origin: 'http://localhost:3100' }, data: { provider: 'google', callbackUrl: '/checkout' } });
+  expect(oauth.status()).toBe(200);
+  const body = await oauth.json();
+  expect(body.url).toContain('authorize');
+  expect(body.url).toContain('provider=google');
+  expect(body.url).toContain('checkout');
+  expect(body.url).not.toContain('http%3A%2F%2Fevil');
+  const github = await request.post('/api/auth/oauth', { headers: { Origin: 'http://localhost:3100' }, data: { provider: 'github' } });
+  expect(github.status()).toBe(200);
+  expect((await github.json()).url).toContain('provider=github');
+});
+
 test('customer APIs and callbacks fail closed', async ({ page, request }) => {
   await page.goto('/conta');
   await expect(page).toHaveURL(/\/portal\/acesso$/);
@@ -105,7 +129,45 @@ test('customer APIs and callbacks fail closed', async ({ page, request }) => {
   const callback = await request.get('/auth/callback?next=https://attacker.example', { maxRedirects: 0 });
   expect(callback.status()).toBe(303);
   expect(callback.headers().location).toBe('http://localhost:3100/portal/acesso?confirmation=error');
+  const evilEntry = await request.get('/auth/callback?entry=//evil.example&next=javascript:alert(1)', { maxRedirects: 0 });
+  expect(evilEntry.status()).toBe(303);
+  expect(evilEntry.headers().location).toBe('http://localhost:3100/portal/acesso?confirmation=error');
   const weak = await request.post('/api/auth/user-signup', { headers: { Origin: 'http://localhost:3100' }, data: { email: 'weak@example.com', password: 'aaaaaaaaaaaaaaa' } });
   expect(weak.status()).toBe(400);
   expect((await weak.json()).error).toContain('12+ caracteres');
+});
+
+test('forgot-password UI contract and recovery APIs fail closed', async ({ page, request }) => {
+  await page.route('**/api/auth/user-forgot', route => route.fulfill({
+    json: { message: 'Se houver uma conta ativa para este e-mail, você receberá um link para redefinir a senha. O link expira em pouco tempo — confira também o spam.' },
+  }));
+  await page.goto('/portal/acesso');
+  await page.getByRole('button', { name: 'Esqueceu a senha?', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Recuperar senha' })).toBeVisible();
+  await page.getByLabel('E-mail', { exact: true }).fill('reset@example.com');
+  await page.getByRole('button', { name: 'Enviar link de redefinição', exact: true }).click();
+  await expect(page.getByRole('status')).toContainText('redefinir a senha');
+  await expect(page.getByRole('heading', { name: 'Recuperar senha' })).toBeVisible();
+
+  await page.goto('/admin-dashboard-su/secure-entry');
+  await expect(page.getByRole('button', { name: 'Esqueceu a senha?', exact: true })).toBeVisible();
+
+  const csrf = await request.post('/api/auth/user-forgot', {
+    headers: { Origin: 'https://attacker.example' },
+    data: { email: 'a@b.co' },
+  });
+  expect(csrf.status()).toBe(403);
+  const invalid = await request.post('/api/auth/user-forgot', {
+    headers: { Origin: 'http://localhost:3100' },
+    data: { email: 'not-an-email' },
+  });
+  expect(invalid.status()).toBe(400);
+  const invalidReset = await request.post('/api/auth/user-reset', {
+    headers: { Origin: 'http://localhost:3100' },
+    data: { password: 'weakpassword' },
+  });
+  expect([400, 401]).toContain(invalidReset.status());
+  const redefinir = await page.goto('/portal/redefinir');
+  expect(redefinir?.status()).toBe(200);
+  await expect(page.getByRole('heading', { name: /Link inválido ou expirado|Defina nova senha/i })).toBeVisible();
 });

@@ -2,12 +2,14 @@
 
 import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
 import { motion, useReducedMotion, type Variants } from 'motion/react';
-import { ArrowRight, ArrowUpRight, Zap, Layers, Gauge } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Zap, Layers, Gauge, Sparkles } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 import { config } from '@/config';
 import GradientText from './GradientText';
 import Topography from './Topography';
+import styles from './MidPage.module.css';
 
 
 
@@ -43,7 +45,7 @@ interface BentoCardData {
   ctaLabel: string;
   ctaHref: string;
   icon: ReactNode;
-  span: string;
+  span: 'span7' | 'span5';
   featured?: boolean;
   featuredBadge?: string;
 }
@@ -71,7 +73,7 @@ const RELIEF_CHILD: Variants = {
   },
 };
 
-function navigate(href: string): void {
+function navigate(href: string, push?: (h: string) => void): void {
   if (href.startsWith('#')) {
     const el: HTMLElement | null = document.getElementById(href.replace('#', ''));
     if (el) {
@@ -79,7 +81,8 @@ function navigate(href: string): void {
       return;
     }
   }
-  window.location.href = href;
+  if (push) push(href);
+  else window.location.href = href;
 }
 
 const BENTO_CARDS: BentoCardData[] = [
@@ -94,7 +97,7 @@ const BENTO_CARDS: BentoCardData[] = [
     ctaLabel: 'Ver Serviços',
     ctaHref: '#services',
     icon: <Layers size={18} strokeWidth={1.75} aria-hidden="true" />,
-    span: 'md:col-span-7',
+    span: 'span7',
   },
   {
     id: 'performance-valor',
@@ -107,7 +110,7 @@ const BENTO_CARDS: BentoCardData[] = [
     ctaLabel: 'Ver Serviços',
     ctaHref: '#services',
     icon: <Zap size={18} strokeWidth={1.75} aria-hidden="true" />,
-    span: 'md:col-span-5',
+    span: 'span5',
     featured: true,
     featuredBadge: 'Destaque B2B',
   },
@@ -116,13 +119,13 @@ const BENTO_CARDS: BentoCardData[] = [
     badge: 'Discovery',
     title: 'A melhor estratégia para seu Business',
     description:
-      'A melhor estratégia para seu Business: validação de produto, roadmap técnico e plano de execução de 90 dias antes de investir em código.',
+      'Validação de produto, roadmap técnico e plano de execução de 90 dias antes de investir em código.',
     metricValue: '6 sem',
     metricLabel: 'MVP médio',
     ctaLabel: 'Agendar Discovery',
     ctaHref: '#contact',
     icon: <Gauge size={18} strokeWidth={1.75} aria-hidden="true" />,
-    span: 'md:col-span-5',
+    span: 'span5',
   },
   {
     id: 'mvp',
@@ -135,7 +138,7 @@ const BENTO_CARDS: BentoCardData[] = [
     ctaLabel: 'Ver Serviços',
     ctaHref: '#services',
     icon: <ArrowUpRight size={18} strokeWidth={1.75} aria-hidden="true" />,
-    span: 'md:col-span-7',
+    span: 'span7',
   },
 ];
 
@@ -145,6 +148,7 @@ interface BentoCardProps {
 }
 
 function BentoCard({ card, reduceMotion }: BentoCardProps) {
+  const router = useRouter();
   return (
     <motion.article
       variants={reduceMotion ? undefined : RELIEF_CHILD}
@@ -152,55 +156,39 @@ function BentoCard({ card, reduceMotion }: BentoCardProps) {
       whileInView={reduceMotion ? { opacity: 1 } : undefined}
       viewport={{ once: true, amount: 0.25 }}
       transition={reduceMotion ? { duration: 0.4 } : undefined}
-      whileHover={reduceMotion ? undefined : { y: -5 }}
-      className={`bento-card will-change-transform group relative flex min-w-0 max-w-full flex-col p-5 transition-colors duration-300 hover:border-ink/25 sm:p-8 md:p-7 ${card.span} ${
-        card.featured
-          ? '!border-pink-500/50 shadow-[0_0_28px_rgba(255, 92, 138,0.22),0_18px_60px_-24px_rgba(255, 92, 138,0.45)]'
-          : ''
-      }`}
+      className={`${styles.bentoCard} ${card.featured ? styles.featured : ''} ${styles[card.span]}`}
       aria-labelledby={`bento-title-${card.id}`}
     >
       {card.featured && card.featuredBadge && (
-        <span className="absolute -top-3 left-5 inline-flex max-w-[calc(100%-2.5rem)] items-center gap-1.5 truncate rounded-full border border-pink-500/50 bg-[#ff5c8a] px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-white shadow-[0_0_16px_rgba(255, 92, 138,0.6)] sm:left-6">
-          <span className="h-1.5 w-1.5 shrink-0 animate-pulse-dot rounded-full bg-white" aria-hidden="true" />
+        <span className={styles.featuredBadge}>
+          <span className={styles.featuredBadgeDot} aria-hidden="true" />
           {card.featuredBadge}
         </span>
       )}
-      <div className="mb-5 flex min-w-0 flex-row flex-wrap items-center justify-between gap-2 sm:gap-3">
-        <span className={`tech-badge ${card.featured ? '!border-pink-500/50 !text-ink' : ''}`}>
-          <span className="tech-badge-dot" aria-hidden="true" />
+      <div className={styles.cardTop}>
+        <span className={styles.badge}>
+          <span className={styles.badgeDot} aria-hidden="true" />
           {card.badge}
         </span>
-        <span
-          className="grid h-9 w-9 place-items-center rounded-lg border border-ink/10 bg-ink/[0.04] text-ink/70 transition-colors duration-300 group-hover:border-pink-500/40 group-hover:text-ink"
-          aria-hidden="true"
-        >
+        <span className={styles.iconBox} aria-hidden="true">
           {card.icon}
         </span>
       </div>
 
-      <h3 id={`bento-title-${card.id}`} className="font-dirty mb-2 break-words text-lg font-bold tracking-tight text-ink sm:text-xl">
-        {card.id === 'performance-valor' ? (
-          <>
-            Performance que gera valor <span className="font-sans font-bold tracking-tight">B2B</span>
-          </>
-        ) : (
-          card.title
-        )}
-      </h3>
-      <p className="mb-5 break-words text-sm leading-relaxed text-ink/70">{card.description}</p>
+      <h3 id={`bento-title-${card.id}`}>{card.title}</h3>
+      <p>{card.description}</p>
 
-      <div className="mb-6 flex min-w-0 flex-row flex-wrap items-baseline gap-x-2 gap-y-1">
-        <span className="font-display text-2xl font-bold tracking-tight text-ink sm:text-3xl">{card.metricValue}</span>
-        <span className="break-words font-mono text-[11px] uppercase tracking-[0.14em] text-ink/45">{card.metricLabel}</span>
+      <div className={styles.metric}>
+        <span className={styles.metricValue}>{card.metricValue}</span>
+        <span className={styles.metricLabel}>{card.metricLabel}</span>
       </div>
 
-      <div className="mt-auto flex flex-row items-center gap-3 border-t border-ink/10 pt-5">
+      <div className={styles.cardAction}>
         <button
           type="button"
-          onClick={() => navigate(card.ctaHref)}
+          onClick={() => navigate(card.ctaHref, router.push)}
           aria-label={card.ctaLabel}
-          className="btn-secondary-nex w-full !justify-between touch-target"
+          className="btn-secondary-nex"
         >
           <span>{card.ctaLabel}</span>
           <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
@@ -214,6 +202,7 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
   ({ className = '' }: HeroProps, ref: ForwardedRef<HTMLElement>) => {
     const reduce = useReducedMotion() ?? false;
     const { theme } = useTheme();
+    const router = useRouter();
 
     return (
       <>
@@ -318,7 +307,7 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
               >
                 <motion.button
                   type="button"
-                  onClick={() => navigate(config.hero.ctaPrimary.href)}
+                  onClick={() => navigate(config.hero.ctaPrimary.href, router.push)}
                   aria-label={config.hero.ctaPrimary.label}
                   whileTap={{ scale: 0.98 }}
                   transition={{ duration: 0.7, ease: [0.32,0.72,0,1] }}
@@ -332,7 +321,7 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
 
                 <motion.button
                   type="button"
-                  onClick={() => navigate(config.hero.ctaSecondary.href)}
+                  onClick={() => navigate(config.hero.ctaSecondary.href, router.push)}
                   aria-label={config.hero.ctaSecondary.label}
                   whileTap={{ scale: 0.98 }}
                   transition={{ duration: 0.2, ease: FLUID_EASE }}
@@ -345,17 +334,33 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
           </div>
         </section>
 
-        <section aria-labelledby="benefits-title" className="relative w-full max-w-full bg-canvas px-4 py-12 sm:px-6 md:px-8 lg:py-16">
-          <div className="mx-auto w-full max-w-6xl">
-            <h2 id="benefits-title" className="sr-only">
-              Benefícios
-            </h2>
+        <section aria-labelledby="benefits-title" className={styles.section}>
+          <div className={styles.container}>
+            <div className={styles.sectionNav} aria-label="Navegação de benefícios">
+              <span className={styles.currentSection}><Sparkles size={16} aria-hidden="true" /> Por que a NexOS</span>
+              <a href="#showcase">Conhecer a Placa NFC <ArrowUpRight size={16} aria-hidden="true" /></a>
+            </div>
+            <motion.header
+              initial={reduce ? { opacity: 0 } : { opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 0.55, ease: FLUID_EASE }}
+              className={styles.header}
+            >
+              <p className={styles.kicker}>Benefícios</p>
+              <h2 id="benefits-title" className={styles.heading}>
+                Do primeiro pixel ao<br /><span className={styles.accent}>pagamento aprovado.</span>
+              </h2>
+              <p className={styles.lead}>
+                Marca, performance e conversão no mesmo lugar — sem trocar de agência a cada etapa.
+              </p>
+            </motion.header>
             <motion.div
               variants={reduce ? undefined : STAGGER_PARENT}
               initial="hidden"
               whileInView="show"
               viewport={{ once: true, amount: 0.12 }}
-              className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-12 md:gap-5 lg:gap-6"
+              className={styles.bentoGrid}
             >
               {BENTO_CARDS.map((card: BentoCardData) => (
                 <BentoCard key={card.id} card={card} reduceMotion={reduce} />

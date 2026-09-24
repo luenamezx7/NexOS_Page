@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { config } from '@/config';
-import { bulkUnitPrice } from '@/lib/bulk-pricing';
+import { BULK_MAX_QTY, bulkUnitPrice } from '@/lib/bulk-pricing';
 import { simulateInstallments } from '@/lib/asaas';
 
 // GET /api/checkout/installments?productId=dev&quantity=1
@@ -8,7 +8,10 @@ import { simulateInstallments } from '@/lib/asaas';
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const productId = searchParams.get('productId');
-  const quantity = Math.max(1, Math.min(12, Number(searchParams.get('quantity') ?? '1') || 1));
+  const rawQty = Number(searchParams.get('quantity') ?? '1');
+  const quantity = Number.isFinite(rawQty)
+    ? Math.max(1, Math.min(BULK_MAX_QTY, Math.floor(rawQty)))
+    : 1;
 
   if (!productId) {
     return NextResponse.json({ error: 'productId obrigatório' }, { status: 400 });

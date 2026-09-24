@@ -1,9 +1,11 @@
+/* /cancelado — tokens reais NexOS (antes usava vars inexistentes) */
 .container {
-  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: calc(72px + var(--space-xl)) var(--container-padding) var(--space-xxl);
+  padding: 88px 20px 56px;
+  background: var(--color-canvas);
 }
 
 .cancel {
@@ -11,9 +13,12 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: var(--space-xxl) var(--space-xl);
+  padding: 40px 24px;
   max-width: 480px;
   width: 100%;
+  border: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent);
+  border-radius: 16px;
+  background: var(--color-card);
 }
 
 .iconWrapper {
@@ -22,88 +27,101 @@
   justify-content: center;
   width: 80px;
   height: 80px;
-  border-radius: var(--rounded-full);
-  background-color: var(--color-surface-1);
-  border: 1px solid var(--color-hairline);
-  color: var(--color-ink-muted);
-  margin-bottom: var(--space-xl);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-ink) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-ink) 14%, transparent);
+  color: color-mix(in srgb, var(--color-ink) 60%, transparent);
+  margin-bottom: 28px;
 }
 
-.icon {
-  color: var(--color-ink-muted);
-}
+.icon { color: inherit; }
 
 .title {
   font-family: var(--font-display);
-  font-size: var(--font-size-display-md);
-  font-weight: var(--font-weight-display);
-  line-height: var(--line-height-display-md);
-  letter-spacing: var(--letter-spacing-display-md);
+  font-size: clamp(26px, 4vw, 34px);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
   color: var(--color-ink);
-  margin: 0 0 var(--space-md);
+  margin: 0 0 12px;
+  text-wrap: balance;
 }
 
 .subtitle {
-  font-family: var(--font-text);
-  font-size: var(--font-size-body-lg);
-  font-weight: var(--font-weight-body);
-  line-height: var(--line-height-body-lg);
-  letter-spacing: var(--letter-spacing-body-lg);
-  color: var(--color-ink-muted);
-  margin: 0 0 var(--space-xxl);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: color-mix(in srgb, var(--color-ink) 68%, transparent);
+  margin: 0 0 28px;
+  text-wrap: pretty;
 }
 
 .actions {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: 10px;
   width: 100%;
   max-width: 320px;
-  margin-bottom: var(--space-xl);
+  margin-bottom: 28px;
 }
 
 @media (min-width: 480px) {
-  .actions {
-    flex-direction: row;
-    justify-content: center;
-  }
+  .actions { flex-direction: row; justify-content: center; }
+}
+
+.actions :global(.btn-primary-nex),
+.actions :global(.btn-secondary-nex) {
+  min-height: 48px;
+  width: 100%;
+  justify-content: center;
+}
+
+@media (min-width: 480px) {
+  .actions :global(.btn-primary-nex),
+  .actions :global(.btn-secondary-nex) { width: auto; min-width: 160px; }
 }
 
 .help {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-sm);
-  padding-top: var(--space-xl);
-  border-top: 1px solid var(--color-hairline);
+  gap: 12px;
+  padding-top: 24px;
+  border-top: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent);
   width: 100%;
 }
 
 .help p {
-  font-family: var(--font-text);
-  font-size: var(--font-size-body-sm);
-  color: var(--color-ink-subtle);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: color-mix(in srgb, var(--color-ink) 55%, transparent);
   margin: 0;
 }
 
 .whatsappLink {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-lg);
-  background-color: #25d366;
-  color: var(--color-white);
-  border-radius: var(--rounded-md);
-  font-family: var(--font-text);
-  font-size: var(--font-size-button);
-  font-weight: var(--font-weight-button);
-  line-height: var(--line-height-button);
-  letter-spacing: var(--letter-spacing-button);
-  transition: all var(--transition-fast);
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 20px;
+  background: #25d366;
+  color: #fff;
+  border-radius: 10px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 180ms var(--ease-fluid), transform 180ms var(--ease-fluid);
   text-decoration: none;
 }
 
 .whatsappLink:hover {
-  background-color: #128c7e;
+  background: #128c7e;
   transform: translateY(-1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .whatsappLink { transition: none; }
+  .whatsappLink:hover { transform: none; }
 }

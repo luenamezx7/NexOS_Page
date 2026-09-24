@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import styles from './Success.module.css';
 import { config } from '@/config';
 import { Button } from '@/components/ui/Button';
@@ -71,6 +71,7 @@ function useAsaasVerification(
 
 export default function SuccessContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const paymentId = searchParams.get('paymentId') ?? searchParams.get('payment_id');
   const externalReference = searchParams.get('externalReference') ?? searchParams.get('external_reference') ?? searchParams.get('order_nsu');
   // Compat: antiga URL InfinitePay usava order_nsu — mantém leitura
@@ -114,7 +115,7 @@ export default function SuccessContent() {
             Ainda não consta a confirmação desse pagamento. Se você já pagou, aguarde 1 minuto e recarregue — ou fale com a gente que conferimos na hora.
           </p>
           <div className={styles.errorActions}>
-            <Button variant="primary" size="lg" onClick={() => window.location.href = '/#contact'}>
+            <Button variant="primary" size="lg" onClick={() => router.push('/#contact')}>
               Falar com suporte
             </Button>
             <Button variant="secondary" size="lg" onClick={() => window.open(whatsappUrl, '_blank')}>
@@ -148,7 +149,7 @@ export default function SuccessContent() {
             <span>Continuar no WhatsApp</span>
             <ArrowRight size={20} strokeWidth={2.5} aria-hidden="true" />
           </a>
-          <Button variant="secondary" size="lg" onClick={() => window.location.href = '/'}>
+          <Button variant="secondary" size="lg" onClick={() => router.push('/')}>
             Voltar ao início
           </Button>
         </div>

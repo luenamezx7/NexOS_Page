@@ -1,0 +1,247 @@
+/* Dashboard técnica NexOS — tokens alinhados ao design system */
+.page {
+  --dash-surface: color-mix(in srgb, var(--color-ink) 3%, var(--color-canvas));
+  --dash-raised: color-mix(in srgb, var(--color-ink) 5%, var(--color-canvas));
+  --dash-line: color-mix(in srgb, var(--color-ink) 14%, transparent);
+  --dash-muted: color-mix(in srgb, var(--color-ink) 62%, transparent);
+  --dash-accent: #be185d;
+  min-height: 100dvh;
+  background: var(--color-canvas);
+  color: var(--color-ink);
+}
+:global(.dark) .page { --dash-accent: #ff8fab; }
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  border-bottom: 1px solid var(--dash-line);
+  background: color-mix(in srgb, var(--color-canvas) 88%, transparent);
+  backdrop-filter: blur(12px);
+}
+.headerInner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  max-width: 1120px;
+  margin-inline: auto;
+  padding: 14px 20px;
+}
+.brandRow { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.mark {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border: 1px solid var(--dash-line);
+  border-radius: 8px;
+  background: var(--dash-raised);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--dash-accent);
+}
+.titleBlock { min-width: 0; }
+.title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.meta {
+  margin-top: 2px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--dash-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.headerActions { display: flex; align-items: center; gap: 8px; }
+.logout:global(.btn-secondary-nex) {
+  min-height: 40px;
+  min-width: 72px;
+  padding: 0 14px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+.logout:global(.btn-secondary-nex):disabled { opacity: 0.55; }
+
+.main { max-width: 1120px; margin-inline: auto; padding: 28px 20px 56px; }
+.alert {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, #ef4444 45%, transparent);
+  border-radius: 10px;
+  background: color-mix(in srgb, #ef4444 10%, transparent);
+  color: inherit;
+  font-size: 13px;
+}
+
+.sectionLabel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--dash-line);
+}
+.sectionLabel h2 {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--dash-muted);
+}
+.sectionLabel span {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: color-mix(in srgb, var(--color-ink) 40%, transparent);
+}
+
+.statusGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+@media (min-width: 640px) { .statusGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1024px) { .statusGrid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--dash-line);
+  border-radius: 12px;
+  background: var(--dash-surface);
+  transition: border-color 200ms, background-color 200ms;
+}
+.card:hover { border-color: color-mix(in srgb, var(--dash-accent) 28%, transparent); background: var(--dash-raised); }
+.cardTop { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.cardTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+.cardTitle svg { color: var(--dash-accent); flex-shrink: 0; }
+.dot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: #f59e0b;
+}
+.dotOk {
+  background: #28c840;
+  box-shadow: 0 0 10px rgba(40, 200, 64, 0.55);
+  animation: pulse-ok 2.4s ease-in-out infinite;
+}
+.dotFail { background: #ef4444; box-shadow: 0 0 8px rgba(239, 68, 68, 0.4); }
+@keyframes pulse-ok {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.65; }
+}
+.cardDetail { font-size: 13px; line-height: 1.5; color: var(--dash-muted); overflow-wrap: anywhere; }
+.cardSub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: color-mix(in srgb, var(--color-ink) 38%, transparent);
+}
+
+.bodyGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  margin-top: 28px;
+}
+@media (min-width: 900px) { .bodyGrid { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); } }
+
+.panel {
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid var(--dash-line);
+  border-radius: 12px;
+  background: var(--color-card);
+}
+.panel h2 {
+  margin-bottom: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--dash-muted);
+}
+.json {
+  max-height: 340px;
+  margin: 0;
+  overflow: auto;
+  padding: 14px;
+  border: 1px solid var(--dash-line);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-ink) 4%, transparent);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.55;
+  color: color-mix(in srgb, var(--color-ink) 78%, transparent);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.actionList { display: flex; flex-direction: column; gap: 8px; }
+.actionList :global(.btn-secondary-nex),
+.actionList a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  text-align: left;
+  text-decoration: none;
+}
+.actionList a { color: inherit; }
+.actionList svg { flex-shrink: 0; opacity: 0.55; }
+
+.note {
+  margin-top: 28px;
+  padding: 16px 18px;
+  border: 1px dashed var(--dash-line);
+  border-radius: 12px;
+  background: var(--dash-surface);
+}
+.note h2 {
+  margin-bottom: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--dash-muted);
+}
+.note p { font-size: 13px; line-height: 1.55; color: var(--dash-muted); }
+
+@media (prefers-reduced-motion: reduce) {
+  .dotOk { animation: none; }
+  .card { transition: none; }
+}

@@ -13,7 +13,6 @@ import { Contact } from '@/components/Contact';
 import { Footer } from '@/components/Footer';
 import { SectionIndicator } from '@/components/SectionIndicator';
 import { ThinkingOrbWrapper } from '@/components/ThinkingOrbWrapper';
-import TextPressure from '@/components/TextPressure';
 import BrandEntrance from '@/components/BrandEntrance';
 import Topography from '@/components/Topography';
 import { useTheme } from '@/components/ThemeProvider';
@@ -39,19 +38,22 @@ type Stage = 'loading' | 'intro' | 'brand' | 'main';
 
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const LOADING_MS = 2200;
-
-const INTRO_TEXT = 'NEXOS, A PERFORMANCE QUE SEU BUSINESS MERECE.';
+const BOOT_SEEN_KEY = 'nexos-boot-seen';
 
 function LoadingScreen() {
+  const reduce = useReducedMotion();
   return (
     <motion.div
       role="status"
       aria-label="Carregando plataforma NexOS"
-      exit={{ opacity: 0, filter: 'blur(6px)' }}
-      transition={{ duration: 0.6, ease: FLUID_EASE }}
-      className="fixed inset-0 z-[999] flex items-center justify-center bg-canvas will-change-transform"
+      exit={{ opacity: 0 }}
+      transition={{ duration: reduce ? 0.15 : 0.45, ease: FLUID_EASE }}
+      className="fixed inset-0 z-[999] flex flex-col items-center justify-center gap-8 bg-canvas"
     >
-      <ThinkingOrbWrapper state="searching" size={64} label="INITIALIZING NEXOS..." />
+      <ThinkingOrbWrapper state="searching" size={64} label="Preparando sua experiência" />
+      <div className="h-px w-32 overflow-hidden bg-ink/10" aria-hidden="true">
+        <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: reduce ? 0 : LOADING_MS / 1000, ease: 'easeInOut' }} className="h-full origin-left bg-[#db2777]" />
+      </div>
     </motion.div>
   );
 }
@@ -103,8 +105,8 @@ function IntroSection({ onComplete }: IntroSectionProps) {
     <motion.div
       role="region"
       aria-label="Apresentação NexOS — role para entrar"
-      exit={reduce ? { opacity: 0 } : { opacity: 0, y: -90, filter: 'blur(8px)' }}
-      transition={{ duration: 0.7, ease: FLUID_EASE }}
+      exit={reduce ? { opacity: 0 } : { opacity: 0, y: -32, scale: 0.985 }}
+      transition={{ duration: reduce ? 0.15 : 0.65, ease: FLUID_EASE }}
       className="fixed inset-0 z-[900] flex min-h-dvh flex-col justify-center overflow-hidden overflow-x-clip bg-canvas will-change-transform"
     >
       <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
@@ -113,43 +115,32 @@ function IntroSection({ onComplete }: IntroSectionProps) {
       <div className="grid-pattern-subtle opacity-80 dark:opacity-10" aria-hidden="true" />
 
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        initial={reduce ? false : { opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: FLUID_EASE }}
-        className="absolute inset-0 w-full max-w-full overflow-hidden px-4 will-change-transform sm:px-6 md:px-8"
+        className="absolute inset-x-0 top-[16%] bottom-[20%] flex items-center justify-center px-6 sm:px-10 md:px-12"
         aria-label="Nexos, a performance que seu business merece."
       >
-        <TextPressure
-          text={INTRO_TEXT}
-          fontFamily="Old English"
-          fontUrl=""
-          width={false}
-          weight={false}
-          italic={false}
-          alpha={false}
-          stroke={false}
-          scale={false}
-          textColor={theme === 'dark' ? '#FFFFFF' : '#131316'}
-          strokeColor={theme === 'dark' ? '#FFFFFF' : '#131316'}
-          minFontSize={28}
-        />
+        <h1 className="font-old-english max-w-5xl text-center !text-[clamp(24px,min(6.4vw,8dvh),88px)] !font-normal !leading-[1.2] !tracking-tight">
+          NexOS, a performance que seu business merece.
+        </h1>
       </motion.div>
 
       <motion.button
         type="button"
         onClick={finish}
         aria-label="Continuar para o site"
-        initial={{ opacity: 0, y: 12 }}
+        initial={reduce ? false : { opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.9, ease: FLUID_EASE }}
-        className="absolute bottom-[calc(2.5rem+env(safe-area-inset-bottom))] left-1/2 z-10 flex min-h-[44px] min-w-[44px] -translate-x-1/2 flex-col items-center gap-3 px-4 font-mono text-[11px] uppercase tracking-[0.22em] text-ink/40 transition-colors duration-300 hover:text-ink/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
+        className="absolute bottom-[calc(2.5rem+env(safe-area-inset-bottom))] left-1/2 z-10 flex min-h-[48px] -translate-x-1/2 items-center gap-3 whitespace-nowrap rounded-full border border-ink/15 bg-canvas/80 px-6 py-3 text-sm font-medium text-ink/80 transition-colors duration-300 hover:bg-ink/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
       >
         <span className="animate-scroll-hint grid place-items-center" aria-hidden="true">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
             <path d="M12 5v14M19 12l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </span>
-        <span>Role para entrar</span>
+        <span>Entrar na NexOS</span>
       </motion.button>
     </motion.div>
   );
@@ -160,8 +151,21 @@ export default function HomeClient() {
   const heroRef = useRef<HTMLElement>(null);
   const introDoneRef = useRef<boolean>(false);
   const brandDoneRef = useRef<boolean>(false);
+  const skippedBootRef = useRef<boolean>(false);
   const { theme: mainTheme } = useTheme();
   const mainReduce = useReducedMotion();
+
+  useEffect(() => {
+    let seen = false;
+    try { seen = sessionStorage.getItem(BOOT_SEEN_KEY) === '1'; } catch { seen = false; }
+    if (!seen) return;
+    skippedBootRef.current = true;
+    introDoneRef.current = true;
+    brandDoneRef.current = true;
+    // rAF: pula o boot sem setState síncrono no effect (lint) e sem replay de 2,2s
+    const id = requestAnimationFrame(() => setStage('main'));
+    return () => cancelAnimationFrame(id);
+  }, []);
 
   const handleIntroComplete = useCallback(() => {
     if (introDoneRef.current) return;
@@ -172,6 +176,7 @@ export default function HomeClient() {
   const handleBrandComplete = useCallback(() => {
     if (brandDoneRef.current) return;
     brandDoneRef.current = true;
+    try { sessionStorage.setItem(BOOT_SEEN_KEY, '1'); } catch { /* sem storage */ }
     setStage('main');
   }, []);
 
@@ -182,17 +187,17 @@ export default function HomeClient() {
   }, [stage]);
 
   useEffect(() => {
-    if (stage !== 'main') return;
+    if (stage !== 'main' || skippedBootRef.current) return;
     window.scrollTo(0, 0);
+    let timer: ReturnType<typeof setTimeout> | undefined;
     const raf: number = requestAnimationFrame(() => {
-      const t: ReturnType<typeof setTimeout> = setTimeout(() => {
+      timer = setTimeout(() => {
         if (heroRef.current) {
           heroRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       }, 150);
-      return () => clearTimeout(t);
     });
-    return () => cancelAnimationFrame(raf);
+    return () => { cancelAnimationFrame(raf); clearTimeout(timer); };
   }, [stage]);
 
   return (
@@ -237,7 +242,7 @@ export default function HomeClient() {
             </div>
           )}
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
+            initial={mainReduce ? false : { opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: FLUID_EASE }}
             className="relative"

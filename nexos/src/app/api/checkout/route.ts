@@ -26,7 +26,7 @@ const bodySchema = z.object({
   billingType: z.enum(['PIX', 'BOLETO', 'CREDIT_CARD', 'UNDEFINED']).optional().default('UNDEFINED'),
   installments: z.coerce.number().int().min(1).max(12).optional().default(1),
   quantity: z.coerce.number().int().min(1).max(BULK_MAX_QTY).optional().default(1),
-  turnstileToken: z.string().optional(),
+  turnstileToken: z.string().nullish(),
 });
 
 const WINDOW_MS = 60_000;
@@ -34,6 +34,8 @@ const MAX_REQ = 8;
 const buckets = new Map<string, number[]>();
 
 function getClientIp(req: NextRequest): string {
+  const cfIp = req.headers.get('cf-connecting-ip');
+  if (cfIp) return cfIp.trim();
   const forwarded = req.headers.get('x-forwarded-for');
   if (forwarded) return forwarded.split(',')[0].trim();
   const realIp = req.headers.get('x-real-ip');
@@ -88,7 +90,7 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  if (!isSameOrigin(req)) return NextResponse.json({ error: 'Origem inválida.' }, { status: 403 });
+  if (!isSameOrigin(req)) return NextResponse.json({ error: 'Origem inválida.' }, { status: 403, headers: securityHeaders() });
   // Regra de negócio: checkout exige conta criada + login (e e-mail confirmado).
   // 401/403 com callbackUrl sinaliza o client para redirecionar e voltar após o auth.
   const access = await getUserAccess();
@@ -106,7 +108,7 @@ export async function POST(req: NextRequest) {
   }
   const idempotencyKey = req.headers.get('idempotency-key');
   if (!idempotencyKey || !z.string().uuid().safeParse(idempotencyKey).success) {
-    return NextResponse.json({ error: 'Chave de tentativa inválida.' }, { status: 400 });
+    return NextResponse.json({ error: 'Chave de tentativa inválida.' }, { status: 400, headers: securityHeaders() });
   }
   const ip = getClientIp(req);
   if (isRateLimited(ip)) {
@@ -125,11 +127,12 @@ export async function POST(req: NextRequest) {
   let billingType: 'PIX' | 'BOLETO' | 'CREDIT_CARD' | 'UNDEFINED';
   let installments: number;
   let quantity: number;
-  let turnstileToken: string | undefined;
+  let turnstileToken: string | null | undefined;
   try {
     const body = await readJsonBody(req);
     const parsed = bodySchema.safeParse(body);
     if (!parsed.success) {
+      console.warn('[api/checkout] validação falhou', parsed.error.issues.map((i) => `${i.path.join('.')}: ${i.code}`).slice(0, 5));
       return NextResponse.json({ error: 'Dados inválidos' }, { status: 400, headers: securityHeaders() });
     }
     ({ productId, name, email, cpfCnpj, billingType, installments, quantity, turnstileToken } = parsed.data);
@@ -182,7 +185,12 @@ export async function POST(req: NextRequest) {
     const { token: statusToken } = issueStatusToken(externalReference);
     const db = createAdminClient();
     const payloadHash = createHmac('sha256', process.env.CHECKOUT_STATUS_SECRET || process.env.SUPABASE_SECRET_KEY!).update(JSON.stringify({ productId, name, email, cpfDigits, billingType, installments, quantity })).digest('hex');
-    const { error: reservationError } = await db.from('idempotency_keys').insert({ key_hash: keyHash, payload_hash: payloadHash, provider_reference: externalReference });
+    const { error: reservationError } = await db.from('idempotency_keys').insert({
+      key_hash: keyHash,
+      payload_hash: payloadHash,
+      provider_reference: externalReference,
+      ...(access.ok && access.userId ? { owner_id: access.userId } : {}),
+    });
     if (reservationError) {
       if (reservationError.code !== '23505') throw reservationError;
       const { data: previous, error } = await db.from('idempotency_keys').select('payload_hash,status,result').eq('key_hash', keyHash).single();
@@ -192,7 +200,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Cobrança em processamento ou aguardando conciliação. Não gere outra tentativa.' }, { status: 409, headers: securityHeaders() });
     }
     reserved = true;
-    const { error: orderError } = await db.from('orders').insert({ amount_cents: Math.round(amount * 100), product_id: productId, quantity, billing_type: effectiveBillingType, external_reference: externalReference });
+    const ownerColumns =
+      access.ok && access.userId ? { owner_id: access.userId } : {};
+    const { error: orderError } = await db.from('orders').insert({
+      amount_cents: Math.round(amount * 100),
+      product_id: productId,
+      quantity,
+      billing_type: effectiveBillingType,
+      external_reference: externalReference,
+      ...ownerColumns,
+    });
     if (orderError) throw orderError;
 
     const result = await createAsaasPayment({

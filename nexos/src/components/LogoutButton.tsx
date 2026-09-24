@@ -13,7 +13,7 @@ export function LogoutButton() {
       try {
         const result = await fetch('/api/auth/user-logout', { method: 'POST', signal: AbortSignal.timeout(15000) });
         if (!result.ok) throw new Error();
-        router.replace('/portal/acesso'); router.refresh();
+        router.replace('/portal/acesso');
       } catch { setError(true); }
       finally { setBusy(false); }
     }}>{busy ? 'Saindo…' : 'Sair da conta'}</button>
