@@ -1,11 +1,22 @@
 'use client';
 
 import { useState, type FormEvent, type ChangeEvent } from 'react';
+import Link from 'next/link';
 import { motion, useReducedMotion } from 'motion/react';
-import { Mail, Phone, MessageSquare, MapPin, ArrowRight, Send } from 'lucide-react';
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Check,
+  Mail,
+  MapPin,
+  MessageSquare,
+  Phone,
+  Send,
+  ShieldCheck,
+} from 'lucide-react';
 import { config } from '@/config';
-import { Button } from './ui/Button';
 import { Turnstile } from './Turnstile';
+import styles from './BottomFunnel.module.css';
 
 interface FormData {
   name: string;
@@ -30,7 +41,7 @@ interface ContactMethod {
   icon: React.ReactNode;
 }
 
-const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const FLUID_EASE = [0.16, 1, 0.3, 1] as const;
 
 const EMPTY_FORM: FormData = { name: '', email: '', company: '', service: '', message: '' };
 
@@ -61,7 +72,7 @@ export function Contact({ className = '' }: ContactProps) {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
-    const newErrors: FormErrors = validate(formData);
+    const newErrors = validate(formData);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
@@ -75,7 +86,7 @@ export function Contact({ className = '' }: ContactProps) {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, turnstileToken }),
+        body: JSON.stringify({ ...formData, ...(turnstileToken ? { turnstileToken } : {}) }),
       });
 
       const body: { error?: string; details?: unknown; hint?: string } = await res.json().catch(() => ({}));
@@ -133,46 +144,31 @@ export function Contact({ className = '' }: ContactProps) {
 
   const reveal = reduce
     ? { initial: { opacity: 0 }, whileInView: { opacity: 1 } }
-    : { initial: { opacity: 0, y: 40, scale: 0.98 }, whileInView: { opacity: 1, y: 0, scale: 1 } };
+    : { initial: { opacity: 0, y: 24 }, whileInView: { opacity: 1, y: 0 } };
 
   if (submitted) {
     return (
-      <section
-        id="contact"
-        aria-labelledby="contact-title"
-        className={`relative border-t border-ink/10 bg-canvas ${className}`}
-      >
-        <div className="mx-auto w-full max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-24 md:px-8 md:py-32">
+      <section id="contact" aria-labelledby="contact-title" className={`${styles.section} ${className}`}>
+        <div className={styles.container}>
           <motion.div
             initial={reveal.initial}
             whileInView={reveal.whileInView}
             viewport={{ once: true, amount: 0.4 }}
-            transition={{ duration: 0.8, ease: FLUID_EASE }}
-            className="bento-card will-change-transform min-w-0 p-5 sm:p-10 md:p-14"
+            transition={{ duration: 0.55, ease: FLUID_EASE }}
+            className={styles.successPanel}
           >
-            <div className="mx-auto mb-6 grid h-14 w-14 place-items-center rounded-full border border-[#ff5c8a]/40 bg-[#ff5c8a]/10" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-7 w-7 text-[#ff5c8a]">
-                <path d="M8 12l2.5 2.5L16 9" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </div>
-            <h2 id="contact-title" className="mb-3 text-ink">
-              Mensagem enviada
-            </h2>
-            <p className="mx-auto mb-8 max-w-md text-sm leading-relaxed text-ink/70">
-              Obrigado pelo contato. Vamos analisar seu projeto e retornamos em até 24h.
-            </p>
-            <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Button variant="secondary" size="md" onClick={() => setSubmitted(false)}>
+            <span className={styles.successIcon} aria-hidden="true">
+              <Check size={24} strokeWidth={2.25} />
+            </span>
+            <h2 id="contact-title">Mensagem enviada</h2>
+            <p>Obrigado pelo contato. Vamos analisar seu projeto e retornamos em até 24h.</p>
+            <div className={styles.successActions}>
+              <button type="button" className="btn-secondary-nex" onClick={() => setSubmitted(false)}>
                 Enviar outra mensagem
-              </Button>
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-primary-nex"
-              >
+              </button>
+              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="btn-primary-nex">
                 <MessageSquare size={16} strokeWidth={2} aria-hidden="true" />
-                <span className="relative z-10">Falar no WhatsApp</span>
+                Falar no WhatsApp
               </a>
             </div>
           </motion.div>
@@ -182,45 +178,43 @@ export function Contact({ className = '' }: ContactProps) {
   }
 
   return (
-    <section
-      id="contact"
-      aria-labelledby="contact-title"
-      className={`relative w-full max-w-full overflow-x-clip border-t border-ink/10 bg-canvas ${className}`}
-    >
-      <div className="grid-pattern-subtle opacity-80 dark:opacity-10" aria-hidden="true" />
-      <div className="mx-auto w-full max-w-6xl px-4 py-24 sm:px-6 md:px-8 lg:py-32">
+    <section id="contact" aria-labelledby="contact-title" className={`${styles.section} ${className}`}>
+      <div className={styles.container}>
+        <div className={styles.sectionNav} aria-label="Navegação de contato">
+          <span className={styles.currentSection}><MessageSquare size={16} aria-hidden="true" /> Contato</span>
+          <a href="#faq">Ver dúvidas frequentes <ArrowUpRight size={16} aria-hidden="true" /></a>
+        </div>
+
         <motion.header
           initial={reveal.initial}
           whileInView={reveal.whileInView}
-          viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 0.8, ease: FLUID_EASE }}
-          className="mb-12 max-w-2xl will-change-transform md:mb-16"
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.55, ease: FLUID_EASE }}
+          className={styles.header}
         >
-          <h2 id="contact-title" className="flex flex-row items-start gap-3 text-ink">
-            <span className="pink-marker mt-[0.28em]" aria-hidden="true" />
-            Vamos conversar?
+          <p className={styles.kicker}>Próximo passo</p>
+          <h2 id="contact-title" className={styles.heading}>
+            Vamos conversar?<br /><span className={styles.accent}>Sem enrolação.</span>
           </h2>
-          <p className="mt-4 text-base leading-relaxed text-ink/70 md:text-lg">
-            Tem um projeto em mente? Preencha o formulário ou chame direto no WhatsApp. Respondemos rápido.
+          <p className={styles.lead}>
+            Preencha o formulário ou chame no WhatsApp. Respondemos rápido — de verdade.
           </p>
         </motion.header>
 
-        <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-5 lg:gap-8">
+        <div className={styles.contactGrid}>
           <motion.form
             initial={reveal.initial}
             whileInView={reveal.whileInView}
-            viewport={{ once: true, amount: 0.15 }}
-            transition={{ duration: 0.8, ease: FLUID_EASE }}
-            className="bento-card will-change-transform min-w-0 p-5 sm:p-8 lg:col-span-3"
+            viewport={{ once: true, amount: 0.12 }}
+            transition={{ duration: 0.55, ease: FLUID_EASE }}
+            className={styles.panel}
             onSubmit={handleSubmit}
             noValidate
             aria-label="Formulário de contato"
           >
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-              <div className="flex flex-col gap-2">
-                <label htmlFor="contact-name" className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/55">
-                  Nome completo *
-                </label>
+            <div className={styles.formGrid}>
+              <div className={styles.field}>
+                <label htmlFor="contact-name">Nome completo *</label>
                 <input
                   type="text"
                   id="contact-name"
@@ -234,12 +228,10 @@ export function Contact({ className = '' }: ContactProps) {
                   aria-invalid={errors.name ? 'true' : 'false'}
                   aria-describedby={errors.name ? 'contact-name-error' : undefined}
                 />
-                {errors.name && <p id="contact-name-error" className="text-xs text-[#ff5c8a]" role="alert">{errors.name}</p>}
+                {errors.name && <p id="contact-name-error" className={styles.error} role="alert">{errors.name}</p>}
               </div>
-              <div className="flex flex-col gap-2">
-                <label htmlFor="contact-email" className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/55">
-                  E-mail corporativo *
-                </label>
+              <div className={styles.field}>
+                <label htmlFor="contact-email">E-mail corporativo *</label>
                 <input
                   type="email"
                   id="contact-email"
@@ -253,12 +245,10 @@ export function Contact({ className = '' }: ContactProps) {
                   aria-invalid={errors.email ? 'true' : 'false'}
                   aria-describedby={errors.email ? 'contact-email-error' : undefined}
                 />
-                {errors.email && <p id="contact-email-error" className="text-xs text-[#ff5c8a]" role="alert">{errors.email}</p>}
+                {errors.email && <p id="contact-email-error" className={styles.error} role="alert">{errors.email}</p>}
               </div>
-              <div className="flex flex-col gap-2">
-                <label htmlFor="contact-company" className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/55">
-                  Empresa
-                </label>
+              <div className={styles.field}>
+                <label htmlFor="contact-company">Empresa</label>
                 <input
                   type="text"
                   id="contact-company"
@@ -270,10 +260,8 @@ export function Contact({ className = '' }: ContactProps) {
                   autoComplete="organization"
                 />
               </div>
-              <div className="flex flex-col gap-2">
-                <label htmlFor="contact-service" className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/55">
-                  Serviço de interesse
-                </label>
+              <div className={styles.field}>
+                <label htmlFor="contact-service">Serviço de interesse</label>
                 <select
                   id="contact-service"
                   name="service"
@@ -287,102 +275,96 @@ export function Contact({ className = '' }: ContactProps) {
                   ))}
                 </select>
               </div>
-            </div>
-
-            <div className="mt-5 flex flex-col gap-2">
-              <label htmlFor="contact-message" className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/55">
-                Mensagem *
-              </label>
-              <textarea
-                id="contact-message"
-                name="message"
-                className="field-input min-h-[128px] resize-y"
-                value={formData.message}
-                onChange={handleChange}
-                placeholder="Conte sobre seu projeto, desafios, prazo e orçamento..."
-                rows={5}
-                required
-                aria-invalid={errors.message ? 'true' : 'false'}
-                aria-describedby={errors.message ? 'contact-message-error' : undefined}
-              />
-              {errors.message && <p id="contact-message-error" className="text-xs text-[#ff5c8a]" role="alert">{errors.message}</p>}
+              <div className={`${styles.field} ${styles.full}`}>
+                <label htmlFor="contact-message">Mensagem *</label>
+                <textarea
+                  id="contact-message"
+                  name="message"
+                  className="field-input"
+                  value={formData.message}
+                  onChange={handleChange}
+                  placeholder="Conte sobre seu projeto, desafios, prazo e orçamento..."
+                  rows={5}
+                  required
+                  aria-invalid={errors.message ? 'true' : 'false'}
+                  aria-describedby={errors.message ? 'contact-message-error' : undefined}
+                />
+                {errors.message && <p id="contact-message-error" className={styles.error} role="alert">{errors.message}</p>}
+              </div>
             </div>
 
             {hasTurnstile && (
-              <div className="mt-5">
+              <div style={{ marginTop: 20 }}>
                 <Turnstile onVerify={setTurnstileToken} onExpire={() => setTurnstileToken(null)} onError={() => setTurnstileToken(null)} />
               </div>
             )}
 
-            <div className="mt-6 border-t border-ink/10 pt-5">
+            <div className={styles.submitRow}>
               <motion.button
                 type="submit"
                 disabled={submitting}
                 aria-busy={submitting}
-                whileTap={{ scale: 0.98 }}
+                whileTap={reduce ? undefined : { scale: 0.98 }}
                 transition={{ duration: 0.2, ease: [0.32, 0.72, 0, 1] }}
-                className="group relative flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-b from-[#f04484] via-pink-600 to-[#c2185b] py-2 pl-6 pr-2 text-sm font-bold tracking-[0.03em] text-white shadow-[0_0_0_1px_rgba(255,92,138,0.28),0_10px_28px_-10px_rgba(255,92,138,0.55)] transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:brightness-[1.07] active:scale-[0.98] disabled:opacity-40"
+                className={`${styles.submit} btn-primary-nex`}
               >
                 <span>{submitting ? 'Enviando...' : 'Enviar projeto'}</span>
-                <span className="grid h-8 w-8 place-items-center rounded-full bg-white/15 transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:scale-105" aria-hidden="true">
-                  <Send size={14} strokeWidth={2.5} />
-                </span>
+                <Send size={16} strokeWidth={2} aria-hidden="true" />
               </motion.button>
             </div>
 
-            {submitError && <p className="mt-3 text-xs text-[#ff5c8a]" role="alert">{submitError}</p>}
+            {submitError && <p className={styles.error} style={{ marginTop: 12 }} role="alert">{submitError}</p>}
 
-            <p className="mt-4 text-center text-xs leading-relaxed text-ink/40">
+            <p className={styles.legalNote}>
               Seus dados são usados apenas para responder seu contato.{' '}
-              <a href="/privacidade" className="underline underline-offset-2 transition-colors hover:text-ink/70">Política de Privacidade</a>
-              {' '}·{' '}
-              <a href="/termos" className="underline underline-offset-2 transition-colors hover:text-ink/70">Termos de Uso</a>
+              <Link href="/privacidade">Política de Privacidade</Link>
+              {' · '}
+              <Link href="/termos">Termos de Uso</Link>
             </p>
           </motion.form>
 
           <motion.aside
             initial={reveal.initial}
             whileInView={reveal.whileInView}
-            viewport={{ once: true, amount: 0.15 }}
-            transition={{ duration: 0.8, delay: 0.1, ease: FLUID_EASE }}
-            className="flex min-w-0 flex-col gap-4 will-change-transform sm:gap-6 lg:col-span-2"
+            viewport={{ once: true, amount: 0.12 }}
+            transition={{ duration: 0.55, delay: 0.08, ease: FLUID_EASE }}
             aria-label="Informações de contato"
           >
-            <div className="bento-card flex min-w-0 flex-col p-5 sm:p-8">
-              <h3 className="mb-5 text-lg font-bold tracking-tight text-ink">
-                Outras formas de falar com a gente
-              </h3>
-              <div className="flex flex-col gap-2.5">
+            <div className={styles.panel}>
+              <h3 className={styles.methodsTitle}>Outras formas de falar com a gente</h3>
+              <div className={styles.methods}>
                 {methods.map((method: ContactMethod) => (
-                  <motion.a
+                  <a
                     key={method.id}
                     href={method.href}
                     target={method.external ? '_blank' : undefined}
                     rel={method.external ? 'noopener noreferrer' : undefined}
-                    whileHover={reduce ? undefined : { y: -3 }}
-                    transition={{ duration: 0.3, ease: FLUID_EASE }}
-                    className="group flex flex-row items-center gap-3.5 rounded-lg border border-ink/10 bg-ink/[0.02] p-4 transition-colors duration-300 hover:border-ink/25 will-change-transform"
+                    className={styles.method}
                   >
-                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-ink/10 bg-ink/[0.04] text-ink/70 transition-colors duration-300 group-hover:border-pink-500/40 group-hover:text-ink" aria-hidden="true">
-                      {method.icon}
+                    <span className={styles.methodIcon} aria-hidden="true">{method.icon}</span>
+                    <span className={styles.methodText}>
+                      <span className={styles.methodLabel}>{method.label}</span>
+                      <span className={styles.methodValue}>{method.value}</span>
                     </span>
-                    <span className="flex min-w-0 flex-col">
-                      <span className="text-sm font-semibold text-ink">{method.label}</span>
-                      <span className="truncate text-xs text-ink/50">{method.value}</span>
-                    </span>
-                    <ArrowRight size={16} strokeWidth={2} className="ml-auto shrink-0 text-ink/35 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-[#ff5c8a]" aria-hidden="true" />
-                  </motion.a>
+                    <ArrowRight size={16} strokeWidth={2} className={styles.methodArrow} aria-hidden="true" />
+                  </a>
                 ))}
+              </div>
+
+              <div className={styles.trust} aria-label="Sinais de confiança">
+                <span><ShieldCheck size={14} aria-hidden="true" /> Checkout Asaas</span>
+                <span><Check size={14} aria-hidden="true" /> Resposta em 24h</span>
+                <span><Check size={14} aria-hidden="true" /> Sem spam</span>
               </div>
             </div>
 
-            <div className="bento-card flex min-w-0 flex-row items-center gap-3.5 p-5 sm:p-8">
-              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-ink/10 bg-ink/[0.04] text-ink/70" aria-hidden="true">
+            <div className={styles.location}>
+              <span className={styles.locationIcon} aria-hidden="true">
                 <MapPin size={20} strokeWidth={1.75} />
               </span>
-              <span className="flex flex-col">
-                <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/55">Onde estamos</span>
-                <address className="text-sm not-italic text-ink/80">Atendemos remoto global</address>
+              <span>
+                <span className={styles.locationMeta}>Onde estamos</span>
+                <address className={styles.locationValue}>Atendemos remoto global</address>
               </span>
             </div>
           </motion.aside>

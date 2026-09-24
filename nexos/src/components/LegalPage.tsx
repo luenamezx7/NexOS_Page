@@ -15,18 +15,20 @@ export function LegalPage({ slug }: { slug: string }) {
       <div className="mx-auto w-full max-w-3xl px-5 py-16 md:px-8 md:py-24">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-ink/55 transition-colors hover:text-ink"
+          className="inline-flex min-h-[44px] items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-ink/55 transition-colors hover:text-ink"
         >
           <ArrowLeft size={14} strokeWidth={2} aria-hidden="true" />
           Voltar ao site
         </Link>
 
-        <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.18em] text-[#ff5c8a]">NexOS · Legal</p>
-        <h1 className="mt-2 text-ink">{doc.title}</h1>
-        <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.16em] text-ink/40">{doc.updated}</p>
-        <p className="mt-4 text-base leading-relaxed text-ink/70">{doc.intro}</p>
+        <div className="mt-6 border-b border-ink/12 pb-8">
+          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#be185d]">NexOS · Legal</p>
+          <h1 className="mt-2 text-balance text-ink">{doc.title}</h1>
+          <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.16em] text-ink/40">{doc.updated}</p>
+          <p className="mt-4 text-base leading-relaxed text-ink/70">{doc.intro}</p>
+        </div>
 
-        <nav aria-label="Documentos legais" className="mt-8 flex flex-wrap gap-2">
+        <nav aria-label="Documentos legais" className="mt-6 flex flex-wrap gap-2">
           {LEGAL_DOCS.map((d) => {
             const active = d.slug === doc.slug;
             return (
@@ -34,9 +36,9 @@ export function LegalPage({ slug }: { slug: string }) {
                 key={d.slug}
                 href={`/${d.slug}`}
                 aria-current={active ? 'page' : undefined}
-                className={`rounded-lg px-4 py-2 font-mono text-[11px] uppercase tracking-[0.14em] transition ${
+                className={`inline-flex min-h-[40px] items-center rounded-lg px-4 py-2 font-mono text-[11px] uppercase tracking-[0.14em] transition ${
                   active
-                    ? 'bg-[#ff5c8a] text-white shadow-[0_0_16px_rgba(255, 92, 138,0.5)]'
+                    ? 'bg-[#be185d] text-white shadow-[0_0_16px_rgba(190,24,93,0.4)]'
                     : isDark
                       ? 'border border-white/10 bg-white/[0.05] text-white/60 hover:bg-white/10 hover:text-white'
                       : 'border border-ink/10 bg-ink/[0.04] text-ink/60 hover:bg-ink/10 hover:text-ink'
@@ -55,7 +57,7 @@ export function LegalPage({ slug }: { slug: string }) {
               <p className="mt-2 text-sm leading-relaxed text-ink/70">{s.body}</p>
             </section>
           ))}
-          <p className="flex items-center gap-2 border-t border-ink/10 pt-5 font-mono text-[10px] uppercase tracking-[0.16em] text-ink/35">
+          <p className="flex flex-wrap items-center gap-2 border-t border-ink/10 pt-5 font-mono text-[10px] uppercase tracking-[0.16em] text-ink/35">
             <ShieldCheck size={13} strokeWidth={2} aria-hidden="true" />
             Dúvidas? nexosperformance@gmail.com · +55 64 99328-9250
           </p>

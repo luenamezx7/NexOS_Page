@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { RobotCycler } from './RobotCycler';
+import { useTheme } from './ThemeProvider';
 
 const OS_NORM_X = 0.795;
 const OS_NORM_Y = 0.491;
@@ -11,6 +12,7 @@ const OS_NORM_H = 0.889;
 
 export default function BrandEntrance({ onComplete }: { onComplete: () => void }) {
   const reduce = useReducedMotion() ?? false;
+  const { theme } = useTheme();
   const logoRef = useRef<HTMLDivElement>(null);
   const completedRef = useRef(false);
   const canFinishRef = useRef(false);
@@ -24,7 +26,7 @@ export default function BrandEntrance({ onComplete }: { onComplete: () => void }
   const [finalY, setFinalY] = useState(0);
   const [logoShift, setLogoShift] = useState(0);
 
-  const logoSrc = '/nexos-branca-transparente.svg';
+  const logoSrc = theme === 'dark' ? '/nexos-logo-dark.svg' : '/nexos-logo-light.svg';
 
   const finish = useCallback(() => {
     if (completedRef.current || !canFinishRef.current) return;
@@ -110,20 +112,20 @@ export default function BrandEntrance({ onComplete }: { onComplete: () => void }
     return (
       <motion.div
         role="region" aria-label="NexOS"
-        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, filter: 'blur(6px)' }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="fixed inset-0 z-[850] flex min-h-dvh flex-col items-center justify-center overflow-hidden bg-black px-4"
+        initial={false} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+        transition={{ duration: 0.15 }}
+        className="fixed inset-0 z-[850] flex min-h-dvh flex-col items-center justify-center overflow-hidden bg-canvas px-4"
         onClick={finish}
       >
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_75%_at_50%_50%,rgba(255,92,138,0.10),rgba(131,53,143,0.08)_32%,transparent_72%)]"
         />
-        <div className="relative flex items-center justify-center gap-6 md:gap-8">
-          <div ref={logoRef} className="relative" style={{ width: 'clamp(200px, 42vw, 460px)', aspectRatio: '1433 / 344' }}>
+        <div className="relative flex w-full max-w-2xl items-center justify-center gap-4 md:gap-8">
+          <div ref={logoRef} className="relative" style={{ width: 'min(55vw, 460px)', aspectRatio: '1433 / 344' }}>
             <img src={logoSrc} alt="NexOS" className="h-full w-full object-contain" draggable={false} />
           </div>
-          <RobotCycler className="shrink-0" style={{ width: iconW || 88, height: iconH || 74 }} intervalMs={1600} fadeMs={600} />
+          <RobotCycler className="logo-invert shrink-0" style={{ width: iconW || 60, height: iconH || 50 }} intervalMs={1600} fadeMs={600} />
         </div>
       </motion.div>
     );
@@ -132,37 +134,36 @@ export default function BrandEntrance({ onComplete }: { onComplete: () => void }
   return (
     <motion.div
       role="region" aria-label="NexOS"
-      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -24, filter: 'blur(8px)' }}
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-      className="fixed inset-0 z-[850] flex min-h-dvh flex-col items-center justify-center overflow-hidden bg-black"
+      className="fixed inset-0 z-[850] flex min-h-dvh flex-col items-center justify-center overflow-hidden bg-canvas"
       onClick={finish}
     >
-      {/* Gradiente suave — preto puro com halo central rosado/roxo bem leve */}
+      {/* A marca mantém o mesmo tema durante toda a entrada. */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(85%_75%_at_50%_50%,rgba(255,92,138,0.11),rgba(131,53,143,0.09)_30%,transparent_72%)]"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black via-transparent to-black/60"
+        className="pointer-events-none absolute inset-0 border-[16px] border-canvas sm:border-[32px]"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-[36%] bg-gradient-to-t from-black via-black/40 to-transparent"
+        className="pointer-events-none absolute inset-x-8 bottom-24 h-px bg-ink/10 sm:inset-x-12"
       />
 
       {/* Conjunto central — logo + ícone */}
-      <div className="relative flex items-center justify-center px-6" style={{ width: 'min(92vw, 680px)' }}>
+      <div className="relative flex items-center justify-center" style={{ width: 'min(66vw, 540px)' }}>
         <motion.div
           ref={logoRef}
           className="relative"
           style={{ width: '100%', aspectRatio: '1433 / 344' }}
-          initial={{ opacity: 0, y: 8, filter: 'blur(6px)', x: 0 }}
-          animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)', x: ready ? logoShift : 0 } : { opacity: 0, y: 8, filter: 'blur(6px)', x: 0 }}
+          initial={{ opacity: 0, y: 12, x: 0 }}
+          animate={inView ? { opacity: 1, y: 0, x: ready ? logoShift : 0 } : { opacity: 0, y: 12, x: 0 }}
           transition={{
             opacity: { duration: 0.95, ease: [0.22, 1, 0.36, 1] },
             y: { duration: 0.95, ease: [0.22, 1, 0.36, 1] },
-            filter: { duration: 0.95, ease: [0.22, 1, 0.36, 1] },
             x: { duration: 0.95, ease: [0.45, 0, 0.2, 1], delay: 1.85 },
           }}
         >
@@ -171,17 +172,16 @@ export default function BrandEntrance({ onComplete }: { onComplete: () => void }
         {ready && (
           <motion.div
             aria-hidden="true"
-            className="absolute left-0 top-0 will-change-transform drop-shadow-[0_0_14px_rgba(255,92,138,0.35)]"
+            className="logo-invert absolute left-0 top-0"
             style={{ width: iconW, height: iconH }}
-            initial={{ opacity: 0, x: oX, y: oY, scale: 0.92, filter: 'blur(4px)' }}
+            initial={{ opacity: 0, x: oX, y: oY, scale: 0.92 }}
             animate={{
               opacity: [0, 0, 1, 1, 1],
               scale: [0.92, 0.92, 1, 1, 1],
-              filter: ['blur(4px)', 'blur(4px)', 'blur(0px)', 'blur(0px)', 'blur(0px)'],
               x: [oX, oX, oX, oX, finalX],
               y: [oY, oY, oY, oY, finalY],
             }}
-            transition={{ duration: 2.8, times: [0, 0.32, 0.42, 0.62, 1], ease: 'linear' }}
+            transition={{ duration: 2.8, times: [0, 0.32, 0.42, 0.62, 1], ease: [0.22, 1, 0.36, 1] }}
           >
             <RobotCycler className="h-full w-full" intervalMs={1550} fadeMs={700} />
           </motion.div>
@@ -194,9 +194,9 @@ export default function BrandEntrance({ onComplete }: { onComplete: () => void }
         transition={{ duration: 0.6, delay: 3.35 }}
         className="pointer-events-none absolute bottom-[calc(2.5rem+env(safe-area-inset-bottom))] flex flex-col items-center gap-3"
       >
-        <span className="h-px w-10 bg-gradient-to-r from-transparent via-white/20 to-transparent" aria-hidden="true" />
-        <span className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-white/45">
-          <span className="animate-scroll-hint grid place-items-center text-white/30" aria-hidden="true">
+        <span className="h-px w-10 bg-ink/20" aria-hidden="true" />
+        <span className="flex items-center gap-2 text-sm text-ink/70">
+          <span className="animate-scroll-hint grid place-items-center" aria-hidden="true">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6}><path d="M12 5v14M19 12l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </span>
           Clique ou role para continuar

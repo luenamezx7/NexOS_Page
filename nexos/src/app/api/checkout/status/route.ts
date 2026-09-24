@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { getPaymentStatus, isAsaasConfigured } from '@/lib/asaas';
 import { getAdminAccess } from '@/lib/auth/admin';
 import { verifyStatusToken } from '@/lib/status-token';
-import { readJsonBody, RequestError } from '@/lib/request-security';
+import { readJsonBody, RequestError, isSameOrigin } from '@/lib/request-security';
 
 const bodySchema = z
   .object({
@@ -25,6 +25,9 @@ function securityHeaders(): Record<string, string> {
 }
 
 export async function POST(req: NextRequest) {
+  if (!isSameOrigin(req)) {
+    return NextResponse.json({ error: 'Origem inválida.' }, { status: 403, headers: securityHeaders() });
+  }
   if (!isAsaasConfigured()) {
     return NextResponse.json({ error: 'Pagamentos indisponíveis.' }, { status: 500, headers: securityHeaders() });
   }

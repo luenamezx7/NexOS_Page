@@ -1,12 +1,13 @@
 'use client';
 
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import styles from './Cancel.module.css';
 import { config } from '@/config';
 import { Button } from '@/components/ui/Button';
 import { XCircle, ArrowLeft, MessageSquare, RotateCcw } from 'lucide-react';
 
 export default function CancelPage() {
+  const router = useRouter();
   return (
     <div className={styles.container}>
       <div className={styles.cancel}>
@@ -18,11 +19,11 @@ export default function CancelPage() {
           Nenhuma cobrança foi realizada. Seu carrinho continua salvo caso queira tentar novamente.
         </p>
         <div className={styles.actions}>
-          <Button variant="primary" size="lg" onClick={() => window.location.href = '/#services'}>
+          <Button variant="primary" size="lg" onClick={() => router.push('/#services')}>
             <RotateCcw size={20} strokeWidth={2.5} aria-hidden="true" />
             Tentar novamente
           </Button>
-          <Button variant="secondary" size="lg" onClick={() => window.location.href = '/'}>
+          <Button variant="secondary" size="lg" onClick={() => router.push('/')}>
             <ArrowLeft size={20} strokeWidth={2.5} aria-hidden="true" />
             Voltar ao início
           </Button>

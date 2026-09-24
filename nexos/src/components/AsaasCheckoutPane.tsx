@@ -187,15 +187,16 @@ export function AsaasCheckoutPane({
         headers: { 'Content-Type': 'application/json', 'Idempotency-Key': attemptRef.current },
         body: JSON.stringify({
           productId, name: name.trim(), email: email.trim(), cpfCnpj: cpfCnpj.trim(),
-          billingType, installments, quantity, turnstileToken,
+          billingType, installments, quantity,
+          ...(turnstileToken ? { turnstileToken } : {}),
         }),
         signal: AbortSignal.timeout(25000),
       });
       const body: { paymentUrl?: string; paymentId?: string; externalReference?: string; statusToken?: string; bankSlipUrl?: string; identificationField?: string; error?: string; callbackUrl?: string } = await res.json().catch(() => ({}));
       if (body.callbackUrl && (res.status === 401 || res.status === 403)) {
         const back = encodeURIComponent(window.location.pathname + window.location.search);
+        // SPA replace sem refresh: evita 2º fetch RSC e "reinício" da página
         router.replace(`${body.callbackUrl}?callbackUrl=${back}`);
-        router.refresh();
         return;
       }
       if ([400, 403, 429].includes(res.status)) attemptRef.current = null;

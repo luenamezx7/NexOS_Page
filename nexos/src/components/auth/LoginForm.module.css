@@ -1,0 +1,35 @@
+.customer {
+  min-height: 100dvh;
+  color: var(--color-ink);
+  background: var(--color-canvas);
+  padding: 16px 20px 32px;
+}
+.header { max-width: 1216px; margin-inline: auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; }
+.content { width: 100%; max-width: 440px; margin: 32px auto 0; }
+.panel { width: 100%; min-width: 0; }
+.overline { margin-bottom: 12px; font-size: 13px; font-weight: 500; letter-spacing: 0.025em; color: #be185d; }
+:global(.dark) .overline { color: #ff8fab; }
+.title h2 { font-size: clamp(28px, 5vw, 36px); font-weight: 600; line-height: 1.15; letter-spacing: -1px; }
+.heading { font-size: clamp(28px, 5vw, 36px); font-weight: 600; line-height: 1.15; letter-spacing: -1px; }
+.description { margin: 12px 0 28px; font-size: 15px; line-height: 1.5; color: color-mix(in srgb, var(--color-ink) 72%, transparent); }
+.customer .social button { min-height: 48px; border-radius: 8px; font-size: 14px; background: color-mix(in srgb, var(--color-ink) 3%, var(--color-canvas)); }
+.customer .social button:hover { background: color-mix(in srgb, var(--color-ink) 7%, var(--color-canvas)); }
+.customer :global(.field-input) { min-height: 48px; padding: 12px; border-radius: 8px; font-size: 16px; line-height: 1.5; box-shadow: none; background: color-mix(in srgb, var(--color-ink) 3%, var(--color-canvas)); }
+.customer :global(.field-input):focus { border-color: #db2777; outline: 2px solid color-mix(in srgb, #db2777 35%, transparent); outline-offset: 2px; }
+.customer :global(.btn-primary-nex) { min-height: 48px; border-radius: 8px; background: #be185d; font-size: 14px; font-weight: 600; letter-spacing: 0; box-shadow: inset 0 1px 0 #ffffff20; }
+.customer :global(.btn-primary-nex):hover { background: #a91551; box-shadow: none; filter: none; }
+.customer form label { font-size: 14px; }
+.customer form button:not([type="submit"]) { min-height: 44px; }
+.customer form > div:last-child { column-gap: 20px; row-gap: 0; }
+.customer form > div:last-child button { text-align: left; font-size: 13px; }
+.customer :global([role="alert"]) { border-radius: 8px; background: color-mix(in srgb, #db2777 5%, var(--color-canvas)); line-height: 1.5; }
+.customer nav { gap: 0 20px; }
+.customer nav a { display: inline-flex; align-items: center; min-height: 44px; color: color-mix(in srgb, var(--color-ink) 72%, transparent); font-size: 12px; }
+.legalNote { font-size: 12px; line-height: 1.6; }
+@media (min-width: 768px) {
+  .customer { padding: 24px 32px 48px; }
+  .content { margin-top: 48px; }
+  .panel { padding: 32px; border: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent); border-radius: 16px; background: color-mix(in srgb, var(--color-ink) 2%, var(--color-canvas)); }
+  .content { max-width: 480px; }
+}
+@media (max-width: 359px) { .customer { padding-inline: 16px; } .header { gap: 8px; } .header > div { gap: 8px; } .header a { font-size: 12px; } }

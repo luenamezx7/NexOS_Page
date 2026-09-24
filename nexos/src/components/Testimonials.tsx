@@ -1,13 +1,13 @@
 'use client';
 
 import { useCallback, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, useReducedMotion, type Variants } from 'motion/react';
-import { Cpu, Layers, CreditCard, ArrowRight, Check, Copy, Terminal } from 'lucide-react';
+import { ArrowUpRight, Check, Copy, Cpu, CreditCard, Layers, Terminal, Workflow } from 'lucide-react';
+import styles from './MidPage.module.css';
 
-const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const FLUID_EASE = [0.16, 1, 0.3, 1] as const;
 
-// Perf: anima SÓ opacity + y (transform GPU). Sem scale — scale força repaint
-// durante o scroll pela seção (era a causa do jank no Ecossistema).
 const STAGGER_PARENT: Variants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.06, delayChildren: 0.02 } },
@@ -52,7 +52,7 @@ const VALUE_CARDS: ValueCard[] = [
     metric: 'Instantâneo',
     metricLabel: 'NFC / QR',
     actionTag: 'Adquirir em Lote',
-    actionHref: '#services',
+    actionHref: '#showcase',
     icon: <Layers size={15} strokeWidth={1.75} aria-hidden="true" />,
     pilar: 'PILAR 2 — DESIGN INDUSTRIAL-TECH',
   },
@@ -88,45 +88,46 @@ const CLIPBOARD_PAYLOAD = VALUE_CARDS.map(
   (c) => `$ nexos pillar --id ${c.id}\n  overline: ${c.overline}\n  title: ${c.title}\n  metric: ${c.metric} ${c.metricLabel}\n  pilar: ${c.pilar}`,
 ).join('\n\n');
 
-function navigate(href: string): void {
+function navigate(href: string, push?: (h: string) => void): void {
   const el = document.querySelector(href) as HTMLElement | null;
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  else if (push) push(href);
   else window.location.href = href;
 }
 
 function ValueRow({ card }: { card: ValueCard }) {
+  const router = useRouter();
   return (
-    <li className="group grid min-w-0 grid-cols-[auto_minmax(0,1fr)] gap-3 border-b border-ink/10 px-4 py-5 last:border-b-0 sm:px-5 md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-center md:gap-5 md:px-6">
-      <span
-        className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-ink/10 bg-ink/[0.04] font-mono text-[11px] text-ink/70 transition-colors duration-300 group-hover:border-pink-500/40 group-hover:text-ink md:mt-0"
-        aria-hidden="true"
-      >
+    <motion.li variants={RELIEF_CHILD} className={styles.pillarRow}>
+      <span className={styles.pillarIcon} aria-hidden="true">
         {card.icon}
       </span>
-      <div className="min-w-0">
-        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#ff5c8a]">
-          <span className="mr-2 text-ink/30">$</span>
+      <div className={styles.pillarBody}>
+        <p className={styles.pillarOverline}>
+          <span className={styles.pillarOverlinePrefix}>$</span>
           {card.overline}
-          <span className="ml-2 hidden text-ink/30 sm:inline">{card.id}</span>
+          <span className={styles.pillarOverlineId}>{card.id}</span>
         </p>
-        <h3 className="mt-1 break-words text-[15px] font-bold leading-snug tracking-tight text-ink">{card.title}</h3>
-        <p className="mt-1 break-words text-[13px] leading-relaxed text-ink/65">{card.description}</p>
-        <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px]">
-          <span className="font-bold text-ink">{card.metric}</span>
-          <span className="uppercase tracking-[0.14em] text-ink/45">{card.metricLabel}</span>
-          <span className="uppercase tracking-[0.14em] text-ink/30">· {card.pilar}</span>
+        <h3>{card.title}</h3>
+        <p>{card.description}</p>
+        <p className={styles.pillarMeta}>
+          <span className={styles.pillarMetric}>{card.metric}</span>
+          <span className={styles.pillarMetricLabel}>{card.metricLabel}</span>
+          <span className={styles.pillarPilar}>{card.pilar}</span>
         </p>
       </div>
-      <button
-        type="button"
-        onClick={() => navigate(card.actionHref)}
-        aria-label={card.actionTag}
-        className="btn-secondary-nex col-span-2 mt-1 w-full !justify-between !py-2 !text-xs md:col-span-1 md:mt-0 md:w-auto md:min-w-[190px]"
-      >
-        <span>{card.actionTag}</span>
-        <ArrowRight size={14} strokeWidth={2} aria-hidden="true" />
-      </button>
-    </li>
+      <div className={styles.pillarAction}>
+        <button
+          type="button"
+          onClick={() => navigate(card.actionHref, router.push)}
+          aria-label={card.actionTag}
+          className="btn-secondary-nex"
+        >
+          <span>{card.actionTag}</span>
+          <ArrowUpRight size={14} strokeWidth={2} aria-hidden="true" />
+        </button>
+      </div>
+    </motion.li>
   );
 }
 
@@ -142,7 +143,6 @@ export function Testimonials({ className = '' }: TestimonialsProps) {
     try {
       await navigator.clipboard.writeText(CLIPBOARD_PAYLOAD);
     } catch {
-      // Fallback para contextos sem Clipboard API (http / permissões)
       const ta = document.createElement('textarea');
       ta.value = CLIPBOARD_PAYLOAD;
       ta.setAttribute('readonly', '');
@@ -165,60 +165,60 @@ export function Testimonials({ className = '' }: TestimonialsProps) {
     <section
       id="testimonials"
       aria-labelledby="testimonials-title"
-      className={`relative w-full max-w-full overflow-clip overflow-x-clip border-t border-ink/10 bg-canvas ${className}`}
+      className={`${styles.section} ${className}`}
       style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 640px' }}
     >
-      <div className="grid-pattern-subtle opacity-80 dark:opacity-10" aria-hidden="true" />
-      <div className="mx-auto w-full max-w-6xl px-4 py-24 sm:px-6 md:px-8 lg:py-32">
+      <div className={styles.container}>
+        <div className={styles.sectionNav} aria-label="Navegação do ecossistema">
+          <span className={styles.currentSection}><Workflow size={16} aria-hidden="true" /> Ecossistema</span>
+          <a href="#faq">Dúvidas frequentes <ArrowUpRight size={16} aria-hidden="true" /></a>
+        </div>
+
         <motion.header
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 24 }}
-          whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.5 }}
           transition={{ duration: 0.55, ease: FLUID_EASE }}
-          className="mb-10 max-w-2xl md:mb-14"
+          className={styles.header}
         >
-          <h2 id="testimonials-title" className="flex flex-row items-start gap-3 text-ink">
-            <span className="pink-marker mt-[0.28em]" aria-hidden="true" />
-            Documentação &amp; Ecossistema
+          <p className={styles.kicker}>Documentação &amp; Ecossistema</p>
+          <h2 id="testimonials-title" className={styles.heading}>
+            Três pilares.<br /><span className={styles.accent}>Uma operação.</span>
           </h2>
-          <p className="mt-4 text-base leading-relaxed text-ink/70 md:text-lg">
-            Três pilares de valor para transformar tráfego em receita: performance absoluta, conexão físico-digital e conversão sem atrito.
+          <p className={styles.lead}>
+            Performance absoluta, conexão físico-digital e conversão sem atrito — para transformar tráfego em receita.
           </p>
         </motion.header>
 
-        {/* ——— Unix / macOS code-viewer window ——— */}
         <motion.div
           variants={reduce ? undefined : STAGGER_PARENT}
           initial={reduce ? { opacity: 0 } : 'hidden'}
           whileInView={reduce ? { opacity: 1 } : 'show'}
           viewport={{ once: true, amount: 0.2, margin: '0px 0px -8% 0px' }}
-          className="overflow-hidden rounded-2xl border border-ink/10 bg-[var(--color-card)] shadow-[0_18px_60px_-24px_rgba(0,0,0,0.45)]"
+          className={styles.terminal}
           role="region"
           aria-label="Documentação do ecossistema NexOS em visual de terminal"
         >
-          {/* Title bar */}
-          <motion.div
-            variants={reduce ? undefined : RELIEF_CHILD}
-            className="relative flex items-center gap-3 border-b border-ink/10 bg-ink/[0.03] px-4 py-3 md:px-5"
-          >
-            <span className="flex items-center gap-1.5" aria-hidden="true">
-              <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
-              <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
-              <span className="h-3 w-3 rounded-full bg-[#28c840]" />
+          <motion.div variants={reduce ? undefined : RELIEF_CHILD} className={styles.terminalBar}>
+            <span className={styles.traffic} aria-hidden="true">
+              <span />
+              <span />
+              <span />
             </span>
-            <p className="flex min-w-0 flex-1 items-center gap-2 truncate font-mono text-[11px] uppercase tracking-[0.16em] text-ink/50">
-              <Terminal size={13} strokeWidth={2} aria-hidden="true" className="shrink-0" />
-              <span className="truncate">nexos — ecossistema · zsh</span>
+            <p className={styles.terminalTitle}>
+              <Terminal size={13} strokeWidth={2} aria-hidden="true" />
+              <span>nexos — ecossistema · zsh</span>
             </p>
             <button
               type="button"
               onClick={handleCopy}
               aria-live="polite"
+              data-copied={copied ? 'true' : 'false'}
               aria-label={copied ? 'Pilares copiados' : 'Copiar pilares do ecossistema'}
-              className="absolute right-3 top-1/2 inline-flex -translate-y-1/2 items-center gap-1.5 rounded-lg border border-ink/10 bg-ink/[0.04] px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-ink/60 transition-colors duration-200 hover:border-pink-500/40 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink md:right-4"
+              className={styles.copyBtn}
             >
               {copied ? (
-                <Check size={13} strokeWidth={2.5} aria-hidden="true" className="text-[#28c840]" />
+                <Check size={13} strokeWidth={2.5} aria-hidden="true" />
               ) : (
                 <Copy size={13} strokeWidth={2} aria-hidden="true" />
               )}
@@ -226,24 +226,20 @@ export function Testimonials({ className = '' }: TestimonialsProps) {
             </button>
           </motion.div>
 
-          {/* Body: pilares como linhas de terminal */}
           <motion.ul
             variants={reduce ? undefined : STAGGER_PARENT}
             role="list"
             aria-label="Pilares de valor NexOS"
-            className="divide-y divide-transparent"
+            className={styles.pillarList}
           >
             {VALUE_CARDS.map((card) => (
-              <motion.div key={card.id} variants={reduce ? undefined : RELIEF_CHILD}>
-                <ValueRow card={card} />
-              </motion.div>
+              <ValueRow key={card.id} card={card} />
             ))}
           </motion.ul>
 
-          {/* Status bar */}
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-ink/10 bg-ink/[0.02] px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-ink/35">
+          <div className={styles.terminalStatus}>
             <span>3 pilares · utf-8</span>
-            <span className="ml-auto">exit 0 — pronto para escalar</span>
+            <span className={styles.push}>exit 0 — pronto para escalar</span>
           </div>
         </motion.div>
       </div>

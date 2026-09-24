@@ -12,7 +12,7 @@ const contactSchema = z.object({
   company: z.string().max(100).optional().default(''),
   service: z.string().max(100).optional().default(''),
   message: z.string().min(5, 'Mensagem é obrigatória').max(5000),
-  turnstileToken: z.string().optional(),
+  turnstileToken: z.string().nullish(),
 });
 
 type ContactPayload = z.infer<typeof contactSchema>;
@@ -26,7 +26,9 @@ function getNotionClient(): Client | null {
 function getServiceLabel(serviceId: string): string {
   // maps internal service id to display label, fallback to id itself
   const map: Record<string, string> = {
-    dev: 'Desenvolvimento Full-Stack',
+    dev: 'Desenvolvimento NexOS',
+    placa: 'Placa NFC + QR Code',
+    teste: 'TESTE CHECKOUT',
     design: 'Product Design & Branding',
     strategy: 'Estratégia & Discovery',
   };
@@ -47,10 +49,9 @@ export async function POST(req: Request) {
     const parsed = contactSchema.safeParse(body);
 
     if (!parsed.success) {
-      const first = parsed.error.issues[0];
       return NextResponse.json(
-        { error: first?.message ?? 'Dados inválidos', details: parsed.error.flatten() },
-        { status: 400 }
+        { error: parsed.error.issues[0]?.message ?? 'Dados inválidos' },
+        { status: 400, headers: { 'Cache-Control': 'private, no-store' } }
       );
     }
 
@@ -72,17 +73,17 @@ export async function POST(req: Request) {
     const token = process.env.NOTION_TOKEN?.trim();
     const rawDatabaseId = process.env.NOTION_DATABASE_ID?.trim();
 
-    if (!token || !rawDatabaseId) {
+if (!token || !rawDatabaseId) {
       console.error('[api/contact] NOTION_TOKEN ou NOTION_DATABASE_ID não configurados', { hasToken: !!token, hasDatabaseId: !!rawDatabaseId });
       return NextResponse.json(
         { error: 'Contato temporariamente indisponível. Tente novamente mais tarde.' },
-        { status: 500 }
+        { status: 503, headers: { 'Cache-Control': 'private, no-store' } }
       );
     }
 
     const notion = getNotionClient();
     if (!notion) {
-      return NextResponse.json({ error: 'Falha ao inicializar Notion' }, { status: 500 });
+      return NextResponse.json({ error: 'Falha ao inicializar Notion' }, { status: 503, headers: { 'Cache-Control': 'private, no-store' } });
     }
 
     const serviceLabel = getServiceLabel(data.service);
@@ -114,21 +115,21 @@ export async function POST(req: Request) {
         } else {
           throw firstError;
         }
-      } catch {
+} catch {
         console.error('[api/contact] provider_failure');
         return NextResponse.json(
           {
             error: 'Não foi possível enviar a mensagem. Tente novamente mais tarde.',
           },
-          { status: 500 }
+          { status: 502, headers: { 'Cache-Control': 'private, no-store' } }
         );
       }
     }
 
-    return NextResponse.json({ ok: true }, { status: 200 });
+    return NextResponse.json({ ok: true }, { status: 200, headers: { 'Cache-Control': 'private, no-store' } });
   } catch (error) {
     if (error instanceof RequestError) return privateJson({ error: error.message }, error.status);
     console.error('[api/contact] request_failure');
-    return NextResponse.json({ error: 'Não foi possível processar a solicitação.' }, { status: 500 });
+    return NextResponse.json({ error: 'Não foi possível processar a solicitação.' }, { status: 500, headers: { 'Cache-Control': 'private, no-store' } });
   }
 }

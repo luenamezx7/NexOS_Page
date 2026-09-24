@@ -8,6 +8,7 @@ import { createHmac } from 'node:crypto';
 import { getUserAccess } from '@/lib/auth/user';
 import { isSameOrigin, readJsonBody, RequestError } from '@/lib/request-security';
 import { evaluatePassword } from '@/lib/auth/password-strength';
+import { sanitizeCallbackPath } from '@/lib/auth/callback';
 
 // Supplemental per-instance limit. Supabase Auth also enforces its own limits.
 const attempts = new Map<string, { count: number; until: number }>();
@@ -30,7 +31,9 @@ export async function POST(req: NextRequest, context: { params: Promise<{ action
   const { action: routeAction } = await context.params;
   const userFlow = routeAction.startsWith('user-');
   const action = userFlow ? routeAction.slice(5) : routeAction;
-  const allowedActions = userFlow ? ['login', 'logout', 'factor', 'enroll', 'verify', 'signup', 'resend', 'otp', 'otp-verify'] : ['login', 'logout', 'factor', 'enroll', 'verify'];
+  const allowedActions = userFlow
+    ? ['login', 'logout', 'factor', 'enroll', 'verify', 'signup', 'resend', 'otp', 'otp-verify', 'oauth', 'forgot', 'reset']
+    : ['login', 'logout', 'factor', 'enroll', 'verify', 'oauth', 'forgot', 'reset'];
   if (!allowedActions.includes(action)) return privateJson({ error: 'Rota inválida.' }, 404);
   const now = Date.now();
   for (const [key, bucket] of attempts) if (bucket.until <= now) attempts.delete(key);
@@ -48,6 +51,88 @@ export async function POST(req: NextRequest, context: { params: Promise<{ action
     if (action === 'logout') {
       const { error } = await client.auth.signOut({ scope: 'local' });
       return error ? privateJson({ error: 'Não foi possível sair. Tente novamente.' }, 503) : privateJson({ ok: true });
+    }
+    if (action === 'oauth') {
+      // Login social (Google/GitHub): gera a URL de authorize do Supabase e
+      // devolve para o client navegar. O callback volta em /auth/callback.
+      const oauthSchema = z.object({
+        provider: z.enum(['google', 'github']),
+        callbackUrl: z.string().max(512).optional(),
+      });
+      const oauthParsed = oauthSchema.safeParse(body);
+      if (!oauthParsed.success) return privateJson({ error: 'Provedor inválido.' }, 400);
+      if (!(await consumeAttempt(`auth:account:oauth:${ip}`, 10, 900))) return privateJson({ error: 'Não foi possível concluir. Aguarde alguns minutos.' }, 429);
+      const site = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || req.url;
+      const redirectTo = new URL('/auth/callback', site);
+      redirectTo.searchParams.set('entry', userFlow ? '/portal/acesso' : '/admin-dashboard-su/secure-entry');
+      const cb = sanitizeCallbackPath(oauthParsed.data.callbackUrl);
+      redirectTo.searchParams.set('next', cb ?? (userFlow ? '/conta' : '/dashboard'));
+      const { data, error } = await client.auth.signInWithOAuth({
+        provider: oauthParsed.data.provider,
+        options: { redirectTo: redirectTo.toString(), skipBrowserRedirect: true },
+      });
+      if (error || !data.url) {
+        if (process.env.NODE_ENV !== 'production') console.error('[api/auth] oauth:', error?.message ?? 'URL ausente');
+        return privateJson({ error: 'Não foi possível iniciar o acesso social. Tente novamente.' }, 503);
+      }
+      return privateJson({ url: data.url });
+    }
+    if (action === 'forgot') {
+      // Recuperação de senha: resposta sempre genérica (anti-enumeration).
+      const forgotParsed = emailSchema.safeParse(body);
+      if (!forgotParsed.success) return privateJson({ error: 'Informe um e-mail válido.' }, 400);
+      const { email, captcha } = forgotParsed.data;
+      if (!(await consumeAttempt(`auth:account:forgot:${email.toLowerCase()}`, 3, 900))) {
+        return privateJson({ error: 'Não foi possível concluir. Aguarde alguns minutos.' }, 429);
+      }
+      if (isTurnstileEnforced()) {
+        if (!isTurnstileConfigured()) return privateJson({ error: 'Verificação de segurança indisponível. Contate a equipe.' }, 503);
+        if (!captcha || !(await verifyTurnstileToken(captcha)).success) return privateJson({ error: 'Confirme a verificação de segurança.' }, 400);
+      }
+      const site = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || req.url;
+      const redirectTo = new URL('/auth/callback', site);
+      redirectTo.searchParams.set('entry', userFlow ? '/portal/acesso' : '/admin-dashboard-su/secure-entry');
+      redirectTo.searchParams.set('next', '/portal/redefinir');
+      await client.auth
+        .resetPasswordForEmail(email, { redirectTo: redirectTo.toString() })
+        .catch(() => undefined);
+      return privateJson({
+        message:
+          'Se houver uma conta ativa para este e-mail, você receberá um link para redefinir a senha. O link expira em pouco tempo — confira também o spam.',
+      });
+    }
+    if (action === 'reset') {
+      // Sessão de recovery estabelecida pelo /auth/callback (troca de code).
+      const resetParsed = z
+        .object({ password: z.string().min(12).max(256), captcha: z.string().max(2048).optional() })
+        .safeParse(body);
+      if (!resetParsed.success) {
+        return privateJson({ error: 'A senha precisa de: 12+ caracteres, maiúscula, minúscula, número e símbolo.' }, 400);
+      }
+      if (!evaluatePassword(resetParsed.data.password).acceptable) {
+        return privateJson({ error: 'A senha precisa de: 12+ caracteres, maiúscula, minúscula, número e símbolo.' }, 400);
+      }
+      if (!(await consumeAttempt(`auth:account:reset:${ip}`, 5, 900))) {
+        return privateJson({ error: 'Não foi possível concluir. Aguarde alguns minutos.' }, 429);
+      }
+      if (isTurnstileEnforced()) {
+        if (!isTurnstileConfigured()) return privateJson({ error: 'Verificação de segurança indisponível. Contate a equipe.' }, 503);
+        if (!resetParsed.data.captcha || !(await verifyTurnstileToken(resetParsed.data.captcha)).success) {
+          return privateJson({ error: 'Confirme a verificação de segurança.' }, 400);
+        }
+      }
+      const { data: sessionUser, error: sessionError } = await client.auth.getUser();
+      if (sessionError || !sessionUser.user || sessionUser.user.is_anonymous) {
+        return privateJson({ error: 'Sessão de recuperação inválida ou expirada. Solicite um novo link.' }, 401);
+      }
+      const { error: updateError } = await client.auth.updateUser({ password: resetParsed.data.password });
+      if (updateError) {
+        if (process.env.NODE_ENV !== 'production') console.error('[api/auth] reset:', updateError.message);
+        return privateJson({ error: 'Não foi possível redefinir a senha. Solicite um novo link.' }, 400);
+      }
+      // Força novo login com a senha atualizada (e MFA quando exigido).
+      await client.auth.signOut({ scope: 'local' }).catch(() => undefined);
+      return privateJson({ ok: true, message: 'Senha redefinida com sucesso. Entre com a nova senha.' });
     }
     if (action === 'otp-verify') {
       const otpParsed = z.object({ email: z.email().max(254), token: z.string().regex(/^\d{6}$/) }).safeParse(body);
