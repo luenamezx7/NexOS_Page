@@ -8,8 +8,15 @@ import 'server-only';
 
 const VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
+export function getTurnstileSiteKey(): string {
+  // Destructuring intentionally reads runtime env instead of Next's build-time
+  // replacement of direct process.env.NEXT_PUBLIC_* references.
+  const { NEXT_PUBLIC_TURNSTILE_SITE_KEY } = process.env;
+  return NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim() || '';
+}
+
 export function isTurnstileConfigured(): boolean {
-  return !!(process.env.TURNSTILE_SECRET_KEY && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
+  return !!(process.env.TURNSTILE_SECRET_KEY?.trim() && getTurnstileSiteKey());
 }
 
 export function isTurnstileEnforced(): boolean {

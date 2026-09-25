@@ -1,12 +1,12 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { motion, useReducedMotion } from 'motion/react';
 import { QrCode, CreditCard, Receipt, ExternalLink, Loader2, Check, Copy, RefreshCw, ShieldCheck, Info } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 import { bulkUnitPrice } from '@/lib/bulk-pricing';
 import { Turnstile } from './Turnstile';
+import { useTurnstileConfig } from '@/lib/use-turnstile-config';
 
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const POLL_INTERVAL_MS = 5000;
@@ -69,7 +69,6 @@ export function AsaasCheckoutPane({
 }: AsaasCheckoutPaneProps) {
   const reduce = useReducedMotion() ?? false;
   const { theme } = useTheme();
-  const router = useRouter();
   const isDark = theme === 'dark';
   const [state, setState] = useState<PixState>('idle');
   const [fatal, setFatal] = useState<string | null>(null);
@@ -85,7 +84,7 @@ export function AsaasCheckoutPane({
   const [copied, setCopied] = useState<string | null>(null);
   const [pollExpired, setPollExpired] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
-  const [turnstileRequired, setTurnstileRequired] = useState(!!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
+  const { required: turnstileRequired } = useTurnstileConfig();
   const [captchaKey, setCaptchaKey] = useState(0);
   const credentialsRef = useRef<{ externalReference: string; statusToken: string } | null>(null);
   const attemptRef = useRef<string | null>(null);
@@ -94,14 +93,6 @@ export function AsaasCheckoutPane({
   const triesRef = useRef(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const inFlightRef = useRef(false);
-
-  useEffect(() => {
-    let active = true;
-    void fetch('/api/checkout').then(r => r.json()).then(data => {
-      if (active) setTurnstileRequired(data.turnstileRequired === true);
-    }).catch(() => {});
-    return () => { active = false; };
-  }, []);
 
   const amount = bulkUnitPrice(productPrice, quantity, productId ?? undefined) * quantity;
   const amountLabel = `R$ ${amount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -194,9 +185,9 @@ export function AsaasCheckoutPane({
       });
       const body: { paymentUrl?: string; paymentId?: string; externalReference?: string; statusToken?: string; bankSlipUrl?: string; identificationField?: string; error?: string; callbackUrl?: string } = await res.json().catch(() => ({}));
       if (body.callbackUrl && (res.status === 401 || res.status === 403)) {
-        const back = encodeURIComponent(window.location.pathname + window.location.search);
-        // SPA replace sem refresh: evita 2º fetch RSC e "reinício" da página
-        router.replace(`${body.callbackUrl}?callbackUrl=${back}`);
+        const back = encodeURIComponent(`/?checkout=${encodeURIComponent(productId)}&quantity=${quantity}#services`);
+        // Recheck access on the server instead of reusing prefetched auth pages.
+        window.location.replace(`/portal/acesso?callbackUrl=${back}`);
         return;
       }
       if ([400, 403, 429].includes(res.status)) attemptRef.current = null;
@@ -217,9 +208,10 @@ export function AsaasCheckoutPane({
       setTurnstileToken(null);
     } finally {
       generatingRef.current = false;
+      setTurnstileToken(null);
       setCaptchaKey(v => v + 1);
     }
-  }, [name, email, cpfCnpj, productId, quantity, billingType, installments, turnstileToken, turnstileRequired, onNameError, onEmailError, onCpfError, startPolling, router]);
+  }, [name, email, cpfCnpj, productId, quantity, billingType, installments, turnstileToken, turnstileRequired, onNameError, onEmailError, onCpfError, startPolling]);
 
   const handleManualCheck = useCallback(async () => {
     if (!paymentId || checking) return;
@@ -254,10 +246,10 @@ export function AsaasCheckoutPane({
             <button
               key={m.id}
               type="button"
-              disabled={m.disabled}
-              onClick={() => !m.disabled && setBillingType(m.id)}
+              disabled={m.disabled || state === 'generating' || state === 'pending'}
+              onClick={() => { if (!m.disabled) { setBillingType(m.id); setInstallments(1); } }}
               aria-pressed={billingType === m.id}
-              aria-disabled={m.disabled}
+              aria-disabled={m.disabled || state === 'generating' || state === 'pending'}
               title={m.badge ?? m.label}
               className={`relative flex flex-col items-center gap-1.5 rounded-xl border px-2 py-3.5 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff5c8a]/60
                 ${m.disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
@@ -280,6 +272,7 @@ export function AsaasCheckoutPane({
           <label htmlFor="checkout-installments" className={`font-mono text-[11px] uppercase tracking-[0.14em] ${isDark ? 'text-white/55' : 'text-ink/55'}`}>Parcelas *</label>
           <select
             id="checkout-installments"
+            disabled={state === 'generating' || state === 'pending'}
             value={installments}
             onChange={(e) => setInstallments(Number(e.target.value))}
             className="field-input !py-3"

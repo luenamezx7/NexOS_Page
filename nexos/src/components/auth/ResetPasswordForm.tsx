@@ -8,6 +8,7 @@ import { ArrowLeft, ArrowRight, Eye, EyeOff, LockKeyhole } from 'lucide-react';
 import { motion, useReducedMotion } from 'motion/react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Turnstile } from '@/components/Turnstile';
+import { useTurnstileConfig } from '@/lib/use-turnstile-config';
 import { PasswordStrengthMeter } from '@/components/auth/PasswordStrengthMeter';
 import { evaluatePassword } from '@/lib/auth/password-strength';
 import styles from '@/components/auth/LoginForm.module.css';
@@ -30,7 +31,7 @@ export function ResetPasswordForm({ audience, email }: ResetPasswordFormProps) {
   const [captcha, setCaptcha] = useState('');
   const [captchaKey, setCaptchaKey] = useState(0);
   const [done, setDone] = useState(false);
-  const captchaEnforced = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const { required: captchaEnforced } = useTurnstileConfig();
 
   async function handleSubmit(form: FormData) {
     if (busyRef.current) return;

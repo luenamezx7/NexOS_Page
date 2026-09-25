@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { config } from '@/config';
 import { BULK_MAX_QTY, bulkUnitPrice } from '@/lib/bulk-pricing';
 import { createAsaasPayment, generateExternalReference, isAsaasConfigured } from '@/lib/asaas';
-import { isTurnstileEnforced, verifyTurnstileToken } from '@/lib/turnstile';
+import { isTurnstileConfigured, isTurnstileEnforced, verifyTurnstileToken } from '@/lib/turnstile';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { createHash, createHmac } from 'node:crypto';
 import { issueStatusToken } from '@/lib/status-token';
@@ -26,7 +26,7 @@ const bodySchema = z.object({
   billingType: z.enum(['PIX', 'BOLETO', 'CREDIT_CARD', 'UNDEFINED']).optional().default('UNDEFINED'),
   installments: z.coerce.number().int().min(1).max(12).optional().default(1),
   quantity: z.coerce.number().int().min(1).max(BULK_MAX_QTY).optional().default(1),
-  turnstileToken: z.string().nullish(),
+  turnstileToken: z.string().max(2048).nullish(),
 });
 
 const WINDOW_MS = 60_000;
@@ -97,7 +97,9 @@ export async function POST(req: NextRequest) {
   if (!access.ok) {
     return NextResponse.json(
       {
-        error: access.reason === 'mfa'
+        error: access.status === 503
+          ? 'Não foi possível verificar sua sessão. Tente novamente em instantes.'
+          : access.reason === 'mfa'
           ? 'Confirme a autenticação em duas etapas para continuar.'
           : 'Faça login ou crie sua conta para finalizar a compra.',
         callbackUrl: '/portal/acesso',
@@ -143,6 +145,7 @@ export async function POST(req: NextRequest) {
 
   // Turnstile anti-bot (se configurado)
   if (isTurnstileEnforced()) {
+    if (!isTurnstileConfigured()) return NextResponse.json({ error: 'Verificação de segurança temporariamente indisponível.' }, { status: 503, headers: securityHeaders() });
     if (!turnstileToken) {
       return NextResponse.json({ error: 'Verificação de segurança obrigatória.' }, { status: 400, headers: securityHeaders() });
     }
@@ -193,8 +196,9 @@ export async function POST(req: NextRequest) {
     });
     if (reservationError) {
       if (reservationError.code !== '23505') throw reservationError;
-      const { data: previous, error } = await db.from('idempotency_keys').select('payload_hash,status,result').eq('key_hash', keyHash).single();
-      if (error) throw error;
+       const { data: previous, error } = await db.from('idempotency_keys').select('owner_id,payload_hash,status,result').eq('key_hash', keyHash).single();
+       if (error) throw error;
+       if (previous.owner_id !== access.userId) return NextResponse.json({ error: 'Esta tentativa não está disponível para esta conta.' }, { status: 409, headers: securityHeaders() });
       if (previous.payload_hash !== payloadHash) return NextResponse.json({ error: 'Esta tentativa já foi usada com outros dados.' }, { status: 409, headers: securityHeaders() });
       if (previous.status === 'succeeded' && previous.result) return NextResponse.json(previous.result, { headers: securityHeaders() });
       return NextResponse.json({ error: 'Cobrança em processamento ou aguardando conciliação. Não gere outra tentativa.' }, { status: 409, headers: securityHeaders() });

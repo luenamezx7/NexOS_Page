@@ -31,7 +31,7 @@ const nextConfig: NextConfig = {
     return [
       // Turnstile só aceita o apex — evita login/origem quebrados no www.
       {
-        source: '/(.*)',
+        source: '/:path*',
         has: [{ type: 'host', value: 'www.nexoslab.online' }],
         destination: 'https://nexoslab.online/:path*',
         permanent: true,

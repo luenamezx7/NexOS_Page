@@ -86,7 +86,7 @@ test('customer signup enforces password strength and mobile layout (UI contract)
   await page.getByLabel('Senha', { exact: true }).fill('Strong-Passw0rd!xyz');
   await page.getByLabel('Confirmar senha', { exact: true }).fill('Strong-Passw0rd!xyz');
   await page.getByRole('button', { name: 'Criar conta', exact: true }).click();
-  await expect(page.getByRole('status')).toHaveText('Confira seu e-mail para confirmar a conta.');
+  await expect(page.getByRole('status').filter({ hasText: 'Confira seu e-mail' })).toHaveText('Confira seu e-mail para confirmar a conta.');
   await expect(page.getByLabel('Senha', { exact: true })).toHaveValue('');
   await page.setViewportSize({ width: 390, height: 844 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
@@ -146,7 +146,7 @@ test('forgot-password UI contract and recovery APIs fail closed', async ({ page,
   await expect(page.getByRole('heading', { name: 'Recuperar senha' })).toBeVisible();
   await page.getByLabel('E-mail', { exact: true }).fill('reset@example.com');
   await page.getByRole('button', { name: 'Enviar link de redefinição', exact: true }).click();
-  await expect(page.getByRole('status')).toContainText('redefinir a senha');
+  await expect(page.getByRole('status').filter({ hasText: 'Se houver uma conta ativa' })).toContainText('redefinir a senha');
   await expect(page.getByRole('heading', { name: 'Recuperar senha' })).toBeVisible();
 
   await page.goto('/admin-dashboard-su/secure-entry');

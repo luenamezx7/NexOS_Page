@@ -12,7 +12,7 @@ import { sanitizeCallbackPath } from '@/lib/auth/callback';
 
 // Supplemental per-instance limit. Supabase Auth also enforces its own limits.
 const attempts = new Map<string, { count: number; until: number }>();
-const emailSchema = z.object({ email: z.email().max(254), captcha: z.string().max(2048).optional() });
+const emailSchema = z.object({ email: z.email().max(254), captcha: z.string().max(2048).optional(), callbackUrl: z.string().max(512).optional() });
 const loginSchema = emailSchema.extend({ password: z.string().min(1).max(256) });
 
 async function consumeAttempt(key: string, limit: number, seconds: number) {
@@ -157,11 +157,17 @@ export async function POST(req: NextRequest, context: { params: Promise<{ action
       }
       if (action === 'otp') {
         // Sempre resposta genérica — não revela existência da conta (anti-enumeration).
-        await client.auth.signInWithOtp({ email, options: { shouldCreateUser: false } }).catch(() => undefined);
+        const redirectTo = new URL('/auth/callback', process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || req.url);
+        redirectTo.searchParams.set('entry', userFlow ? '/portal/acesso' : '/admin-dashboard-su/secure-entry');
+        redirectTo.searchParams.set('next', sanitizeCallbackPath(parsed.data.callbackUrl) ?? (userFlow ? '/conta' : '/dashboard'));
+        await client.auth.signInWithOtp({ email, options: { shouldCreateUser: false, emailRedirectTo: redirectTo.toString() } }).catch(() => undefined);
         return privateJson({ message: 'Se houver uma conta ativa para este e-mail, você receberá um código de 6 dígitos. Confira também o spam.' });
       }
       if (action === 'signup' || action === 'resend') {
-        const emailRedirectTo = new URL('/auth/callback', process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || req.url).toString();
+        const redirectTo = new URL('/auth/callback', process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || req.url);
+        redirectTo.searchParams.set('entry', userFlow ? '/portal/acesso' : '/admin-dashboard-su/secure-entry');
+        redirectTo.searchParams.set('next', sanitizeCallbackPath(parsed.data.callbackUrl) ?? (userFlow ? '/conta' : '/dashboard'));
+        const emailRedirectTo = redirectTo.toString();
         const result = action === 'signup'
           ? await client.auth.signUp({ email, password, options: { emailRedirectTo } })
           : await client.auth.resend({ type: 'signup', email, options: { emailRedirectTo } });
