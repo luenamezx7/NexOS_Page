@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic';
 export default async function SecureEntryPage({
   searchParams,
 }: {
-  searchParams: Promise<{ confirmation?: string; callbackUrl?: string }>;
+  searchParams: Promise<{ confirmation?: string | string[]; callbackUrl?: string | string[] }>;
 }) {
   const access = await getAdminAccess();
   const params = await searchParams;

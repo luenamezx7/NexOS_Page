@@ -1,11 +1,12 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { motion, useReducedMotion } from 'motion/react';
 import { ArrowUpRight, Check, Code2, CreditCard, Headphones, Layers, Plus } from 'lucide-react';
 import { config } from '@/config';
 import type { Service } from '@/types';
+import { BULK_MAX_QTY } from '@/lib/bulk-pricing';
 import { HoldButton } from './HoldButton';
 import styles from './commerce/Commerce.module.css';
 
@@ -49,7 +50,25 @@ const DIFFERENTIALS = [
 
 export function Services({ className = '' }: { className?: string }) {
   const [activeService, setActiveService] = useState<Service | null>(null);
-  const closeCheckout = useCallback(() => setActiveService(null), []);
+  const [quantity, setQuantity] = useState(1);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const service = config.services.find(s => s.id === params.get('checkout'));
+    if (!service) return;
+    const requested = Number(params.get('quantity') ?? 1);
+    const frame = requestAnimationFrame(() => {
+      setQuantity(Number.isInteger(requested) && requested >= 1 && requested <= BULK_MAX_QTY ? requested : 1);
+      setActiveService(service);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, []);
+  const closeCheckout = useCallback(() => {
+    setActiveService(null);
+    setQuantity(1);
+    const url = new URL(window.location.href);
+    url.searchParams.delete('checkout'); url.searchParams.delete('quantity');
+    window.history.replaceState(null, '', url.pathname + url.search + url.hash);
+  }, []);
   return (
     <>
       <section id="services" aria-labelledby="services-title" className={`${styles.section} ${styles.servicesSection} ${className}`}>
@@ -74,7 +93,7 @@ export function Services({ className = '' }: { className?: string }) {
           <div className={styles.differentials}>{DIFFERENTIALS.map(({ icon: Icon, title, description }) => <div key={title}><Icon size={20} strokeWidth={1.75} aria-hidden="true" /><h3>{title}</h3><p>{description}</p></div>)}</div>
         </div>
       </section>
-      {activeService && <EmbeddedCheckoutDrawer open onClose={closeCheckout} productId={activeService.id} productTitle={activeService.title} productPrice={activeService.price} />}
+      {activeService && <EmbeddedCheckoutDrawer open onClose={closeCheckout} productId={activeService.id} productTitle={activeService.title} productPrice={activeService.price} quantity={quantity} />}
     </>
   );
 }

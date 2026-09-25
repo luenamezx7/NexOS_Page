@@ -158,7 +158,7 @@ export default function HomeClient() {
   useEffect(() => {
     let seen = false;
     try { seen = sessionStorage.getItem(BOOT_SEEN_KEY) === '1'; } catch { seen = false; }
-    if (!seen) return;
+    if (!seen && !new URLSearchParams(window.location.search).has('checkout')) return;
     skippedBootRef.current = true;
     introDoneRef.current = true;
     brandDoneRef.current = true;

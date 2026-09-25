@@ -157,6 +157,31 @@ export function EmbeddedCheckoutDrawer({ open, onClose, productId, productTitle,
   const [nameError, setNameError] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
   const [cpfError, setCpfError] = useState<string | null>(null);
+  const [sessionReady, setSessionReady] = useState(false);
+  const [sessionError, setSessionError] = useState('');
+  const [sessionAttempt, setSessionAttempt] = useState(0);
+
+  useEffect(() => {
+    if (!open || !productId) return;
+    const controller = new AbortController();
+    void fetch('/api/auth/session', { cache: 'no-store', signal: AbortSignal.any([controller.signal, AbortSignal.timeout(12000)]) })
+      .then(async response => {
+        if (controller.signal.aborted) return;
+        if (response.status === 401 || response.status === 403) {
+          const back = `/?checkout=${encodeURIComponent(productId)}&quantity=${quantity}#services`;
+          // A full navigation avoids a previously cached anonymous/MFA page.
+          window.location.assign(new URL(`/portal/acesso?callbackUrl=${encodeURIComponent(back)}`, window.location.origin).href);
+          return;
+        }
+        if (!response.ok) throw new Error('Sessão temporariamente indisponível. Feche e tente novamente.');
+        const data = await response.json();
+        if (data?.ok !== true || typeof data.email !== 'string' || !data.email) throw new Error('Sessão inválida.');
+        if (!controller.signal.aborted) { setCustomerEmail(data.email); setSessionReady(true); }
+      }).catch(() => {
+        if (!controller.signal.aborted) setSessionError('Não foi possível verificar sua sessão. Tente novamente.');
+      });
+    return () => controller.abort();
+  }, [open, productId, quantity, sessionAttempt]);
 
   const handleClose = useCallback(() => {
     setDrawerState('idle');
@@ -263,7 +288,10 @@ export function EmbeddedCheckoutDrawer({ open, onClose, productId, productTitle,
               className="relative flex-1 touch-pan-y overflow-y-auto overscroll-contain px-6 py-6 md:px-7 md:py-7"
               style={{ overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch' }}
             >
-              {drawerState === 'success' ? (
+              {!sessionReady ? <div>
+                <p role={sessionError ? 'alert' : 'status'}>{sessionError || 'Verificando seu acesso para continuar a compra…'}</p>
+                {sessionError && <button type="button" className="btn-secondary-nex mt-4" onClick={() => { setSessionError(''); setSessionAttempt(v => v + 1); }}>Tentar verificar sessão novamente</button>}
+              </div> : drawerState === 'success' ? (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.92 }}
                   animate={{ opacity: 1, scale: 1 }}

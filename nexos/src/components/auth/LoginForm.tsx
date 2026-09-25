@@ -3,7 +3,6 @@
 import { useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { ArrowLeft, ArrowRight, Eye, EyeOff, LockKeyhole, Mail } from 'lucide-react';
 import { motion, useReducedMotion } from 'motion/react';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -12,6 +11,7 @@ import { Turnstile } from '@/components/Turnstile';
 import { PasswordStrengthMeter } from '@/components/auth/PasswordStrengthMeter';
 import { evaluatePassword } from '@/lib/auth/password-strength';
 import { sanitizeCallbackPath } from '@/lib/auth/callback';
+import { useTurnstileConfig } from '@/lib/use-turnstile-config';
 
 type AuthResult = { ok?: boolean; error?: string; message?: string; factorId?: string; enrollmentRequired?: boolean; qr?: string; secret?: string; url?: string };
 
@@ -45,11 +45,10 @@ function GitHubIcon() {
 export function LoginForm({ initialMfa, audience = 'admin', confirmationError = false, callbackUrl = null }: LoginFormProps) {
   const userFlow = audience === 'user';
   const reduce = useReducedMotion();
-  const router = useRouter();
   const busyRef = useRef(false);
   const safeCallback = sanitizeCallbackPath(callbackUrl);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState(confirmationError ? 'Link inválido ou expirado. Entre com sua senha se o e-mail já foi confirmado, ou solicite outro link.' : '');
+  const [error, setError] = useState(confirmationError ? 'Não foi possível concluir o acesso. O link pode ter expirado ou a autorização foi cancelada. Tente novamente com Google, GitHub ou seu e-mail neste navegador.' : '');
   const [message, setMessage] = useState('');
   const [mode, setMode] = useState<Mode>('login');
   const [formKey, setFormKey] = useState(0);
@@ -62,17 +61,17 @@ export function LoginForm({ initialMfa, audience = 'admin', confirmationError = 
   const [factor, setFactor] = useState<AuthResult>({});
 
   const destination = () => safeCallback ?? (userFlow ? '/conta' : '/dashboard');
-  const captchaEnforced = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const { required: captchaEnforced, loading: captchaLoading } = useTurnstileConfig();
 
   async function submit(action: string, body: object = {}) {
     if (busyRef.current) return;
     busyRef.current = true; setBusy(true); setError(''); setMessage('');
     let navigating = false;
     try {
-      const response = await fetch(`/api/auth/${userFlow ? 'user-' : ''}${action}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: AbortSignal.timeout(20000) });
+      const response = await fetch(`/api/auth/${userFlow ? 'user-' : ''}${action}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...body, callbackUrl: safeCallback ?? undefined }), signal: AbortSignal.timeout(20000) });
       const result: AuthResult = await response.json();
       if (!response.ok) throw new Error(result.error ?? 'Não foi possível entrar.');
-      if (action === 'logout') { setStep('login'); setFactor({}); navigating = true; router.replace('/portal/acesso'); return; }
+      if (action === 'logout') { setStep('login'); setFactor({}); navigating = true; window.location.replace(userFlow ? '/portal/acesso' : '/admin-dashboard-su/secure-entry'); return; }
       if (result.message) {
         setMessage(result.message);
         setPassword('');
@@ -84,8 +83,8 @@ export function LoginForm({ initialMfa, audience = 'admin', confirmationError = 
       if (result.ok) {
         setFactor({});
         navigating = true;
-        // replace SPA-only: páginas destino são force-dynamic; refresh extra só causava flash
-        router.replace(destination());
+        // A new document prevents prefetched anonymous RSC data surviving login.
+        window.location.replace(destination());
         return;
       }
       setFactor(result);
@@ -99,6 +98,7 @@ export function LoginForm({ initialMfa, audience = 'admin', confirmationError = 
   }
 
   function goMode(next: Mode) {
+    setCaptcha(''); setCaptchaKey(v => v + 1);
     setMode(next); setError(''); setMessage(''); setPassword(''); setFormKey(v => v + 1);
   }
 
@@ -224,7 +224,7 @@ export function LoginForm({ initialMfa, audience = 'admin', confirmationError = 
                 </div>
               )}
             <form key={`${mode}-${formKey}`} className="flex flex-col gap-5" onSubmit={e => { e.preventDefault(); handlePasswordSubmit(new FormData(e.currentTarget)); }}>
-              <div className="space-y-2"><label htmlFor="login-email" className="block text-sm font-medium">E-mail</label><input id="login-email" name="email" type="email" autoComplete="username" required maxLength={254} className="field-input w-full" disabled={busy} /></div>
+              <div className="space-y-2"><label htmlFor="login-email" className="block text-sm font-medium">E-mail</label><input id="login-email" name="email" type="email" autoComplete="username" required maxLength={254} className="field-input w-full" disabled={busy || captchaLoading} /></div>
               {mode !== 'resend' && mode !== 'forgot' && (
                 <div className="flex flex-col gap-2">
                   <label htmlFor="login-password" className="block text-sm font-medium">Senha</label>
@@ -241,7 +241,7 @@ export function LoginForm({ initialMfa, audience = 'admin', confirmationError = 
                       onChange={(e) => setPassword(e.target.value)}
                       aria-describedby={mode === 'signup' ? 'password-help password-strength' : undefined}
                       className="field-input w-full !pr-14"
-                      disabled={busy}
+                      disabled={busy || captchaLoading}
                     />
                     <button type="button" onClick={() => setShowPassword(v => !v)} aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'} aria-pressed={showPassword} className="absolute inset-y-0 right-0 px-4 focus-visible:outline-2">{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button>
                   </div>
@@ -300,8 +300,9 @@ export function LoginForm({ initialMfa, audience = 'admin', confirmationError = 
                 <input key={formKey} id="otp-token" name="token" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" minLength={6} maxLength={6} required className="field-input w-full font-mono tracking-[.4em]" disabled={busy} autoFocus />
               </div>
               <button type="submit" disabled={busy} className="btn-primary-nex w-full justify-center disabled:opacity-60">{busy ? 'Verificando…' : 'Verificar código'}</button>
+              <Turnstile key={captchaKey} onVerify={setCaptcha} onExpire={() => setCaptcha('')} onError={() => { setCaptcha(''); setError('Verificação indisponível. Atualize a página.'); }} />
               <div className="flex flex-wrap gap-4 text-sm">
-                <button type="button" disabled={busy} className="underline underline-offset-4" onClick={() => { void submit('otp', { email: otpEmail, captcha }); }}>Reenviar código</button>
+                <button type="button" disabled={busy || (captchaEnforced && !captcha)} className="underline underline-offset-4" onClick={() => { void submit('otp', { email: otpEmail, captcha }); }}>Reenviar código</button>
                 <button type="button" disabled={busy} className="underline underline-offset-4" onClick={() => goMode('login')}>Usar senha</button>
               </div>
             </form>

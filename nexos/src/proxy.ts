@@ -1,6 +1,11 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { randomBytes } from 'node:crypto';
+import { isSameOrigin } from './lib/request-security';
+
+// Rotas mutantes que exigem mesma origem (defesa em profundidade antes dos handlers).
+const ORIGIN_PROTECTED = ['/api/auth', '/api/contact', '/api/checkout'];
+const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
 function getNonce(): string {
   return randomBytes(16).toString('base64url');
@@ -20,6 +25,12 @@ function getIp(req: NextRequest): string {
 }
 
 export async function proxy(req: NextRequest) {
+  const pathname = req.nextUrl.pathname;
+  const isProtected = ORIGIN_PROTECTED.some((route) => pathname === route || pathname.startsWith(`${route}/`));
+  if (isProtected && !SAFE_METHODS.has(req.method) && !isSameOrigin(req)) {
+    return NextResponse.json({ error: 'Origem inválida.' }, { status: 403 });
+  }
+
   const nonce = getNonce();
   const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
   const origin = url ? new URL(url).origin : '';
@@ -77,7 +88,9 @@ export async function proxy(req: NextRequest) {
     });
     // Não bloqueia rota se falhar, só tenta refresh
     try {
-      await supabase.auth.getUser();
+      // Verify/refresh JWT locally when asymmetric keys are available. Handlers
+      // still use getUser() for up-to-date authorization and account checks.
+      await supabase.auth.getClaims();
     } catch {}
   }
 

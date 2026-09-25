@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Client } from '@notionhq/client';
 import { z } from 'zod';
-import { isTurnstileEnforced, verifyTurnstileToken } from '@/lib/turnstile';
+import { isTurnstileConfigured, isTurnstileEnforced, verifyTurnstileToken } from '@/lib/turnstile';
 import { getAdminAccess, deniedJson, privateJson } from '@/lib/auth/admin';
 import { notionHealth } from '@/lib/admin-health';
 import { isSameOrigin, readJsonBody, RequestError } from '@/lib/request-security';
@@ -59,14 +59,15 @@ export async function POST(req: Request) {
 
     // ── Turnstile (Cloudflare) ──
     if (isTurnstileEnforced()) {
-      const token = (data as unknown as { turnstileToken?: string }).turnstileToken;
+      if (!isTurnstileConfigured()) return privateJson({ error: 'Verificação de segurança temporariamente indisponível.' }, 503);
+      const token = data.turnstileToken;
       if (!token) {
         return NextResponse.json({ error: 'Verificação de segurança obrigatória. Atualize a página e tente novamente.' }, { status: 400 });
       }
       const ip = req.headers.get('cf-connecting-ip') ?? req.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
-      const result = await verifyTurnstileToken(token, ip ?? undefined);
+      const result = await verifyTurnstileToken(token, ip ?? undefined).catch(() => ({ success: false }));
       if (!result.success) {
-        return NextResponse.json({ error: 'Falha na verificação anti-bot. Tente novamente.', details: result['error-codes']?.join(', ') }, { status: 403 });
+        return privateJson({ error: 'Falha na verificação de segurança. Conclua a nova verificação e tente novamente.' }, 403);
       }
     }
 

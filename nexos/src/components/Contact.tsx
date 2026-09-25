@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { config } from '@/config';
 import { Turnstile } from './Turnstile';
+import { useTurnstileConfig } from '@/lib/use-turnstile-config';
 import styles from './BottomFunnel.module.css';
 
 interface FormData {
@@ -57,7 +58,8 @@ export function Contact({ className = '' }: ContactProps) {
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
-  const hasTurnstile = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const { required: hasTurnstile } = useTurnstileConfig();
+  const [captchaKey, setCaptchaKey] = useState(0);
 
   const whatsappUrl: string = `https://wa.me/${config.whatsapp.number}?text=${encodeURIComponent(config.whatsapp.message)}`;
 
@@ -72,12 +74,17 @@ export function Contact({ className = '' }: ContactProps) {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
+    if (submitting) return;
     const newErrors = validate(formData);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
+    if (hasTurnstile && !turnstileToken) {
+      setSubmitError('Conclua a verificação de segurança antes de enviar.');
+      return;
+    }
     setSubmitting(true);
     setErrors({});
     setSubmitError(null);
@@ -87,6 +94,7 @@ export function Contact({ className = '' }: ContactProps) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...formData, ...(turnstileToken ? { turnstileToken } : {}) }),
+        signal: AbortSignal.timeout(25000),
       });
 
       const body: { error?: string; details?: unknown; hint?: string } = await res.json().catch(() => ({}));
@@ -103,6 +111,8 @@ export function Contact({ className = '' }: ContactProps) {
       const msg = err instanceof Error ? err.message : 'Erro ao enviar. Tente novamente.';
       setSubmitError(msg);
     } finally {
+      setTurnstileToken(null);
+      setCaptchaKey(v => v + 1);
       setSubmitting(false);
     }
   };
@@ -295,14 +305,14 @@ export function Contact({ className = '' }: ContactProps) {
 
             {hasTurnstile && (
               <div style={{ marginTop: 20 }}>
-                <Turnstile onVerify={setTurnstileToken} onExpire={() => setTurnstileToken(null)} onError={() => setTurnstileToken(null)} />
+                <Turnstile key={captchaKey} onVerify={setTurnstileToken} onExpire={() => setTurnstileToken(null)} onError={() => { setTurnstileToken(null); setSubmitError('Verificação indisponível. Atualize a página e tente novamente.'); }} />
               </div>
             )}
 
             <div className={styles.submitRow}>
               <motion.button
                 type="submit"
-                disabled={submitting}
+                disabled={submitting || (hasTurnstile && !turnstileToken)}
                 aria-busy={submitting}
                 whileTap={reduce ? undefined : { scale: 0.98 }}
                 transition={{ duration: 0.2, ease: [0.32, 0.72, 0, 1] }}

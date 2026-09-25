@@ -1,7 +1,7 @@
 // Explicit integration test: creates two disposable Auth users, sends no emails,
 // runs an isolated local app, and revokes/deletes its fixtures in finally.
 import assert from 'node:assert/strict';
-import { createHmac, randomUUID } from 'node:crypto';
+import { createHash, createHmac, randomUUID } from 'node:crypto';
 import { spawn } from 'node:child_process';
 import { once } from 'node:events';
 import { createServer } from 'node:net';
@@ -15,6 +15,9 @@ const secret = process.env.SUPABASE_SECRET_KEY;
 assert.ok(url && secret, 'Supabase server configuration required');
 const admin = createAdminClient({ env: { url, secretKeys: { default: secret } } });
 const run = randomUUID();
+const replayKey = randomUUID();
+const replayKeyHash = createHash('sha256').update(replayKey).digest('hex');
+const checkoutSecret = randomUUID() + randomUUID();
 const password = `${randomUUID()}-Aa9!`;
 const origin = 'http://localhost:3200';
 const fixtures = [];
@@ -64,7 +67,7 @@ try {
     fixtures.push({ id: data.user.id, email });
   }
   server = spawn(process.execPath, ['--use-system-ca', 'node_modules/next/dist/bin/next', 'start', '-p', '3200'], {
-    env: { ...process.env, SITE_URL: origin, DASHBOARD_ADMIN_USER_IDS: fixtures[1].id, TURNSTILE_ENFORCED: 'false' },
+    env: { ...process.env, SITE_URL: origin, DASHBOARD_ADMIN_USER_IDS: fixtures[1].id, TURNSTILE_ENFORCED: 'false', NEXT_PUBLIC_TURNSTILE_SITE_KEY: 'test-runtime-public-key', TURNSTILE_SECRET_KEY: 'test-runtime-private-key', ASAAS_ENV: 'sandbox', ASAAS_API_KEY: 'invalid-test-key-no-payments', CHECKOUT_STATUS_SECRET: checkoutSecret },
     stdio: ['ignore', 'ignore', 'inherit'],
   });
   server.on('error', error => { throw error; });
@@ -77,6 +80,10 @@ try {
   assert.ok(ready, 'Isolated test server failed to start');
   for (let i = 0; i < 2; i++) contexts.push(await request.newContext({ baseURL: origin, extraHTTPHeaders: { Origin: origin, 'x-forwarded-for': `${run}-${i}` } }));
   const [customer, operator] = contexts;
+  const securityConfig = await customer.get('/api/security/config');
+  assert.equal(securityConfig.status(), 200);
+  assert.deepEqual(await securityConfig.json(), { required: false, configured: true, siteKey: 'test-runtime-public-key' }, 'Captcha config must use runtime env and expose only the public key');
+  assert.ok(securityConfig.headers()['cache-control'].includes('no-store'));
   const denied = await post(customer, 'user-login', { email: fixtures[0].email, password });
   assert.equal(denied.status(), 401, 'Unconfirmed email must be rejected');
   const confirmed = await admin.auth.admin.updateUserById(fixtures[0].id, { email_confirm: true });
@@ -84,7 +91,12 @@ try {
   const login = await post(customer, 'user-login', { email: fixtures[0].email, password });
   assert.equal(login.status(), 200);
   assert.equal((await login.json()).enrollmentRequired, true);
+  assert.equal((await customer.get('/api/auth/session')).status(), 403, 'Session preflight must require MFA');
   await completeMfa(customer, 'user-');
+  const session = await customer.get('/api/auth/session');
+  assert.equal(session.status(), 200);
+  assert.deepEqual(await session.json(), { ok: true, email: fixtures[0].email });
+  assert.ok(session.headers()['cache-control'].includes('no-store'));
   assert.equal((await customer.get('/conta')).status(), 200);
   assert.equal((await customer.get('/api/supabase/health')).status(), 403, 'User-editable admin metadata must not authorize admin access');
   const state = await customer.storageState();
@@ -102,9 +114,23 @@ try {
   const dashboard = await operator.get('/dashboard');
   assert.equal(dashboard.status(), 200);
   assert.ok((await dashboard.text()).includes(fixtures[1].email));
+
+  // Seed a completed synthetic attempt: replay never contacts the payment provider.
+  const purchase = { productId: 'placa', name: 'Integration Test', email: fixtures[0].email, cpfCnpj: '12345678901', billingType: 'CREDIT_CARD', installments: 1, quantity: 1 };
+  const payloadHash = createHmac('sha256', checkoutSecret).update(JSON.stringify({ productId: purchase.productId, name: purchase.name, email: purchase.email, cpfDigits: purchase.cpfCnpj, billingType: purchase.billingType, installments: purchase.installments, quantity: purchase.quantity })).digest('hex');
+  const replayResult = { paymentId: `synthetic-${run}`, statusToken: 'synthetic-private-token' };
+  const seeded = await admin.from('idempotency_keys').insert({ owner_id: fixtures[0].id, key_hash: replayKeyHash, payload_hash: payloadHash, status: 'succeeded', result: replayResult });
+  assert.equal(seeded.error, null, 'Synthetic replay fixture must be created');
+  const ownReplay = await customer.post('/api/checkout', { headers: { 'Idempotency-Key': replayKey }, data: purchase });
+  assert.equal(ownReplay.status(), 200);
+  assert.deepEqual(await ownReplay.json(), replayResult);
+  const foreignReplay = await operator.post('/api/checkout', { headers: { 'Idempotency-Key': replayKey }, data: purchase });
+  assert.equal(foreignReplay.status(), 409, 'A different authenticated account cannot recover another user’s payment');
+  assert.equal((await foreignReplay.text()).includes('synthetic-private-token'), false);
   assert.equal((await post(customer, 'user-logout')).status(), 200);
+  assert.equal((await customer.get('/api/auth/session')).status(), 401);
   assert.equal((await customer.get('/conta', { maxRedirects: 0 })).status(), 307);
-  console.log('PASS: email confirmation, real TOTP enrollment/challenge, AAL1 denial, AAL2 access, admin allowlist, forged cookies, HttpOnly/Secure cookies and logout.');
+  console.log('PASS: email confirmation, real TOTP, session preflight, AAL1 denial, AAL2 access, admin allowlist, forged cookies, HttpOnly/Secure cookies, payment replay ownership and logout.');
 } finally {
   for (const context of contexts) {
     await post(context, 'logout').catch(() => {});
@@ -112,6 +138,8 @@ try {
   }
   if (server && server.exitCode === null) { const exited = once(server, 'exit'); server.kill(); await exited; }
   let cleanupFailed = false;
+  const replayCleanup = await admin.from('idempotency_keys').delete().eq('key_hash', replayKeyHash);
+  if (replayCleanup.error) { cleanupFailed = true; console.error('Could not clean up synthetic payment replay fixture.'); }
   for (const fixture of fixtures) {
     const { error } = await admin.auth.admin.deleteUser(fixture.id);
     if (error) { cleanupFailed = true; console.error(`Cleanup required for test Auth user ${fixture.id}`); }

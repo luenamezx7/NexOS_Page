@@ -111,3 +111,17 @@ test('callback URLs only accept internal paths (no open redirect)', () => {
   assert.equal(sanitizeCallbackPath(null), null);
   assert.equal(sanitizeCallbackPath('/'.repeat(600)), null);
 });
+
+test('callbacks reject URL normalization tricks and recursive auth destinations', () => {
+  for (const path of ['/\t/evil.example', '/%5cevil.example', '/%2f%2fevil.example', '/a/../portal/acesso', '/portal/acesso?callbackUrl=/conta', '/auth/callback', '/api/auth/user-logout', '/login', '/entrar', '/%ZZ']) {
+    assert.equal(sanitizeCallbackPath(path), null, path);
+  }
+  assert.equal(sanitizeCallbackPath('/?checkout=placa&quantity=3#servicos'), '/?checkout=placa&quantity=3#servicos');
+  assert.equal(sanitizeCallbackPath('/portal/redefinir'), '/portal/redefinir');
+});
+
+test('callbacks reject repeated query parameters and non-string input', () => {
+  for (const value of [['/conta', '/dashboard'], {}, 1, true]) {
+    assert.equal(sanitizeCallbackPath(value), null);
+  }
+});
