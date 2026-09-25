@@ -44,7 +44,7 @@ export function MacBookMockup({
       >
         {/* SVG ORIGINAL DO FIGMA */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/mackbook_1.svg" alt="MacBook Air 13 Figma" className="relative z-0 block h-auto w-full select-none" draggable={false} />
+        <img src="/mackbook_1.svg" alt="MacBook Air 13 Figma" className="relative z-0 block h-auto w-full select-none" draggable={false} width={2180} height={1324} />
 
         {/* Overlay da tela — preenche 100% do Screen REPLACE, sangra 1.5px sob a borda preta para não deixar fresta roxa/branca */}
         <div
@@ -69,6 +69,8 @@ export function MacBookMockup({
               alt={wallpaperAlt}
               className="h-full w-full object-cover object-center"
               draggable={false}
+              width={1740}
+              height={1106}
             />
           ) : (
             <div className="h-full w-full bg-gradient-to-br from-[#83358F] via-[#7c3aed] to-[#ff5c8a]" />

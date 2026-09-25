@@ -123,7 +123,7 @@ export default function BrandEntrance({ onComplete }: { onComplete: () => void }
         />
         <div className="relative flex w-full max-w-2xl items-center justify-center gap-4 md:gap-8">
           <div ref={logoRef} className="relative" style={{ width: 'min(55vw, 460px)', aspectRatio: '1433 / 344' }}>
-            <img src={logoSrc} alt="NexOS" className="h-full w-full object-contain" draggable={false} />
+            <img src={logoSrc} alt="NexOS" className="h-full w-full object-contain" draggable={false} width={1433} height={344} />
           </div>
           <RobotCycler className="logo-invert shrink-0" style={{ width: iconW || 60, height: iconH || 50 }} intervalMs={1600} fadeMs={600} />
         </div>
@@ -167,7 +167,7 @@ export default function BrandEntrance({ onComplete }: { onComplete: () => void }
             x: { duration: 0.95, ease: [0.45, 0, 0.2, 1], delay: 1.85 },
           }}
         >
-          <img src={logoSrc} alt="NexOS" className="h-full w-full object-contain will-change-transform" draggable={false} />
+          <img src={logoSrc} alt="NexOS" className="h-full w-full object-contain will-change-transform" draggable={false} width={1433} height={344} />
         </motion.div>
         {ready && (
           <motion.div

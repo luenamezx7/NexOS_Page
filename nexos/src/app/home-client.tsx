@@ -6,16 +6,18 @@ import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { Header } from '@/components/Header';
 import { Hero } from '@/components/Hero';
 import { ProductShowcase } from '@/components/ProductShowcase';
-import { Services } from '@/components/Services';
-import { Testimonials } from '@/components/Testimonials';
-import { FAQ } from '@/components/FAQ';
-import { Contact } from '@/components/Contact';
-import { Footer } from '@/components/Footer';
 import { SectionIndicator } from '@/components/SectionIndicator';
 import { ThinkingOrbWrapper } from '@/components/ThinkingOrbWrapper';
 import BrandEntrance from '@/components/BrandEntrance';
 import Topography from '@/components/Topography';
 import { useTheme } from '@/components/ThemeProvider';
+
+// Lazy load heavy components below the fold
+const Services = dynamic(() => import('@/components/Services').then(m => m.Services), { ssr: false, loading: () => null });
+const Testimonials = dynamic(() => import('@/components/Testimonials').then(m => m.Testimonials), { ssr: false, loading: () => null });
+const FAQ = dynamic(() => import('@/components/FAQ').then(m => m.FAQ), { ssr: false, loading: () => null });
+const Contact = dynamic(() => import('@/components/Contact').then(m => m.Contact), { ssr: false, loading: () => null });
+const Footer = dynamic(() => import('@/components/Footer').then(m => m.Footer), { ssr: false, loading: () => null });
 
 
 // Mesmo lazy do Hero: WebGL/canvas fora do bundle inicial, com fallback

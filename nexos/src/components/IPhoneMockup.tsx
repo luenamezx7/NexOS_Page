@@ -115,17 +115,19 @@ export function IPhoneMockup({
         >
           {/* Wallpaper / children */}
           <div className="absolute inset-0">
-            {children ? (
-              <div className="h-full w-full overflow-hidden">{children}</div>
-            ) : wallpaperSrc ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={wallpaperSrc}
-                alt={wallpaperAlt}
-                className="h-full w-full object-cover"
-                draggable={false}
-              />
-            ) : (
+{children ? (
+                <div className="h-full w-full overflow-hidden">{children}</div>
+              ) : wallpaperSrc ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={wallpaperSrc}
+                  alt={wallpaperAlt}
+                  className="h-full w-full object-cover"
+                  draggable={false}
+                  width={402}
+                  height={874}
+                />
+              ) : (
               <div className="h-full w-full bg-gradient-to-br from-[#83358F] via-[#7c3aed] to-[#ff5c8a]" />
             )}
           </div>
