@@ -60,7 +60,7 @@ export function Turnstile({ onVerify, onExpire, onError, theme = 'auto', size = 
     return () => { cancelled = true; if (widget !== undefined) window.turnstile?.remove(widget); };
   }, [siteKey, required, configured, loading, theme, size, attempt]);
   if (loading) return <p role="status" className="text-sm">Preparando verificação de segurança…</p>;
-  if (error || (required && !configured)) return <p role="alert" className="text-sm">{error || 'Verificação de segurança temporariamente indisponível. Tente novamente mais tarde.'}</p>;
+  if (error || (required && !configured)) return <p role="alert" className="text-sm">{error || 'Verificação de segurança não está configurada.'}</p>;
   return required && siteKey ? <div>
     <div ref={container} className="min-h-[65px]" aria-label="Verificação de segurança" />
     {failed && <button type="button" className="text-sm underline underline-offset-4" onClick={() => { setFailed(false); callbacks.current.onExpire?.(); setAttempt(v => v + 1); }}>Tentar verificação novamente</button>}

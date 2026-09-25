@@ -59,7 +59,7 @@ export async function POST(req: Request) {
 
     // ── Turnstile (Cloudflare) ──
     if (isTurnstileEnforced()) {
-      if (!isTurnstileConfigured()) return privateJson({ error: 'Verificação de segurança temporariamente indisponível.' }, 503);
+      if (!isTurnstileConfigured()) return privateJson({ error: 'Verificação de segurança não está configurada.' }, 503);
       const token = data.turnstileToken;
       if (!token) {
         return NextResponse.json({ error: 'Verificação de segurança obrigatória. Atualize a página e tente novamente.' }, { status: 400 });
@@ -77,7 +77,7 @@ export async function POST(req: Request) {
 if (!token || !rawDatabaseId) {
       console.error('[api/contact] NOTION_TOKEN ou NOTION_DATABASE_ID não configurados', { hasToken: !!token, hasDatabaseId: !!rawDatabaseId });
       return NextResponse.json(
-        { error: 'Contato temporariamente indisponível. Tente novamente mais tarde.' },
+        { error: 'Serviço de contato temporariamente indisponível. Tente novamente mais tarde.' },
         { status: 503, headers: { 'Cache-Control': 'private, no-store' } }
       );
     }

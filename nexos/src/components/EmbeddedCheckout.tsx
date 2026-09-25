@@ -173,7 +173,7 @@ export function EmbeddedCheckoutDrawer({ open, onClose, productId, productTitle,
           window.location.assign(new URL(`/portal/acesso?callbackUrl=${encodeURIComponent(back)}`, window.location.origin).href);
           return;
         }
-        if (!response.ok) throw new Error('Sessão temporariamente indisponível. Feche e tente novamente.');
+        if (!response.ok) throw new Error('Sessão expirada. Feche e tente novamente.');
         const data = await response.json();
         if (data?.ok !== true || typeof data.email !== 'string' || !data.email) throw new Error('Sessão inválida.');
         if (!controller.signal.aborted) { setCustomerEmail(data.email); setSessionReady(true); }
