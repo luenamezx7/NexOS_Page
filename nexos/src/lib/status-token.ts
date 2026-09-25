@@ -1,6 +1,6 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 
-function secret(): string {
+export function secret(): string {
   const key = process.env.CHECKOUT_STATUS_SECRET || (process.env.SUPABASE_SECRET_KEY
     ? createHmac('sha256', process.env.SUPABASE_SECRET_KEY).update('nexos-checkout-status-v1').digest('hex')
     : undefined);

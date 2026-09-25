@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { config } from '@/config';
 import { BULK_MAX_QTY, bulkUnitPrice } from '@/lib/bulk-pricing';
-import { createAsaasPayment, generateExternalReference, isAsaasConfigured } from '@/lib/asaas';
+import { createAsaasPayment, generateExternalReference, isAsaasConfigured, isPixEnabled } from '@/lib/asaas';
 import { isTurnstileConfigured, isTurnstileEnforced, verifyTurnstileToken } from '@/lib/turnstile';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { createHash, createHmac } from 'node:crypto';
-import { issueStatusToken } from '@/lib/status-token';
+import { issueStatusToken, secret as statusSecret } from '@/lib/status-token';
 import { isSameOrigin, readJsonBody, RequestError } from '@/lib/request-security';
 import { getUserAccess } from '@/lib/auth/user';
 
@@ -119,7 +119,7 @@ export async function POST(req: NextRequest) {
 
   if (!isAsaasConfigured()) {
     console.error('[api/checkout] ASAAS_API_KEY não configurado');
-    return NextResponse.json({ error: 'Pagamentos temporariamente indisponíveis.' }, { status: 500, headers: securityHeaders() });
+    return NextResponse.json({ error: 'Gateway de pagamentos (Asaas) não está configurado. Contate o suporte.' }, { status: 503, headers: securityHeaders() });
   }
 
   let productId: string;
@@ -145,7 +145,7 @@ export async function POST(req: NextRequest) {
 
   // Turnstile anti-bot (se configurado)
   if (isTurnstileEnforced()) {
-    if (!isTurnstileConfigured()) return NextResponse.json({ error: 'Verificação de segurança temporariamente indisponível.' }, { status: 503, headers: securityHeaders() });
+    if (!isTurnstileConfigured()) return NextResponse.json({ error: 'Verificação de segurança não está configurada.' }, { status: 503, headers: securityHeaders() });
     if (!turnstileToken) {
       return NextResponse.json({ error: 'Verificação de segurança obrigatória.' }, { status: 400, headers: securityHeaders() });
     }
@@ -172,8 +172,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Valor mínimo para cobrança no Asaas é R$ 5,00.' }, { status: 400, headers: securityHeaders() });
   }
 
-  // Pix ainda em aprovação — bloqueia no servidor também
-  if (billingType === 'PIX') {
+  if (billingType === 'PIX' && !isPixEnabled()) {
     return NextResponse.json({ error: 'Pix em desenvolvimento — liberação pendente no Asaas.' }, { status: 400, headers: securityHeaders() });
   }
 
@@ -187,7 +186,7 @@ export async function POST(req: NextRequest) {
     // Validate signing configuration before any external charge is created.
     const { token: statusToken } = issueStatusToken(externalReference);
     const db = createAdminClient();
-    const payloadHash = createHmac('sha256', process.env.CHECKOUT_STATUS_SECRET || process.env.SUPABASE_SECRET_KEY!).update(JSON.stringify({ productId, name, email, cpfDigits, billingType, installments, quantity })).digest('hex');
+    const payloadHash = createHmac('sha256', statusSecret()).update(JSON.stringify({ productId, name, email, cpfDigits, billingType, installments, quantity })).digest('hex');
     const { error: reservationError } = await db.from('idempotency_keys').insert({
       key_hash: keyHash,
       payload_hash: payloadHash,
@@ -251,6 +250,9 @@ export async function POST(req: NextRequest) {
       try { await createAdminClient().from('idempotency_keys').update({ status: 'unknown' }).eq('key_hash', keyHash); } catch {}
     }
     console.error('[api/checkout] falha na cobrança', err instanceof Error ? err.name : 'ProviderError');
-    return NextResponse.json({ error: reserved ? 'Não foi possível confirmar a cobrança. Aguarde a conciliação antes de gerar outra.' : 'Pagamentos temporariamente indisponíveis.' }, { status: 503, headers: securityHeaders() });
+    const fallbackMsg = reserved
+      ? 'Não foi possível confirmar a cobrança. Aguarde a conciliação antes de gerar outra.'
+      : 'O gateway de pagamentos não respondeu. Tente novamente em alguns instantes.';
+    return NextResponse.json({ error: fallbackMsg }, { status: reserved ? 409 : 503, headers: securityHeaders() });
   }
 }

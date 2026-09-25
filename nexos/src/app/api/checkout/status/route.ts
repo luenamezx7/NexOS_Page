@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Origem inválida.' }, { status: 403, headers: securityHeaders() });
   }
   if (!isAsaasConfigured()) {
-    return NextResponse.json({ error: 'Pagamentos indisponíveis.' }, { status: 500, headers: securityHeaders() });
+    return NextResponse.json({ error: 'Gateway de pagamentos (Asaas) não está configurado.' }, { status: 503, headers: securityHeaders() });
   }
 
   try {
