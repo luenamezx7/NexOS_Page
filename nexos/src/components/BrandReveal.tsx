@@ -65,7 +65,7 @@ export default function BrandReveal() {
       <section ref={sectionRef} aria-label="NexOS" className="relative flex min-h-[92svh] w-full items-center justify-center overflow-x-clip border-y border-ink/10 bg-canvas px-4">
         <div className="flex items-center justify-center gap-6 md:gap-8">
           <div ref={logoRef} className="relative" style={{ width: 'clamp(200px, 42vw, 460px)', aspectRatio: '1433 / 344' }}>
-            <img src={logoSrc} alt="NexOS" className="h-full w-full object-contain" draggable={false} />
+<img src={logoSrc} alt="NexOS" className="h-full w-full object-contain" draggable={false} width={1433} height={344} />
           </div>
           <img src={oSrc} alt="" aria-hidden="true" className="shrink-0 object-contain" style={{ width: iconW || 90, height: iconH || 52, rotate: '90deg' }} draggable={false} />
         </div>
@@ -90,7 +90,7 @@ export default function BrandReveal() {
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={logoSrc} alt="NexOS" className="h-full w-full object-contain" draggable={false} />
+          <img src={logoSrc} alt="NexOS" className="h-full w-full object-contain" draggable={false} width={1433} height={344} />
         </motion.div>
 
         {/* O personalizado 90° sobre o O, depois desliza para direita */}
@@ -108,6 +108,8 @@ export default function BrandReveal() {
               left: 0,
               rotate: '90deg',
             }}
+            width={307}
+            height={257}
             initial={{ opacity: 0, x: oX, scale: 0.98 }}
             animate={
               inView

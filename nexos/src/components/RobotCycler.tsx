@@ -53,6 +53,8 @@ export function RobotCycler({
         className={className}
         style={style}
         draggable={false}
+        width={112}
+        height={28}
       />
     );
   }
@@ -75,6 +77,8 @@ export function RobotCycler({
           transition={{ duration: fadeMs / 1000, ease: FLUID_EASE }}
           className="absolute inset-0 h-full w-full object-contain will-change-transform"
           style={{ backfaceVisibility: 'hidden' } as React.CSSProperties}
+          width={112}
+          height={28}
         />
       </AnimatePresence>
       {/* spacer mantém proporção 307/257 sem layout shift e sem gargalo (decode off-main) */}
@@ -85,6 +89,8 @@ export function RobotCycler({
         className="invisible block h-full w-auto object-contain"
         draggable={false}
         decoding="async"
+        width={112}
+        height={28}
       />
     </span>
   );

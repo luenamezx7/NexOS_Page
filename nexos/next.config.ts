@@ -4,16 +4,37 @@ const SECURITY_HEADERS = [
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'X-Frame-Options', value: 'DENY' },
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-  { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
-  { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' },
+  { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(), fullscreen=()' },
+  { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains; preload' },
+  { key: 'Cross-Origin-Opener-Policy', value: 'same-origin-allow-popups' },
+  { key: 'Cross-Origin-Resource-Policy', value: 'same-origin' },
 ];
 
-// Assets estáticos não passam pelo proxy (matcher os exclui) — o scanner do
-// pentest exige CSP presente também em /_next/static (CWE-1021).
+// CSP robusta com Trusted Types para mitigar XSS
+const CSP_POLICY = [
+  "default-src 'self'",
+  "script-src 'self' 'wasm-unsafe-eval' 'inline-speculation-rules' https://challenges.cloudflare.com https://static.cloudflareinsights.com",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "img-src 'self' data: blob: https:",
+  "font-src 'self' data: https://fonts.gstatic.com",
+  "connect-src 'self' https://api.asaas.com https://lgfttyeezviecfqbbmqk.supabase.co https://challenges.cloudflare.com",
+  "frame-src https://challenges.cloudflare.com",
+  "frame-ancestors 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "manifest-src 'self'",
+  "object-src 'none'",
+  "trusted-types default nextjs#internal",
+  "require-trusted-types-for 'script'",
+].join('; ');
+
+const CSP_REPORT_ONLY = CSP_POLICY.replace('require-trusted-types-for', 'require-trusted-types-for').replace("trusted-types default", "trusted-types default nextjs#internal");
+
+// CSP estrita para assets (mais restritiva)
 const STATIC_CSP = [
   "default-src 'none'",
   "script-src 'self'",
-  "style-src 'unsafe-inline'",
+  "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data:",
   "font-src 'self' data:",
   "base-uri 'none'",
@@ -23,13 +44,12 @@ const STATIC_CSP = [
 
 const nextConfig: NextConfig = {
   turbopack: { root: process.cwd() },
-  images: { unoptimized: true },
+  images: { unoptimized: true, formats: ['image/avif', 'image/webp'] },
   poweredByHeader: false,
   typescript: { ignoreBuildErrors: false },
-  experimental: { optimizePackageImports: ['lucide-react'] },
+  experimental: { optimizePackageImports: ['lucide-react', 'motion/react'] },
   async redirects() {
     return [
-      // Turnstile só aceita o apex — evita login/origem quebrados no www.
       {
         source: '/:path*',
         has: [{ type: 'host', value: 'www.nexoslab.online' }],
@@ -42,9 +62,22 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
-      { source: '/(.*)', headers: SECURITY_HEADERS },
-      { source: '/_next/static/:path*', headers: [...SECURITY_HEADERS, { key: 'Content-Security-Policy', value: STATIC_CSP }] },
-      { source: '/.well-known/:path*', headers: [{ key: 'Cache-Control', value: 'public, max-age=86400' }] },
+      {
+        source: '/(.*)',
+        headers: [
+          ...SECURITY_HEADERS,
+          { key: 'Content-Security-Policy', value: CSP_POLICY },
+          { key: 'Content-Security-Policy-Report-Only', value: CSP_REPORT_ONLY },
+        ],
+      },
+      {
+        source: '/_next/static/:path*',
+        headers: [...SECURITY_HEADERS, { key: 'Content-Security-Policy', value: STATIC_CSP }],
+      },
+      {
+        source: '/.well-known/:path*',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=86400' }],
+      },
     ];
   },
 };

@@ -52,7 +52,15 @@ export function Header() {
           <RobotCycler className={`logo-invert ${styles.robot}`} intervalMs={2200} fadeMs={650} />
         </a>
         <nav className={styles.desktopNav} aria-label="Navegação principal">
-          {NAV_ITEMS.map(item => <a key={item.href} href={item.href} onClick={event => { event.preventDefault(); handleNav(item.href); }} className={styles.navLink}>{item.label}</a>)}
+          <ul role="list" className="flex gap-6">
+            {NAV_ITEMS.map(item => (
+              <li key={item.href}>
+                <a href={item.href} onClick={event => { event.preventDefault(); handleNav(item.href); }} className={styles.navLink}>
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
         </nav>
         <div className={styles.actions}>
           <Link href="/portal/acesso" className={styles.account}>
@@ -68,7 +76,13 @@ export function Header() {
       <AnimatePresence>
         {mobileOpen && (
           <motion.nav id="mobile-navigation" aria-label="Navegação móvel" initial={reduce ? false : { opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: reduce ? 0 : -8 }} transition={{ duration: 0.2 }} className={styles.mobileNav}>
-            {NAV_ITEMS.map(item => <a key={item.href} href={item.href} onClick={event => { event.preventDefault(); handleNav(item.href); }}>{item.label}<ArrowUpRight size={16} aria-hidden="true" /></a>)}
+            <ul role="list" className="flex flex-col gap-4">
+              {NAV_ITEMS.map(item => (
+                <li key={item.href}>
+                  <a href={item.href} onClick={event => { event.preventDefault(); handleNav(item.href); }}>{item.label}<ArrowUpRight size={16} aria-hidden="true" /></a>
+                </li>
+              ))}
+            </ul>
             <button type="button" className={styles.mobileStart} onClick={() => handleNav('#services')}>Ver soluções <ArrowUpRight size={16} aria-hidden="true" /></button>
           </motion.nav>
         )}

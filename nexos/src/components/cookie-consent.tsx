@@ -249,7 +249,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
           >
             <div
               className={`mx-auto flex w-full max-w-3xl flex-col gap-4 rounded-2xl border p-5 shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-[20px] md:flex-row md:items-center md:gap-5 md:p-6 ${
-                isDark ? 'border-white/10 bg-[#0a0a0a]/95' : 'border-ink/10 bg-white/95'
+                isDark ? 'border-white/15 bg-[#0a0a0a]/95' : 'border-ink/15 bg-white/95'
               }`}
             >
               <div className="flex min-w-0 flex-1 items-start gap-3">
@@ -263,7 +263,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                   <p className={`text-sm font-semibold leading-snug ${isDark ? 'text-white' : 'text-ink'}`}>
                     Usamos cookies — você escolhe
                   </p>
-                  <p className={`mt-1 text-[13px] leading-relaxed ${isDark ? 'text-white/60' : 'text-ink/60'}`}>
+                  <p className={`mt-1 text-[13px] leading-relaxed ${isDark ? 'text-white/70' : 'text-ink/70'}`}>
                     Só o essencial roda por padrão. Analytics e marketing ficam desligados até você aceitar.{' '}
                     <Link href="/cookies" className="underline underline-offset-2 hover:opacity-80">
                       Política de Cookies
@@ -277,8 +277,8 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                   onClick={rejectAll}
                   className={`rounded-xl border px-4 py-2.5 text-xs font-semibold transition ${
                     isDark
-                      ? 'border-white/10 bg-white/[0.06] text-white/70 hover:bg-white/10 hover:text-white'
-                      : 'border-ink/10 bg-ink/[0.04] text-ink/60 hover:bg-ink/10 hover:text-ink'
+                      ? 'border-white/15 bg-white/[0.08] text-white/80 hover:bg-white/15 hover:text-white'
+                      : 'border-ink/15 bg-ink/[0.06] text-ink/70 hover:bg-ink/12 hover:text-ink'
                   }`}
                 >
                   Recusar
@@ -288,8 +288,8 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                   onClick={openPreferences}
                   className={`rounded-xl border px-4 py-2.5 text-xs font-semibold transition ${
                     isDark
-                      ? 'border-white/10 bg-white/[0.06] text-white/70 hover:bg-white/10 hover:text-white'
-                      : 'border-ink/10 bg-ink/[0.04] text-ink/60 hover:bg-ink/10 hover:text-ink'
+                      ? 'border-white/15 bg-white/[0.08] text-white/80 hover:bg-white/15 hover:text-white'
+                      : 'border-ink/15 bg-ink/[0.06] text-ink/70 hover:bg-ink/12 hover:text-ink'
                   }`}
                 >
                   Personalizar
@@ -326,12 +326,13 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
               role="dialog"
               aria-modal="true"
               aria-labelledby="cookie-prefs-title"
+              aria-describedby="cookie-prefs-description"
               initial={reduce ? { opacity: 0 } : { opacity: 0, y: 32, scale: 0.98 }}
               animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
               exit={reduce ? { opacity: 0 } : { opacity: 0, y: 20, scale: 0.98 }}
               transition={{ duration: 0.45, ease: FLUID_EASE }}
               className={`fixed inset-x-0 bottom-0 z-[71] mx-auto flex max-h-[92dvh] w-full max-w-xl flex-col overflow-hidden rounded-t-[24px] border shadow-[0_24px_80px_rgba(0,0,0,0.6)] backdrop-blur-[20px] will-change-transform md:inset-0 md:m-auto md:h-fit md:max-h-[88dvh] md:w-[min(520px,calc(100vw-2rem))] md:rounded-3xl ${
-                isDark ? 'border-white/10 bg-[#0a0a0a]/95' : 'border-ink/10 bg-white/95'
+                isDark ? 'border-white/15 bg-[#0a0a0a]/95' : 'border-ink/15 bg-white/95'
               }`}
             >
               <div
@@ -356,6 +357,9 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                     >
                       Preferências de cookies
                     </h2>
+                    <p id="cookie-prefs-description" className={`mt-1 text-xs ${isDark ? 'text-white/60' : 'text-ink/60'}`}>
+                      Gerencie quais categorias de cookies podem ser usadas. Cookies essenciais são sempre ativos.
+                    </p>
                   </div>
                 </div>
                 <button
@@ -379,7 +383,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
               >
                 {/* Necessários — sempre ativos */}
                 <div
-                  className={`flex items-center justify-between gap-4 rounded-xl border p-4 ${isDark ? 'border-white/10 bg-white/[0.03]' : 'border-ink/10 bg-ink/[0.03]'}`}
+                  className={`flex items-center justify-between gap-4 rounded-xl border p-4 ${isDark ? 'border-white/15 bg-white/[0.05]' : 'border-ink/15 bg-ink/[0.05]'}`}
                 >
                   <div>
                     <p className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-ink'}`}>
@@ -402,7 +406,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                   return (
                     <div
                       key={cat.key}
-                      className={`flex items-center justify-between gap-4 rounded-xl border p-4 ${isDark ? 'border-white/10 bg-white/[0.03]' : 'border-ink/10 bg-ink/[0.03]'}`}
+                      className={`flex items-center justify-between gap-4 rounded-xl border p-4 ${isDark ? 'border-white/15 bg-white/[0.05]' : 'border-ink/15 bg-ink/[0.05]'}`}
                     >
                       <div className="min-w-0">
                         <p className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-ink'}`}>{cat.title}</p>
@@ -419,6 +423,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                         className={`relative h-7 w-12 shrink-0 rounded-full border transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff5c8a]/60 ${
                           on ? 'border-[#ff5c8a] bg-[#ff5c8a]' : isDark ? 'border-white/15 bg-white/10' : 'border-ink/15 bg-ink/10'
                         }`}
+                        id={`cookie-switch-${cat.key}`}
                       >
                         <span
                           aria-hidden="true"
@@ -431,9 +436,9 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                   );
                 })}
 
-                <p className={`text-[11px] leading-relaxed ${isDark ? 'text-white/35' : 'text-ink/40'}`}>
+<p className={`text-[11px] leading-relaxed ${isDark ? 'text-white/50' : 'text-ink/50'}`}>
                   Detalhes em <Link href="/cookies" className="underline underline-offset-2">/cookies</Link>. Sua escolha
-                  vale por 12 meses e pode ser alterada no rodapé em “Gerenciar cookies”.
+                  vale por 12 meses e pode ser alterada no rodapé em &ldquo;Gerenciar cookies&rdquo;.
                 </p>
               </div>
 
