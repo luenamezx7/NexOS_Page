@@ -9,6 +9,7 @@ import { config } from '@/config';
 import { BULK_MAX_QTY, bulkTag, bulkUnitPrice } from '@/lib/bulk-pricing';
 import { HoldButton } from './HoldButton';
 import { DetailTabs, type DetailTab } from './commerce/DetailTabs';
+import { MacBookMockup } from './MacBookMockup';
 import styles from './commerce/Commerce.module.css';
 
 const EmbeddedCheckoutDrawer = dynamic(() => import('./EmbeddedCheckout').then(m => m.EmbeddedCheckoutDrawer), { ssr: false });
@@ -47,7 +48,13 @@ export function ProductShowcase({ className = '' }: { className?: string }) {
               <p className={styles.lead}>Do balcão para o digital. Sua marca, seu link e duas formas de conectar: NFC e QR Code.</p>
             </motion.div>
             <motion.figure className={styles.productVisual} initial={reduce ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.7, ease: EASE }}>
-              <Image src="/placas/codex-1.png" alt="Placa NexOS de acrílico com NFC e QR Code, segurada por duas mãos" width={1672} height={941} sizes="(max-width: 899px) calc(100vw - 40px), (max-width: 1280px) 54vw, 660px" className={styles.productImage} />
+              <MacBookMockup
+                wallpaperSrc="/placas/codex-1.png"
+                wallpaperAlt="Placa NexOS de acrílico com NFC e QR Code, exibida na tela do MacBook"
+                className={styles.macbookMockup}
+                scale={0.85}
+                withShadow={false}
+              />
               <figcaption className={styles.photoCaption}><span><Nfc size={16} aria-hidden="true" /> Aproxime</span><span><QrCode size={16} aria-hidden="true" /> Ou escaneie</span></figcaption>
             </motion.figure>
             <div className={styles.purchase}>
