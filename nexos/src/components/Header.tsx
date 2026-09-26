@@ -16,10 +16,24 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [authenticated, setAuthenticated] = useState(false);
   const menuRef = useRef<HTMLButtonElement>(null);
   const reduce = useReducedMotion();
   const { scrollY } = useScroll();
   useMotionValueEvent(scrollY, 'change', latest => setScrolled(latest > 10));
+
+  useEffect(() => {
+    let active = true;
+    const check = async () => {
+      try {
+        const response = await fetch('/api/auth/session?requireMfa=false', { cache: 'no-store', signal: AbortSignal.timeout(8000) });
+        const data = await response.json();
+        if (active && data?.ok === true) setAuthenticated(true);
+      } catch { /* ignore */ }
+    };
+    void check();
+    return () => { active = false; };
+  }, []);
 
   const handleNav = useCallback((hash: string) => {
     setMobileOpen(false);
@@ -64,7 +78,7 @@ export function Header() {
         </nav>
         <div className={styles.actions}>
           <Link href="/portal/acesso" className={styles.account}>
-            <UserRound size={16} strokeWidth={1.75} aria-hidden="true" /><span>Minha conta</span>
+            <UserRound size={16} strokeWidth={1.75} aria-hidden="true" />{authenticated ? null : <span>Minha conta</span>}
           </Link>
           <ThemeToggle />
           <button type="button" className={styles.start} onClick={() => handleNav('#services')}>Ver soluções <ArrowUpRight size={16} aria-hidden="true" /></button>
