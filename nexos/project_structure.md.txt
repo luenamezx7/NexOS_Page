@@ -1,0 +1,87 @@
+Project Overview
+Framework: Next.js 16.3.5 with App Router (React 19.2.8)
+- Uses src/app/ directory structure (Next.js 13+ App Router)
+- next.config.ts with security headers, CSP, and redirects
+- Tailwind CSS 4.3.3 for styling
+Directory Structure
+src/
+├── app/                    # App Router pages
+│   ├── account/            # /conta - User account page
+│   ├── portal/acesso/      # /portal/acesso - Login portal
+│   ├── dashboard/          # /dashboard - Technical dashboard (admin)
+│   ├── admin-dashboard-su/ # /admin-dashboard-su/secure-entry - Admin entry
+│   ├── api/                # API routes (checkout, auth, webhooks)
+│   ├── auth/               # Auth callback
+│   ├── sucesso/            # Payment success page
+│   ├── cancelado/          # Payment cancelled page
+│   ├── conta/              # User account
+│   ├── lgpd/               # LGPD privacy page
+│   ├── reembolso/          # Refund policy page
+│   ├── privacidade/        # Privacy policy page
+│   ├── cookies/            # Cookie policy page
+│   ├── termos/             # Terms page
+│   ├── home-client.tsx     # Main home page with animated boot sequence
+│   └── layout.tsx          # Root layout with ThemeProvider, GlobalNoise, etc.
+│
+├── components/             # Main components (77+ files)
+│   ├── ui/                 # Shadcn UI components (11 files: Button, Input, etc.)
+│   ├── dashboard/          # DashboardClient
+│   ├── auth/               # LoginForm, PasswordStrengthMeter, ResetPasswordForm
+│   ├── Header, Footer, Hero, etc.
+│   └── Various animated components (Gradient, Plasma, Noise, etc.)
+│
+├── public/                 # Static assets (32 files)
+│   ├── fonts, images, svgs
+│   └── well-known directory
+│
+└── config.ts               # Site configuration (brand, services, navigation, footer)
+Pages/Routes
+Route	Path	Description
+/	/	Home page with animated boot sequence
+/conta	/conta	User account page (requires auth)
+/portal/acesso	/portal/acesso	Login portal
+/admin-dashboard-su/secure-entry	/admin-dashboard-su/secure-entry	Admin dashboard entry
+/dashboard	/dashboard	Technical dashboard (admin only)
+/privacidade	/privacidade	Privacy policy
+/termos	/termos	Terms of use
+/lgpd	/lgpd	LGPD rights page
+/reembolso	/reembolso	Refund policy
+/cookies	/cookies	Cookie policy
+/sucesso	/sucesso	Payment success page
+/cancelado	/cancelado	Payment cancelled page
+Account/Profile Pages
+- /conta (src/app/conta/page.tsx): User account page showing email confirmation, 2FA status, and session security. Redirects to /portal/acesso if not authenticated.
+- /portal/acesso (src/app/portal/acesso/page.tsx): Login form with Better-Auth integration, MFA support, and redirects to /conta after login.
+- /dashboard (src/app/dashboard/page.tsx): Technical dashboard for admins showing Supabase, Notion, Asaas, and Cloudflare integration status.
+Order/Checkout Components
+- EmbeddedCheckout.tsx (src/components/EmbeddedCheckout.tsx): Full checkout drawer with name, email, CPF fields, and Asaas payment integration (PIX, boleto, cartão)
+- AsaasCheckoutPane.tsx: Asaas-specific checkout pane component
+- api/checkout/route.ts: POST/GET API for checkout - creates Asaas payments, validates user auth, rate limiting, idempotency keys
+- api/checkout/installments/route.ts: GET endpoint for installment simulation (1x-12x)
+- sucesso/page.tsx (src/app/sucesso/): Payment success page with confirmation polling
+- cancelado/page.tsx: Payment cancellation page with WhatsApp support
+API Routes
+- GET /api/checkout - Returns products, Asaas config, turnstile status
+- POST /api/checkout - Creates checkout payment
+- GET /api/checkout/installments - Returns installment options
+- GET /api/auth/session - Checks auth session
+- GET /api/webhooks/checkout - Asaas webhook handler
+- POST /api/auth/logout - Logout handler
+CSS Frameworks & Design Systems
+- Tailwind CSS 4.3.3 - Utility-first CSS framework
+- Shadcn UI - Component library (configured in components.json with style: "base-nova")
+- Framer Motion - Animation library (v13)
+- Motion/React - Animation transitions
+- Lucide-react - Icon library (v1.45.0)
+- Custom effects: GlobalNoise, Plasma, Gradient, VariableProximity, MoireTest, etc.
+Authentication
+- Better-Auth (better-auth: ^1.7.5) - Authentication provider
+- Supabase (@supabase/ssr, @supabase/server) - User management and auth
+- Turnstile (Cloudflare) - Anti-bot verification
+- MFA/TOTP - Two-factor authentication support
+- Role-based access: regular users vs admin (getUserAccess vs getAdminAccess)
+Key Configurations
+- next.config.ts: CSP, security headers, redirects (/entrar → /portal/acesso, /login → /admin-dashboard-su/secure-entry)
+- tailwind.config.ts: Content paths covering src/, components/, app/
+- components.json: Shadcn UI configuration pointing to @/components, @/lib, @/ui
+- proxy.ts: Supabase proxy with rate limiting and CSP headers
