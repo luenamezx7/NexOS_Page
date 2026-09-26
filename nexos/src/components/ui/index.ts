@@ -6,3 +6,4 @@ export { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from './card';
 export { Separator } from './separator';
 export { cn } from '@/lib/utils';
+export { toast } from './use-toast';
