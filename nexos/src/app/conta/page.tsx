@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { ArrowLeft, ShieldCheck, KeyRound, Mail, MapPin, Package } from 'lucide-react';
-import { getUserAccess, type UserAccess } from '@/lib/auth/user';
+import { getUserAccessAction, type UserAccess } from '@/lib/auth/actions';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent, Label } from '@/components/ui';
@@ -143,7 +143,7 @@ export default function ContaPage() {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const access: UserAccess = await getUserAccess();
+        const access: UserAccess = await getUserAccessAction();
         setUserAccess(access);
         setProfile({
           name: 'João Silva',
@@ -203,7 +203,7 @@ export default function ContaPage() {
             className="flex items-center gap-2"
           >
             Sair
-            <LogoutButton w-3 h-3 />
+            <LogoutButton />
           </Button>
         </div>
       </nav>
