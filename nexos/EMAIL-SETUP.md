@@ -65,7 +65,7 @@ SITE_URL=https://nexoslab.online
 | **Port** | `587` |
 | **Security** | `STARTTLS` (TLS) |
 | **Username** | `resend` |
-| **Password** | `re_************` |
+| **Password** | `re_************` (sua API key do Resend) |
 | **Sender email** | `noreply@nexoslab.online` |
 | **Sender name** | `NexOS` |
 
