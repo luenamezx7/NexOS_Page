@@ -481,15 +481,19 @@ export default function ContaPage() {
                   {addresses.map((addr) => (
                     <div
                       key={addr.id}
-                      className={`p-4 rounded-lg border ${addr.is_default ? 'border-[#ff5c8a]/30 bg-[#ff5c8a]/[0.02]' : 'border-ink/10'}`}
+                      className={`p-4 rounded-lg border transition-colors ${
+                        addr.is_default
+                          ? 'border-[#ff5c8a]/40 bg-[#ff5c8a]/[0.04] dark:border-[#ff5c8a]/30 dark:bg-[#ff5c8a]/[0.06]'
+                          : 'border-ink/10 bg-ink/[0.01] dark:bg-transparent'
+                      }`}
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-mono uppercase tracking-wider text-ink/40">
+                          <span className="text-xs font-mono uppercase tracking-wider text-ink/50">
                             {addressTypeLabels[addr.type]}
                           </span>
                           {addr.is_default && (
-                            <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-[#ff5c8a]/10 text-[#ff5c8a]">
+                            <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-[#ff5c8a]/15 text-[#ff5c8a] dark:bg-[#ff5c8a]/20">
                               Padrão
                             </span>
                           )}
