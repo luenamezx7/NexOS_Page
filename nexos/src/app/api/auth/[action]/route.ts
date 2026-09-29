@@ -104,10 +104,9 @@ export async function POST(req: NextRequest, context: { params: Promise<{ action
       }
       if (isTurnstileEnforced()) {
         if (!isTurnstileConfigured()) return privateJson({ error: 'Verificação de segurança indisponível. Contate a equipe.' }, 503);
-        // Supabase validates this single-use token. Siteverify here would consume it.
         if (!captcha) return privateJson({ error: 'Confirme a verificação de segurança.' }, 400);
       }
-      const site = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || req.url;
+      const site = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://nexoslab.online';
       const redirectTo = new URL('/auth/callback', site);
       redirectTo.searchParams.set('entry', userFlow ? '/portal/acesso' : '/admin-dashboard-su/secure-entry');
       redirectTo.searchParams.set('next', '/portal/redefinir');
@@ -198,7 +197,10 @@ export async function POST(req: NextRequest, context: { params: Promise<{ action
         const result = action === 'signup'
           ? await client.auth.signUp({ email, password, options: { emailRedirectTo, captchaToken: captcha } })
           : await client.auth.resend({ type: 'signup', email, options: { emailRedirectTo, captchaToken: captcha } });
-        // Never disclose whether an address already has an account.
+        // Detect email already in use for signup (not resend — resend is for confirmation)
+        if (action === 'signup' && result.error && ['user_already_exists', 'email_exists'].includes(result.error.code ?? '')) {
+          return privateJson({ error: 'O e-mail já está em uso. Faça login ou use outro e-mail.' }, 409);
+        }
         const failure = authEmailFailure(result.error);
         if (failure) {
           console.error('[api/auth] email request failed', { action, code: result.error?.code, status: result.error?.status });
