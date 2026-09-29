@@ -50,3 +50,6 @@ nul
 **/nul
 NUL
 **/NUL
+
+.vercel
+.env*
