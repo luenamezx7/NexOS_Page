@@ -15,16 +15,26 @@ export async function GET(request: NextRequest) {
   const next = sanitizeCallbackPath(request.nextUrl.searchParams.get('next'));
   const code = request.nextUrl.searchParams.get('code');
   let success = false;
+  let errorCode = '';
   if (code && code.length <= 2048) {
     try {
       const client = await createClient();
       const { data, error } = await client.auth.exchangeCodeForSession(code);
+      if (error) {
+        errorCode = error.code ?? error.name ?? '';
+        console.error('[auth/callback] exchangeCodeForSession failed', { code: errorCode, message: error.message });
+      }
       success = !error;
       if (success && data.user && entry === '/portal/acesso' && next !== '/portal/redefinir') {
         const userId = data.user.id;
         after(() => sendWelcomeIfNeeded(userId));
       }
-    } catch { /* Render a fixed, non-sensitive error below. */ }
+    } catch (err) {
+      errorCode = err instanceof Error ? err.name : 'UnknownError';
+      console.error('[auth/callback] exchangeCodeForSession threw', { code: errorCode });
+    }
+  } else if (!code) {
+    console.error('[auth/callback] missing code parameter');
   }
   let target: URL;
   if (success && next === '/portal/redefinir') {
@@ -35,6 +45,7 @@ export async function GET(request: NextRequest) {
     if (next) target.searchParams.set('callbackUrl', next);
     if (!success) {
       target.searchParams.set('confirmation', 'error');
+      if (errorCode) target.searchParams.set('reason', errorCode);
     }
   }
   const response = NextResponse.redirect(target, 303);

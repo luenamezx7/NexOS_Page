@@ -198,8 +198,14 @@ export async function POST(req: NextRequest, context: { params: Promise<{ action
           ? await client.auth.signUp({ email, password, options: { emailRedirectTo, captchaToken: captcha } })
           : await client.auth.resend({ type: 'signup', email, options: { emailRedirectTo, captchaToken: captcha } });
         // Detect email already in use for signup (not resend — resend is for confirmation)
-        if (action === 'signup' && result.error && ['user_already_exists', 'email_exists'].includes(result.error.code ?? '')) {
-          return privateJson({ error: 'O e-mail já está em uso. Faça login ou use outro e-mail.' }, 409);
+        if (action === 'signup' && result.error) {
+          const errCode = result.error.code ?? '';
+          const errMsg = result.error.message ?? '';
+          const duplicateCodes = ['user_already_exists', 'email_exists', 'email_address_invalid', 'duplicate_email'];
+          const duplicateMsgPattern = /already (been )?registered|already in use|já está em uso|user already exists/i;
+          if (duplicateCodes.includes(errCode) || duplicateMsgPattern.test(errMsg)) {
+            return privateJson({ error: 'O e-mail já está em uso. Faça login ou use outro e-mail.' }, 409);
+          }
         }
         const failure = authEmailFailure(result.error);
         if (failure) {
