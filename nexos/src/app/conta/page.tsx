@@ -250,12 +250,12 @@ export default function ContaPage() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#ff5c8a] to-[#83358F] flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#ff5c8a] to-[#83358F] flex items-center justify-center shadow-lg">
                     <User className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <CardTitle className="font-display text-xl">{profile.fullName || 'Usuário'}</CardTitle>
-                    <CardDescription className="text-ink/50">{profile.email}</CardDescription>
+                    <CardTitle className="font-display text-xl text-ink">{profile.fullName || 'Usuário'}</CardTitle>
+                    <CardDescription className="text-ink/60">{profile.email}</CardDescription>
                   </div>
                 </div>
                 <Button
@@ -371,13 +371,13 @@ export default function ContaPage() {
                   <div className="flex items-center gap-2">
                     {profile.emailConfirmed ? (
                       <>
-                        <Check className="w-4 h-4 text-green-500" />
-                        <p className="text-sm text-green-600 dark:text-green-400">Confirmado</p>
+                        <Check className="w-4 h-4 text-emerald-500" />
+                        <p className="text-sm text-emerald-600 dark:text-emerald-400">Confirmado</p>
                       </>
                     ) : (
                       <>
-                        <X className="w-4 h-4 text-yellow-500" />
-                        <p className="text-sm text-yellow-600 dark:text-yellow-400">Não confirmado</p>
+                        <X className="w-4 h-4 text-amber-500" />
+                        <p className="text-sm text-amber-600 dark:text-amber-400">Não confirmado</p>
                       </>
                     )}
                   </div>
@@ -496,7 +496,8 @@ export default function ContaPage() {
                         </div>
                         <button
                           onClick={() => setDeletingAddress(addr.id)}
-                          className="p-1 rounded hover:bg-red-500/10 text-ink/40 hover:text-red-500 transition-colors"
+                          className="p-1 rounded-lg hover:bg-red-500/10 text-ink/50 hover:text-red-500 dark:hover:text-red-400 transition-colors"
+                          aria-label="Remover endereço"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
