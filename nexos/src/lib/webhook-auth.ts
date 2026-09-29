@@ -1,6 +1,11 @@
 import 'server-only';
 import { createHash, timingSafeEqual } from 'node:crypto';
 
+/**
+ * Verifica se o token de webhook fornecido corresponde ao esperado.
+ * Usa timing-safe comparison para prevenir timing attacks.
+ * Rejeita tokens com mais de 1024 caracteres.
+ */
 export function matchesWebhookSecret(
   received: string | null,
   expected: string | undefined,

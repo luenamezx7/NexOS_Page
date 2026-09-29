@@ -2,6 +2,10 @@ import 'server-only';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
+/**
+ * Cria cliente Supabase server-side (Route Handlers, Server Components, Server Actions).
+ * Usa cookies para persistir sessão SSR.
+ */
 export async function createClient() {
   const cookieStore = await cookies();
   const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;

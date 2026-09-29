@@ -3,6 +3,11 @@ import { createClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
+/**
+ * GET /api/account/addresses
+ * Returns all delivery addresses for the authenticated user.
+ * Ordered by: is_default DESC, created_at DESC.
+ */
 export async function GET() {
   try {
     const client = await createClient();
@@ -28,6 +33,12 @@ export async function GET() {
   }
 }
 
+/**
+ * POST /api/account/addresses
+ * Creates a new delivery address for the authenticated user.
+ * If `isDefault` is true, removes the default flag from all other addresses first.
+ * Required fields: street, number, neighborhood, city, state, cep.
+ */
 export async function POST(req: NextRequest) {
   try {
     const client = await createClient();

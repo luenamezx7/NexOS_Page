@@ -1,5 +1,17 @@
-// Inspect SMTP/CAPTCHA and add OTP to existing templates without replacing branding.
-// Usage: node --use-system-ca scripts/configure-auth-email.mjs [--apply]
+/**
+ * Script to inspect and configure Supabase Auth email templates.
+ *
+ * - Inspects SMTP, CAPTCHA, OTP length, and template content
+ * - Adds {{ .Token }} (OTP code) to confirmation and magic link templates
+ * - Preserves existing template branding (only appends OTP section)
+ * - Verifies changes after applying
+ *
+ * Usage:
+ *   node --use-system-ca scripts/configure-auth-email.mjs           # inspect only
+ *   node --use-system-ca scripts/configure-auth-email.mjs --apply   # apply changes
+ *
+ * Requires: SUPABASE_ACCESS_TOKEN in environment
+ */
 import env from '@next/env';
 env.loadEnvConfig(process.cwd());
 

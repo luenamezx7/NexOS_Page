@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * Ciclo de robôs (animação de ícones).
+ * Alterna entre ícones de robô com transição suave.
+ */
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 

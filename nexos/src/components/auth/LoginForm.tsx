@@ -1,5 +1,18 @@
 'use client';
 
+/**
+ * Formulário de autenticação — login, cadastro, OTP, recuperação de senha, MFA.
+ *
+ * Modos: login | signup | resend | otp | otp-verify | forgot
+ * Etapas: login | factor | enroll | verify
+ *
+ * Segurança:
+ * - CAPTCHA Turnstile (validado pelo Supabase, não aqui)
+ * - Rate limiting no backend
+ * - MFA obrigatório para acesso completo
+ * - Aceita códigos OTP de 6-8 dígitos (Supabase gera 8)
+ */
+
 import { useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';

@@ -4,6 +4,11 @@ import { createAdminClient } from '@/lib/supabase/admin';
 
 export const dynamic = 'force-dynamic';
 
+/**
+ * GET /api/account/profile
+ * Returns the authenticated user's profile data.
+ * Combines data from `profiles` table and `auth.users` metadata.
+ */
 export async function GET() {
   try {
     const client = await createClient();
@@ -38,6 +43,11 @@ export async function GET() {
   }
 }
 
+/**
+ * PATCH /api/account/profile
+ * Updates the authenticated user's profile (fullName, phone).
+ * Uses UPSERT to create the profile row if it doesn't exist yet.
+ */
 export async function PATCH(req: NextRequest) {
   try {
     const client = await createClient();

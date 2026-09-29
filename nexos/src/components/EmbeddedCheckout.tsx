@@ -1,5 +1,10 @@
 'use client';
 
+/**
+ * Drawer de checkout Asaas — nome/e-mail validados.
+ * Estados: idle, generating, pending, success.
+ * Container oculto quando open=false (não no DOM).
+ */
 import { useCallback, useEffect, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { X, Lock, QrCode } from 'lucide-react';

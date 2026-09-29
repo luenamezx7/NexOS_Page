@@ -1,5 +1,13 @@
 import 'server-only';
 
+/**
+ * Server-only email sending actions via Resend SDK.
+ *
+ * These functions are NOT exposed as Server Actions — they are internal
+ * helpers called by other server code (e.g., sendWelcomeIfNeeded).
+ * Do not expose recipient addresses via public Server Actions or API routes.
+ */
+
 import { getResend, FROM_EMAIL } from '@/lib/emails/resend';
 import { WelcomeEmail } from '@/emails/welcome';
 import { MagicLinkEmail } from '@/emails/magic-link';

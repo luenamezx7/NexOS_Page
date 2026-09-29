@@ -1,3 +1,18 @@
+/**
+ * Auth API route — handles all Supabase Auth actions.
+ *
+ * Actions: login, logout, signup, resend, otp, otp-verify, oauth, forgot, reset, factor, enroll, verify
+ *
+ * Security:
+ * - isSameOrigin(req) — rejects cross-origin requests
+ * - consumeAttempt() — rate limiting per IP and per email
+ * - captchaToken — passed to Supabase (Turnstile validated there, not here)
+ * - MFA required for full access (aal2)
+ *
+ * Email errors are mapped via authEmailFailure() to prevent account enumeration.
+ * Welcome email is triggered via after() on successful user-flow authentication.
+ */
+
 import { after, NextRequest } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';

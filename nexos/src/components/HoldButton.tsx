@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * Botão de segurar (1.5s) + scramble hover.
+ * Debounced, sem remount. Progress bar scaleX.
+ */
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { motion, useMotionValue, useReducedMotion, useTransform, type MotionValue } from 'motion/react';
 import { ArrowRight } from 'lucide-react';

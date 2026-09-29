@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * Overlay de topografia (linhas de contorno sutis).
+ * Usa WebGL (OGL) para efeito de mapa animado.
+ */
 import { useEffect, useRef } from 'react';
 import { Renderer, Program, Mesh, Triangle } from 'ogl';
 import './Topography.css';

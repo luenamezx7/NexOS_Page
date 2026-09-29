@@ -1,5 +1,9 @@
 "use client";
 
+/**
+ * Assinatura SVG (Lastoria) — 120px com opentype.js.
+ * viewBox dinâmico, overflow visible.
+ */
 import { useEffect, useId, useState } from "react";
 import { motion } from "motion/react";
 import { parse as parseFont } from "opentype.js";

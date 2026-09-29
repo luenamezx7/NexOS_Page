@@ -1,5 +1,10 @@
 'use client';
 
+/**
+ * Medidor de força de senha.
+ * Avalia comprimento, maiúsculas, minúsculas, números e símbolos.
+ * Exibe barra de progresso e rótulo de força.
+ */
 import { evaluatePassword } from '@/lib/auth/password-strength';
 
 const BAR_COLORS = [

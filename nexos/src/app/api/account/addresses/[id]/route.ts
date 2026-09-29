@@ -3,6 +3,11 @@ import { createClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
+/**
+ * PATCH /api/account/addresses/[id]
+ * Updates an existing delivery address.
+ * Only updates if the address belongs to the authenticated user (RLS enforced).
+ */
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const client = await createClient();
@@ -49,6 +54,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   }
 }
 
+/**
+ * DELETE /api/account/addresses/[id]
+ * Deletes a delivery address.
+ * Only deletes if the address belongs to the authenticated user (RLS enforced).
+ */
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const client = await createClient();

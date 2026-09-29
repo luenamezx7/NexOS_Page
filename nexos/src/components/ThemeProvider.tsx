@@ -1,5 +1,11 @@
 'use client';
 
+/**
+ * Provider de tema — gerencia modo claro/escuro.
+ * Default: dark. Persiste em localStorage (nexos-theme).
+ * Sincroniza entre abas via evento customizado.
+ * Adiciona/remove classe .dark no <html>.
+ */
 import { createContext, useCallback, useContext, useEffect, useSyncExternalStore, type ReactNode } from 'react';
 
 export type Theme = 'dark' | 'light';

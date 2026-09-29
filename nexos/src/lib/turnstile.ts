@@ -4,6 +4,10 @@ import 'server-only';
 // Docs: https://developers.cloudflare.com/turnstile/
 // Site Key: NEXT_PUBLIC_TURNSTILE_SITE_KEY (exposto no client)
 // Secret: TURNSTILE_SECRET_KEY (server-only)
+//
+// Nota: Tokens Turnstile são de uso único. No fluxo de auth,
+// o token é validado pelo Supabase (não aqui). Em outros fluxos
+// (contato, checkout), a validação é feita no servidor.
 // ============================================================
 
 const VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";

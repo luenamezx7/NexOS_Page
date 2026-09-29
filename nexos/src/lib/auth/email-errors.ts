@@ -1,6 +1,14 @@
+/**
+ * Maps Supabase Auth email-related errors to safe HTTP responses.
+ * - Returns `null` for errors that should not be surfaced (user not found, already exists, etc.)
+ * - Returns `{ status, error }` for errors that should be shown to the user
+ *
+ * This prevents account existence enumeration while still communicating
+ * infrastructure failures (CAPTCHA, rate limits, SMTP).
+ */
+
 type ProviderError = { code?: string; status?: number };
 
-// Keep account existence private, but never disguise infrastructure failures as success.
 export function authEmailFailure(error: ProviderError | null) {
   if (!error) return null;
   if (['user_not_found', 'user_already_exists', 'email_exists', 'signup_disabled', 'otp_disabled'].includes(error.code ?? '')) return null;

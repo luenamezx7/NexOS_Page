@@ -1,5 +1,10 @@
 'use client';
 
+/**
+ * Pane do checkout Asaas — geração de cobrança + polling.
+ * Valida nome/e-mail, cria payment via /api/checkout, faz polling em /api/checkout/status.
+ * CAPTCHA Turnstile quando habilitado.
+ */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { QrCode, CreditCard, Receipt, ExternalLink, Loader2, Check, Copy, RefreshCw, ShieldCheck, Info } from 'lucide-react';

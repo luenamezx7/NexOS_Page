@@ -1,5 +1,20 @@
 'use client';
 
+/**
+ * Tela "Minha Conta" — painel do usuário autenticado.
+ *
+ * Seções:
+ * - Perfil: nome, e-mail, telefone, membro desde (editável)
+ * - Segurança: MFA status, status do e-mail, último acesso
+ * - Endereços: lista, adicionar, remover (CRUD completo)
+ * - Pedidos: lista com status, itens, total, rastreio
+ * - LGPD: direitos do usuário, proteção de dados
+ *
+ * Dados reais do Supabase via /api/account/*.
+ * Design: tokens do Design System v3 (bg-canvas, text-ink, bg-card).
+ * Dark/light mode automático via variáveis CSS.
+ */
+
 import { useState, useEffect, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';

@@ -1,6 +1,10 @@
 import type { Metadata } from 'next';
 import { getAdminAccess } from '@/lib/auth/admin';
 import { getUserAccess } from '@/lib/auth/user';
+/**
+ * Página de redefinição de senha — renderiza o ResetPasswordForm.
+ * O usuário deve ter uma sessão de recovery válida (via /auth/callback).
+ */
 import { ResetPasswordForm } from '@/components/auth/ResetPasswordForm';
 
 export const metadata: Metadata = {

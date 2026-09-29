@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * Botão de alternância de tema (claro/escuro).
+ * 44x44px, ícones Sun/Moon, borda hairline.
+ */
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 

@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * Overlay de blur para páginas não autenticadas.
+ * Exclui /conta e outras páginas de auth do efeito.
+ */
 import { usePathname } from 'next/navigation';
 import GradualBlur from '@/components/GradualBlur';
 

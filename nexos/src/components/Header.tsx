@@ -1,5 +1,12 @@
 'use client';
 
+/**
+ * Header fixo com glassmorphism.
+ * - Nav desktop + drawer mobile
+ * - Link "Minha conta" → /portal/acesso
+ * - ThemeToggle
+ * - Scroll → glass-header--scrolled
+ */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';

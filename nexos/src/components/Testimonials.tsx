@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * Testimonials section — carousel de depoimentos.
+ * Autoplay com pause on hover, dots de navegação.
+ */
 import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, useReducedMotion, type Variants } from 'motion/react';

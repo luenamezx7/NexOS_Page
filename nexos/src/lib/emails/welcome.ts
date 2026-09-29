@@ -2,7 +2,16 @@ import 'server-only';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { sendWelcomeEmail } from '@/lib/emails/actions';
 
-// userId must come from a verified Supabase session, never from a request body.
+/**
+ * Sends a welcome email to a newly confirmed user.
+ *
+ * - Only sends if the user has a confirmed email and hasn't received one yet
+ * - Uses a stable idempotency key (`welcome/{userId}`) to prevent duplicates
+ * - Records success in `app_metadata.welcome_email_sent_at`
+ * - Failures are logged but never thrown (non-blocking)
+ *
+ * Must be called with a verified Supabase user ID (from session, never from request body).
+ */
 export async function sendWelcomeIfNeeded(userId: string): Promise<void> {
   try {
     const admin = createAdminClient();

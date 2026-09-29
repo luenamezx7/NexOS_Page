@@ -1,3 +1,7 @@
+/**
+ * Texto com gradiente animado (pink → purple).
+ * Usa background-clip: text + animação de movimento.
+ */
 import { useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
 import { motion, useMotionValue, useAnimationFrame, useTransform } from 'motion/react';
 import './GradientText.css';

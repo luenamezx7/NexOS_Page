@@ -1,3 +1,7 @@
+/**
+ * Cria cliente Supabase browser-side (componentes client).
+ * Usa localStorage para persistir sessão.
+ */
 import { createBrowserClient } from '@supabase/ssr';
 
 export function createClient() {

@@ -1,5 +1,11 @@
 'use client';
 
+/**
+ * Formulário de redefinição de senha.
+ * O usuário deve ter uma sessão de recovery válida (via /auth/callback).
+ * Valida força da senha e confirma correspondência antes de enviar.
+ * Inclui CAPTCHA Turnstile quando habilitado.
+ */
 import { useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';

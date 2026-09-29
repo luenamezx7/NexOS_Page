@@ -1,6 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+/**
+ * Cloudflare Turnstile widget component.
+ * Renders the CAPTCHA challenge and exposes the token via onVerify.
+ * Automatically loads the Turnstile script and handles cleanup.
+ */
 import { useTurnstileConfig } from '@/lib/use-turnstile-config';
 
 declare global {

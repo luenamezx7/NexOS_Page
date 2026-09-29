@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * Overlay de grão (textura de ruído sutil).
+ * Usa WebGL (OGL) para efeito de grain animado.
+ */
 import React, { useEffect, useRef } from 'react';
 import { Renderer, Program, Mesh, Triangle } from 'ogl';
 import './Grainient.css';

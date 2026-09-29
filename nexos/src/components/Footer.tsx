@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * Footer — glass-footer, Signature (Lastoria), links.
+ * Redes sociais, links legais, copyright.
+ */
 import Link from 'next/link';
 import { motion, useReducedMotion, type Variants } from 'motion/react';
 import { ArrowUpRight, GitBranch, MessageSquare } from 'lucide-react';

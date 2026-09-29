@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * Provider de scroll suave (Lenis + GSAP ScrollTrigger).
+ * Inicializa Lenis com configurações fluidas e sincroniza com GSAP.
+ */
 import { useEffect, useRef, useState, createContext, useContext } from 'react';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';

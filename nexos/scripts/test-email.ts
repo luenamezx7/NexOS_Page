@@ -1,7 +1,15 @@
 #!/usr/bin/env node
 /**
- * Teste rápido de envio de email via Resend
- * Execute: npx tsx scripts/test-email.ts
+ * Teste rápido de envio de email via Resend.
+ *
+ * Carrega .env.local automaticamente e envia e-mails de teste para
+ * delivered@resend.dev (endereço de simulação do Resend).
+ *
+ * Uso: npm run test:email
+ * Requer: RESEND_API_KEY configurada no .env.local
+ *
+ * Nota: O SMTP do Supabase é uma configuração separada. Este script
+ * testa apenas o envio direto via SDK do Resend (boas-vindas, notificações).
  */
 
 import React from 'react';

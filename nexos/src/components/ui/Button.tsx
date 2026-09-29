@@ -1,3 +1,10 @@
+/**
+ * Botão reutilizável com variants primary/secondary/ghost.
+ * - primary: gradiente pink + glow
+ * - secondary: borda hairline, transparente
+ * - ghost: sem borda, hover sutil
+ * - loading: spinner + disabled
+ */
 import * as React from 'react';
 import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';

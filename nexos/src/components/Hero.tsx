@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * Hero section — DarkVeil/Grainient + bento 4 cards + HoldButton featured.
+ * Animações: parallax scroll, reveal on mount, scramble hover.
+ */
 import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';

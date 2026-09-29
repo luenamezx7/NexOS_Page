@@ -3,6 +3,10 @@ import { createClient } from '@/lib/supabase/server';
 import { sanitizeCallbackPath } from '@/lib/auth/callback';
 import { sendWelcomeIfNeeded } from '@/lib/emails/welcome';
 
+/**
+ * Auth callback — handles OAuth/OTP code exchange.
+ * On successful user-flow authentication, triggers welcome email via `after()`.
+ */
 export async function GET(request: NextRequest) {
   const site = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || request.url;
   // entry/next só valem se forem caminhos internos — nunca open redirect.

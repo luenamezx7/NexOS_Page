@@ -1,3 +1,10 @@
+/**
+ * Utilitários de segurança para requests.
+ * - RequestError: erro com status HTTP
+ * - readJsonBody: lê JSON com limite de bytes (streaming)
+ * - isSameOrigin: verifica se a request tem a mesma origem
+ */
+
 export class RequestError extends Error {
   status: number;
   constructor(message: string, status: number) { super(message); this.status = status; }

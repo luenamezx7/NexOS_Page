@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * Services section — 2 bento-cards + EmbeddedCheckoutDrawer trigger.
+ * Cards com hover glow e reveal on scroll.
+ */
 import { useCallback, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { motion, useReducedMotion } from 'motion/react';

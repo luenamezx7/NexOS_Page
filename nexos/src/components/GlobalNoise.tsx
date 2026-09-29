@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * Overlay de ruído global (textura sutil).
+ * Usa WebGL (OGL) para efeito de grain animado.
+ */
 import { useRef, useEffect } from 'react';
 import { Renderer, Program, Mesh, Triangle, Vec2 } from 'ogl';
 

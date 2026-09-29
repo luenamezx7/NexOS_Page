@@ -1,5 +1,10 @@
 'use client';
 
+/**
+ * Overlay de blur gradual (bottom/top).
+ * Usa divs com backdrop-filter para efeito de transição suave.
+ * Anima com scroll quando animated="scroll".
+ */
 import React, { type CSSProperties, useEffect, useRef, useState, useMemo, type PropsWithChildren } from 'react';
 
 import './GradualBlur.css';

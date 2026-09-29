@@ -1,3 +1,7 @@
+/**
+ * Soma o status de múltiplos pagamentos.
+ * Retorna se todos foram pagos, o status agregado e o valor total.
+ */
 export interface ProviderPayment {
   id: string;
   status: string;

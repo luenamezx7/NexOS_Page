@@ -1,5 +1,10 @@
 'use client';
 
+/**
+ * Contact section — formulário com validação, POST /api/contact → Notion.
+ * Estados: idle, submitting, submitted, error.
+ * CAPTCHA Turnstile quando habilitado.
+ */
 import { useState, type FormEvent, type ChangeEvent } from 'react';
 import Link from 'next/link';
 import { motion, useReducedMotion } from 'motion/react';

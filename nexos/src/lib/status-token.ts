@@ -1,3 +1,8 @@
+/**
+ * Gera e verifica tokens de status para checkout.
+ * Tokens são HMAC-SHA256 com expiração de 24h.
+ * Usados para verificar status de pagamento sem expor dados sensíveis.
+ */
 import { createHmac, timingSafeEqual } from 'node:crypto';
 
 export function secret(): string {

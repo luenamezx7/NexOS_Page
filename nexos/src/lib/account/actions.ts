@@ -3,6 +3,13 @@
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 
+/**
+ * Server action to update the authenticated user's profile.
+ * Upserts into the `profiles` table (1:1 with auth.users).
+ *
+ * @param formData - Must contain `fullName` (required) and `phone` (optional)
+ * @returns `{ success: true }` on success, or `{ error: string }` on failure
+ */
 export async function updateProfileAction(prevState: { error?: string; success?: boolean }, formData: FormData) {
   const fullName = String(formData.get('fullName') ?? '').trim();
   const phone = String(formData.get('phone') ?? '').trim();
@@ -38,6 +45,14 @@ export async function updateProfileAction(prevState: { error?: string; success?:
   }
 }
 
+/**
+ * Server action to add a new delivery address for the authenticated user.
+ * If `isDefault` is true, removes the default flag from all other addresses first.
+ *
+ * @param formData - Must contain: street, number, neighborhood, city, state, cep.
+ *                   Optional: type (home|work|other), complement, isDefault.
+ * @returns `{ success: true }` on success, or `{ error: string }` on failure
+ */
 export async function addAddressAction(prevState: { error?: string; success?: boolean }, formData: FormData) {
   const street = String(formData.get('street') ?? '').trim();
   const number = String(formData.get('number') ?? '').trim();
@@ -88,6 +103,13 @@ export async function addAddressAction(prevState: { error?: string; success?: bo
   }
 }
 
+/**
+ * Server action to delete a delivery address.
+ * Only deletes if the address belongs to the authenticated user (RLS enforced).
+ *
+ * @param id - UUID of the address to delete
+ * @returns `{ success: true }` on success, or `{ error: string }` on failure
+ */
 export async function deleteAddressAction(id: string) {
   try {
     const client = await createClient();

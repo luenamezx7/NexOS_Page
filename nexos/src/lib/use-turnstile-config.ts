@@ -1,5 +1,15 @@
 'use client';
 
+/**
+ * Hook to fetch Turnstile configuration from /api/security/config.
+ * Caches the result for 60 seconds to avoid repeated requests.
+ *
+ * @returns `{ required, configured, siteKey, loading, error }`
+ * - `required` — whether CAPTCHA is enforced
+ * - `configured` — whether both site key and secret are set
+ * - `siteKey` — public Turnstile site key (empty string if not configured)
+ */
+
 import { useEffect, useState } from 'react';
 
 type Config = { required: boolean; configured: boolean; siteKey: string };

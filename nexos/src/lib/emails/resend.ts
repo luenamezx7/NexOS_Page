@@ -1,5 +1,11 @@
 import { Resend } from 'resend';
 
+/**
+ * Lazy-initialized Resend client.
+ * Throws a clear error if RESEND_API_KEY is not configured.
+ * This prevents runtime errors when the env var is missing.
+ */
+
 let client: Resend | undefined;
 
 export function getResend(): Resend {

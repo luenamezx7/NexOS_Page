@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * Logout button — calls /api/auth/user-logout and redirects to /portal/acesso.
+ * Shows error state on failure.
+ */
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 

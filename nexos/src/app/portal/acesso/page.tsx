@@ -1,6 +1,10 @@
 import { redirect } from 'next/navigation';
 import { getUserAccess } from '@/lib/auth/user';
 import { sanitizeCallbackPath } from '@/lib/auth/callback';
+/**
+ * Página de acesso — renderiza o LoginForm com audience="user".
+ * Redireciona para /conta em caso de autenticação bem-sucedida.
+ */
 import { LoginForm } from '@/components/auth/LoginForm';
 
 export const metadata = { title: 'Área do cliente | NexOS', robots: { index: false, follow: false } };

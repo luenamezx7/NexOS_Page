@@ -1,3 +1,9 @@
+/**
+ * Avalia a força de uma senha.
+ * Requisitos mínimos: 12+ caracteres, maiúscula, minúscula, número, símbolo.
+ * Retorna score de 0-4 e se é aceitável.
+ */
+
 export interface PasswordRequirement {
   id: string;
   label: string;

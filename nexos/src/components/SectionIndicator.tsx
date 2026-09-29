@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * Navegação lateral (xl:flex) — IntersectionObserver + scrollYProgress spring.
+ * Dots + trilho + counter de seção.
+ */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useSpring, useReducedMotion } from 'motion/react';
 

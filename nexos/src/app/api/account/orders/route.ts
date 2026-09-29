@@ -3,6 +3,12 @@ import { createClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
+/**
+ * GET /api/account/orders
+ * Returns all orders for the authenticated user.
+ * RLS policy `orders_read_own` ensures users only see their own orders.
+ * Ordered by: created_at DESC.
+ */
 export async function GET() {
   try {
     const client = await createClient();
