@@ -6,6 +6,18 @@ import { summarizePayments } from '../src/lib/payment-status.ts';
 import { readJsonBody, isSameOrigin } from '../src/lib/request-security.ts';
 import { evaluatePassword } from '../src/lib/auth/password-strength.ts';
 import { sanitizeCallbackPath } from '../src/lib/auth/callback.ts';
+import { authEmailFailure } from '../src/lib/auth/email-errors.ts';
+
+test('email requests surface CAPTCHA, rate limits and SMTP failures without exposing account existence', () => {
+  assert.equal(authEmailFailure(null), null);
+  for (const code of ['user_not_found', 'user_already_exists', 'email_exists', 'signup_disabled', 'otp_disabled']) {
+    assert.equal(authEmailFailure({ code, status: 400 }), null);
+  }
+  assert.equal(authEmailFailure({ code: 'captcha_failed', status: 400 }).status, 400);
+  assert.equal(authEmailFailure({ code: 'over_email_send_rate_limit', status: 429 }).status, 429);
+  assert.equal(authEmailFailure({ code: 'unexpected_failure', status: 500 }).status, 503);
+  assert.equal(authEmailFailure({ status: 400 }).status, 503);
+});
 
 process.env.CHECKOUT_STATUS_SECRET = 'test-only-secret-'.repeat(4);
 

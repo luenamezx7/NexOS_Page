@@ -18,8 +18,8 @@ Este projeto usa **duas camadas de email**:
 2. Clique em **Add Domain**
 3. Digite `nexoslab.online` (ou seu domínio)
 4. Configure os registros DNS no seu provedor:
-   - **SPF** (TXT): `v=spf1 include:_spf.resend.com ~all`
-   - **DKIM** (CNAME): Copie os valores do Resend
+   - **SPF / MX**: copie exatamente o nome, tipo, prioridade e valor mostrados no Resend
+   - **DKIM**: copie exatamente o tipo e o valor mostrados no Resend
    - **DMARC** (TXT): `v=DMARC1; p=none; rua=mailto:dmarc@nexoslab.online`
 5. Aguarde verificação (pode levar até 48h)
 
@@ -35,7 +35,7 @@ Este projeto usa **duas camadas de email**:
 ## 2. Variáveis de Ambiente
 
 ### Vercel (Produção/Preview/Development)
-Já configuradas via API:
+Confira no projeto e no ambiente correto; a presença neste documento não comprova a configuração:
 - `RESEND_API_KEY` = `re_************` (encrypted)
 - `RESEND_FROM_EMAIL` = `NexOS <noreply@nexoslab.online>` (plain)
 
@@ -83,7 +83,11 @@ Em **Authentication** → **Email Templates**, personalize:
 
 ## 4. Como Usar nos Código
 
-### Server Actions (Recomendado)
+### Funções internas do servidor
+
+`src/lib/emails/actions.ts` usa `server-only`: não exponha destinatários arbitrários
+por Server Actions ou rotas públicas. Os e-mails de autenticação são gerados pelo
+Supabase e entregues pelo SMTP; os templates React não substituem essa configuração.
 
 ```typescript
 // src/lib/emails/actions.ts
@@ -125,18 +129,14 @@ await sendNotificationEmail(
 );
 ```
 
-### API Routes
+### Boas-vindas automáticas
 
-```typescript
-// src/app/api/emails/send/route.ts
-import { sendWelcomeEmail } from '@/lib/emails/actions';
-
-export async function POST(req: Request) {
-  const { email, name } = await req.json();
-  const result = await sendWelcomeEmail(email, name);
-  return Response.json(result);
-}
-```
+O callback de autenticação e o acesso autenticado chamam `sendWelcomeIfNeeded`.
+O destinatário vem da conta confirmada no Supabase. O envio usa uma chave de
+idempotência por usuário e registra sucesso em `app_metadata.welcome_email_sent_at`.
+Uma falha não impede o login; o próximo acesso tenta novamente. Não há fila de
+retentativas em segundo plano. A idempotência do Resend dura 24 horas; se o envio
+for aceito mas o registro falhar, uma tentativa após essa janela pode duplicá-lo.
 
 ---
 
@@ -168,21 +168,14 @@ background: 'linear-gradient(135deg, #ff6b4a 0%, #ff3366 100%)'
 
 ### Testar Local
 ```bash
-# Terminal 1: Next.js dev
-npm run dev
+# Carrega .env.local automaticamente; destino padrão é delivered@resend.dev.
+npm run test:email
 
-# Terminal 2: Testar email via script
-node -e "
-const { resend } = require('./src/lib/emails/resend');
-const { WelcomeEmail } = require('./src/emails/welcome');
+# Inspeciona SMTP/CAPTCHA e os templates (requer SUPABASE_ACCESS_TOKEN local).
+node --use-system-ca scripts/configure-auth-email.mjs
 
-resend.emails.send({
-  from: 'NexOS <noreply@nexoslab.online>',
-  to: ['seu@email.com'],
-  subject: 'Teste NexOS',
-  react: WelcomeEmail({ name: 'Teste', dashboardUrl: 'https://nexoslab.online/conta' })
-}).then(console.log).catch(console.error);
-"
+# Adiciona {{ .Token }} a confirmação/login preservando o HTML existente.
+node --use-system-ca scripts/configure-auth-email.mjs --apply
 ```
 
 ### Emails de Teste Resend
@@ -200,9 +193,32 @@ Use estes endereços para testar sem afetar reputação:
 |----------|---------|
 | Email não chega | Verifique spam, confirme domínio no Resend, teste com `delivered@resend.dev` |
 | "Origem inválida" no auth | Confira `SITE_URL` e `NEXT_PUBLIC_SITE_URL` no Vercel |
-| Magic link expira rápido | Ajuste `expiresInMinutes` no template |
+| Magic link expira rápido | Ajuste a expiração do OTP no Supabase Auth; o texto do template não altera a validade |
 | Domínio não verifica | Aguarde propagação DNS (até 48h), confira registros no Resend |
-| Rate limit (429) | Padrão: 10 req/s. Peça aumento no suporte Resend |
+| Rate limit (429) | Confira limites da aplicação, do Supabase Auth e da conta Resend |
+| `no captcha_token found` | Passe `options.captchaToken` ao Supabase em login, signup, resend, OTP e recuperação |
+| CAPTCHA inválido após validação local | Token é de uso único: nesses fluxos, só o Supabase chama Siteverify |
+| E-mail só contém link | Inclua `{{ .Token }}` nos templates de confirmação e magic link para permitir código |
+| Código de 8 dígitos rejeitado | A tela e a API aceitam OTP de e-mail de 6 a 8 dígitos; TOTP continua com 6 |
+
+### CAPTCHA e notificações de segurança
+
+Em Supabase Auth > Bot and Abuse Protection, habilite Turnstile com o secret do
+mesmo widget usado pelo site. Configure `NEXT_PUBLIC_TURNSTILE_SITE_KEY`,
+`TURNSTILE_SECRET_KEY` e `TURNSTILE_ENFORCED=true` no servidor. A validação de
+login/cadastro/reenvio/OTP/recuperação pertence ao Supabase; contato, checkout e
+troca de senha autenticada continuam validando no servidor da aplicação.
+
+Em Auth > Email Templates, habilite as notificações de senha/e-mail/telefone
+alterados, identidade vinculada/removida e fator MFA adicionado/removido. Elas
+usam o mesmo SMTP. O segundo fator implementado é TOTP de aplicativo autenticador,
+não um código enviado por e-mail. O OTP por e-mail é uma forma de login.
+
+**Verificação em 28/09/2026:** SMTP `smtp.resend.com:587`, remetente
+`noreply@nexoslab.online`, CAPTCHA Turnstile ativo, OTP com 8 dígitos e todas as
+sete notificações de segurança habilitadas. Os templates de confirmação e login
+foram atualizados via Management API para incluir `{{ .Token }}` e relidos para
+confirmar a alteração. Isso verifica configuração, não entrega na caixa de entrada.
 
 ---
 
@@ -226,4 +242,4 @@ Use estes endereços para testar sem afetar reputação:
 1. **Webhooks Resend**: Configure em `resend.com/webhooks` para track delivery/bounce/complaint
 2. **Suppression List**: Monitore `resend.com/suppressions` para emails bloqueados
 3. **Analytics**: Use `tags` nos emails para categorizar no dashboard Resend
-4. **Idempotency**: Adicione `idempotencyKey` em emails críticos (ex: `welcome-user/{userId}`)
+4. **Retentativas duráveis**: Para garantias além da próxima autenticação, adicione uma fila transacional e monitore falhas de boas-vindas.

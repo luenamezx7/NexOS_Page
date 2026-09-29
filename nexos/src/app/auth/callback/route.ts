@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { after, NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { sanitizeCallbackPath } from '@/lib/auth/callback';
+import { sendWelcomeIfNeeded } from '@/lib/emails/welcome';
 
 export async function GET(request: NextRequest) {
   const site = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || request.url;
@@ -13,8 +14,12 @@ export async function GET(request: NextRequest) {
   if (code && code.length <= 2048) {
     try {
       const client = await createClient();
-      const { error } = await client.auth.exchangeCodeForSession(code);
+      const { data, error } = await client.auth.exchangeCodeForSession(code);
       success = !error;
+      if (success && data.user && entry === '/portal/acesso' && next !== '/portal/redefinir') {
+        const userId = data.user.id;
+        after(() => sendWelcomeIfNeeded(userId));
+      }
     } catch { /* Render a fixed, non-sensitive error below. */ }
   }
   let target: URL;

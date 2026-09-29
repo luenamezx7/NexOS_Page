@@ -61,6 +61,37 @@ test('contact retries with a new captcha and preserves message after failure', a
   expect(tokens[1]).not.toBe(tokens[0]);
 });
 
+test('signup accepts an eight-digit confirmation code and resends signup with a fresh CAPTCHA', async ({ page }) => {
+  await mockCaptcha(page);
+  const tokens: string[] = [];
+  await page.route('**/api/auth/user-signup', route => {
+    tokens.push(route.request().postDataJSON().captcha);
+    return route.fulfill({ json: { message: 'Confira seu e-mail.' } });
+  });
+  await page.route('**/api/auth/user-resend', route => {
+    tokens.push(route.request().postDataJSON().captcha);
+    return route.fulfill({ json: { message: 'Confira seu e-mail.' } });
+  });
+  let submittedCode = '';
+  await page.route('**/api/auth/user-otp-verify', route => {
+    submittedCode = route.request().postDataJSON().token;
+    return route.fulfill({ status: 401, json: { error: 'Código inválido ou expirado.' } });
+  });
+  await page.goto('/portal/acesso');
+  await page.getByRole('button', { name: 'Criar uma conta', exact: true }).click();
+  await page.getByLabel('E-mail', { exact: true }).fill('customer@example.com');
+  await page.getByLabel('Senha', { exact: true }).fill('Strong-Passw0rd!xyz');
+  await page.getByLabel('Confirmar senha', { exact: true }).fill('Strong-Passw0rd!xyz');
+  await page.getByRole('button', { name: 'Criar conta', exact: true }).click();
+  await page.getByRole('button', { name: 'Reenviar código', exact: true }).click();
+  await expect.poll(() => tokens.length).toBe(2);
+  expect(tokens[1]).not.toBe(tokens[0]);
+  await page.getByLabel('Código recebido por e-mail (6 a 8 dígitos)').fill('12345678');
+  await page.getByRole('button', { name: 'Verificar código', exact: true }).click();
+  await expect.poll(() => submittedCode).toBe('12345678');
+  await expect(page.getByRole('alert').filter({ hasText: 'Código inválido ou expirado.' })).toBeVisible();
+});
+
 test('login resumes selected product and quantity without creating a payment', async ({ page }) => {
   await page.route('**/api/security/config', route => route.fulfill({ json: { required: false, configured: false, siteKey: '' } }));
   let signedIn = false;

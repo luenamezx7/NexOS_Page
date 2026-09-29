@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server';
+import { after, NextRequest } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { getAdminAccess, privateJson } from '@/lib/auth/admin';
@@ -9,6 +9,8 @@ import { getUserAccess } from '@/lib/auth/user';
 import { isSameOrigin, readJsonBody, RequestError } from '@/lib/request-security';
 import { evaluatePassword } from '@/lib/auth/password-strength';
 import { sanitizeCallbackPath } from '@/lib/auth/callback';
+import { authEmailFailure } from '@/lib/auth/email-errors';
+import { sendWelcomeIfNeeded } from '@/lib/emails/welcome';
 
 // Supplemental per-instance limit. Supabase Auth also enforces its own limits.
 const attempts = new Map<string, { count: number; until: number }>();
@@ -87,15 +89,19 @@ export async function POST(req: NextRequest, context: { params: Promise<{ action
       }
       if (isTurnstileEnforced()) {
         if (!isTurnstileConfigured()) return privateJson({ error: 'Verificação de segurança indisponível. Contate a equipe.' }, 503);
-        if (!captcha || !(await verifyTurnstileToken(captcha)).success) return privateJson({ error: 'Confirme a verificação de segurança.' }, 400);
+        // Supabase validates this single-use token. Siteverify here would consume it.
+        if (!captcha) return privateJson({ error: 'Confirme a verificação de segurança.' }, 400);
       }
       const site = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || req.url;
       const redirectTo = new URL('/auth/callback', site);
       redirectTo.searchParams.set('entry', userFlow ? '/portal/acesso' : '/admin-dashboard-su/secure-entry');
       redirectTo.searchParams.set('next', '/portal/redefinir');
-      await client.auth
-        .resetPasswordForEmail(email, { redirectTo: redirectTo.toString() })
-        .catch(() => undefined);
+      const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo: redirectTo.toString(), captchaToken: captcha });
+      const failure = authEmailFailure(error);
+      if (failure) {
+        console.error('[api/auth] email request failed', { action, code: error?.code, status: error?.status });
+        return privateJson({ error: failure.error }, failure.status);
+      }
       return privateJson({
         message:
           'Se houver uma conta ativa para este e-mail, você receberá um link para redefinir a senha. O link expira em pouco tempo — confira também o spam.',
@@ -135,8 +141,8 @@ export async function POST(req: NextRequest, context: { params: Promise<{ action
       return privateJson({ ok: true, message: 'Senha redefinida com sucesso. Entre com a nova senha.' });
     }
     if (action === 'otp-verify') {
-      const otpParsed = z.object({ email: z.email().max(254), token: z.string().regex(/^\d{6}$/) }).safeParse(body);
-      if (!otpParsed.success) return privateJson({ error: 'Informe o código de seis dígitos.' }, 400);
+      const otpParsed = z.object({ email: z.email().max(254), token: z.string().regex(/^\d{6,8}$/) }).safeParse(body);
+      if (!otpParsed.success) return privateJson({ error: 'Informe o código de 6 a 8 dígitos recebido por e-mail.' }, 400);
       const { email, token } = otpParsed.data;
       if (!(await consumeAttempt(`auth:account:otp-verify:${email.toLowerCase()}`, 10, 900))) return privateJson({ error: 'Não foi possível concluir. Aguarde alguns minutos.' }, 429);
       const { error } = await client.auth.verifyOtp({ email, token, type: 'email' });
@@ -153,15 +159,21 @@ export async function POST(req: NextRequest, context: { params: Promise<{ action
       if (!(await consumeAttempt(`auth:account:${action}:${email.toLowerCase()}`, action === 'login' ? 10 : 3, 900))) return privateJson({ error: 'Não foi possível concluir. Aguarde alguns minutos.' }, 429);
       if (isTurnstileEnforced()) {
         if (!isTurnstileConfigured()) return privateJson({ error: 'Verificação de segurança indisponível. Contate a equipe.' }, 503);
-        if (!captcha || !(await verifyTurnstileToken(captcha)).success) return privateJson({ error: 'Confirme a verificação de segurança.' }, 400);
+        // Validation belongs to Supabase Auth; Turnstile tokens cannot be used twice.
+        if (!captcha) return privateJson({ error: 'Confirme a verificação de segurança.' }, 400);
       }
       if (action === 'otp') {
         // Sempre resposta genérica — não revela existência da conta (anti-enumeration).
         const redirectTo = new URL('/auth/callback', process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || req.url);
         redirectTo.searchParams.set('entry', userFlow ? '/portal/acesso' : '/admin-dashboard-su/secure-entry');
         redirectTo.searchParams.set('next', sanitizeCallbackPath(parsed.data.callbackUrl) ?? (userFlow ? '/conta' : '/dashboard'));
-        await client.auth.signInWithOtp({ email, options: { shouldCreateUser: false, emailRedirectTo: redirectTo.toString() } }).catch(() => undefined);
-        return privateJson({ message: 'Se houver uma conta ativa para este e-mail, você receberá um código de 6 dígitos. Confira também o spam.' });
+        const { error } = await client.auth.signInWithOtp({ email, options: { shouldCreateUser: false, emailRedirectTo: redirectTo.toString(), captchaToken: captcha } });
+        const failure = authEmailFailure(error);
+        if (failure) {
+          console.error('[api/auth] email request failed', { action, code: error?.code, status: error?.status });
+          return privateJson({ error: failure.error }, failure.status);
+        }
+        return privateJson({ message: 'Se houver uma conta ativa para este e-mail, você receberá um código de acesso. Confira também o spam.' });
       }
       if (action === 'signup' || action === 'resend') {
         const redirectTo = new URL('/auth/callback', process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || req.url);
@@ -169,15 +181,22 @@ export async function POST(req: NextRequest, context: { params: Promise<{ action
         redirectTo.searchParams.set('next', sanitizeCallbackPath(parsed.data.callbackUrl) ?? (userFlow ? '/conta' : '/dashboard'));
         const emailRedirectTo = redirectTo.toString();
         const result = action === 'signup'
-          ? await client.auth.signUp({ email, password, options: { emailRedirectTo } })
-          : await client.auth.resend({ type: 'signup', email, options: { emailRedirectTo } });
+          ? await client.auth.signUp({ email, password, options: { emailRedirectTo, captchaToken: captcha } })
+          : await client.auth.resend({ type: 'signup', email, options: { emailRedirectTo, captchaToken: captcha } });
         // Never disclose whether an address already has an account.
-        if (result.error && (result.error.status ?? 500) >= 500) throw result.error;
+        const failure = authEmailFailure(result.error);
+        if (failure) {
+          console.error('[api/auth] email request failed', { action, code: result.error?.code, status: result.error?.status });
+          return privateJson({ error: failure.error }, failure.status);
+        }
         if ('session' in result.data && result.data.session) await client.auth.signOut({ scope: 'local' });
         return privateJson({ message: 'Se o endereço estiver apto, você receberá um e-mail de confirmação. Confira também o spam e depois entre na sua conta.' });
       }
-      const { error } = await client.auth.signInWithPassword({ email, password });
-      if (error) return privateJson({ error: 'Não foi possível entrar com essas credenciais.' }, 401);
+      const { error } = await client.auth.signInWithPassword({ email, password, options: { captchaToken: captcha } });
+      if (error) {
+        const failure = error.code === 'invalid_credentials' || error.code === 'email_not_confirmed' ? null : authEmailFailure(error);
+        return privateJson({ error: failure?.error ?? 'Não foi possível entrar com essas credenciais. Confira também a confirmação do e-mail.' }, failure?.status ?? 401);
+      }
     }
     const checkAccess = (mfa = true) => userFlow ? getUserAccess(mfa, client) : getAdminAccess(mfa, client);
     const access = await checkAccess(false);
@@ -192,10 +211,14 @@ export async function POST(req: NextRequest, context: { params: Promise<{ action
       const { error } = await client.auth.mfa.challengeAndVerify(parsed.data);
       if (error) return privateJson({ error: 'Código inválido ou expirado. Tente novamente.' }, 400);
       const verified = await checkAccess();
+      if (userFlow && verified.ok) after(() => sendWelcomeIfNeeded(access.userId));
       return verified.ok ? privateJson({ ok: true }) : privateJson({ error: 'Não foi possível validar a sessão.' }, 403);
     }
     const fullAccess = await checkAccess();
-    if (fullAccess.ok) return privateJson({ ok: true });
+    if (fullAccess.ok) {
+      if (userFlow) after(() => sendWelcomeIfNeeded(access.userId));
+      return privateJson({ ok: true });
+    }
     if (fullAccess.reason !== 'mfa') return privateJson({ error: 'Não foi possível validar a sessão.' }, fullAccess.status);
     const factors = await client.auth.mfa.listFactors();
     if (factors.error) throw factors.error;
@@ -212,6 +235,7 @@ export async function POST(req: NextRequest, context: { params: Promise<{ action
     return privateJson({ factorId: enrollment.data.id, qr: enrollment.data.totp.qr_code, secret: enrollment.data.totp.secret });
   } catch (error) {
     if (error instanceof RequestError) return privateJson({ error: error.message }, error.status);
+    console.error('[api/auth] request failed', { action, name: error instanceof Error ? error.name : 'UnknownError' });
     return privateJson({ error: 'Não foi possível concluir. Tente novamente em instantes.' }, 503);
   }
 }

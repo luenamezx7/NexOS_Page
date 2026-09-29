@@ -55,6 +55,7 @@ export function LoginForm({ initialMfa, audience = 'admin', confirmationError = 
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState('');
   const [otpEmail, setOtpEmail] = useState('');
+  const [otpResendAction, setOtpResendAction] = useState<'otp' | 'resend'>('otp');
   const [captcha, setCaptcha] = useState('');
   const [captchaKey, setCaptchaKey] = useState(0);
   const [step, setStep] = useState<Step>(initialMfa ? 'factor' : 'login');
@@ -76,7 +77,11 @@ export function LoginForm({ initialMfa, audience = 'admin', confirmationError = 
         setMessage(result.message);
         setPassword('');
         setFormKey(v => v + 1);
-        if (action === 'otp') { setOtpEmail(String((body as { email?: string }).email ?? '')); setMode('otp-verify'); }
+        if (['otp', 'signup', 'resend'].includes(action)) {
+          setOtpEmail(String((body as { email?: string }).email ?? ''));
+          setOtpResendAction(action === 'otp' ? 'otp' : 'resend');
+          setMode('otp-verify');
+        }
         else if (action !== 'forgot') setMode('login');
         return;
       }
@@ -265,7 +270,7 @@ export function LoginForm({ initialMfa, audience = 'admin', confirmationError = 
               )}
               {mode === 'signup' && <div className="flex flex-col gap-2"><label htmlFor="confirm-password" className="text-sm font-medium">Confirmar senha</label><input id="confirm-password" name="confirmPassword" type="password" autoComplete="new-password" minLength={12} maxLength={256} required disabled={busy} className="field-input w-full" /></div>}
               <Turnstile key={captchaKey} onVerify={setCaptcha} onExpire={() => setCaptcha('')} onError={() => { setCaptcha(''); setError('Verificação indisponível. Recarregue a página.'); }} />
-              <button type="submit" disabled={busy || (captchaEnforced && !captcha)} className="btn-primary-nex w-full justify-center disabled:opacity-60">
+              <button type="submit" disabled={busy || captchaLoading || (captchaEnforced && !captcha)} className="btn-primary-nex w-full justify-center disabled:opacity-60">
                 {busy ? (mode === 'forgot' ? 'Enviando…' : 'Verificando…') : mode === 'signup' ? 'Criar conta' : mode === 'resend' ? 'Reenviar confirmação' : mode === 'forgot' ? 'Enviar link de redefinição' : 'Entrar'}
                 <ArrowRight size={16} />
               </button>
@@ -286,23 +291,23 @@ export function LoginForm({ initialMfa, audience = 'admin', confirmationError = 
             </>
           ) : step === 'login' && mode === 'otp' ? (
             <form key={`otp-${formKey}`} className="flex flex-col gap-5" onSubmit={e => { e.preventDefault(); const form = new FormData(e.currentTarget); void submit('otp', { email: form.get('email'), captcha }); }}>
-              <p className="text-sm leading-relaxed text-ink/75">Enviaremos um código de 6 dígitos para o seu e-mail. Válido por alguns minutos.</p>
+              <p className="text-sm leading-relaxed text-ink/75">Enviaremos um código de acesso para o seu e-mail. Use o código mais recente recebido.</p>
               <div className="space-y-2"><label htmlFor="otp-email" className="block text-sm font-medium">E-mail</label><input id="otp-email" name="email" type="email" autoComplete="username" required maxLength={254} className="field-input w-full" disabled={busy} /></div>
               <Turnstile key={captchaKey} onVerify={setCaptcha} onExpire={() => setCaptcha('')} onError={() => { setCaptcha(''); setError('Verificação indisponível. Recarregue a página.'); }} />
-              <button type="submit" disabled={busy || (captchaEnforced && !captcha)} className="btn-primary-nex w-full justify-center disabled:opacity-60">{busy ? 'Enviando…' : 'Enviar código por e-mail'}<Mail size={16} /></button>
+              <button type="submit" disabled={busy || captchaLoading || (captchaEnforced && !captcha)} className="btn-primary-nex w-full justify-center disabled:opacity-60">{busy ? 'Enviando…' : 'Enviar código por e-mail'}<Mail size={16} /></button>
               <button type="button" disabled={busy} className="self-start text-sm underline underline-offset-4" onClick={() => goMode('login')}>Voltar à senha</button>
             </form>
           ) : step === 'login' && mode === 'otp-verify' ? (
             <form key={`otp-verify-${formKey}`} className="flex flex-col gap-5" onSubmit={e => { e.preventDefault(); const form = new FormData(e.currentTarget); void submit('otp-verify', { email: otpEmail, token: form.get('token') }); }}>
               <p className="text-sm leading-relaxed text-ink/75">Digite o código enviado para <span className="font-medium text-ink">{otpEmail}</span>.</p>
               <div className="space-y-2">
-                <label htmlFor="otp-token" className="block text-sm font-medium">Código de 6 dígitos</label>
-                <input key={formKey} id="otp-token" name="token" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" minLength={6} maxLength={6} required className="field-input w-full font-mono tracking-[.4em]" disabled={busy} autoFocus />
+                <label htmlFor="otp-token" className="block text-sm font-medium">Código recebido por e-mail (6 a 8 dígitos)</label>
+                <input key={formKey} id="otp-token" name="token" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6,8}" minLength={6} maxLength={8} required className="field-input w-full font-mono tracking-[.4em]" disabled={busy} autoFocus />
               </div>
               <button type="submit" disabled={busy} className="btn-primary-nex w-full justify-center disabled:opacity-60">{busy ? 'Verificando…' : 'Verificar código'}</button>
               <Turnstile key={captchaKey} onVerify={setCaptcha} onExpire={() => setCaptcha('')} onError={() => { setCaptcha(''); setError('Verificação indisponível. Atualize a página.'); }} />
               <div className="flex flex-wrap gap-4 text-sm">
-                <button type="button" disabled={busy || (captchaEnforced && !captcha)} className="underline underline-offset-4" onClick={() => { void submit('otp', { email: otpEmail, captcha }); }}>Reenviar código</button>
+                <button type="button" disabled={busy || captchaLoading || (captchaEnforced && !captcha)} className="underline underline-offset-4" onClick={() => { void submit(otpResendAction, { email: otpEmail, captcha }); }}>Reenviar código</button>
                 <button type="button" disabled={busy} className="underline underline-offset-4" onClick={() => goMode('login')}>Usar senha</button>
               </div>
             </form>

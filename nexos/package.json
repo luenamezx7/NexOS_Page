@@ -11,7 +11,7 @@
     "test:security": "node --conditions=react-server --test tests/security.test.mjs",
     "test:auth:live": "node --use-system-ca tests/live-auth.mjs",
     "test:browser": "playwright test",
-    "test:email": "tsx scripts/test-email.ts",
+    "test:email": "node --use-system-ca --import tsx scripts/test-email.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

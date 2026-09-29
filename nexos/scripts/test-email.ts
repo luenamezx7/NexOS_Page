@@ -5,19 +5,22 @@
  */
 
 import React from 'react';
-import { resend, FROM_EMAIL } from '../src/lib/emails/resend';
+import { loadEnvConfig } from '@next/env';
+import { getResend } from '../src/lib/emails/resend';
 import { WelcomeEmail } from '../src/emails/welcome';
 import { MagicLinkEmail } from '../src/emails/magic-link';
 import { ResetPasswordEmail } from '../src/emails/reset-password';
 import { VerifyEmail } from '../src/emails/verify-email';
 import { NotificationEmail } from '../src/emails/notification';
 
+loadEnvConfig(process.cwd());
 const TEST_EMAIL = process.env.TEST_EMAIL || 'delivered@resend.dev';
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'NexOS <noreply@nexoslab.online>';
 
 async function testEmail(name: string, subject: string, react: React.ReactElement) {
   console.log(`\n📧 Testando: ${name}...`);
   try {
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await getResend().emails.send({
       from: FROM_EMAIL,
       to: [TEST_EMAIL],
       subject,
@@ -36,6 +39,11 @@ async function testEmail(name: string, subject: string, react: React.ReactElemen
 }
 
 async function main() {
+  if (!process.env.RESEND_API_KEY?.trim()) {
+    console.error('RESEND_API_KEY ausente. Configure em .env.local para testar o envio direto. O SMTP do Supabase é uma configuração separada.');
+    process.exitCode = 1;
+    return;
+  }
   console.log('🚀 Iniciando testes de email NexOS');
   console.log(`📬 Enviando para: ${TEST_EMAIL}`);
   console.log(`📤 De: ${FROM_EMAIL}`);
@@ -80,7 +88,7 @@ async function main() {
     const ok = await testEmail(name, subject, react);
     if (ok) passed++;
     // Rate limit: 10 req/s, mas vamos dar um respiro
-    await new Promise(r => setTimeout(r, 200));
+    await new Promise(r => setTimeout(r, 600));
   }
 
   console.log(`\n📊 Resultado: ${passed}/${tests.length} testes passaram`);

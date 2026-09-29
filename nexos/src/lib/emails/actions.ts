@@ -1,6 +1,6 @@
-'use server';
+import 'server-only';
 
-import { resend, FROM_EMAIL } from '@/lib/emails/resend';
+import { getResend, FROM_EMAIL } from '@/lib/emails/resend';
 import { WelcomeEmail } from '@/emails/welcome';
 import { MagicLinkEmail } from '@/emails/magic-link';
 import { ResetPasswordEmail } from '@/emails/reset-password';
@@ -28,10 +28,11 @@ function getDashboardUrl(userType: 'user' | 'admin'): string {
 export async function sendWelcomeEmail(
   email: string,
   name: string,
-  userType: 'user' | 'admin' = 'user'
+  userType: 'user' | 'admin' = 'user',
+  idempotencyKey?: string
 ): Promise<SendEmailResult> {
   try {
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await getResend().emails.send({
       from: FROM_EMAIL,
       to: [email],
       subject: 'Bem-vindo ao NexOS! 🚀',
@@ -39,7 +40,7 @@ export async function sendWelcomeEmail(
         name,
         dashboardUrl: getDashboardUrl(userType),
       }),
-    });
+    }, idempotencyKey ? { idempotencyKey } : undefined);
 
     if (error) {
       console.error('[sendWelcomeEmail] Erro:', error);
@@ -65,7 +66,7 @@ export async function sendMagicLinkEmail(
   otpCode?: string
 ): Promise<SendEmailResult> {
   try {
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await getResend().emails.send({
       from: FROM_EMAIL,
       to: [email],
       subject: isOtp ? `Seu código de acesso: ${otpCode}` : 'Acesse sua conta no NexOS',
@@ -100,7 +101,7 @@ export async function sendResetPasswordEmail(
   expiresInMinutes: number = 30
 ): Promise<SendEmailResult> {
   try {
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await getResend().emails.send({
       from: FROM_EMAIL,
       to: [email],
       subject: 'Redefina sua senha no NexOS',
@@ -133,7 +134,7 @@ export async function sendVerifyEmail(
   expiresInMinutes: number = 60
 ): Promise<SendEmailResult> {
   try {
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await getResend().emails.send({
       from: FROM_EMAIL,
       to: [email],
       subject: 'Confirme seu e-mail para ativar sua conta NexOS',
@@ -169,7 +170,7 @@ export async function sendNotificationEmail(
   actionVariant?: 'primary' | 'secondary' | 'warning'
 ): Promise<SendEmailResult> {
   try {
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await getResend().emails.send({
       from: FROM_EMAIL,
       to: [email],
       subject: title,
@@ -204,7 +205,7 @@ export async function sendCustomEmail(
   react: React.ReactElement
 ): Promise<SendEmailResult> {
   try {
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await getResend().emails.send({
       from: FROM_EMAIL,
       to: [email],
       subject,
