@@ -12,8 +12,10 @@ export async function GET(request: NextRequest) {
   const entry = request.nextUrl.searchParams.get('entry') === '/admin-dashboard-su/secure-entry'
     ? '/admin-dashboard-su/secure-entry' : '/portal/acesso';
   const next = sanitizeCallbackPath(request.nextUrl.searchParams.get('next'));
-  // Supabase pode enviar 'code' (OAuth) ou 'token' (recovery password) no callback
-  const code = request.nextUrl.searchParams.get('code') ?? request.nextUrl.searchParams.get('token');
+  const code = request.nextUrl.searchParams.get('code');
+  const token = request.nextUrl.searchParams.get('token');
+  const type = request.nextUrl.searchParams.get('type');
+  const isRecovery = type === 'recovery' || next === '/portal/redefinir';
   let success = false;
   let errorCode = '';
   if (code && code.length <= 2048) {
@@ -33,8 +35,26 @@ export async function GET(request: NextRequest) {
       errorCode = err instanceof Error ? err.name : 'UnknownError';
       console.error('[auth/callback] exchangeCodeForSession threw', { code: errorCode });
     }
+  } else if (isRecovery && token && token.length <= 2048) {
+    try {
+      const client = await createClient();
+      const email = request.nextUrl.searchParams.get('email') ?? '';
+      const { data, error } = await client.auth.verifyOtp({ token, type: 'recovery', email });
+      if (error) {
+        errorCode = error.code ?? error.name ?? '';
+        console.error('[auth/callback] verifyOtp recovery failed', { code: errorCode, message: error.message });
+      }
+      success = !error;
+      if (success && data.user && entry === '/portal/acesso') {
+        const userId = data.user.id;
+        after(() => sendWelcomeIfNeeded(userId));
+      }
+    } catch (err) {
+      errorCode = err instanceof Error ? err.name : 'UnknownError';
+      console.error('[auth/callback] verifyOtp recovery threw', { code: errorCode });
+    }
   } else {
-    console.error('[auth/callback] missing code/token parameter', { hasCode: !!request.nextUrl.searchParams.get('code'), hasToken: !!request.nextUrl.searchParams.get('token') });
+    console.error('[auth/callback] missing code/token parameter', { hasCode: !!code, hasToken: !!token, type, next });
   }
   let target: URL;
   if (success && next === '/portal/redefinir') {
