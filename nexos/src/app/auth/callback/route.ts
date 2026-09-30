@@ -9,11 +9,11 @@ import { sendWelcomeIfNeeded } from '@/lib/emails/welcome';
  */
 export async function GET(request: NextRequest) {
   const site = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || request.url;
-  // entry/next só valem se forem caminhos internos — nunca open redirect.
   const entry = request.nextUrl.searchParams.get('entry') === '/admin-dashboard-su/secure-entry'
     ? '/admin-dashboard-su/secure-entry' : '/portal/acesso';
   const next = sanitizeCallbackPath(request.nextUrl.searchParams.get('next'));
-  const code = request.nextUrl.searchParams.get('code');
+  // Supabase pode enviar 'code' (OAuth) ou 'token' (recovery password) no callback
+  const code = request.nextUrl.searchParams.get('code') ?? request.nextUrl.searchParams.get('token');
   let success = false;
   let errorCode = '';
   if (code && code.length <= 2048) {
@@ -33,15 +33,14 @@ export async function GET(request: NextRequest) {
       errorCode = err instanceof Error ? err.name : 'UnknownError';
       console.error('[auth/callback] exchangeCodeForSession threw', { code: errorCode });
     }
-  } else if (!code) {
-    console.error('[auth/callback] missing code parameter');
+  } else {
+    console.error('[auth/callback] missing code/token parameter', { hasCode: !!request.nextUrl.searchParams.get('code'), hasToken: !!request.nextUrl.searchParams.get('token') });
   }
   let target: URL;
   if (success && next === '/portal/redefinir') {
     target = new URL(next, site);
   } else {
     target = new URL(entry, site);
-    // The entry page checks email/MFA/admin access before resuming a purchase.
     if (next) target.searchParams.set('callbackUrl', next);
     if (!success) {
       target.searchParams.set('confirmation', 'error');
