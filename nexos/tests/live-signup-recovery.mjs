@@ -20,6 +20,7 @@ const origin = 'http://localhost:3212';
 const password = `${randomUUID()}-Aa9!`;
 const newPassword = `${randomUUID()}-Zz8?`;
 const takenEmail = `nexos-signup-taken-${run}@example.com`;
+const pendingEmail = `nexos-signup-pending-${run}@example.com`;
 const unusedEmail = `nexos-signup-unused-${run}@example.com`;
 const recoverEmail = `nexos-recovery-${run}@example.com`;
 const fixtures = [];
@@ -39,6 +40,7 @@ async function hashRateKeys() {
     `auth:account:forgot:${recoverEmail.toLowerCase()}`,
     `auth:account:signup:${takenEmail.toLowerCase()}`,
     `auth:account:signup:${unusedEmail.toLowerCase()}`,
+    `auth:account:signup:${pendingEmail.toLowerCase()}`,
     `auth:account:reset:${run}-reset`,
   ];
   return keys.map(key => createHmac('sha256', secret).update(key).digest('hex'));
@@ -50,8 +52,13 @@ try {
     probe.once('error', reject);
     probe.listen(3212, () => probe.close(resolve));
   });
-  for (const email of [takenEmail, recoverEmail]) {
-    const { data, error } = await admin.auth.admin.createUser({ email, password, email_confirm: true, user_metadata: { integration_test: run } });
+  for (const email of [takenEmail, pendingEmail, recoverEmail]) {
+    const { data, error } = await admin.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: email !== pendingEmail,
+      user_metadata: { integration_test: run },
+    });
     assert.equal(error, null, `Disposable fixture creation failed: ${error?.message ?? ''}`);
     fixtures.push(data.user.id);
   }
@@ -84,6 +91,10 @@ try {
     assert.equal(alt.status, 409, `Variant ${variant} must be rejected`);
     assert.equal(alt.body.error, 'O E-mail já está em uso.');
   }
+
+  // A merely pending registration must stay hidden: no "in use" verdict.
+  const pending = await signup(pendingEmail);
+  assert.notEqual(pending.status, 409, 'A pending sign-up must not be disclosed as taken');
 
   // A genuinely unused address must never be reported as in use. Supabase Auth
   // itself requires a captcha token in this project, so the only acceptable
@@ -176,7 +187,7 @@ try {
     'A malformed hash must be rejected before the form',
   );
 
-  console.log('PASS: duplicate signup warning (exact, case/whitespace variants, no false positive) and full password recovery (link, form, update, replay rejection).');
+  console.log('PASS: duplicate signup warning (confirmed only, case/whitespace variants, pending and unused hidden) and full password recovery (link, form, update, replay rejection).');
 } finally {
   if (server && server.exitCode === null) { const exited = once(server, 'exit'); server.kill(); await exited; }
   let cleanupFailed = false;

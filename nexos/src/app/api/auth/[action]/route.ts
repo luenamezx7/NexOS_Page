@@ -26,7 +26,7 @@ import { evaluatePassword } from '@/lib/auth/password-strength';
 import { sanitizeCallbackPath } from '@/lib/auth/callback';
 import { authEmailFailure } from '@/lib/auth/email-errors';
 import { sendWelcomeIfNeeded } from '@/lib/emails/welcome';
-import { emailAlreadyInUse, isDuplicateSignup } from '@/lib/auth/signup';
+import { isConfirmedDuplicateError, isConfirmedEmailTaken } from '@/lib/auth/signup';
 import { isRecoveryTokenHash } from '@/lib/auth/recovery';
 
 // Supplemental per-instance limit. Supabase Auth also enforces its own limits.
@@ -206,7 +206,7 @@ export async function POST(req: NextRequest, context: { params: Promise<{ action
         return privateJson({ message: 'Se houver uma conta ativa para este e-mail, você receberá um código de acesso. Confira também o spam.' });
       }
       if (action === 'signup' || action === 'resend') {
-        if (action === 'signup' && await emailAlreadyInUse(email, createAdminClient().auth.admin)) {
+        if (action === 'signup' && await isConfirmedEmailTaken(email, createAdminClient())) {
           // This branch skips signUp, so validate CAPTCHA here exactly once.
           if (isTurnstileEnforced() && !(await verifyTurnstileToken(captcha ?? '')).success) {
             return privateJson({ error: 'Confirme a verificação de segurança.' }, 400);
@@ -220,8 +220,8 @@ export async function POST(req: NextRequest, context: { params: Promise<{ action
         const result = action === 'signup'
           ? await client.auth.signUp({ email, password, options: { emailRedirectTo, captchaToken: captcha } })
           : await client.auth.resend({ type: 'signup', email, options: { emailRedirectTo, captchaToken: captcha } });
-        // Covers a concurrent signup after the existence check and obfuscated responses.
-        if (action === 'signup' && isDuplicateSignup(result)) {
+        // Covers a signup that raced the index check, for confirmed accounts only.
+        if (action === 'signup' && isConfirmedDuplicateError(result.error)) {
           return privateJson({ error: 'O E-mail já está em uso.', code: 'EMAIL_IN_USE' }, 409);
         }
         const failure = authEmailFailure(result.error);

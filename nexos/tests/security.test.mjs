@@ -7,37 +7,58 @@ import { readJsonBody, isSameOrigin } from '../src/lib/request-security.ts';
 import { evaluatePassword } from '../src/lib/auth/password-strength.ts';
 import { sanitizeCallbackPath } from '../src/lib/auth/callback.ts';
 import { authEmailFailure } from '../src/lib/auth/email-errors.ts';
-import { emailAlreadyInUse, isDuplicateSignup } from '../src/lib/auth/signup.ts';
+import { isConfirmedDuplicateError, isConfirmedEmailTaken } from '../src/lib/auth/signup.ts';
 import { isRecoveryTokenHash } from '../src/lib/auth/recovery.ts';
 
-test('new unconfirmed accounts without a session are not reported as duplicates', () => {
-  assert.equal(isDuplicateSignup({ error: null, data: { user: { identities: [{ provider: 'email' }] }, session: null } }), false);
-  assert.equal(isDuplicateSignup({ error: null, data: { user: { identities: [] } } }), true);
-  assert.equal(isDuplicateSignup({ error: null, data: { user: null } }), false);
-  assert.equal(isDuplicateSignup({ error: { code: 'email_address_invalid' }, data: {} }), false);
-  assert.equal(isDuplicateSignup({ error: { code: 'captcha_failed' }, data: {} }), false);
-  for (const code of ['user_already_exists', 'email_exists']) {
-    assert.equal(isDuplicateSignup({ error: { code }, data: {} }), true);
-  }
+// Minimal stand-in for the server-only Supabase client used by the lookup.
+function indexStub(result) {
+  const calls = [];
+  return {
+    calls,
+    from(table) {
+      return {
+        select() {
+          return {
+            eq(column, value) {
+              calls.push([table, column, value]);
+              return { maybeSingle: async () => result };
+            },
+          };
+        },
+      };
+    },
+  };
+}
+
+test('only confirmed accounts are reported as taken', async () => {
+  const missing = indexStub({ data: null, error: null });
+  assert.equal(await isConfirmedEmailTaken('fresh@example.com', missing), false);
+  assert.deepEqual(missing.calls.at(-1), ['account_email_index', 'email', 'fresh@example.com']);
+
+  // Pending sign-up: deliberately not reported, so pending registrations stay hidden.
+  const pending = indexStub({ data: { confirmed: false }, error: null });
+  assert.equal(await isConfirmedEmailTaken('pending@example.com', pending), false);
+
+  // Confirmed account: reported, and the address is normalized before lookup.
+  const confirmed = indexStub({ data: { confirmed: true }, error: null });
+  assert.equal(await isConfirmedEmailTaken('  USED@Example.com ', confirmed), true);
+  assert.deepEqual(confirmed.calls.at(-1), ['account_email_index', 'email', 'used@example.com']);
+
+  // A missing or failing index must not block sign-up.
+  const notFound = indexStub({ data: null, error: { code: 'PGRST116' } });
+  assert.equal(await isConfirmedEmailTaken('fresh@example.com', notFound), false);
+  const failed = indexStub({ data: null, error: { code: '500' } });
+  assert.equal(await isConfirmedEmailTaken('fresh@example.com', failed), false);
 });
 
-test('email existence checks match exact addresses across every page, regardless of confirmation', async () => {
-  const pages = [
-    [{ email: 'other@example.com' }],
-    [{ email: 'Used@example.com', email_confirmed_at: null }],
-    [],
-  ];
-  const calls = [];
-  const admin = { async listUsers({ page }) { calls.push(page); return { data: { users: pages[page - 1] }, error: null }; } };
-  assert.equal(await emailAlreadyInUse(' USED@example.com ', admin), true);
-  assert.deepEqual(calls, [1, 2]);
-  calls.length = 0;
-  assert.equal(await emailAlreadyInUse('new@example.com', admin), false);
-  assert.deepEqual(calls, [1, 2, 3]);
-  assert.equal(await emailAlreadyInUse('used@example.co', admin), false);
-  await assert.rejects(emailAlreadyInUse('new@example.com', {
-    async listUsers() { return { data: { users: [] }, error: new Error('Auth unavailable') }; },
-  }), /Auth unavailable/);
+test('a pending sign-up is never disclosed as a duplicate', () => {
+  for (const code of ['user_already_exists', 'email_exists']) {
+    assert.equal(isConfirmedDuplicateError({ code }), true);
+  }
+  assert.equal(isConfirmedDuplicateError({ code: 'email_address_invalid' }), false);
+  assert.equal(isConfirmedDuplicateError({ code: 'captcha_failed' }), false);
+  assert.equal(isConfirmedDuplicateError({ code: 'over_email_send_rate_limit' }), false);
+  assert.equal(isConfirmedDuplicateError(null), false);
 });
 
 test('recovery links use a token hash, not an OTP or PKCE code', () => {
