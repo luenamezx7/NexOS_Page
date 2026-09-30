@@ -15,9 +15,11 @@ export async function GET(request: NextRequest) {
   const next = sanitizeCallbackPath(request.nextUrl.searchParams.get('next'));
   const code = request.nextUrl.searchParams.get('code');
   const type = request.nextUrl.searchParams.get('type');
-  const isRecovery = type === 'recovery' || next === '/portal/redefinir';
   const tokenHash = request.nextUrl.searchParams.get('token_hash') ?? request.nextUrl.searchParams.get('token');
-  if (isRecovery && isRecoveryTokenHash(tokenHash)) {
+  // A well-formed token hash is only ever issued for password recovery, so treat
+  // it as recovery even if the template lost its extra query parameters.
+  const isRecovery = !!isRecoveryTokenHash(tokenHash) || type === 'recovery' || next === '/portal/redefinir';
+  if (isRecoveryTokenHash(tokenHash)) {
     // Do not consume the one-time token here: email scanners follow links, and
     // verifying on GET would invalidate the token before the user sees the form.
     // The form renders immediately and the POST verifies the hash before saving.
