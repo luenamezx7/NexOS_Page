@@ -34,6 +34,18 @@ const attempts = new Map<string, { count: number; until: number }>();
 const emailSchema = z.object({ email: z.string().trim().toLowerCase().pipe(z.email().max(254)), captcha: z.string().max(2048).optional(), callbackUrl: z.string().max(512).optional() });
 const loginSchema = emailSchema.extend({ password: z.string().min(1).max(256) });
 
+// Machine-readable reason for every reset rejection, so a support report can
+// identify the exact step that failed without exposing provider internals.
+const RESET_CODES = {
+  password: 'RESET_PASSWORD_INVALID',
+  rateLimited: 'RESET_RATE_LIMITED',
+  captchaUnavailable: 'RESET_CAPTCHA_UNAVAILABLE',
+  captchaFailed: 'RESET_CAPTCHA_FAILED',
+  linkInvalid: 'RESET_LINK_INVALID',
+  sessionInvalid: 'RESET_SESSION_INVALID',
+  updateFailed: 'RESET_UPDATE_FAILED',
+} as const;
+
 async function consumeAttempt(key: string, limit: number, seconds: number) {
   const secret = process.env.SUPABASE_SECRET_KEY;
   if (!secret) throw new Error('Rate limit unavailable');
@@ -129,18 +141,20 @@ export async function POST(req: NextRequest, context: { params: Promise<{ action
         .object({ password: z.string().min(12).max(256), captcha: z.string().max(2048).optional(), tokenHash: z.string().refine(isRecoveryTokenHash).optional() })
         .safeParse(body);
       if (!resetParsed.success) {
-        return privateJson({ error: 'A senha precisa de: 12+ caracteres, maiúscula, minúscula, número e símbolo.' }, 400);
+        return privateJson({ error: 'A senha precisa de: 12+ caracteres, maiúscula, minúscula, número e símbolo.', code: RESET_CODES.password }, 400);
       }
       if (!evaluatePassword(resetParsed.data.password).acceptable) {
-        return privateJson({ error: 'A senha precisa de: 12+ caracteres, maiúscula, minúscula, número e símbolo.' }, 400);
+        return privateJson({ error: 'A senha precisa de: 12+ caracteres, maiúscula, minúscula, número e símbolo.', code: RESET_CODES.password }, 400);
       }
       if (!(await consumeAttempt(`auth:account:reset:${ip}`, 5, 900))) {
-        return privateJson({ error: 'Não foi possível concluir. Aguarde alguns minutos.' }, 429);
+        return privateJson({ error: 'Não foi possível concluir. Aguarde alguns minutos.', code: RESET_CODES.rateLimited }, 429);
       }
       if (isTurnstileEnforced()) {
-        if (!isTurnstileConfigured()) return privateJson({ error: 'Verificação de segurança indisponível. Contate a equipe.' }, 503);
+        if (!isTurnstileConfigured()) {
+          return privateJson({ error: 'Verificação de segurança indisponível. Contate a equipe.', code: RESET_CODES.captchaUnavailable }, 503);
+        }
         if (!resetParsed.data.captcha || !(await verifyTurnstileToken(resetParsed.data.captcha)).success) {
-          return privateJson({ error: 'Confirme a verificação de segurança.' }, 400);
+          return privateJson({ error: 'Confirme a verificação de segurança.', code: RESET_CODES.captchaFailed }, 400);
         }
       }
       let recoveryVerified = false;
@@ -148,23 +162,25 @@ export async function POST(req: NextRequest, context: { params: Promise<{ action
         const { data, error } = await client.auth.verifyOtp({ token_hash: resetParsed.data.tokenHash, type: 'recovery' });
         if (error || !data.session || !data.user || data.user.is_anonymous) {
           console.error('[api/auth] recovery verification failed', { code: error?.code, status: error?.status });
-          return privateJson({ error: 'Link de redefinição inválido ou expirado. Solicite um novo link em Esqueceu a senha.' }, 401);
+          return privateJson({ error: 'Link de redefinição inválido ou expirado. Solicite um novo link em Esqueceu a senha.', code: RESET_CODES.linkInvalid }, 401);
         }
         recoveryVerified = true;
       }
       const { data: sessionUser, error: sessionError } = await client.auth.getUser();
       if (sessionError || !sessionUser.user || sessionUser.user.is_anonymous) {
-        return privateJson({ error: 'Sessão de recuperação inválida ou expirada. Solicite um novo link.' }, 401);
+        console.error('[api/auth] recovery session missing', { code: sessionError?.code, status: sessionError?.status });
+        return privateJson({ error: 'Sessão de recuperação inválida ou expirada. Solicite um novo link.', code: RESET_CODES.sessionInvalid }, 401);
       }
       const { error: updateError } = await client.auth.updateUser({ password: resetParsed.data.password });
       if (updateError) {
         console.error('[api/auth] reset failed', { code: updateError.code, status: updateError.status });
-        const error = updateError.code === 'same_password'
-          ? 'A nova senha precisa ser diferente da senha atual.'
-          : updateError.code === 'weak_password'
-            ? 'Escolha uma senha mais forte e tente novamente.'
-            : 'Não foi possível salvar a nova senha. Tente novamente.';
-        return privateJson({ error, recoveryVerified }, 400);
+        const error =
+          updateError.code === 'same_password'
+            ? 'A nova senha precisa ser diferente da senha atual.'
+            : updateError.code === 'weak_password'
+              ? 'Escolha uma senha mais forte e tente novamente.'
+              : 'Não foi possível salvar a nova senha. Tente novamente.';
+        return privateJson({ error, recoveryVerified, code: RESET_CODES.updateFailed }, 400);
       }
       // Força novo login com a senha atualizada (e MFA quando exigido).
       await client.auth.signOut({ scope: 'local' }).catch(() => undefined);

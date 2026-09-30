@@ -62,13 +62,13 @@ export function ResetPasswordForm({ audience, email, tokenHash }: ResetPasswordF
         body: JSON.stringify({ password: pass, captcha, tokenHash: recoveryToken.current }),
         signal: AbortSignal.timeout(20000),
       });
-      const result: { ok?: boolean; error?: string; message?: string; recoveryVerified?: boolean } = await response.json();
-      if (result.ok || result.recoveryVerified) {
+        const result: { ok?: boolean; error?: string; message?: string; recoveryVerified?: boolean; code?: string } = await response.json();
+        if (result.ok || result.recoveryVerified) {
         // The one-time link is consumed, but a verified session now exists for retries.
         recoveryToken.current = undefined;
         window.history.replaceState(null, '', '/portal/redefinir');
       }
-      if (!response.ok) throw new Error(result.error ?? 'Não foi possível redefinir a senha.');
+        if (!response.ok) throw new Error(result.error ?? `Não foi possível redefinir a senha. Ref.: ${result.code ?? 'desconhecido'}`);
       setPassword('');
       setDone(true);
       setMessage(result.message ?? 'Senha redefinida com sucesso. Entre com a nova senha.');
