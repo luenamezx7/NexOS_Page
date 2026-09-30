@@ -2,6 +2,7 @@ import { after, NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { sanitizeCallbackPath } from '@/lib/auth/callback';
 import { sendWelcomeIfNeeded } from '@/lib/emails/welcome';
+import { isRecoveryTokenHash } from '@/lib/auth/recovery';
 
 /**
  * Auth callback — handles OAuth/OTP code exchange.
@@ -13,60 +14,51 @@ export async function GET(request: NextRequest) {
     ? '/admin-dashboard-su/secure-entry' : '/portal/acesso';
   const next = sanitizeCallbackPath(request.nextUrl.searchParams.get('next'));
   const code = request.nextUrl.searchParams.get('code');
-  const token = request.nextUrl.searchParams.get('token');
   const type = request.nextUrl.searchParams.get('type');
   const isRecovery = type === 'recovery' || next === '/portal/redefinir';
+  const tokenHash = request.nextUrl.searchParams.get('token_hash') ?? request.nextUrl.searchParams.get('token');
+  if (isRecovery && isRecoveryTokenHash(tokenHash)) {
+    // Do not consume the one-time token here: email scanners follow links, and
+    // verifying on GET would invalidate the token before the user sees the form.
+    // The form renders immediately and the POST verifies the hash before saving.
+    const target = new URL('/portal/redefinir', site);
+    target.searchParams.set('token_hash', tokenHash);
+    return privateRedirect(target);
+  }
   let success = false;
-  let errorCode = '';
   if (code && code.length <= 2048) {
     try {
       const client = await createClient();
       const { data, error } = await client.auth.exchangeCodeForSession(code);
       if (error) {
-        errorCode = error.code ?? error.name ?? '';
-        console.error('[auth/callback] exchangeCodeForSession failed', { code: errorCode, message: error.message });
+        console.error('[auth/callback] code exchange failed', { code: error.code, status: error.status, isRecovery });
       }
-      success = !error;
-      if (success && data.user && entry === '/portal/acesso' && next !== '/portal/redefinir') {
+      success = !error && !!data.session && !!data.user;
+      if (success && data.user && entry === '/portal/acesso' && !isRecovery) {
         const userId = data.user.id;
         after(() => sendWelcomeIfNeeded(userId));
       }
     } catch (err) {
-      errorCode = err instanceof Error ? err.name : 'UnknownError';
-      console.error('[auth/callback] exchangeCodeForSession threw', { code: errorCode });
-    }
-  } else if (isRecovery && token && token.length <= 2048) {
-    try {
-      const client = await createClient();
-      const email = request.nextUrl.searchParams.get('email') ?? '';
-      const { data, error } = await client.auth.verifyOtp({ token, type: 'recovery', email });
-      if (error) {
-        errorCode = error.code ?? error.name ?? '';
-        console.error('[auth/callback] verifyOtp recovery failed', { code: errorCode, message: error.message });
-      }
-      success = !error;
-      if (success && data.user && entry === '/portal/acesso') {
-        const userId = data.user.id;
-        after(() => sendWelcomeIfNeeded(userId));
-      }
-    } catch (err) {
-      errorCode = err instanceof Error ? err.name : 'UnknownError';
-      console.error('[auth/callback] verifyOtp recovery threw', { code: errorCode });
+      console.error('[auth/callback] code exchange threw', { name: err instanceof Error ? err.name : 'UnknownError' });
     }
   } else {
-    console.error('[auth/callback] missing code/token parameter', { hasCode: !!code, hasToken: !!token, type, next });
+    console.error('[auth/callback] missing or invalid credentials', { hasCode: !!code, hasTokenHash: !!tokenHash, isRecovery });
   }
   let target: URL;
-  if (success && next === '/portal/redefinir') {
-    target = new URL(next, site);
+  if (isRecovery) {
+    target = new URL('/portal/redefinir', site);
+    if (!success) target.searchParams.set('recovery', 'error');
   } else {
     target = new URL(entry, site);
     if (next) target.searchParams.set('callbackUrl', next);
     if (!success) {
       target.searchParams.set('confirmation', 'error');
-      if (errorCode) target.searchParams.set('reason', errorCode);
     }
   }
+  return privateRedirect(target);
+}
+
+function privateRedirect(target: URL) {
   const response = NextResponse.redirect(target, 303);
   response.headers.set('Cache-Control', 'private, no-store');
   response.headers.set('Referrer-Policy', 'no-referrer');

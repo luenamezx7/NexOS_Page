@@ -9,7 +9,6 @@
 import { useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { ArrowLeft, ArrowRight, Eye, EyeOff, LockKeyhole } from 'lucide-react';
 import { motion, useReducedMotion } from 'motion/react';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -22,12 +21,13 @@ import styles from '@/components/auth/LoginForm.module.css';
 interface ResetPasswordFormProps {
   audience: 'admin' | 'user';
   email: string;
+  tokenHash?: string;
 }
 
-export function ResetPasswordForm({ audience, email }: ResetPasswordFormProps) {
+export function ResetPasswordForm({ audience, email, tokenHash }: ResetPasswordFormProps) {
   const userFlow = audience === 'user';
   const reduce = useReducedMotion();
-  const router = useRouter();
+  const recoveryToken = useRef(tokenHash);
   const busyRef = useRef(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -37,7 +37,7 @@ export function ResetPasswordForm({ audience, email }: ResetPasswordFormProps) {
   const [captcha, setCaptcha] = useState('');
   const [captchaKey, setCaptchaKey] = useState(0);
   const [done, setDone] = useState(false);
-  const { required: captchaEnforced } = useTurnstileConfig();
+  const { required: captchaEnforced, loading: captchaLoading } = useTurnstileConfig();
 
   async function handleSubmit(form: FormData) {
     if (busyRef.current) return;
@@ -59,10 +59,15 @@ export function ResetPasswordForm({ audience, email }: ResetPasswordFormProps) {
       const response = await fetch(`/api/auth/${userFlow ? 'user-' : ''}reset`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: pass, captcha }),
+        body: JSON.stringify({ password: pass, captcha, tokenHash: recoveryToken.current }),
         signal: AbortSignal.timeout(20000),
       });
-      const result: { ok?: boolean; error?: string; message?: string } = await response.json();
+      const result: { ok?: boolean; error?: string; message?: string; recoveryVerified?: boolean } = await response.json();
+      if (result.ok || result.recoveryVerified) {
+        // The one-time link is consumed, but a verified session now exists for retries.
+        recoveryToken.current = undefined;
+        window.history.replaceState(null, '', '/portal/redefinir');
+      }
       if (!response.ok) throw new Error(result.error ?? 'Não foi possível redefinir a senha.');
       setPassword('');
       setDone(true);
@@ -130,19 +135,19 @@ export function ResetPasswordForm({ audience, email }: ResetPasswordFormProps) {
                   {message}
                 </p>
               )}
-              <button type="button" onClick={() => router.replace(loginHref)} className="btn-primary-nex justify-center">
+              <button type="button" onClick={() => window.location.replace(loginHref)} className="btn-primary-nex justify-center">
                 Ir para o login
                 <ArrowRight size={16} />
               </button>
             </div>
           ) : (
-            <form key={`reset-${captchaKey}`} className="flex flex-col gap-5" onSubmit={(e) => { e.preventDefault(); void handleSubmit(new FormData(e.currentTarget)); }}>
-              <div className="flex flex-col gap-2">
+            <form className="flex flex-col gap-5" onSubmit={(e) => { e.preventDefault(); void handleSubmit(new FormData(e.currentTarget)); }}>
+              {email && <div className="flex flex-col gap-2">
                 <label htmlFor="reset-email-read" className="text-sm font-medium">
                   E-mail
                 </label>
                 <input id="reset-email-read" value={email} readOnly disabled className="field-input w-full opacity-70" autoComplete="username" />
-              </div>
+              </div>}
               <div className="flex flex-col gap-2">
                 <label htmlFor="reset-password" className="text-sm font-medium">
                   Nova senha
@@ -205,7 +210,7 @@ export function ResetPasswordForm({ audience, email }: ResetPasswordFormProps) {
               />
               <button
                 type="submit"
-                disabled={busy || (captchaEnforced && !captcha)}
+                disabled={busy || captchaLoading || (captchaEnforced && !captcha)}
                 className="btn-primary-nex w-full justify-center disabled:opacity-60"
               >
                 {busy ? 'Salvando…' : 'Salvar nova senha'}

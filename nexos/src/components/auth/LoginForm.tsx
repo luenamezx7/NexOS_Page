@@ -26,7 +26,7 @@ import { evaluatePassword } from '@/lib/auth/password-strength';
 import { sanitizeCallbackPath } from '@/lib/auth/callback';
 import { useTurnstileConfig } from '@/lib/use-turnstile-config';
 
-type AuthResult = { ok?: boolean; error?: string; message?: string; factorId?: string; enrollmentRequired?: boolean; qr?: string; secret?: string; url?: string };
+type AuthResult = { ok?: boolean; error?: string; code?: string; message?: string; factorId?: string; enrollmentRequired?: boolean; qr?: string; secret?: string; url?: string };
 
 type Mode = 'login' | 'signup' | 'resend' | 'otp' | 'otp-verify' | 'forgot';
 type Step = 'login' | 'factor' | 'enroll' | 'verify';
@@ -63,6 +63,7 @@ export function LoginForm({ initialMfa, audience = 'admin', confirmationError = 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(confirmationError ? 'Não foi possível concluir o acesso. O link pode ter expirado ou a autorização foi cancelada. Tente novamente com Google, GitHub ou seu e-mail neste navegador.' : '');
   const [message, setMessage] = useState('');
+  const [emailInUse, setEmailInUse] = useState(false);
   const [mode, setMode] = useState<Mode>('login');
   const [formKey, setFormKey] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
@@ -79,12 +80,15 @@ export function LoginForm({ initialMfa, audience = 'admin', confirmationError = 
 
   async function submit(action: string, body: object = {}) {
     if (busyRef.current) return;
-    busyRef.current = true; setBusy(true); setError(''); setMessage('');
+    busyRef.current = true; setBusy(true); setError(''); setMessage(''); setEmailInUse(false);
     let navigating = false;
     try {
       const response = await fetch(`/api/auth/${userFlow ? 'user-' : ''}${action}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...body, callbackUrl: safeCallback ?? undefined }), signal: AbortSignal.timeout(20000) });
       const result: AuthResult = await response.json();
-      if (!response.ok) throw new Error(result.error ?? 'Não foi possível entrar.');
+      if (!response.ok || result.error) {
+        setEmailInUse(action === 'signup' && result.code === 'EMAIL_IN_USE');
+        throw new Error(result.error ?? 'Não foi possível entrar.');
+      }
       if (action === 'logout') { setStep('login'); setFactor({}); navigating = true; window.location.replace(userFlow ? '/portal/acesso' : '/admin-dashboard-su/secure-entry'); return; }
       if (result.message) {
         setMessage(result.message);
@@ -117,7 +121,7 @@ export function LoginForm({ initialMfa, audience = 'admin', confirmationError = 
 
   function goMode(next: Mode) {
     setCaptcha(''); setCaptchaKey(v => v + 1);
-    setMode(next); setError(''); setMessage(''); setPassword(''); setFormKey(v => v + 1);
+    setMode(next); setError(''); setMessage(''); setEmailInUse(false); setPassword(''); setFormKey(v => v + 1);
   }
 
   async function oauth(provider: SocialProvider) {
@@ -205,6 +209,7 @@ export function LoginForm({ initialMfa, audience = 'admin', confirmationError = 
             </h2>
           </div>
           {userFlow && <p className={styles.description}>{step !== 'login' ? 'Mais uma confirmação para proteger sua conta.' : mode === 'signup' ? 'Crie seu acesso para escolher e contratar suas soluções.' : mode === 'forgot' ? 'Informe o e-mail da conta. Enviaremos um link para criar uma nova senha.' : 'Entre para continuar de onde parou.'}</p>}
+          {error && <p id="auth-error" className="mb-5 rounded-lg border border-ink/20 p-3 text-sm" role="alert">{error}</p>}
 
           {step === 'login' && (mode === 'login' || mode === 'signup' || mode === 'resend' || mode === 'forgot') ? (
             <>
@@ -242,7 +247,7 @@ export function LoginForm({ initialMfa, audience = 'admin', confirmationError = 
                 </div>
               )}
             <form key={`${mode}-${formKey}`} className="flex flex-col gap-5" onSubmit={e => { e.preventDefault(); handlePasswordSubmit(new FormData(e.currentTarget)); }}>
-              <div className="space-y-2"><label htmlFor="login-email" className="block text-sm font-medium">E-mail</label><input id="login-email" name="email" type="email" autoComplete="username" required maxLength={254} className="field-input w-full" disabled={busy || captchaLoading} /></div>
+              <div className="space-y-2"><label htmlFor="login-email" className="block text-sm font-medium">E-mail</label><input id="login-email" name="email" type="email" autoComplete="username" required maxLength={254} aria-invalid={emailInUse || undefined} aria-describedby={emailInUse ? 'auth-error' : undefined} className="field-input w-full" disabled={busy || captchaLoading} /></div>
               {mode !== 'resend' && mode !== 'forgot' && (
                 <div className="flex flex-col gap-2">
                   <label htmlFor="login-password" className="block text-sm font-medium">Senha</label>
@@ -347,7 +352,6 @@ export function LoginForm({ initialMfa, audience = 'admin', confirmationError = 
             </div>
           )}
 
-          {error && <p className="mt-5 rounded-lg border border-ink/20 p-3 text-sm" role="alert">{error}</p>}
           {message && <p className="mt-5 text-sm leading-relaxed" role="status">{message}</p>}
           {step !== 'login' && <button type="button" disabled={busy} onClick={() => void submit('logout')} className="mt-5 text-sm underline underline-offset-4">Sair e usar outra conta</button>}
           <p className="mt-8 text-sm leading-relaxed text-ink/75">{adminShell ? 'Acesso reservado à equipe NexOS. Tentativas são registradas.' : <>Precisa de ajuda? <a href="mailto:nexosperformance@gmail.com" className="underline underline-offset-4">Fale com a NexOS</a>.</>}</p>

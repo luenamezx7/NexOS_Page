@@ -26,10 +26,12 @@ import { evaluatePassword } from '@/lib/auth/password-strength';
 import { sanitizeCallbackPath } from '@/lib/auth/callback';
 import { authEmailFailure } from '@/lib/auth/email-errors';
 import { sendWelcomeIfNeeded } from '@/lib/emails/welcome';
+import { emailAlreadyInUse, isDuplicateSignup } from '@/lib/auth/signup';
+import { isRecoveryTokenHash } from '@/lib/auth/recovery';
 
 // Supplemental per-instance limit. Supabase Auth also enforces its own limits.
 const attempts = new Map<string, { count: number; until: number }>();
-const emailSchema = z.object({ email: z.email().max(254), captcha: z.string().max(2048).optional(), callbackUrl: z.string().max(512).optional() });
+const emailSchema = z.object({ email: z.string().trim().toLowerCase().pipe(z.email().max(254)), captcha: z.string().max(2048).optional(), callbackUrl: z.string().max(512).optional() });
 const loginSchema = emailSchema.extend({ password: z.string().min(1).max(256) });
 
 async function consumeAttempt(key: string, limit: number, seconds: number) {
@@ -122,9 +124,9 @@ export async function POST(req: NextRequest, context: { params: Promise<{ action
       });
     }
     if (action === 'reset') {
-      // Sessão de recovery estabelecida pelo /auth/callback (troca de code).
+      // Verify the email link only on submission, so email scanners cannot consume it.
       const resetParsed = z
-        .object({ password: z.string().min(12).max(256), captcha: z.string().max(2048).optional() })
+        .object({ password: z.string().min(12).max(256), captcha: z.string().max(2048).optional(), tokenHash: z.string().refine(isRecoveryTokenHash).optional() })
         .safeParse(body);
       if (!resetParsed.success) {
         return privateJson({ error: 'A senha precisa de: 12+ caracteres, maiúscula, minúscula, número e símbolo.' }, 400);
@@ -141,14 +143,28 @@ export async function POST(req: NextRequest, context: { params: Promise<{ action
           return privateJson({ error: 'Confirme a verificação de segurança.' }, 400);
         }
       }
+      let recoveryVerified = false;
+      if (resetParsed.data.tokenHash) {
+        const { data, error } = await client.auth.verifyOtp({ token_hash: resetParsed.data.tokenHash, type: 'recovery' });
+        if (error || !data.session || !data.user || data.user.is_anonymous) {
+          console.error('[api/auth] recovery verification failed', { code: error?.code, status: error?.status });
+          return privateJson({ error: 'Link de redefinição inválido ou expirado. Solicite um novo link em Esqueceu a senha.' }, 401);
+        }
+        recoveryVerified = true;
+      }
       const { data: sessionUser, error: sessionError } = await client.auth.getUser();
       if (sessionError || !sessionUser.user || sessionUser.user.is_anonymous) {
         return privateJson({ error: 'Sessão de recuperação inválida ou expirada. Solicite um novo link.' }, 401);
       }
       const { error: updateError } = await client.auth.updateUser({ password: resetParsed.data.password });
       if (updateError) {
-        if (process.env.NODE_ENV !== 'production') console.error('[api/auth] reset:', updateError.message);
-        return privateJson({ error: 'Não foi possível redefinir a senha. Solicite um novo link.' }, 400);
+        console.error('[api/auth] reset failed', { code: updateError.code, status: updateError.status });
+        const error = updateError.code === 'same_password'
+          ? 'A nova senha precisa ser diferente da senha atual.'
+          : updateError.code === 'weak_password'
+            ? 'Escolha uma senha mais forte e tente novamente.'
+            : 'Não foi possível salvar a nova senha. Tente novamente.';
+        return privateJson({ error, recoveryVerified }, 400);
       }
       // Força novo login com a senha atualizada (e MFA quando exigido).
       await client.auth.signOut({ scope: 'local' }).catch(() => undefined);
@@ -190,6 +206,13 @@ export async function POST(req: NextRequest, context: { params: Promise<{ action
         return privateJson({ message: 'Se houver uma conta ativa para este e-mail, você receberá um código de acesso. Confira também o spam.' });
       }
       if (action === 'signup' || action === 'resend') {
+        if (action === 'signup' && await emailAlreadyInUse(email, createAdminClient().auth.admin)) {
+          // This branch skips signUp, so validate CAPTCHA here exactly once.
+          if (isTurnstileEnforced() && !(await verifyTurnstileToken(captcha ?? '')).success) {
+            return privateJson({ error: 'Confirme a verificação de segurança.' }, 400);
+          }
+          return privateJson({ error: 'O E-mail já está em uso.', code: 'EMAIL_IN_USE' }, 409);
+        }
         const redirectTo = new URL('/auth/callback', process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || req.url);
         redirectTo.searchParams.set('entry', userFlow ? '/portal/acesso' : '/admin-dashboard-su/secure-entry');
         redirectTo.searchParams.set('next', sanitizeCallbackPath(parsed.data.callbackUrl) ?? (userFlow ? '/conta' : '/dashboard'));
@@ -197,15 +220,9 @@ export async function POST(req: NextRequest, context: { params: Promise<{ action
         const result = action === 'signup'
           ? await client.auth.signUp({ email, password, options: { emailRedirectTo, captchaToken: captcha } })
           : await client.auth.resend({ type: 'signup', email, options: { emailRedirectTo, captchaToken: captcha } });
-        // Detect email already in use for signup (not resend — resend is for confirmation)
-        if (action === 'signup' && result.error) {
-          const errCode = result.error.code ?? '';
-          const errMsg = result.error.message ?? '';
-          const duplicateCodes = ['user_already_exists', 'email_exists', 'email_address_invalid', 'duplicate_email'];
-          const duplicateMsgPattern = /already (been )?registered|already in use|já está em uso|user already exists/i;
-          if (duplicateCodes.includes(errCode) || duplicateMsgPattern.test(errMsg)) {
-            return privateJson({ error: 'O e-mail já está em uso. Faça login ou use outro e-mail.' }, 409);
-          }
+        // Covers a concurrent signup after the existence check and obfuscated responses.
+        if (action === 'signup' && isDuplicateSignup(result)) {
+          return privateJson({ error: 'O E-mail já está em uso.', code: 'EMAIL_IN_USE' }, 409);
         }
         const failure = authEmailFailure(result.error);
         if (failure) {

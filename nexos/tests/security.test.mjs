@@ -7,6 +7,46 @@ import { readJsonBody, isSameOrigin } from '../src/lib/request-security.ts';
 import { evaluatePassword } from '../src/lib/auth/password-strength.ts';
 import { sanitizeCallbackPath } from '../src/lib/auth/callback.ts';
 import { authEmailFailure } from '../src/lib/auth/email-errors.ts';
+import { emailAlreadyInUse, isDuplicateSignup } from '../src/lib/auth/signup.ts';
+import { isRecoveryTokenHash } from '../src/lib/auth/recovery.ts';
+
+test('new unconfirmed accounts without a session are not reported as duplicates', () => {
+  assert.equal(isDuplicateSignup({ error: null, data: { user: { identities: [{ provider: 'email' }] }, session: null } }), false);
+  assert.equal(isDuplicateSignup({ error: null, data: { user: { identities: [] } } }), true);
+  assert.equal(isDuplicateSignup({ error: null, data: { user: null } }), false);
+  assert.equal(isDuplicateSignup({ error: { code: 'email_address_invalid' }, data: {} }), false);
+  assert.equal(isDuplicateSignup({ error: { code: 'captcha_failed' }, data: {} }), false);
+  for (const code of ['user_already_exists', 'email_exists']) {
+    assert.equal(isDuplicateSignup({ error: { code }, data: {} }), true);
+  }
+});
+
+test('email existence checks match exact addresses across every page, regardless of confirmation', async () => {
+  const pages = [
+    [{ email: 'other@example.com' }],
+    [{ email: 'Used@example.com', email_confirmed_at: null }],
+    [],
+  ];
+  const calls = [];
+  const admin = { async listUsers({ page }) { calls.push(page); return { data: { users: pages[page - 1] }, error: null }; } };
+  assert.equal(await emailAlreadyInUse(' USED@example.com ', admin), true);
+  assert.deepEqual(calls, [1, 2]);
+  calls.length = 0;
+  assert.equal(await emailAlreadyInUse('new@example.com', admin), false);
+  assert.deepEqual(calls, [1, 2, 3]);
+  assert.equal(await emailAlreadyInUse('used@example.co', admin), false);
+  await assert.rejects(emailAlreadyInUse('new@example.com', {
+    async listUsers() { return { data: { users: [] }, error: new Error('Auth unavailable') }; },
+  }), /Auth unavailable/);
+});
+
+test('recovery links use a token hash, not an OTP or PKCE code', () => {
+  assert.equal(isRecoveryTokenHash('a'.repeat(64)), true);
+  assert.equal(isRecoveryTokenHash('a'.repeat(40)), true);
+  for (const value of [undefined, '', '123456', 'oauth-code', ['a'.repeat(64)], 'a'.repeat(2049)]) {
+    assert.equal(isRecoveryTokenHash(value), false);
+  }
+});
 
 test('email requests surface CAPTCHA, rate limits and SMTP failures without exposing account existence', () => {
   assert.equal(authEmailFailure(null), null);
