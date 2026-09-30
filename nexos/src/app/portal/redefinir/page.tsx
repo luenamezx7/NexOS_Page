@@ -34,18 +34,19 @@ export default async function ResetPasswordPage({ searchParams }: {
   if (user.ok) {
     return <ResetPasswordForm audience="user" email={user.email} />;
   }
-  // Sem sessão: link expirado ou acesso direto.
+  // Sem sessão: link expirado, já utilizado ou aberto em outro navegador.
   return (
     <main className="min-h-[100dvh] bg-canvas px-6 py-16 text-ink">
       <div className="mx-auto flex max-w-md flex-col gap-6 text-center">
         <p className="font-mono text-xs uppercase tracking-widest text-[#be185d]">Recuperação</p>
         <h1 className="font-display text-3xl font-bold tracking-tight">Link inválido ou expirado</h1>
         <p className="text-sm leading-relaxed text-ink/70">
-          Peça um novo link de redefinição na tela de login. Se o problema continuar, fale com a
-          equipe.
+          O link de redefinição vale uma única vez e precisa ser aberto no mesmo navegador em que você
+          pediu a recuperação. Se você abriu direto pelo Gmail, use <strong>“Abrir no navegador”</strong>{' '}
+          e tente novamente. Caso contrário, peça um novo link.
         </p>
         <a href="/portal/acesso" className="btn-primary-nex justify-center">
-          Voltar ao login
+          Pedir um novo link
         </a>
         <p className="text-xs text-ink/55">
           Suporte ·{' '}

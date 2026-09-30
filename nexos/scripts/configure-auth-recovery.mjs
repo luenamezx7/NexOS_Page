@@ -21,18 +21,24 @@ async function getConfig() {
 }
 
 const before = await getConfig();
+const changes = {
+  mailer_templates_recovery_content: template,
+  mailer_subjects_recovery: 'Redefina sua senha no NexOS',
+};
 if (process.argv.includes('--check')) {
-  assert.equal(before.mailer_templates_recovery_content, template, 'Recovery template is not configured');
-} else if (before.mailer_templates_recovery_content !== template) {
+  assert.equal(before.mailer_templates_recovery_content, template, 'Recovery template body is not configured');
+  assert.equal(before.mailer_subjects_recovery, changes.mailer_subjects_recovery, 'Recovery subject is not configured');
+} else if (before.mailer_templates_recovery_content !== template || before.mailer_subjects_recovery !== changes.mailer_subjects_recovery) {
   const updated = await fetch(endpoint, {
     method: 'PATCH', headers,
-    body: JSON.stringify({ mailer_templates_recovery_content: template }),
+    body: JSON.stringify(changes),
     signal: AbortSignal.timeout(20000),
   });
   assert.ok(updated.ok, `Could not update recovery template (${updated.status})`);
   const after = await getConfig();
   assert.equal(after.mailer_templates_recovery_content, template, 'Recovery template update was not persisted');
+  assert.equal(after.mailer_subjects_recovery, changes.mailer_subjects_recovery, 'Recovery subject update was not persisted');
   assert.equal(after.site_url, before.site_url, 'Site URL must remain unchanged');
   assert.equal(after.mailer_autoconfirm, before.mailer_autoconfirm, 'Email confirmation must remain enabled');
 }
-console.log(`PASS: recovery email uses token_hash for project ${ref}.`);
+console.log(`PASS: recovery email body and subject are configured for project ${ref}.`);
