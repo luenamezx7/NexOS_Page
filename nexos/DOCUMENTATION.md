@@ -54,7 +54,7 @@ src/
 │  ├─ auth/actions.ts            → getUserAccessAction (server action)
 │  ├─ account/actions.ts         → updateProfileAction, addAddressAction, deleteAddressAction
 │  ├─ emails/resend.ts           → getResend() — lazy init do cliente Resend
-│  ├─ emails/actions.ts          → sendWelcomeEmail, sendMagicLinkEmail, sendResetPasswordEmail, etc.
+│  ├─ emails/actions.ts          → sendWelcomeEmail, sendCustomEmail (e-mails de auth são do Supabase)
 │  ├─ emails/welcome.ts          → sendWelcomeIfNeeded — boas-vindas pós-confirmação (idempotente)
 │  └─ turnstile.ts               → Verificação Cloudflare Turnstile
 ├─ components/

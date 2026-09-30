@@ -83,50 +83,31 @@ Em **Authentication** → **Email Templates**, personalize:
 
 ## 4. Como Usar nos Código
 
-### Funções internas do servidor
+### Camada de autenticação (Supabase Auth)
+
+Magic link, OTP, confirmação e recuperação **não** são enviados pela aplicação.
+São gerados pelo Supabase Auth e entregues pelo SMTP: chame `resetPasswordForEmail`
+ou `signInWithOtp` e personalize o texto em **Authentication → Email Templates**.
+
+O template de recuperação precisa entregar o token na **query**. Com
+`{{ .ConfirmationURL }}` o GoTrue sobrescreve a query e devolve a sessão no fragmento
+— que o servidor não lê — e o link abre "inválido ou expirado". Use a receita:
+
+    {{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=recovery&next=/portal/redefinir
+
+Veja `AUTH-DEPLOY.md` e `supabase/templates/recovery.html`.
+
+### Camada da aplicação (Resend)
 
 `src/lib/emails/actions.ts` usa `server-only`: não exponha destinatários arbitrários
-por Server Actions ou rotas públicas. Os e-mails de autenticação são gerados pelo
-Supabase e entregues pelo SMTP; os templates React não substituem essa configuração.
+por Server Actions ou rotas públicas.
 
 ```typescript
-// src/lib/emails/actions.ts
-import { 
-  sendWelcomeEmail,
-  sendMagicLinkEmail,
-  sendResetPasswordEmail,
-  sendVerifyEmail,
-  sendNotificationEmail 
-} from '@/lib/emails/actions';
+import { sendWelcomeEmail } from '@/lib/emails/actions';
 
-// Boas-vindas após cadastro confirmado
+// Único e-mail da aplicação: boas-vindas após a confirmação.
+// O disparo fica em src/lib/emails/welcome.ts (sendWelcomeIfNeeded).
 await sendWelcomeEmail('usuario@email.com', 'João', 'user');
-
-// Magic link customizado (se não usar Supabase Auth padrão)
-await sendMagicLinkEmail(
-  'usuario@email.com', 
-  'João', 
-  'https://nexoslab.online/auth/callback?token=...',
-  15
-);
-
-// Reset senha customizado
-await sendResetPasswordEmail(
-  'usuario@email.com',
-  'João',
-  'https://nexoslab.online/portal/redefinir?token=...',
-  30
-);
-
-// Notificação genérica
-await sendNotificationEmail(
-  'usuario@email.com',
-  'João',
-  'Novo recurso disponível!',
-  'Acabamos de lançar o novo dashboard...',
-  'https://nexoslab.online/dashboard',
-  'Ver Novidades'
-);
 ```
 
 ### Boas-vindas automáticas
@@ -145,10 +126,9 @@ for aceito mas o registro falhar, uma tentativa após essa janela pode duplicá-
 | Template | Arquivo | Uso |
 |----------|---------|-----|
 | `WelcomeEmail` | `src/emails/welcome.tsx` | Pós-cadastro |
-| `MagicLinkEmail` | `src/emails/magic-link.tsx` | Login sem senha / OTP |
-| `ResetPasswordEmail` | `src/emails/reset-password.tsx` | Recuperação de senha |
-| `VerifyEmail` | `src/emails/verify-email.tsx` | Confirmação de email |
-| `NotificationEmail` | `src/emails/notification.tsx` | Notificações gerais |
+
+Os e-mails de autenticação não têm template na aplicação: são gerados pelo Supabase
+Auth e personalizados no painel (ver seção 4).
 
 ### Personalizar Templates
 Edite os arquivos em `src/emails/` — usam **React Email** com componentes `@react-email/components`.

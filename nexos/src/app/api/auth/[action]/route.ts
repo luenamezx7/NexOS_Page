@@ -171,7 +171,14 @@ export async function POST(req: NextRequest, context: { params: Promise<{ action
         console.error('[api/auth] recovery session missing', { code: sessionError?.code, status: sessionError?.status });
         return privateJson({ error: 'Sessão de recuperação inválida ou expirada. Solicite um novo link.', code: RESET_CODES.sessionInvalid }, 401);
       }
-      const { error: updateError } = await client.auth.updateUser({ password: resetParsed.data.password });
+      // A sessão vinda do link de recuperação não conta como "autenticação recente"
+      // para o `secure_password_change` do Supabase, que responderia
+      // `reauthentication_needed`. Como o token de uso único já foi verificado acima
+      // (`verifyOtp`), a gravação é feita com privilégio de admin — sem afrouxar a
+      // exigência de reautenticação para quem chega pela sessão comum.
+      const { error: updateError } = recoveryVerified
+        ? await createAdminClient().auth.admin.updateUserById(sessionUser.user.id, { password: resetParsed.data.password })
+        : await client.auth.updateUser({ password: resetParsed.data.password });
       if (updateError) {
         console.error('[api/auth] reset failed', { code: updateError.code, status: updateError.status });
         const error =
@@ -179,7 +186,9 @@ export async function POST(req: NextRequest, context: { params: Promise<{ action
             ? 'A nova senha precisa ser diferente da senha atual.'
             : updateError.code === 'weak_password'
               ? 'Escolha uma senha mais forte e tente novamente.'
-              : 'Não foi possível salvar a nova senha. Tente novamente.';
+              : updateError.code === 'reauthentication_needed'
+                ? 'Sua sessão expirou. Solicite um novo link de redefinição.'
+                : 'Não foi possível salvar a nova senha. Tente novamente.';
         return privateJson({ error, recoveryVerified, code: RESET_CODES.updateFailed }, 400);
       }
       // Força novo login com a senha atualizada (e MFA quando exigido).

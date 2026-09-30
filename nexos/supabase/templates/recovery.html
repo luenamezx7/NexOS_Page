@@ -1,7 +1,17 @@
+<!--
+  Template de recuperação de senha (espelha o template do painel Supabase).
+
+  Use a receita com `{{ .TokenHash }}`, e NÃO `{{ .ConfirmationURL }}`: o GoTrue
+  monta o ConfirmationURL e sobrescreve a query string, entregando a sessão no
+  fragmento da URL — que o servidor não enxerga. Com TokenHash o link chega em
+  /auth/callback pela query, onde route.ts faz o verifyOtp server-side.
+
+  Este arquivo é o mesmo que deve estar em Authentication → Email Templates.
+-->
 <h2>Redefina sua senha no NexOS</h2>
 <p>Recebemos uma solicitação para trocar a senha da sua conta.</p>
 <p>
-  <a href="{{ .ConfirmationURL }}">Definir nova senha</a>
+  <a href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=recovery&next=/portal/redefinir">Definir nova senha</a>
 </p>
 <p>O link é de uso único. Ao abrir, você poderá escolher e confirmar sua nova senha.</p>
 <p>Se você não solicitou a troca, ignore este e-mail.</p>

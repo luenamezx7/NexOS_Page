@@ -8,18 +8,18 @@
  * Uso: npm run test:email
  * Requer: RESEND_API_KEY configurada no .env.local
  *
- * Nota: O SMTP do Supabase é uma configuração separada. Este script
- * testa apenas o envio direto via SDK do Resend (boas-vindas, notificações).
+ * Nota: o SMTP do Supabase é uma configuração separada. Este script cobre
+ * apenas o envio direto via SDK do Resend, hoje usado só para boas-vindas.
+ * Os e-mails de autenticação (magic link, OTP, confirmação, recuperação)
+ * são gerados pelo Supabase Auth e não têm template na aplicação — não há
+ * token válido para forjar aqui. Para inspecionar esses templates, use
+ * `node --use-system-ca scripts/configure-auth-email.mjs`.
  */
 
 import React from 'react';
 import { loadEnvConfig } from '@next/env';
 import { getResend } from '../src/lib/emails/resend';
 import { WelcomeEmail } from '../src/emails/welcome';
-import { MagicLinkEmail } from '../src/emails/magic-link';
-import { ResetPasswordEmail } from '../src/emails/reset-password';
-import { VerifyEmail } from '../src/emails/verify-email';
-import { NotificationEmail } from '../src/emails/notification';
 
 loadEnvConfig(process.cwd());
 const TEST_EMAIL = process.env.TEST_EMAIL || 'delivered@resend.dev';
@@ -60,35 +60,6 @@ async function main() {
 
   const tests: Array<[string, string, React.ReactElement]> = [
     ['WelcomeEmail', 'Bem-vindo ao NexOS! 🚀', WelcomeEmail({ name: 'João', dashboardUrl: `${baseUrl}/conta` })],
-    ['MagicLinkEmail (link)', 'Acesse sua conta no NexOS', MagicLinkEmail({ 
-      name: 'João', 
-      magicLink: `${baseUrl}/auth/callback?token=abc123`, 
-      expiresInMinutes: 15 
-    })],
-    ['MagicLinkEmail (OTP)', 'Seu código de acesso: 123456', MagicLinkEmail({ 
-      name: 'João', 
-      magicLink: '', 
-      expiresInMinutes: 10, 
-      isOtp: true, 
-      otpCode: '123456' 
-    })],
-    ['ResetPasswordEmail', 'Redefina sua senha no NexOS', ResetPasswordEmail({ 
-      name: 'João', 
-      resetLink: `${baseUrl}/portal/redefinir?token=abc123`, 
-      expiresInMinutes: 30 
-    })],
-    ['VerifyEmail', 'Confirme seu e-mail para ativar sua conta NexOS', VerifyEmail({ 
-      name: 'João', 
-      verifyLink: `${baseUrl}/auth/callback?token=abc123`, 
-      expiresInMinutes: 60 
-    })],
-    ['NotificationEmail', 'Novo recurso disponível!', NotificationEmail({ 
-      name: 'João', 
-      title: 'Novo recurso disponível!', 
-      message: 'Acabamos de lançando o novo dashboard com analytics em tempo real.', 
-      actionUrl: `${baseUrl}/dashboard`, 
-      actionLabel: 'Ver Novidades' 
-    })],
   ];
 
   let passed = 0;
@@ -99,11 +70,11 @@ async function main() {
     await new Promise(r => setTimeout(r, 600));
   }
 
-  console.log(`\n📊 Resultado: ${passed}/${tests.length} testes passaram`);
+  console.log(`\n📊 Resultado: ${passed}/${tests.length} envios concluíram`);
   if (passed === tests.length) {
-    console.log('🎉 Todos os templates funcionando!');
+    console.log('🎉 Envio direto funcionando!');
   } else {
-    console.log('⚠️  Alguns testes falharam. Verifique logs acima.');
+    console.log('⚠️  Algum envio falhou. Verifique logs acima.');
     process.exit(1);
   }
 }
