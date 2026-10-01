@@ -7,6 +7,7 @@ import { isRecoveryTokenHash } from '@/lib/auth/recovery';
  * O usuário deve ter uma sessão de recovery válida (via /auth/callback).
  */
 import { ResetPasswordForm } from '@/components/auth/ResetPasswordForm';
+import { RequestResetLink } from '@/components/auth/RequestResetLink';
 
 export const metadata: Metadata = {
   title: 'Redefinir senha | NexOS',
@@ -31,8 +32,25 @@ export default async function ResetPasswordPage({ searchParams }: {
     return <ResetPasswordForm audience="admin" email={admin.email} />;
   }
   const user = invalidLink ? { ok: false as const } : await getUserAccess(false);
+  // Sem token de link, mesmo logado, a troca não pode acontecer: a API exige o link
+  // de e-mail. Em vez de exibir um formulário que retornaria erro, oferecemos o envio.
   if (user.ok) {
-    return <ResetPasswordForm audience="user" email={user.email} />;
+    return (
+      <main className="min-h-[100dvh] bg-canvas px-6 py-16 text-ink">
+        <div className="mx-auto flex max-w-md flex-col gap-6">
+          <p className="font-mono text-xs uppercase tracking-widest text-[#be185d]">Recuperação</p>
+          <h1 className="font-display text-3xl font-bold tracking-tight">Confirme seu e-mail</h1>
+          <p className="text-sm leading-relaxed text-ink/70">
+            Por segurança, a senha só muda depois de confirmar um link enviado para o seu e-mail.
+            Vamos enviar um link de uso único para <strong>{user.email}</strong>.
+          </p>
+          <RequestResetLink email={user.email} endpoint="/api/auth/user-forgot" />
+          <a href="/portal/acesso" className="self-start text-sm underline underline-offset-4">
+            Voltar ao login
+          </a>
+        </div>
+      </main>
+    );
   }
   // Sem sessão: link expirado, já utilizado ou aberto em outro navegador.
   return (
