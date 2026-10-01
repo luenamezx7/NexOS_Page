@@ -43,6 +43,7 @@ const RESET_CODES = {
   captchaFailed: 'RESET_CAPTCHA_FAILED',
   linkInvalid: 'RESET_LINK_INVALID',
   sessionInvalid: 'RESET_SESSION_INVALID',
+  reauthRequired: 'RESET_REAUTH_REQUIRED',
   updateFailed: 'RESET_UPDATE_FAILED',
 } as const;
 
@@ -138,7 +139,7 @@ export async function POST(req: NextRequest, context: { params: Promise<{ action
     if (action === 'reset') {
       // Verify the email link only on submission, so email scanners cannot consume it.
       const resetParsed = z
-        .object({ password: z.string().min(12).max(256), captcha: z.string().max(2048).optional(), tokenHash: z.string().refine(isRecoveryTokenHash).optional() })
+        .object({ password: z.string().min(12).max(256), captcha: z.string().max(2048).optional(), tokenHash: z.string().refine(isRecoveryTokenHash).optional(), currentPassword: z.string().min(1).max(256).optional() })
         .safeParse(body);
       if (!resetParsed.success) {
         return privateJson({ error: 'A senha precisa de: 12+ caracteres, maiúscula, minúscula, número e símbolo.', code: RESET_CODES.password }, 400);
@@ -171,21 +172,42 @@ export async function POST(req: NextRequest, context: { params: Promise<{ action
         console.error('[api/auth] recovery session missing', { code: sessionError?.code, status: sessionError?.status });
         return privateJson({ error: 'Sessão de recuperação inválida ou expirada. Solicite um novo link.', code: RESET_CODES.sessionInvalid }, 401);
       }
-      // Verificado empiricamente contra o projeto: sessões de recuperação e de OTP
-      // são dispensadas do `secure_password_change`, então `updateUser` funciona
-      // direto nestas. Não há necessidade — nem justify — de gravar com service_role,
-      // que ampliaria o privilégio do fluxo sem necessidade.
-      const { error: updateError } = await client.auth.updateUser({ password: resetParsed.data.password });
+      // Com MFA habilitado o GoTrue recusa trocar a senha fora de sessão aal2
+      // (`insufficient_aal`), e a sessão criada por um link de recuperação é aal1 —
+      // MFA não pode ser satisfeito por link. Quando o token de uso único foi
+      // verificado acima, a posse do e-mail já é a credencial pedida por um reset,
+      // então a gravação usa service_role. A exigência de MFA continua valendo em
+      // qualquer outro caminho: sessão comum continua por `updateUser`.
+      if (!recoveryVerified && !resetParsed.data.currentPassword) {
+        return privateJson({ error: 'Confirme a senha atual para definir uma nova senha.', code: RESET_CODES.reauthRequired }, 400);
+      }
+      if (!recoveryVerified && !(await consumeAttempt(`auth:account:reset:pwd:${sessionUser.user.id}`, 5, 900))) {
+        return privateJson({ error: 'Muitas tentativas. Aguarde alguns minutos.', code: RESET_CODES.rateLimited }, 429);
+      }
+      const { error: updateError } = recoveryVerified
+        ? await createAdminClient().auth.admin.updateUserById(sessionUser.user.id, { password: resetParsed.data.password })
+        : await client.auth.updateUser({
+            password: resetParsed.data.password,
+            ...(resetParsed.data.currentPassword ? { current_password: resetParsed.data.currentPassword } : {}),
+          });
       if (updateError) {
-        console.error('[api/auth] reset failed', { code: updateError.code, status: updateError.status, message: updateError.message });
+        console.error('[api/auth] reset failed', { code: updateError.code, status: updateError.status, message: updateError.message, recoveryVerified });
         const error =
           updateError.code === 'same_password'
             ? 'A nova senha precisa ser diferente da senha atual.'
             : updateError.code === 'weak_password'
               ? 'Escolha uma senha mais forte e tente novamente.'
-              : updateError.code === 'reauthentication_needed'
-                ? 'Confirme a senha atual para continuar.'
-                : 'Não foi possível salvar a nova senha. Tente novamente.';
+              : updateError.code === 'insufficient_aal'
+                ? 'Sua conta usa verificação em duas etapas. Entre na sua conta, confirme o segundo fator e redefina a senha por lá.'
+                : updateError.code === 'validation_failed'
+                  ? 'A senha não foi aceita. Escolha outra combinação de caracteres.'
+                  : updateError.code === 'reauthentication_needed'
+                    ? 'Não foi possível confirmar sua senha atual. Solicite um link em “Esqueceu a senha”.'
+                    : updateError.code === 'session_not_found' || updateError.code === 'session_expired'
+                      ? 'Sua sessão expirou. Entre novamente e repita.'
+                      : updateError.code === 'over_request_rate_limit'
+                        ? 'Muitas tentativas. Aguarde alguns minutos.'
+                        : 'Não foi possível salvar a nova senha. Tente novamente.';
         return privateJson({ error, recoveryVerified, code: RESET_CODES.updateFailed }, 400);
       }
       // Força novo login com a senha atualizada (e MFA quando exigido).

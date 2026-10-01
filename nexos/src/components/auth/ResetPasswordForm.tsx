@@ -33,11 +33,20 @@ export function ResetPasswordForm({ audience, email, tokenHash }: ResetPasswordF
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [password, setPassword] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showCurrent, setShowCurrent] = useState(false);
   const [captcha, setCaptcha] = useState('');
   const [captchaKey, setCaptchaKey] = useState(0);
   const [done, setDone] = useState(false);
+  // Espelha o ref em state para poder decidir o campo durante o render
+  // (ler ref.current no render é proibido pelo lint react-hooks/refs).
+  const [hasRecoveryToken, setHasRecoveryToken] = useState(!!tokenHash);
   const { required: captchaEnforced, loading: captchaLoading } = useTurnstileConfig();
+
+  // Sem token de recuperação o Supabase exige prova de identidade para trocar a
+  // senha, então o campo "senha atual" só aparece nesse caminho.
+  const needsCurrentPassword = !hasRecoveryToken;
 
   async function handleSubmit(form: FormData) {
     if (busyRef.current) return;
@@ -53,19 +62,29 @@ export function ResetPasswordForm({ audience, email, tokenHash }: ResetPasswordF
       setError('A senha precisa de: 12+ caracteres, maiúscula, minúscula, número e símbolo.');
       return;
     }
+    if (needsCurrentPassword && currentPassword.length === 0) {
+      setError('Informe a senha atual para confirmar sua identidade.');
+      return;
+    }
     busyRef.current = true;
     setBusy(true);
     try {
       const response = await fetch(`/api/auth/${userFlow ? 'user-' : ''}reset`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: pass, captcha, tokenHash: recoveryToken.current }),
+        body: JSON.stringify({
+          password: pass,
+          captcha,
+          tokenHash: recoveryToken.current,
+          ...(needsCurrentPassword ? { currentPassword } : {}),
+        }),
         signal: AbortSignal.timeout(20000),
       });
         const result: { ok?: boolean; error?: string; message?: string; recoveryVerified?: boolean; code?: string } = await response.json();
         if (result.ok || result.recoveryVerified) {
           // The one-time link is consumed, but a verified session now exists for retries.
           recoveryToken.current = undefined;
+          setHasRecoveryToken(false);
           window.history.replaceState(null, '', '/portal/redefinir');
         }
         if (!response.ok) throw new Error(result.error ?? `Não foi possível redefinir a senha. Ref.: ${result.code ?? 'desconhecido'}`);
@@ -148,6 +167,40 @@ export function ResetPasswordForm({ audience, email, tokenHash }: ResetPasswordF
                 </label>
                 <input id="reset-email-read" value={email} readOnly disabled className="field-input w-full opacity-70" autoComplete="username" />
               </div>}
+              {needsCurrentPassword && (
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="reset-current" className="text-sm font-medium">
+                    Senha atual
+                  </label>
+                  <div className="relative">
+                    <input
+                      id="reset-current"
+                      name="currentPassword"
+                      type={showCurrent ? 'text' : 'password'}
+                      autoComplete="current-password"
+                      required
+                      maxLength={256}
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      aria-describedby="reset-current-help"
+                      className="field-input w-full !pr-14"
+                      disabled={busy}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowCurrent((v) => !v)}
+                      aria-label={showCurrent ? 'Ocultar senha atual' : 'Mostrar senha atual'}
+                      aria-pressed={showCurrent}
+                      className="absolute inset-y-0 right-0 px-4 focus-visible:outline-2"
+                    >
+                      {showCurrent ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                  <p id="reset-current-help" className="text-sm text-ink/75">
+                    Necessária para confirmar que é você. Ou use o link enviado por e-mail em “Esqueceu a senha”.
+                  </p>
+                </div>
+              )}
               <div className="flex flex-col gap-2">
                 <label htmlFor="reset-password" className="text-sm font-medium">
                   Nova senha
