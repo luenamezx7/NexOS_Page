@@ -18,7 +18,9 @@ begin;
 
 -- ── Usuários ──────────────────────────────────────
 create table if not exists public."user" (
-  id uuid primary key,
+  -- `generateId: "uuid"` faz o Better Auth omitir o id no INSERT e esperar
+  -- `gen_random_uuid()` do banco. Sem este default, todo signup viola NOT NULL.
+  id uuid primary key default gen_random_uuid(),
   name text not null,
   email text not null,
   "emailVerified" boolean not null default false,
@@ -32,13 +34,18 @@ create table if not exists public."user" (
   "banExpires" timestamp
 );
 
-create unique index if not exists "user_email_unique" on public."user" (email);
+-- CONSTRAINT, nao apenas indice: o Better Auth emite `on conflict (email)` ao
+-- criar usuario, e ON CONFLICT so aceita um unique constraint como arbitro.
+-- Com um indice unico comum o INSERT falha com infer_arbiter_indexes.
+alter table public."user" drop constraint if exists "user_email_unique";
+drop index if exists "user_email_unique";
+alter table public."user" add constraint "user_email_unique" unique (email);
 
 -- ── Sessões ───────────────────────────────────────
 -- Sessão persistida no banco: revogação é verificável e imediata. Uma entrada
 -- apagada aqui invalida o cookie correspondente na mesma hora.
 create table if not exists public.session (
-  id uuid primary key,
+  id uuid primary key default gen_random_uuid(),
   "expiresAt" timestamp not null,
   token text not null,
   "createdAt" timestamp not null,
@@ -54,7 +61,7 @@ create index if not exists session_userId_idx on public.session ("userId");
 
 -- ── Contas (credencial + OAuth) ───────────────────
 create table if not exists public.account (
-  id uuid primary key,
+  id uuid primary key default gen_random_uuid(),
   "accountId" text not null,
   "providerId" text not null,
   "userId" uuid not null references public."user"(id) on delete cascade,
@@ -72,10 +79,18 @@ create table if not exists public.account (
 create index if not exists account_userId_idx on public.account ("userId");
 -- Impede que o mesmo provedor vincule duas contas ao mesmo perfil externo.
 create unique index if not exists account_providerId_accountId_unique on public.account ("providerId", "accountId");
+-- Um usuário tem no máximo uma credencial por provedor. Além de ser a invariante
+-- que o Better Auth espera, e o que faz `on conflict ("userId","providerId")`
+-- funcionar no rehash e na migracao de senhas.
+-- Constraint (e nao indice) pelo mesmo motivo do e-mail: a migracao de senhas
+-- usa on conflict ("userId","providerId").
+alter table public.account drop constraint if exists account_userId_providerId_unique;
+drop index if exists account_userId_providerId_unique;
+alter table public.account add constraint account_userId_providerId_unique unique ("userId", "providerId");
 
 -- ── Verificações (e-mail e recuperação) ───────────
 create table if not exists public.verification (
-  id uuid primary key,
+  id uuid primary key default gen_random_uuid(),
   identifier text not null,
   value text not null,
   "expiresAt" timestamp not null,
@@ -87,7 +102,7 @@ create index if not exists verification_identifier_idx on public.verification (i
 
 -- ── Segundo fator (TOTP + códigos de backup) ──────
 create table if not exists public."twoFactor" (
-  id uuid primary key,
+  id uuid primary key default gen_random_uuid(),
   secret text not null,
   "backupCodes" text not null,
   "userId" uuid not null references public."user"(id) on delete cascade,
@@ -101,9 +116,14 @@ create index if not exists twoFactor_userId_idx on public."twoFactor" ("userId")
 -- ── Rate limiting compartilhado ───────────────────
 -- Vive no Postgres porque o app roda em serverless: um Map em memória não é
 -- compartilhado entre instâncias e permitiria burlar o limite por rebalance.
+-- `id` e' a coluna que o Better Auth espera (a PK), nao `key`: o schema check
+-- aborta o login com "Missing columns rateLimit.id" se faltar.
+-- `id` e' gerado pelo banco: o rate limiter envia apenas `key`, e um id NOT NULL
+-- sem default aborta todo login com "null value in column id".
 create table if not exists public."rateLimit" (
-  key text primary key,
-  count integer not null,
+  id text primary key default gen_random_uuid()::text,
+  key text not null unique,
+  count integer not null default 0,
   "lastRequest" bigint not null
 );
 

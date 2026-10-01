@@ -6,6 +6,7 @@ import { createAccessControl } from 'better-auth/plugins/access';
 import { createPool } from '@/lib/auth/db';
 import { PostgresDialect } from 'kysely';
 import { sendVerificationEmail, sendResetPasswordEmail } from '@/lib/auth/mailer';
+import { verifyMigratedPassword } from '@/lib/auth/password';
 
 /**
  * Instância do Better Auth — autoridade única de identidade e sessão.
@@ -117,6 +118,10 @@ function createAuth() {
     // Trocar a senha invalida as sessões abertas: reduz a janela de sequestro.
     revokeSessionsOnPasswordReset: true,
     autoSignIn: false,
+    // Só `verify` é sobrescrito: `hash` continua o scrypt do Better Auth, então
+    // toda senha nova nasce no formato forte. Só os hashes importados do GoTrue
+    // (bcrypt) passam pelo caminho legado. Ver src/lib/auth/password.ts.
+    password: { verify: verifyMigratedPassword },
   },
 
   emailVerification: {

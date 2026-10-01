@@ -173,10 +173,12 @@ security definer set search_path = public
 as $$
 begin
   if tg_op = 'INSERT' or tg_op = 'UPDATE' then
+    -- Conflita por email, que e a CHAVE PRIMARIA desta tabela. Usar (user_id)
+    -- aqui aborta todo INSERT em public."user" com infer_arbiter_indexes.
     insert into public.account_email_index (user_id, email, confirmed)
     values (new.id, lower(new.email), new."emailVerified")
-    on conflict (user_id) do update
-      set email = excluded.email,
+    on conflict (email) do update
+      set user_id = excluded.user_id,
           confirmed = excluded.confirmed;
   elsif tg_op = 'DELETE' then
     delete from public.account_email_index where user_id = old.id;
@@ -194,8 +196,8 @@ create trigger account_email_index_sync
 -- Backfill do índice de e-mail para as contas já copiadas.
 insert into public.account_email_index (user_id, email, confirmed)
 select id, lower(email), "emailVerified" from public."user"
-on conflict (user_id) do update
-  set email = excluded.email,
+on conflict (email) do update
+  set user_id = excluded.user_id,
       confirmed = excluded.confirmed;
 
 -- ── 5. Limpeza ────────────────────────────────────────────────────────
