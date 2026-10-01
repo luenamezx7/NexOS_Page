@@ -1,71 +1,40 @@
 import type { Metadata } from 'next';
-import { getAdminAccess } from '@/lib/auth/admin';
-import { getUserAccess } from '@/lib/auth/user';
-import { isRecoveryTokenHash } from '@/lib/auth/recovery';
-/**
- * Página de redefinição de senha — renderiza o ResetPasswordForm.
- * O usuário deve ter uma sessão de recovery válida (via /auth/callback).
- */
+import Link from 'next/link';
 import { ResetPasswordForm } from '@/components/auth/ResetPasswordForm';
-import { RequestResetLink } from '@/components/auth/RequestResetLink';
 
+/**
+ * Página de redefinição de senha.
+ *
+ * A autenticação é o próprio link: o Better Auth entrega um token JWT na query
+ * (`?token=`) e a troca acontece sem sessão pré-existente. Nada aqui depende
+ * de sessão do Supabase nem de privilégio administrativo — por isso MFA não
+ * bloqueia a recuperação.
+ */
 export const metadata: Metadata = {
   title: 'Redefinir senha | NexOS',
   robots: { index: false, follow: false },
 };
 export const dynamic = 'force-dynamic';
 
-// Sessão de recovery (após /auth/callback) ou sessão logada.
-// Não exige MFA aqui — o usuário ainda não redefiniu a senha.
-export default async function ResetPasswordPage({ searchParams }: {
-  searchParams: Promise<{ token_hash?: string | string[]; recovery?: string | string[] }>;
-}) {
+export default async function ResetPasswordPage({ searchParams }: { searchParams: Promise<{ token?: string | string[] }> }) {
   const params = await searchParams;
-  if (isRecoveryTokenHash(params.token_hash)) {
-    // Render the password form immediately; the POST validates the link before updating.
-    return <ResetPasswordForm audience="user" email="" tokenHash={params.token_hash} />;
-  }
-  // Admin primeiro: allowlist identifica o operador; senão, conta comum.
-  const invalidLink = params.recovery === 'error' || params.token_hash !== undefined;
-  const admin = invalidLink ? { ok: false as const } : await getAdminAccess(false);
-  if (admin.ok) {
-    return <ResetPasswordForm audience="admin" email={admin.email} />;
-  }
-  const user = invalidLink ? { ok: false as const } : await getUserAccess(false);
-  // Sem token de link, mesmo logado, a troca não pode acontecer: a API exige o link
-  // de e-mail. Em vez de exibir um formulário que retornaria erro, oferecemos o envio.
-  if (user.ok) {
-    return (
-      <main className="min-h-[100dvh] bg-canvas px-6 py-16 text-ink">
-        <div className="mx-auto flex max-w-md flex-col gap-6">
-          <p className="font-mono text-xs uppercase tracking-widest text-[#be185d]">Recuperação</p>
-          <h1 className="font-display text-3xl font-bold tracking-tight">Confirme seu e-mail</h1>
-          <p className="text-sm leading-relaxed text-ink/70">
-            Por segurança, a senha só muda depois de confirmar um link enviado para o seu e-mail.
-            Vamos enviar um link de uso único para <strong>{user.email}</strong>.
-          </p>
-          <RequestResetLink email={user.email} endpoint="/api/auth/user-forgot" />
-          <a href="/portal/acesso" className="self-start text-sm underline underline-offset-4">
-            Voltar ao login
-          </a>
-        </div>
-      </main>
-    );
-  }
-  // Sem sessão: link expirado, já utilizado ou aberto em outro navegador.
+  const raw = params.token;
+  const token = (Array.isArray(raw) ? raw[0] : raw)?.trim() ?? '';
+
+  if (token) return <ResetPasswordForm token={token} />;
+
   return (
     <main className="min-h-[100dvh] bg-canvas px-6 py-16 text-ink">
       <div className="mx-auto flex max-w-md flex-col gap-6 text-center">
         <p className="font-mono text-xs uppercase tracking-widest text-[#be185d]">Recuperação</p>
-        <h1 className="font-display text-3xl font-bold tracking-tight">Link inválido ou expirado</h1>
+        <h1 className="font-display text-3xl font-bold tracking-tight">Link necessário</h1>
         <p className="text-sm leading-relaxed text-ink/70">
-          O link de redefinição vale uma única vez e precisa ser aberto no mesmo navegador em que você
-          pediu a recuperação. Se você abriu direto pelo Gmail, use <strong>“Abrir no navegador”</strong>{' '}
-          e tente novamente. Caso contrário, peça um novo link.
+          Para redefinir a senha é preciso o link enviado por e-mail. Ele é de uso único e expira em
+          pouco tempo. Peça um novo em “Esqueceu a senha”.
         </p>
-        <a href="/portal/acesso" className="btn-primary-nex justify-center">
+        <Link href="/portal/acesso" className="btn-primary-nex justify-center">
           Pedir um novo link
-        </a>
+        </Link>
         <p className="text-xs text-ink/55">
           Suporte ·{' '}
           <a href="mailto:nexosperformance@gmail.com" className="underline underline-offset-4">

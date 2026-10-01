@@ -1,3 +1,21 @@
+// ============================================================================
+// ⚠️  TESTE INVALIDADO — NÃO HÁ MAIS O QUE TESTAR AQUI
+//
+// Este arquivo validava o fluxo do Supabase Auth e foi deixado intacto de
+// propósito, para não dar aparência de cobertura enquanto aponta para um sistema
+// removido. Ele depende de:
+//   - POST /api/auth/user-login          (rota removida)
+//   - resposta `enrollmentRequired`       (modelo antigo de MFA)
+//   - /api/auth/session retornar 403     (sem 2FA) — o Better Auth não emite
+//                                         sessão enquanto o desafio está aberto
+//   - tabela auth_rate_limits            (o Better Auth usa "rateLimit")
+//   - admin.auth.admin.createUser/deleteUser (GoTrue)
+//
+// Reescrever isto é trabalho em série, não uma troca de import: o fluxo E2E
+// precisa ser repensado em torno de authClient e do plugin twoFactor.
+// Cobre-se o essencial em tests/better-auth.test.mjs enquanto isso não existir.
+// ============================================================================
+
 // Explicit integration test: creates two disposable Auth users, sends no emails,
 // runs an isolated local app, and revokes/deletes its fixtures in finally.
 import assert from 'node:assert/strict';

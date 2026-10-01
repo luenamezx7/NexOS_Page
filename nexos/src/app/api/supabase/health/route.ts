@@ -1,4 +1,5 @@
-import { getAdminAccess, deniedJson, privateJson } from '@/lib/auth/admin';
+import { getAdminAccess } from '@/lib/auth/session';
+import { deniedJson, privateJson } from '@/lib/auth/http';
 import { publicHealth } from '@/lib/admin-health';
 
 export const dynamic = 'force-dynamic';

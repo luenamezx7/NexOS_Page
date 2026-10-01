@@ -1,11 +1,11 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { createClient } from '@/lib/supabase/server';
+import { getUserScope } from '@/lib/db/user-scope';
 
 /**
  * Server action to update the authenticated user's profile.
- * Upserts into the `profiles` table (1:1 with auth.users).
+ * Upserts into the `profiles` table (1:1 com o usuário Better Auth).
  *
  * @param formData - Must contain `fullName` (required) and `phone` (optional)
  * @returns `{ success: true }` on success, or `{ error: string }` on failure
@@ -19,16 +19,13 @@ export async function updateProfileAction(prevState: { error?: string; success?:
   }
 
   try {
-    const client = await createClient();
-    const { data: { user }, error: userError } = await client.auth.getUser();
-    if (userError || !user) {
-      return { error: 'Não autenticado' };
-    }
+    const scope = await getUserScope();
+    if (!scope) return { error: 'Não autenticado' };
 
-    const { error } = await client
+    const { error } = await scope.client
       .from('profiles')
       .upsert({
-        id: user.id,
+        id: scope.userId,
         full_name: fullName,
         phone: phone || null,
         updated_at: new Date().toISOString(),
@@ -69,18 +66,15 @@ export async function addAddressAction(prevState: { error?: string; success?: bo
   }
 
   try {
-    const client = await createClient();
-    const { data: { user }, error: userError } = await client.auth.getUser();
-    if (userError || !user) {
-      return { error: 'Não autenticado' };
-    }
+    const scope = await getUserScope();
+    if (!scope) return { error: 'Não autenticado' };
 
     if (isDefault) {
-      await client.from('addresses').update({ is_default: false }).eq('user_id', user.id);
+      await scope.client.from('addresses').update({ is_default: false }).eq('user_id', scope.userId);
     }
 
-    const { error } = await client.from('addresses').insert({
-      user_id: user.id,
+    const { error } = await scope.client.from('addresses').insert({
+      user_id: scope.userId,
       type,
       street,
       number,
@@ -105,28 +99,28 @@ export async function addAddressAction(prevState: { error?: string; success?: bo
 
 /**
  * Server action to delete a delivery address.
- * Only deletes if the address belongs to the authenticated user (RLS enforced).
+ * O `id` vem do cliente: o `.eq('user_id', scope.userId)` é o que impede que
+ * outro usuário apague o endereço trocando o id na chamada.
  *
- * @param id - UUID of the address to delete
+ * @param id - UUID do endereço a remover
  * @returns `{ success: true }` on success, or `{ error: string }` on failure
  */
 export async function deleteAddressAction(id: string) {
   try {
-    const client = await createClient();
-    const { data: { user }, error: userError } = await client.auth.getUser();
-    if (userError || !user) {
-      return { error: 'Não autenticado' };
-    }
+    const scope = await getUserScope();
+    if (!scope) return { error: 'Não autenticado' };
 
-    const { error } = await client
+    const { data, error } = await scope.client
       .from('addresses')
       .delete()
       .eq('id', id)
-      .eq('user_id', user.id);
+      .eq('user_id', scope.userId)
+      .select('id')
+      .maybeSingle();
 
-    if (error) {
-      return { error: 'Erro ao remover endereço' };
-    }
+    if (error) return { error: 'Erro ao remover endereço' };
+    // Nenhuma linha afetada = o endereço não é do usuário.
+    if (!data) return { error: 'Endereço não encontrado' };
 
     revalidatePath('/conta');
     return { success: true };

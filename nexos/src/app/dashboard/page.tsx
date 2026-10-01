@@ -1,5 +1,5 @@
 import { DashboardClient } from '@/components/dashboard/DashboardClient';
-import { getAdminAccess } from '@/lib/auth/admin';
+import { getAdminAccess } from '@/lib/auth/session';
 import { adminDiagnostics } from '@/lib/admin-health';
 import { redirect } from 'next/navigation';
 

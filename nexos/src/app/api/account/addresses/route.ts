@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { getUserScope } from '@/lib/db/user-scope';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,16 +10,11 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET() {
   try {
-    const client = await createClient();
-    const { data: { user }, error: userError } = await client.auth.getUser();
-    if (userError || !user) {
-      return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
-    }
+    const scope = await getUserScope();
+    if (!scope) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
 
-    const { data: addresses, error } = await client
-      .from('addresses')
-      .select('*')
-      .eq('user_id', user.id)
+    const { data: addresses, error } = await scope
+      .selectOwn('addresses')
       .order('is_default', { ascending: false })
       .order('created_at', { ascending: false });
 
@@ -41,13 +36,11 @@ export async function GET() {
  */
 export async function POST(req: NextRequest) {
   try {
-    const client = await createClient();
-    const { data: { user }, error: userError } = await client.auth.getUser();
-    if (userError || !user) {
-      return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
-    }
+    const scope = await getUserScope();
+    if (!scope) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
 
-    const body = await req.json();
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body !== 'object') return NextResponse.json({ error: 'Corpo inválido' }, { status: 400 });
     const { type, street, number, complement, neighborhood, city, state, cep, country, isDefault } = body;
 
     if (!street || !number || !neighborhood || !city || !state || !cep) {
@@ -55,13 +48,13 @@ export async function POST(req: NextRequest) {
     }
 
     if (isDefault) {
-      await client.from('addresses').update({ is_default: false }).eq('user_id', user.id);
+      await scope.client.from('addresses').update({ is_default: false }).eq('user_id', scope.userId);
     }
 
-    const { data: address, error } = await client
+    const { data: address, error } = await scope.client
       .from('addresses')
       .insert({
-        user_id: user.id,
+        user_id: scope.userId,
         type: type ?? 'home',
         street: street.trim(),
         number: number.trim(),

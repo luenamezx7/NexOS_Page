@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server';
 import { Client } from '@notionhq/client';
 import { z } from 'zod';
 import { isTurnstileConfigured, isTurnstileEnforced, verifyTurnstileToken } from '@/lib/turnstile';
-import { getAdminAccess, deniedJson, privateJson } from '@/lib/auth/admin';
+import { getAdminAccess } from '@/lib/auth/session';
+import { deniedJson, privateJson } from '@/lib/auth/http';
 import { notionHealth } from '@/lib/admin-health';
 import { isSameOrigin, readJsonBody, RequestError } from '@/lib/request-security';
 

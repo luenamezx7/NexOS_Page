@@ -8,7 +8,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { createHash, createHmac } from 'node:crypto';
 import { issueStatusToken, secret as statusSecret } from '@/lib/status-token';
 import { isSameOrigin, readJsonBody, RequestError } from '@/lib/request-security';
-import { getUserAccess } from '@/lib/auth/user';
+import { getUserAccess } from '@/lib/auth/session';
 
 // ============================================================
 // NexOS — Checkout via Asaas (PIX / Boleto / Cartão)
@@ -99,8 +99,6 @@ export async function POST(req: NextRequest) {
       {
         error: access.status === 503
           ? 'Não foi possível verificar sua sessão. Tente novamente em instantes.'
-          : access.reason === 'mfa'
-          ? 'Confirme a autenticação em duas etapas para continuar.'
           : 'Faça login ou crie sua conta para finalizar a compra.',
         callbackUrl: '/portal/acesso',
         reason: access.reason ?? 'unauthenticated',

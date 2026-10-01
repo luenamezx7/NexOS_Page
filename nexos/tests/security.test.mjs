@@ -6,78 +6,38 @@ import { summarizePayments } from '../src/lib/payment-status.ts';
 import { readJsonBody, isSameOrigin } from '../src/lib/request-security.ts';
 import { evaluatePassword } from '../src/lib/auth/password-strength.ts';
 import { sanitizeCallbackPath } from '../src/lib/auth/callback.ts';
-import { authEmailFailure } from '../src/lib/auth/email-errors.ts';
-import { isConfirmedDuplicateError, isConfirmedEmailTaken } from '../src/lib/auth/signup.ts';
-import { isRecoveryTokenHash } from '../src/lib/auth/recovery.ts';
+import { authErrorMessage } from '../src/lib/auth/error-message.ts';
 
-// Minimal stand-in for the server-only Supabase client used by the lookup.
-function indexStub(result) {
-  const calls = [];
-  return {
-    calls,
-    from(table) {
-      return {
-        select() {
-          return {
-            eq(column, value) {
-              calls.push([table, column, value]);
-              return { maybeSingle: async () => result };
-            },
-          };
-        },
-      };
-    },
-  };
-}
+test('auth errors never disclose whether an account exists', () => {
+  const neutral = 'Se os dados estiverem corretos, continue.';
 
-test('only confirmed accounts are reported as taken', async () => {
-  const missing = indexStub({ data: null, error: null });
-  assert.equal(await isConfirmedEmailTaken('fresh@example.com', missing), false);
-  assert.deepEqual(missing.calls.at(-1), ['account_email_index', 'email', 'fresh@example.com']);
-
-  // Pending sign-up: deliberately not reported, so pending registrations stay hidden.
-  const pending = indexStub({ data: { confirmed: false }, error: null });
-  assert.equal(await isConfirmedEmailTaken('pending@example.com', pending), false);
-
-  // Confirmed account: reported, and the address is normalized before lookup.
-  const confirmed = indexStub({ data: { confirmed: true }, error: null });
-  assert.equal(await isConfirmedEmailTaken('  USED@Example.com ', confirmed), true);
-  assert.deepEqual(confirmed.calls.at(-1), ['account_email_index', 'email', 'used@example.com']);
-
-  // A missing or failing index must not block sign-up.
-  const notFound = indexStub({ data: null, error: { code: 'PGRST116' } });
-  assert.equal(await isConfirmedEmailTaken('fresh@example.com', notFound), false);
-  const failed = indexStub({ data: null, error: { code: '500' } });
-  assert.equal(await isConfirmedEmailTaken('fresh@example.com', failed), false);
-});
-
-test('a pending sign-up is never disclosed as a duplicate', () => {
-  for (const code of ['user_already_exists', 'email_exists']) {
-    assert.equal(isConfirmedDuplicateError({ code }), true);
+  // "Conta não existe" e "conta já existe" precisam ser indistinguíveis:
+  // o mesmo texto neutro nos dois casos, senão qualquer formulário enumerator de contas.
+  for (const code of [
+    'USER_NOT_FOUND', 'user_not_found',
+    'USER_ALREADY_EXISTS', 'user_already_exists',
+    'EMAIL_ALREADY_EXISTS', 'email_exists', 'email_already_exists',
+    'EMAIL_NOT_VERIFIED', 'email_not_verified',
+    'INVALID_EMAIL_OR_PASSWORD', 'CREDENTIALS_NOT_FOUND',
+  ]) {
+    assert.equal(authErrorMessage({ code, status: 400, message: 'User not found' }, neutral), neutral);
   }
-  assert.equal(isConfirmedDuplicateError({ code: 'email_address_invalid' }), false);
-  assert.equal(isConfirmedDuplicateError({ code: 'captcha_failed' }), false);
-  assert.equal(isConfirmedDuplicateError({ code: 'over_email_send_rate_limit' }), false);
-  assert.equal(isConfirmedDuplicateError(null), false);
-});
 
-test('recovery links use a token hash, not an OTP or PKCE code', () => {
-  assert.equal(isRecoveryTokenHash('a'.repeat(64)), true);
-  assert.equal(isRecoveryTokenHash('a'.repeat(40)), true);
-  for (const value of [undefined, '', '123456', 'oauth-code', ['a'.repeat(64)], 'a'.repeat(2049)]) {
-    assert.equal(isRecoveryTokenHash(value), false);
+  // Falhas que o usuário pode agir sobre continuam informativo.
+  assert.match(authErrorMessage({ code: 'captcha_failed', status: 400 }, neutral), /Verificação de segurança/);
+  assert.match(authErrorMessage({ code: 'TOO_MANY_REQUESTS', status: 429 }, neutral), /Muitas tentativas/);
+
+  // Ruído e formatos inesperados caem no texto neutro.
+  for (const value of [null, undefined, {}, 42, 'texto', { message: '' }]) {
+    assert.equal(authErrorMessage(value, neutral), neutral);
   }
 });
 
-test('email requests surface CAPTCHA, rate limits and SMTP failures without exposing account existence', () => {
-  assert.equal(authEmailFailure(null), null);
-  for (const code of ['user_not_found', 'user_already_exists', 'email_exists', 'signup_disabled', 'otp_disabled']) {
-    assert.equal(authEmailFailure({ code, status: 400 }), null);
-  }
-  assert.equal(authEmailFailure({ code: 'captcha_failed', status: 400 }).status, 400);
-  assert.equal(authEmailFailure({ code: 'over_email_send_rate_limit', status: 429 }).status, 429);
-  assert.equal(authEmailFailure({ code: 'unexpected_failure', status: 500 }).status, 503);
-  assert.equal(authEmailFailure({ status: 400 }).status, 503);
+test('auth errors never leak stack traces or internal detail', () => {
+  const neutral = 'Tente novamente.';
+  const stack = 'Error: boom\n    at handler (/app/src/lib/auth/instance.ts:42:9)';
+  assert.equal(authErrorMessage({ code: 'UNEXPECTED', message: stack }, neutral), neutral);
+  assert.equal(authErrorMessage({ code: 'UNEXPECTED', message: 'x'.repeat(500) }, neutral), neutral);
 });
 
 process.env.CHECKOUT_STATUS_SECRET = 'test-only-secret-'.repeat(4);

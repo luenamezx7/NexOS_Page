@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getPaymentStatus, isAsaasConfigured } from '@/lib/asaas';
-import { getAdminAccess } from '@/lib/auth/admin';
+import { getAdminAccess } from '@/lib/auth/session';
 import { verifyStatusToken } from '@/lib/status-token';
 import { readJsonBody, RequestError, isSameOrigin } from '@/lib/request-security';
 

@@ -1,5 +1,4 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
 import { randomBytes } from 'node:crypto';
 import { isSameOrigin } from './lib/request-security';
 
@@ -67,36 +66,10 @@ export async function proxy(req: NextRequest) {
     }
   }
 
-  // ── Supabase: refresh session (SSR) ──
-  // Mantém auth cookies atualizados em toda rota (necessário para RLS)
-  let supabaseResponse = NextResponse.next({ request: req });
-  const key = process.env.SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-  if (url && key) {
-    const supabase = createServerClient(url, key, {
-      cookieOptions: { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/' },
-      cookies: {
-        getAll() {
-          return req.cookies.getAll();
-        },
-        setAll(cookiesToSet, cacheHeaders) {
-          cookiesToSet.forEach(({ name, value }) => req.cookies.set(name, value));
-          supabaseResponse = NextResponse.next({ request: req });
-          cookiesToSet.forEach(({ name, value, options }) => supabaseResponse.cookies.set(name, value, options));
-          Object.entries(cacheHeaders).forEach(([key, value]) => supabaseResponse.headers.set(key, value));
-        },
-      },
-    });
-    // Não bloqueia rota se falhar, só tenta refresh
-    try {
-      // Verify/refresh JWT locally when asymmetric keys are available. Handlers
-      // still use getUser() for up-to-date authorization and account checks.
-      await supabase.auth.getClaims();
-    } catch {}
-  }
-
-  supabaseResponse.headers.set('Content-Security-Policy', csp);
-  supabaseResponse.headers.set('Cache-Control', 'private, no-store');
-  return supabaseResponse;
+  const response = NextResponse.next({ request: req });
+  response.headers.set('Content-Security-Policy', csp);
+  response.headers.set('Cache-Control', 'private, no-store');
+  return response;
 }
 
 export const config = {

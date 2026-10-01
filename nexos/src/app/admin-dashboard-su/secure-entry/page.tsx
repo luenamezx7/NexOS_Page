@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
-import { getAdminAccess } from '@/lib/auth/admin';
+import { getAdminAccess } from '@/lib/auth/session';
 import { sanitizeCallbackPath } from '@/lib/auth/callback';
+import { enabledSocialProviders } from '@/lib/auth/social';
 import { LoginForm } from '@/components/auth/LoginForm';
 
 export const metadata = { title: 'Acesso restrito | NexOS', robots: { index: false, follow: false } };
@@ -17,9 +18,9 @@ export default async function SecureEntryPage({
   return (
     <LoginForm
       audience="admin"
-      initialMfa={access.reason === 'mfa'}
       confirmationError={params.confirmation === 'error'}
       callbackUrl={sanitizeCallbackPath(params.callbackUrl)}
+      socialProviders={enabledSocialProviders()}
     />
   );
 }

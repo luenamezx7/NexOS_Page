@@ -1,9 +1,14 @@
-"use server";
+'use server';
 
-import { getUserAccess, type UserAccess } from "@/lib/auth/user";
+import { getUserAccess, type SessionState } from '@/lib/auth/session';
 
-export type { UserAccess };
+export type { SessionState };
 
-export async function getUserAccessAction(requireMfa = true): Promise<UserAccess> {
-  return getUserAccess(requireMfa);
+/**
+ * Server Action que expõe o estado de sessão ao cliente.
+ * `requireTwoFactor` é aceito por compatibilidade: o Better Auth não cria
+ * sessão enquanto o segundo fator está pendente, então não há verificação extra.
+ */
+export async function getUserAccessAction(requireTwoFactor = true): Promise<SessionState> {
+  return getUserAccess(requireTwoFactor);
 }
