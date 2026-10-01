@@ -1,7 +1,8 @@
 'use client';
 
 import { createAuthClient } from 'better-auth/react';
-import { twoFactorClient, adminClient } from 'better-auth/client/plugins';
+import { twoFactorClient, adminClient, magicLinkClient } from 'better-auth/client/plugins';
+import { passkeyClient } from '@better-auth/passkey/client';
 import { authErrorMessage } from '@/lib/auth/error-message';
 
 export { authErrorMessage };
@@ -13,7 +14,7 @@ export { authErrorMessage };
  * do servidor, que é quem valida sessão, rate limit, CAPTCHA e 2FA.
  */
 export const authClient = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_SITE_URL || undefined,
+  // Mesma origem do documento: previews e localhost não enviam dados a produção.
   basePath: '/api/auth',
-  plugins: [twoFactorClient(), adminClient()],
+  plugins: [twoFactorClient(), adminClient(), magicLinkClient(), passkeyClient()],
 });

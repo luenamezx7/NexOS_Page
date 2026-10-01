@@ -10,17 +10,20 @@ export const dynamic = 'force-dynamic';
 export default async function SecureEntryPage({
   searchParams,
 }: {
-  searchParams: Promise<{ confirmation?: string | string[]; callbackUrl?: string | string[] }>;
+  searchParams: Promise<{ confirmation?: string | string[]; callbackUrl?: string | string[]; mfa?: string | string[]; verified?: string | string[] }>;
 }) {
   const access = await getAdminAccess();
   const params = await searchParams;
   if (access.ok) redirect(sanitizeCallbackPath(params.callbackUrl) ?? '/dashboard');
+  if (!access.ok && access.reason === 'mfa_setup') redirect('/portal/seguranca?callbackUrl=/dashboard');
   return (
     <LoginForm
       audience="admin"
       confirmationError={params.confirmation === 'error'}
       callbackUrl={sanitizeCallbackPath(params.callbackUrl)}
       socialProviders={enabledSocialProviders()}
+      initialStep={params.mfa === 'required' ? 'totp' : 'credentials'}
+      verified={params.verified === '1'}
     />
   );
 }

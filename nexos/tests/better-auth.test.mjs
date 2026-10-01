@@ -1,124 +1,345 @@
-import test, { after } from 'node:test';
+import test, { before, after } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { randomBytes } from 'node:crypto';
+import { createServer } from 'node:http';
+import { chromium } from '@playwright/test';
+import { exportJWK, generateKeyPair, SignJWT } from 'jose';
+import pg from 'pg';
+import nextEnv from '@next/env';
+import { createOTP } from '@better-auth/utils/otp';
+import { base32 } from '@better-auth/utils/base32';
+import { createAuth } from '../src/lib/auth/instance.ts';
 
-/**
- * Testes de integração do Better Auth contra um Postgres real.
- *
- * São pulados (não reprovados) sem `DATABASE_URL` + `BETTER_AUTH_SECRET`, porque
- * exigem um banco de verdade — um stub não provaria nada sobre hash de senha,
- * persistência de sessão ou revogação, que é justamente o que mudou.
- *
- * Para rodar: aponte DATABASE_URL para um Postgres vazio e aplique
- * supabase/migrations/20260930120000_better_auth.sql antes.
- *
- *   DATABASE_URL=postgres://... BETTER_AUTH_SECRET=$(openssl rand -base64 32) \
- *     node --conditions=react-server --test tests/better-auth.test.mjs
- */
+nextEnv.loadEnvConfig(process.cwd());
+const schema = `nexos_auth_test_${randomBytes(8).toString('hex')}`;
+const SITE = 'http://localhost:3199';
+const PASSWORD = 'Test-Password-12345!';
+const messages = [];
+const dbOptions = { connectionString: process.env.DATABASE_URL, ssl: process.env.DATABASE_SSL === 'false' ? false : { rejectUnauthorized: false }, connectionTimeoutMillis: 10000 };
+let admin, pool, auth, authOptions, accountId, ip = 10;
 
-const CONFIGURED = !!(process.env.DATABASE_URL?.trim() && process.env.BETTER_AUTH_SECRET?.trim());
-const SKIP = CONFIGURED ? false : 'DATABASE_URL/BETTER_AUTH_SECRET ausentes — integração exige Postgres real';
-
-const baseURL = (process.env.SITE_URL || 'http://localhost:3000').replace(/\/$/, '');
-
-let auth = null;
-const createdUsers = [];
-
-/** Confirma o e-mail direto no banco, para pular o passo de verificação. */
-async function confirmEmail(id) {
-  await auth.$context.adapter.update({
-    model: 'user',
-    where: [{ id }],
-    update: { emailVerified: true },
-  });
+class Jar {
+  values = new Map();
+  receive(response) {
+    for (const line of response.headers.getSetCookie()) {
+      const pair = line.split(';')[0]; const equals = pair.indexOf('=');
+      const name = pair.slice(0, equals), value = pair.slice(equals + 1);
+      if (/max-age=0/i.test(line)) this.values.delete(name); else this.values.set(name, value);
+    }
+  }
+  header() { return [...this.values].map(([key, value]) => `${key}=${value}`).join('; '); }
 }
-
-async function removeUser(id) {
-  await auth.$context.adapter.delete({ model: 'user', where: [{ id }] });
+async function request(path, body, jar = new Jar(), options = {}) {
+  const response = await (options.auth ?? auth).handler(new Request(`${SITE}/api/auth${path}`, {
+    method: body === undefined ? 'GET' : 'POST',
+    headers: { Origin: SITE, 'Content-Type': 'application/json', 'User-Agent': 'NexOS Integration',
+      'x-forwarded-for': options.ip ?? `192.0.2.${++ip}`, Cookie: jar.header(), ...options.headers },
+    ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+  }));
+  jar.receive(response);
+  return response;
 }
+async function login(jar = new Jar(), email = 'customer@example.test', password = PASSWORD) {
+  const response = await request('/sign-in/email', { email, password }, jar);
+  assert.equal(response.status, 200, JSON.stringify(await response.clone().json()));
+  return jar;
+}
+function lastMail(kind) { return messages.filter(mail => mail.kind === kind).at(-1); }
 
-test('fluxo completo de autenticação', { skip: SKIP }, async (t) => {
-  const { getAuth } = await import('../src/lib/auth/instance.ts');
-  auth = getAuth();
-
-  const suffix = Date.now().toString(36);
-  const email = `ba-${suffix}@example.test`;
-  const password = 'Senha-Forte-1234!';
-
-  await t.test('cadastra a conta', async () => {
-    const res = await auth.api.signUpEmail({ body: { email, password, name: 'Teste' } });
-    assert.equal(res.user?.email, email);
-    createdUsers.push(res.user.id);
-    await confirmEmail(res.user.id);
-  });
-
-  await t.test('recusa senha fraca e e-mail duplicado', async () => {
-    await assert.rejects(
-      auth.api.signUpEmail({ body: { email: `outro-${suffix}@example.test`, password: 'fraca', name: 'X' } }),
-      'senha abaixo do mínimo deve ser rejeitada',
-    );
-    await assert.rejects(
-      auth.api.signUpEmail({ body: { email, password, name: 'Dup' } }),
-      'e-mail já cadastrado deve ser rejeitado',
-    );
-  });
-
-  await t.test('senha errada falha e senha certa autentica', async () => {
-    await assert.rejects(auth.api.signInEmail({ body: { email, password: 'Errada-1234!' } }));
-    const res = await auth.api.signInEmail({ body: { email, password } });
-    assert.equal(res.user.email, email);
-    assert.ok(res.token, 'login deve emitir token de sessão');
-  });
-
-  await t.test('a sessão é lida do banco, não do cookie', async () => {
-    const login = await auth.api.signInEmail({ body: { email, password } });
-    const cookie = login.headers.get('set-cookie') ?? '';
-    assert.ok(cookie.includes('nexos'), 'o cookie de sessão deve usar o prefixo configurado');
-
-    const session = await auth.api.getSession({
-      headers: new Headers({ cookie }),
-      query: { disableCookieCache: true },
-    });
-    assert.equal(session?.user?.email, email);
-  });
-
-  await t.test('logout invalida a sessão no servidor', async () => {
-    const login = await auth.api.signInEmail({ body: { email, password } });
-    const cookie = login.headers.get('set-cookie') ?? '';
-    const headers = new Headers({ cookie });
-
-    assert.ok((await auth.api.getSession({ headers }))?.session, 'sessão deve existir antes do logout');
-
-    await auth.api.signOut({ headers });
-
-    const after = await auth.api.getSession({ headers }).catch(() => null);
-    assert.equal(after, null, 'sessão removida do banco não pode continuar válida');
-  });
-
-  await t.test('recuperação de senha não revela se o e-mail existe', async () => {
-    const existente = await auth.api
-      .requestPasswordReset({ body: { email, redirectTo: `${baseURL}/portal/redefinir` } })
-      .then(() => 'ok', (e) => e?.code ?? 'erro');
-    const inexistente = await auth.api
-      .requestPasswordReset({ body: { email: `fantasma-${suffix}@example.test`, redirectTo: `${baseURL}/portal/redefinir` } })
-      .then(() => 'ok', (e) => e?.code ?? 'erro');
-
-    assert.equal(
-      existente,
-      inexistente,
-      'a resposta deve ser idêntica para e-mail existente e inexistente, ou a resposta vira enumerador de contas',
-    );
-  });
-
-  await t.test('limpa os usuários criados', async () => {
-    for (const id of createdUsers) await removeUser(id);
-    createdUsers.length = 0;
-  });
+before(async () => {
+  assert.ok(process.env.DATABASE_URL, 'DATABASE_URL necessária: testes usam schema temporário isolado e removido ao final');
+  admin = new pg.Pool(dbOptions);
+  await admin.query(`create schema "${schema}"`);
+  pool = new pg.Pool({ ...dbOptions, max: 3, options: `-c search_path=${schema}` });
+  for (const file of ['supabase/migrations/20260930120000_better_auth.sql']) {
+    await pool.query(readFileSync(file, 'utf8').replaceAll('public.', `"${schema}".`));
+  }
+  await pool.query(`create table "${schema}".welcome_email_log (user_id uuid references "${schema}"."user"(id), template text, sent_at timestamptz default now())`);
+  await pool.query(readFileSync('supabase/migrations/20261001152936_auth_methods_and_email_outbox.sql', 'utf8').replaceAll('public.', `"${schema}".`));
+  const capture = kind => async params => { messages.push({ kind, ...params }); };
+  authOptions = { pool, siteURL: SITE, secret: randomBytes(48).toString('hex'), captchaEnabled: false, notifications: false,
+    socialProviders: {
+      github: { clientId: 'integration-github-id', clientSecret: 'integration-github-secret' },
+      google: { clientId: 'integration-google-id', clientSecret: 'integration-google-secret', prompt: 'select_account' },
+    },
+    mail: { verification: capture('verification'), reset: capture('reset'), magic: capture('magic') } };
+  auth = createAuth(authOptions);
+});
+after(async () => {
+  await pool?.end();
+  if (admin) { await admin.query(`drop schema if exists "${schema}" cascade`); await admin.end(); }
 });
 
-after(async () => {
-  // Rede de segurança caso um teste falhe antes da limpeza.
-  if (!auth) return;
-  for (const id of createdUsers) {
-    await removeUser(id).catch(() => {});
+test('cadastro, confirmação, senha forte e cookies HTTP-only', async () => {
+  const weak = await request('/sign-up/email', { email: 'weak@example.test', password: 'aaaaaaaaaaaa', name: 'Weak' });
+  assert.equal(weak.status, 400);
+  const signup = await request('/sign-up/email', { email: 'customer@example.test', password: PASSWORD, name: 'Cliente', callbackURL: '/portal/acesso' });
+  assert.equal(signup.status, 200, JSON.stringify(await signup.clone().json()));
+  accountId = (await signup.json()).user.id;
+  const before = await request('/sign-in/email', { email: 'customer@example.test', password: PASSWORD });
+  assert.equal(before.status, 403);
+  const link = new URL(lastMail('verification').url);
+  assert.equal((await request(`${link.pathname.replace('/api/auth', '')}${link.search}`)).status, 302);
+  const jar = new Jar();
+  const response = await request('/sign-in/email', { email: 'customer@example.test', password: PASSWORD }, jar);
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get('set-cookie'), /HttpOnly/i);
+  assert.match(response.headers.get('set-cookie'), /SameSite=Lax/i);
+  assert.equal((await (await request('/get-session', undefined, jar)).json()).user.email, 'customer@example.test');
+  assert.equal((await request('/sign-in/email', { email: 'customer@example.test', password: 'Wrong-Password-12345!' })).status, 401);
+  await request('/sign-out', {}, jar);
+  assert.equal(await (await request('/get-session', undefined, jar)).json(), null);
+});
+
+test('redefinição envia token, recusa expiração/reutilização e revoga sessões', async () => {
+  const jar = await login();
+  const valid = await request('/request-password-reset', { email: 'customer@example.test', redirectTo: `${SITE}/portal/redefinir` });
+  const missing = await request('/request-password-reset', { email: 'missing@example.test', redirectTo: `${SITE}/portal/redefinir` });
+  assert.deepEqual(await valid.json(), await missing.json());
+  const reset = new URL(lastMail('reset').url);
+  const token = reset.pathname.split('/').at(-1);
+  assert.equal((await request('/reset-password', { token: 'expired-token', newPassword: PASSWORD })).status, 400);
+  await pool.query('insert into verification (identifier, value, "expiresAt", "createdAt", "updatedAt") values ($1,$2,$3,$4,$4)', ['reset-password:expired-test', accountId, new Date(Date.now() - 1000), new Date()]);
+  assert.equal((await request('/reset-password', { token: 'expired-test', newPassword: PASSWORD })).status, 400);
+  assert.equal((await request('/reset-password', { token, newPassword: PASSWORD })).status, 200);
+  assert.equal((await request('/reset-password', { token, newPassword: PASSWORD })).status, 400);
+  assert.equal(await (await request('/get-session', undefined, jar)).json(), null);
+});
+
+test('troca exige senha atual e aplica política forte no servidor', async () => {
+  const jar = await login();
+  assert.equal((await request('/change-password', { currentPassword: 'Wrong-12345!', newPassword: PASSWORD }, jar)).status, 400);
+  assert.equal((await request('/change-password', { currentPassword: PASSWORD, newPassword: 'aaaaaaaaaaaa' }, jar)).status, 400);
+  assert.equal((await request('/change-password', { currentPassword: PASSWORD, newPassword: PASSWORD, revokeOtherSessions: true }, jar)).status, 200);
+});
+
+test('Magic Link tem hash no banco, uso único e rejeita destino externo', async () => {
+  assert.equal((await request('/sign-in/magic-link', { email: 'customer@example.test', callbackURL: '/conta', errorCallbackURL: '/portal/acesso?confirmation=error' })).status, 200);
+  const url = new URL(lastMail('magic').url);
+  const token = url.searchParams.get('token');
+  const rows = await pool.query('select identifier from verification where identifier like $1', ['magic-link:%']);
+  assert.ok(rows.rows.length > 0);
+  assert.ok(rows.rows.every(row => !row.identifier.includes(token)));
+  const jar = new Jar();
+  const path = `${url.pathname.replace('/api/auth', '')}${url.search}`;
+  assert.equal((await request(path, undefined, jar)).status, 302);
+  assert.ok((await (await request('/get-session', undefined, jar)).json()).session);
+  assert.match((await request(path)).headers.get('location'), /INVALID_TOKEN/);
+  const unsafe = await request('/sign-in/magic-link', { email: 'customer@example.test', callbackURL: 'https://attacker.example' });
+  assert.equal(unsafe.status, 403);
+});
+
+test('TOTP exige senha, confirma enrollment, bloqueia sessão e consome backup uma vez', async () => {
+  const jar = await login();
+  assert.equal((await request('/two-factor/enable', { method: 'totp' }, jar)).status, 400);
+  const response = await request('/two-factor/enable', { method: 'totp', password: PASSWORD }, jar);
+  assert.equal(response.status, 200, JSON.stringify(await response.clone().json()));
+  const setup = await response.json();
+  assert.match(setup.totpURI, /^otpauth:\/\/totp\//);
+  const secret = new TextDecoder().decode(base32.decode(new URL(setup.totpURI).searchParams.get('secret')));
+  const otp = await createOTP(secret).totp();
+  assert.equal((await request('/two-factor/verify-totp', { code: otp }, jar)).status, 200);
+  await request('/sign-out', {}, jar);
+  const challenged = await request('/sign-in/email', { email: 'customer@example.test', password: PASSWORD }, jar);
+  assert.equal((await challenged.json()).twoFactorRedirect, true);
+  assert.equal(await (await request('/get-session', undefined, jar)).json(), null);
+  assert.equal((await request('/two-factor/verify-totp', { code: 'wrong' }, jar)).status, 401);
+  assert.equal((await request('/two-factor/verify-totp', { code: await createOTP(secret).totp() }, jar)).status, 200);
+  await request('/sign-out', {}, jar);
+  await login(jar);
+  assert.equal((await request('/two-factor/verify-backup-code', { code: setup.backupCodes[0] }, jar)).status, 200);
+  await request('/sign-out', {}, jar);
+  await login(jar);
+  assert.equal((await request('/two-factor/verify-backup-code', { code: setup.backupCodes[0] }, jar)).status, 401);
+  assert.equal((await request('/two-factor/verify-totp', { code: await createOTP(secret).totp() }, jar)).status, 200);
+  // Magic Link também deve apagar a sessão antes do segundo fator.
+  await request('/sign-in/magic-link', { email: 'customer@example.test', callbackURL: '/conta' });
+  const magic = new URL(lastMail('magic').url), other = new Jar();
+  const callback = await request(`${magic.pathname.replace('/api/auth', '')}${magic.search}`, undefined, other);
+  assert.match(callback.headers.get('location'), /mfa=required/);
+  assert.equal(await (await request('/get-session', undefined, other)).json(), null);
+  assert.equal((await request('/two-factor/verify-totp', { code: await createOTP(secret).totp() }, other)).status, 200);
+  assert.equal((await request('/two-factor/disable', { password: PASSWORD }, jar)).status, 200);
+});
+
+test('CSRF e rate limit persistido recusam abuso', async () => {
+  assert.equal((await request('/sign-in/email', { email: 'customer@example.test', password: PASSWORD }, undefined, { headers: { Origin: 'https://attacker.example' } })).status, 403);
+  let status;
+  for (let i = 0; i < 11; i++) status = (await request('/sign-in/email', { email: 'missing@example.test', password: PASSWORD }, undefined, { ip: '198.51.100.10' })).status;
+  assert.equal(status, 429);
+});
+
+test('Passkey lista exige sessão e registro exige verificação do dispositivo', async () => {
+  assert.equal((await request('/passkey/list-user-passkeys')).status, 401);
+  const jar = await login();
+  const result = await request('/passkey/generate-register-options', undefined, jar);
+  assert.equal(result.status, 200);
+  const options = await result.json();
+  assert.equal(options.authenticatorSelection.userVerification, 'required');
+  assert.equal(options.authenticatorSelection.residentKey, 'required');
+  assert.equal(options.rp.id, 'localhost');
+  assert.equal((await request('/passkey/verify-registration', { response: {} }, jar)).status, 400);
+});
+
+test('OAuth GitHub simulado mantém callback, exige MFA e trata consentimento cancelado', async t => {
+  const jar = await login();
+  const setupResponse = await request('/two-factor/enable', { method: 'totp', password: PASSWORD }, jar);
+  const setup = await setupResponse.json();
+  const secret = new TextDecoder().decode(base32.decode(new URL(setup.totpURI).searchParams.get('secret')));
+  await request('/two-factor/verify-totp', { code: await createOTP(secret).totp() }, jar);
+  t.mock.method(globalThis, 'fetch', async input => {
+    const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
+    if (url.includes('github.com/login/oauth/access_token')) return Response.json({ access_token: 'test-only-token', token_type: 'bearer', scope: 'user:email' });
+    if (url.includes('api.github.com/user/emails')) return Response.json([{ email: 'customer@example.test', verified: true, primary: true }]);
+    if (url.includes('api.github.com/user')) return Response.json({ id: 998877, login: 'nexos-test', name: 'Cliente', email: 'customer@example.test', avatar_url: null });
+    throw new Error('Unexpected external request in isolated OAuth test');
+  });
+  const oauthJar = new Jar();
+  const started = await request('/sign-in/social', { provider: 'github', callbackURL: '/dashboard', errorCallbackURL: '/portal/acesso?confirmation=error&callbackUrl=%2Fdashboard' }, oauthJar);
+  const state = new URL((await started.json()).url).searchParams.get('state');
+  const callback = await request(`/callback/github?code=test-only-code&state=${encodeURIComponent(state)}`, undefined, oauthJar);
+  assert.match(callback.headers.get('location'), /mfa=required/);
+  assert.match(callback.headers.get('location'), /callbackUrl=%2Fdashboard/);
+  assert.equal(await (await request('/get-session', undefined, oauthJar)).json(), null);
+  assert.equal((await request('/two-factor/verify-totp', { code: await createOTP(secret).totp() }, oauthJar)).status, 200);
+  const cancelledJar = new Jar();
+  const startCancelled = await request('/sign-in/social', { provider: 'github', callbackURL: '/conta', errorCallbackURL: '/portal/acesso?confirmation=error&callbackUrl=%2Fconta' }, cancelledJar);
+  const cancelledState = new URL((await startCancelled.json()).url).searchParams.get('state');
+  const cancelled = await request(`/callback/github?error=access_denied&state=${encodeURIComponent(cancelledState)}`, undefined, cancelledJar);
+  assert.match(cancelled.headers.get('location'), /confirmation=error/);
+  assert.match(cancelled.headers.get('location'), /callbackUrl=%2Fconta/);
+  await request('/two-factor/disable', { password: PASSWORD }, jar);
+});
+
+test('CAPTCHA exige header e indisponibilidade de configuração falha fechada', async t => {
+  const previous = process.env.TURNSTILE_SECRET_KEY;
+  try {
+    delete process.env.TURNSTILE_SECRET_KEY;
+    const closed = createAuth({ ...authOptions, captchaEnabled: true });
+    assert.equal((await request('/request-password-reset', { email: 'customer@example.test' }, undefined, { auth: closed })).status, 503);
+    process.env.TURNSTILE_SECRET_KEY = 'test-only-turnstile-secret';
+    const guarded = createAuth({ ...authOptions, captchaEnabled: true });
+    t.mock.method(globalThis, 'fetch', async () => Response.json({ success: true }));
+    assert.equal((await request('/sign-in/email', { email: 'customer@example.test', password: PASSWORD, captchaToken: 'body-is-not-valid' }, undefined, { auth: guarded })).status, 400);
+    assert.equal((await request('/sign-in/email', { email: 'customer@example.test', password: PASSWORD }, undefined, { auth: guarded, headers: { 'x-captcha-response': 'test-valid-token' } })).status, 200);
+  } finally {
+    if (previous === undefined) delete process.env.TURNSTILE_SECRET_KEY; else process.env.TURNSTILE_SECRET_KEY = previous;
   }
+});
+
+test('WebAuthn real no Chromium cadastra, autentica, exige TOTP e recusa replay', { timeout: 90000 }, async () => {
+  // Autenticador virtual executa a cerimônia criptográfica real; o DB continua isolado.
+  const server = createServer(async (req, res) => {
+    try {
+      if (!req.url.startsWith('/api/auth/')) {
+        res.setHeader('Content-Type', 'text/html'); res.end('<!doctype html><title>WebAuthn integration</title>'); return;
+      }
+      const chunks = [];
+      for await (const chunk of req) chunks.push(chunk);
+      const response = await auth.handler(new Request(`${SITE}${req.url}`, {
+        method: req.method, headers: { ...req.headers, 'x-forwarded-for': `192.0.2.${++ip}` },
+        ...(!['GET', 'HEAD'].includes(req.method) ? { body: Buffer.concat(chunks) } : {}),
+      }));
+      res.statusCode = response.status;
+      response.headers.forEach((value, key) => { if (key !== 'set-cookie') res.setHeader(key, value); });
+      res.setHeader('Set-Cookie', response.headers.getSetCookie());
+      res.end(Buffer.from(await response.arrayBuffer()));
+    } catch { res.statusCode = 500; res.end('Isolated test server error'); }
+  });
+  await new Promise((resolve, reject) => { server.once('error', reject); server.listen(3199, resolve); });
+  let browser;
+  try {
+    browser = await chromium.launch();
+    const page = await browser.newPage();
+    const cdp = await page.context().newCDPSession(page);
+    await cdp.send('WebAuthn.enable');
+    await cdp.send('WebAuthn.addVirtualAuthenticator', { options: {
+      protocol: 'ctap2', transport: 'internal', hasResidentKey: true,
+      hasUserVerification: true, isUserVerified: true, automaticPresenceSimulation: true,
+    } });
+    await page.goto(SITE);
+    const api = (path, body) => page.evaluate(async ({ path, body }) => {
+      const result = await fetch(`/api/auth${path}`, { method: body === undefined ? 'GET' : 'POST',
+        headers: { 'Content-Type': 'application/json' }, ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
+      return { status: result.status, data: await result.json() };
+    }, { path, body });
+    assert.equal((await api('/sign-in/email', { email: 'customer@example.test', password: PASSWORD })).status, 200);
+    const options = await api('/passkey/generate-register-options');
+    assert.equal(options.status, 200);
+    const credential = await page.evaluate(async options => {
+      const decode = value => Uint8Array.from(atob(value.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
+      const key = await navigator.credentials.create({ publicKey: { ...options,
+        challenge: decode(options.challenge), user: { ...options.user, id: decode(options.user.id) },
+        excludeCredentials: options.excludeCredentials?.map(c => ({ ...c, id: decode(c.id) })),
+      } });
+      return key.toJSON();
+    }, options.data);
+    const registered = await api('/passkey/verify-registration', { response: credential, name: 'Chromium virtual' });
+    assert.equal(registered.status, 200, JSON.stringify(registered.data));
+    const savedId = registered.data.id;
+    assert.equal((await api('/passkey/list-user-passkeys')).data.length, 1);
+    await api('/sign-out', {});
+    const signIn = async () => {
+      const options = await api('/passkey/generate-authenticate-options');
+      assert.equal(options.status, 200);
+      const assertion = await page.evaluate(async options => {
+        const decode = value => Uint8Array.from(atob(value.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
+        const key = await navigator.credentials.get({ publicKey: { ...options,
+          challenge: decode(options.challenge), allowCredentials: options.allowCredentials?.map(c => ({ ...c, id: decode(c.id) })),
+        } });
+        return key.toJSON();
+      }, options.data);
+      return { result: await api('/passkey/verify-authentication', { response: assertion }), assertion };
+    };
+    const signedIn = await signIn();
+    assert.equal(signedIn.result.status, 200, JSON.stringify(signedIn.result.data));
+    assert.equal((await api('/get-session')).data.user.id, accountId);
+    assert.equal((await api('/passkey/verify-authentication', { response: signedIn.assertion })).status, 400);
+    const setup = await api('/two-factor/enable', { method: 'totp', password: PASSWORD });
+    assert.equal(setup.status, 200);
+    const secret = new TextDecoder().decode(base32.decode(new URL(setup.data.totpURI).searchParams.get('secret')));
+    assert.equal((await api('/two-factor/verify-totp', { code: await createOTP(secret).totp() })).status, 200);
+    await api('/sign-out', {});
+    const challenged = await signIn();
+    assert.equal(challenged.result.data.twoFactorRedirect, true);
+    assert.equal((await api('/get-session')).data, null);
+    assert.equal((await api('/two-factor/verify-totp', { code: await createOTP(secret).totp() })).status, 200);
+    assert.equal((await api('/passkey/delete-passkey', { id: savedId })).status, 200);
+    assert.equal((await api('/passkey/list-user-passkeys')).data.length, 0);
+    assert.equal((await api('/two-factor/disable', { password: PASSWORD })).status, 200);
+  } finally {
+    await browser?.close();
+    await new Promise(resolve => server.close(resolve));
+  }
+});
+
+test('OAuth Google simulado verifica JWT assinado, callback e desafio MFA', async t => {
+  const jar = await login();
+  const setup = await (await request('/two-factor/enable', { method: 'totp', password: PASSWORD }, jar)).json();
+  const secret = new TextDecoder().decode(base32.decode(new URL(setup.totpURI).searchParams.get('secret')));
+  await request('/two-factor/verify-totp', { code: await createOTP(secret).totp() }, jar);
+  const { privateKey, publicKey } = await generateKeyPair('RS256');
+  const jwk = { ...await exportJWK(publicKey), kid: 'isolated-google-key', alg: 'RS256', use: 'sig' };
+  const oauthJar = new Jar();
+  const started = await request('/sign-in/social', { provider: 'google', callbackURL: '/conta', errorCallbackURL: '/portal/acesso?confirmation=error' }, oauthJar);
+  assert.equal(started.status, 200);
+  const authorization = new URL((await started.json()).url);
+  assert.equal(authorization.searchParams.get('redirect_uri'), `${SITE}/api/auth/callback/google`);
+  assert.equal(authorization.searchParams.get('code_challenge_method'), 'S256');
+  const token = await new SignJWT({ email: 'customer@example.test', email_verified: true, name: 'Cliente',
+    ...(authorization.searchParams.get('nonce') ? { nonce: authorization.searchParams.get('nonce') } : {}),
+  }).setProtectedHeader({ alg: 'RS256', kid: jwk.kid }).setSubject('isolated-google-user')
+    .setIssuer('https://accounts.google.com').setAudience('integration-google-id').setIssuedAt().setExpirationTime('5m').sign(privateKey);
+  t.mock.method(globalThis, 'fetch', async input => {
+    const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
+    if (url.includes('oauth2.googleapis.com/token')) return Response.json({ access_token: 'test-only-token', id_token: token, token_type: 'bearer', expires_in: 300 });
+    if (url.includes('googleapis.com/oauth2/v3/certs')) return Response.json({ keys: [jwk] });
+    throw new Error('Unexpected request in isolated Google test');
+  });
+  const callback = await request(`/callback/google?code=isolated-code&state=${encodeURIComponent(authorization.searchParams.get('state'))}`, undefined, oauthJar);
+  assert.match(callback.headers.get('location'), /mfa=required/);
+  assert.equal(await (await request('/get-session', undefined, oauthJar)).json(), null);
+  assert.equal((await request('/two-factor/verify-totp', { code: await createOTP(secret).totp() }, oauthJar)).status, 200);
+  assert.equal((await request('/two-factor/disable', { password: PASSWORD }, jar)).status, 200);
 });

@@ -13,7 +13,7 @@
 import { useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, ArrowRight, Eye, EyeOff, LockKeyhole } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { motion, useReducedMotion } from 'motion/react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { PasswordStrengthMeter } from '@/components/auth/PasswordStrengthMeter';

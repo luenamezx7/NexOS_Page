@@ -14,7 +14,7 @@ export const dynamic = 'force-dynamic';
 export default async function PortalAcessoPage({
   searchParams,
 }: {
-  searchParams: Promise<{ confirmation?: string | string[]; callbackUrl?: string | string[] }>;
+  searchParams: Promise<{ confirmation?: string | string[]; callbackUrl?: string | string[]; mfa?: string | string[]; verified?: string | string[] }>;
 }) {
   const access = await getUserAccess();
   const params = await searchParams;
@@ -25,6 +25,8 @@ export default async function PortalAcessoPage({
       confirmationError={params.confirmation === 'error'}
       callbackUrl={sanitizeCallbackPath(params.callbackUrl)}
       socialProviders={enabledSocialProviders()}
+      initialStep={params.mfa === 'required' ? 'totp' : 'credentials'}
+      verified={params.verified === '1'}
     />
   );
 }

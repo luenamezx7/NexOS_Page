@@ -1,4 +1,4 @@
-import { Html } from '@react-email/components';
+import { Html, Head } from '@react-email/components';
 
 interface EmailLayoutProps {
   children: React.ReactNode;
@@ -8,7 +8,7 @@ interface EmailLayoutProps {
 export function EmailLayout({ children, preheader }: EmailLayoutProps) {
   return (
     <Html lang="pt-BR">
-      <head />
+      <Head />
       <body style={styles.body}>
         <div style={styles.preheader}>{preheader}</div>
         <table role="presentation" style={styles.wrapper}>

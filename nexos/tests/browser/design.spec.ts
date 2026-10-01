@@ -54,7 +54,7 @@ test('stage 3: customer login is compact, theme-aware and functional', async ({ 
   await page.screenshot({ path: 'test-results/login-redesign-dark.png', fullPage: true });
   await page.getByRole('button', { name: 'Criar uma conta', exact: true }).click();
   await page.getByLabel('Senha', { exact: true }).fill('curta');
-  await expect(page.getByText('Mínimo de 12 caracteres', { exact: false })).toBeVisible();
+  await expect(page.getByText('Pelo menos 12 caracteres', { exact: false })).toBeVisible();
   await noOverflow(page);
 });
 

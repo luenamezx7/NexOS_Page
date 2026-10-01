@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserScope } from '@/lib/db/user-scope';
+import { getAuth } from '@/lib/auth/instance';
+import { headers } from 'next/headers';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,13 +25,15 @@ export async function GET() {
       return NextResponse.json({ error: 'Erro ao carregar perfil' }, { status: 500 });
     }
 
+    const session = await getAuth().api.getSession({ headers: await headers(), query: { disableCookieCache: true } });
     return NextResponse.json({
       email: scope.email,
       fullName: profile?.full_name ?? '',
       phone: profile?.phone ?? '',
       emailConfirmed: true,
-      lastSignIn: null,
-      createdAt: null,
+      twoFactorEnabled: session?.user.twoFactorEnabled === true,
+      lastSignIn: session?.session.createdAt ?? null,
+      createdAt: session?.user.createdAt ?? null,
     });
   } catch {
     return NextResponse.json({ error: 'Erro interno' }, { status: 500 });

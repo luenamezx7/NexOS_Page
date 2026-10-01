@@ -5,21 +5,39 @@
 - Vercel: `nexoslab.online` serve Production; não configure redirecionamento do apex para `www`. O app já redireciona `www` para o apex preservando caminho e query.
 - `SITE_URL` e `NEXT_PUBLIC_SITE_URL`: `https://nexoslab.online`.
 - `SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_URL`: mesmo projeto; as chaves publishable e secret devem pertencer a ele.
-- `DASHBOARD_ADMIN_USER_IDS`: UUIDs dos administradores separados por vírgula. Admin exige allowlist e MFA; clientes também completam MFA antes da compra.
+- Identidade e sessão: Better Auth 1.7.7 + Postgres/Kysely; Next.js 16.3.5.
+- `BETTER_AUTH_SECRET`: segredo estável de pelo menos 32 caracteres; `DATABASE_URL`: conexão Postgres do mesmo projeto.
+- Administradores usam `role = 'admin'` em `public."user"` e precisam ativar TOTP. A allowlist `DASHBOARD_ADMIN_USER_IDS` é legada.
+- A migração `supabase/migrations/20261001152936_auth_methods_and_email_outbox.sql` cria Passkeys e outbox e revoga sessões anteriores de contas com MFA. `npm run migrate:auth` verifica a presença das tabelas; `npm run migrate:auth -- --apply` aplica o SQL quando pendente.
 
 ## GitHub e Google
 
-O callback dos provedores é o **Supabase**, não o domínio da aplicação:
+Os callbacks são atendidos pelo **Better Auth na aplicação**:
 
-`https://lgfttyeezviecfqbbmqk.supabase.co/auth/v1/callback`
+| Provedor | Produção | Desenvolvimento |
+|---|---|---|
+| Google | `https://nexoslab.online/api/auth/callback/google` | `http://localhost:3000/api/auth/callback/google` |
+| GitHub | `https://nexoslab.online/api/auth/callback/github` | `http://localhost:3000/api/auth/callback/github` |
 
-- GitHub Settings → Developer settings → OAuth Apps: Authorization callback URL acima. O Client ID desse app deve ser o configurado no provider GitHub do Supabase.
-- Google Cloud → OAuth client (Web application): Authorized redirect URI acima. Configure a tela de consentimento e os usuários de teste quando o app estiver em Testing. Client ID/Secret devem coincidir com o provider Google no Supabase.
-- Supabase Authentication → URL Configuration: Site URL `https://nexoslab.online`; Redirect URLs devem aceitar `/auth/callback` **com os parâmetros `entry` e `next`**. Cadastre `https://nexoslab.online/auth/callback` e `https://nexoslab.online/auth/callback?**` (curinga apenas na query, mantendo domínio/path fixos).
-- **Dev local**: com `SITE_URL=http://localhost:3000`, o `redirectTo` é **descartado** se `http://localhost:3000/**` não estiver na allowlist — o GoTrue cai no Site URL e o link de recuperação abre a home, nunca `/auth/callback`. Adicione `http://localhost:3000/**` (só em ambiente de teste) antes de validar redefinição localmente. Confirmado por medição: `https://nexoslab.online/auth/callback?entry=...&next=...` é honrada; `http://localhost:3000/auth/callback?entry=...&next=...` não é.
-- Templates: confirmação e magic link usam `{{ .ConfirmationURL }}`. **Recuperação de senha é a exceção** — use a receita com `{{ .TokenHash }}`: `{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=recovery&next=/portal/redefinir` (espelha `supabase/templates/recovery.html`). Não use `{{ .ConfirmationURL }}` no recovery: o GoTrue sobrescreve a query e entrega a sessão no fragmento, invisível ao servidor. Para login digitando código, o template também deve exibir `{{ .Token }}`.
+- Google Cloud → cliente OAuth Web: cadastre os redirect URIs acima e a origem do site. Confira a tela de consentimento e os usuários de teste quando estiver em Testing.
+- GitHub Settings → Developer settings → OAuth Apps: configure o callback de produção; use um app separado para localhost quando necessário.
+- Configure `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GITHUB_CLIENT_ID` e `GITHUB_CLIENT_SECRET` no servidor.
+- Credenciais do antigo provider Supabase podem ser reutilizadas, mas seus callbacks precisam ser atualizados nos painéis dos provedores. O script `scripts/configure-production-auth.mjs` recupera Google via Management API quando autorizado e configura variáveis via Vercel CLI com `--apply`, sem imprimir segredos.
+- Os botões sociais aparecem apenas quando o par de credenciais está presente. Cancelamento retorna à tela de acesso com mensagem de erro e destino preservado.
 
-O app inicia OAuth com PKCE, troca o código no servidor e passa pela entrada correspondente para validar e-mail/MFA/allowlist antes de retomar o destino interno. Código/verificador devem permanecer no mesmo navegador. Configurações dos provedores precisam ser validadas nos painéis externos: uma URL de autorização gerada com sucesso não comprova login concluído.
+OAuth, Magic Link e Passkeys exigem TOTP quando a conta tem 2FA ativo. O plugin
+de segurança apaga a sessão inicial e só libera uma nova após verificar o fator.
+Testes com provedores simulados não comprovam consentimento real nos provedores.
+
+## Passkeys, senhas e proteção de rotas
+
+- RP ID e origem WebAuthn vêm de `SITE_URL`; produção exige HTTPS e domínio canônico.
+- `/portal/seguranca`: troca/definição de senha, cadastro/remoção de Passkeys, QR Code TOTP e códigos de recuperação.
+- `/portal/redefinir?token=...`: redefinição sem sessão; senha forte validada também no servidor e revogação de sessões anteriores.
+- Next.js 16 usa **`src/proxy.ts`**, substituindo a convenção `middleware.ts`. O filtro inicial verifica presença do cookie; RSC e APIs validam a sessão persistida antes de entregar dados.
+- Cookies de sessão: HttpOnly, SameSite=Lax e Secure em HTTPS. Mutação de APIs exige mesma origem; Better Auth mantém as proteções nativas de CSRF.
+- As páginas de acesso redirecionam sessões válidas no servidor. Um cookie forjado não autoriza acesso.
+- Resend e cron: ver `EMAIL-SETUP.md`.
 
 ## Turnstile e contato
 
@@ -31,8 +49,10 @@ O app inicia OAuth com PKCE, troca o código no servidor e passa pela entrada co
 
 ## Verificação
 
-`npm run typecheck`, `npm run test:security`, `npm run build`, `npm run test:browser`.
+`npm run typecheck`, `npm run lint`, `npm run test:security`, `npm run test:auth:password`, `npm run test:auth:integration`, `npm run test:email`, `npm run build`, `npm run test:browser`.
 
-`npm run test:auth:live` cria usuários temporários no Supabase configurado, testa confirmação, MFA, allowlist, cookies e logout, e remove as contas ao final. Não cria cobranças nem mensagens de contato.
+Os testes de integração Better Auth criam/removem um schema temporário e usam
+Chromium com autenticador WebAuthn virtual para verificar a cerimônia completa.
+O script legado `tests/live-auth.mjs` testa Supabase Auth e não homologa a arquitetura atual.
 
 Após publicar: verificar o retorno de Google e GitHub no navegador, incluindo recusa de consentimento; abrir uma compra deslogado e confirmar que produto/quantidade retornam depois do login/MFA; testar captcha expirado e reenvio do contato. Testes automatizados com provedores simulados não substituem o consentimento real nos dois provedores.

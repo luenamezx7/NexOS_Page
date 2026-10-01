@@ -10,26 +10,6 @@ const SECURITY_HEADERS = [
   { key: 'Cross-Origin-Resource-Policy', value: 'same-origin' },
 ];
 
-// CSP robusta com Trusted Types para mitigar XSS
-const CSP_POLICY = [
-  "default-src 'self'",
-  "script-src 'self' 'wasm-unsafe-eval' 'inline-speculation-rules' https://challenges.cloudflare.com https://static.cloudflareinsights.com",
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "img-src 'self' data: blob: https:",
-  "font-src 'self' data: https://fonts.gstatic.com",
-  "connect-src 'self' https://api.asaas.com https://lgfttyeezviecfqbbmqk.supabase.co https://challenges.cloudflare.com",
-  "frame-src https://challenges.cloudflare.com",
-  "frame-ancestors 'none'",
-  "base-uri 'self'",
-  "form-action 'self'",
-  "manifest-src 'self'",
-  "object-src 'none'",
-  "trusted-types default nextjs#internal",
-  "require-trusted-types-for 'script'",
-].join('; ');
-
-const CSP_REPORT_ONLY = CSP_POLICY.replace('require-trusted-types-for', 'require-trusted-types-for').replace("trusted-types default", "trusted-types default nextjs#internal");
-
 // CSP estrita para assets (mais restritiva)
 const STATIC_CSP = [
   "default-src 'none'",
@@ -66,8 +46,7 @@ const nextConfig: NextConfig = {
         source: '/(.*)',
         headers: [
           ...SECURITY_HEADERS,
-          { key: 'Content-Security-Policy', value: CSP_POLICY },
-          { key: 'Content-Security-Policy-Report-Only', value: CSP_REPORT_ONLY },
+          // A CSP das páginas é gerada com nonce em src/proxy.ts.
         ],
       },
       {

@@ -14,15 +14,14 @@ import { getAuth } from '@/lib/auth/instance';
  * continuaria aparentando sessão válida até o cache expirar. Operações
  * sensíveis (conta, pedidos, painel) não podem confiar nisso.
  *
- * Por que não há checagem de "2FA verificado": o plugin twoFactor do Better
- * Auth NÃO cria sessão enquanto o segundo fator está pendente — apaga a
- * sessão emitida no login e responde com um cookie de desafio de 10 minutos.
- * Existindo sessão, o segundo fator já foi satisfeito.
+ * O plugin twoFactor protege credenciais; nexos-security estende o mesmo
+ * desafio a OAuth, Magic Link e Passkeys. Nenhum deles mantém sessão enquanto
+ * o segundo fator está pendente. Admin exige ainda um fator cadastrado.
  */
 
 export type SessionState =
-  | { ok: true; userId: string; email: string; name: string; role: string | null }
-  | { ok: false; status: 401 | 403 | 503; reason?: 'banned' | 'unverified' | 'unauthenticated' | 'unavailable' };
+  | { ok: true; userId: string; email: string; name: string; role: string | null; twoFactorEnabled: boolean }
+  | { ok: false; status: 401 | 403 | 503; reason?: 'banned' | 'unverified' | 'unauthenticated' | 'unavailable' | 'mfa_setup' };
 
 type PersistedSession = Awaited<ReturnType<ReturnType<typeof getAuth>['api']['getSession']>>;
 
@@ -51,9 +50,10 @@ async function lookupSession(): Promise<SessionLookup> {
     })) as PersistedSession;
     if (!data?.session || !data?.user) return { status: 'absent' };
     return { status: 'found', data };
-  } catch {
+  } catch (error) {
     // Exceção aqui é infraestrutura (Postgres fora, rede, timeout) — não é
     // ausência de sessão, e a resposta precisa dizer isso.
+    console.error('[auth/session] leitura indisponível', { type: error instanceof Error ? error.name : 'UnknownError' });
     return { status: 'error' };
   }
 }
@@ -71,6 +71,7 @@ function evaluate(lookup: SessionLookup): SessionState {
     email: String(user.email),
     name: typeof user.name === 'string' ? user.name : '',
     role: typeof user.role === 'string' ? user.role : null,
+    twoFactorEnabled: user.twoFactorEnabled === true,
   };
 }
 
@@ -82,6 +83,7 @@ function evaluate(lookup: SessionLookup): SessionState {
  *   enquanto o 2FA está pendente), portanto não há verificação adicional a fazer.
  */
 export async function getUserAccess(_requireTwoFactor = true): Promise<SessionState> {
+  void _requireTwoFactor; // Compatibilidade: fator pendente não possui sessão.
   return evaluate(await lookupSession());
 }
 
@@ -95,6 +97,7 @@ export async function getAdminAccess(_requireTwoFactor = true): Promise<SessionS
   const access = evaluate(await lookupSession());
   if (!access.ok) return access;
   if (access.role !== 'admin') return { ok: false, status: 403 };
+  if (_requireTwoFactor && !access.twoFactorEnabled) return { ok: false, status: 403, reason: 'mfa_setup' };
   return access;
 }
 
