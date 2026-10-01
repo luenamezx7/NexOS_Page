@@ -57,8 +57,9 @@ export function RobotCycler({
         className={className}
         style={style}
         draggable={false}
+        decoding="async"
+        loading="eager"
         width={112}
-        height={28}
       />
     );
   }

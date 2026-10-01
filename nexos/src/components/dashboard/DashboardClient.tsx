@@ -203,23 +203,23 @@ export function DashboardClient({
                 <span>Atualizar diagnóstico</span>
                 <RefreshCw size={15} strokeWidth={1.75} aria-hidden="true" />
               </button>
-              <a href="/api/supabase/health" target="_blank" rel="noreferrer">
+              <a href="/api/supabase/health" target="_blank" rel="noopener noreferrer">
                 <span>API Supabase health</span>
                 <ArrowUpRight size={15} strokeWidth={1.75} aria-hidden="true" />
               </a>
-              <a href="/api/cloudflare/verify" target="_blank" rel="noreferrer">
+              <a href="/api/cloudflare/verify" target="_blank" rel="noopener noreferrer">
                 <span>API Cloudflare verify</span>
                 <ArrowUpRight size={15} strokeWidth={1.75} aria-hidden="true" />
               </a>
               <a
                 href="https://supabase.com/dashboard/project/lgfttyeezviecfqbbmqk"
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
               >
                 <span>Supabase Dashboard</span>
                 <ExternalLink size={15} strokeWidth={1.75} aria-hidden="true" />
               </a>
-              <a href="https://dash.cloudflare.com" target="_blank" rel="noreferrer">
+              <a href="https://dash.cloudflare.com" target="_blank" rel="noopener noreferrer">
                 <span>Cloudflare Dash</span>
                 <ExternalLink size={15} strokeWidth={1.75} aria-hidden="true" />
               </a>

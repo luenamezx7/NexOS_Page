@@ -78,6 +78,11 @@ const nextConfig: NextConfig = {
         source: '/.well-known/:path*',
         headers: [{ key: 'Cache-Control', value: 'public, max-age=86400' }],
       },
+      {
+        // Fontes e assets de marca não mudam sem troca de nome: cache longo imutável.
+        source: '/:path*\\.(svg|png|jpe?g|webp|avif|otf|ttf|woff2?)$',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+      },
     ];
   },
 };
