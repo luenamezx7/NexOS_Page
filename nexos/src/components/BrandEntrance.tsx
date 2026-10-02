@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
+import Image from 'next/image';
 import { RobotCycler } from './RobotCycler';
 import { useTheme } from './ThemeProvider';
 
@@ -84,13 +85,13 @@ export default function BrandEntrance({ onComplete }: { onComplete: () => void }
   }, [measure, ready]);
 
   useEffect(() => {
-    const t = setTimeout(() => { canFinishRef.current = true; }, 2850);
+    const t = setTimeout(() => { canFinishRef.current = true; }, reduce ? 0 : 1800);
     return () => clearTimeout(t);
-  }, []);
+  }, [reduce]);
   useEffect(() => {
-    const t = setTimeout(() => { if (!completedRef.current) { canFinishRef.current = true; finish(); } }, 5800);
+    const t = setTimeout(() => { if (!completedRef.current) { canFinishRef.current = true; finish(); } }, reduce ? 250 : 3400);
     return () => clearTimeout(t);
-  }, [finish]);
+  }, [finish, reduce]);
   useEffect(() => {
     const onWheel = (e: WheelEvent) => { if (Math.abs(e.deltaY) > 8) finish(); };
     const onTouchEnd = () => finish();
@@ -119,11 +120,11 @@ export default function BrandEntrance({ onComplete }: { onComplete: () => void }
       >
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_75%_at_50%_50%,rgba(255,92,138,0.10),rgba(131,53,143,0.08)_32%,transparent_72%)]"
+          className="grid-pattern-subtle"
         />
         <div className="relative flex w-full max-w-2xl items-center justify-center gap-4 md:gap-8">
           <div ref={logoRef} className="relative" style={{ width: 'min(55vw, 460px)', aspectRatio: '1433 / 344' }}>
-            <img src={logoSrc} alt="NexOS" className="h-full w-full object-contain" draggable={false} width={1433} height={344} loading="eager" fetchPriority="high" decoding="async" />
+            <Image src={logoSrc} alt="NexOS" className="h-full w-full object-contain" draggable={false} width={1433} height={344} loading="eager" />
           </div>
           <RobotCycler className="logo-invert shrink-0" style={{ width: iconW || 60, height: iconH || 50 }} intervalMs={1600} fadeMs={600} />
         </div>
@@ -142,7 +143,7 @@ export default function BrandEntrance({ onComplete }: { onComplete: () => void }
       {/* A marca mantém o mesmo tema durante toda a entrada. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(85%_75%_at_50%_50%,rgba(255,92,138,0.11),rgba(131,53,143,0.09)_30%,transparent_72%)]"
+        className="grid-pattern-subtle"
       />
       <div
         aria-hidden="true"
@@ -167,7 +168,7 @@ export default function BrandEntrance({ onComplete }: { onComplete: () => void }
             x: { duration: 0.95, ease: [0.45, 0, 0.2, 1], delay: 1.85 },
           }}
         >
-          <img src={logoSrc} alt="NexOS" className="h-full w-full object-contain will-change-transform" draggable={false} width={1433} height={344} loading="eager" fetchPriority="high" decoding="async" />
+          <Image src={logoSrc} alt="NexOS" className="h-full w-full object-contain" draggable={false} width={1433} height={344} loading="eager" />
         </motion.div>
         {ready && (
           <motion.div
@@ -191,7 +192,7 @@ export default function BrandEntrance({ onComplete }: { onComplete: () => void }
       <motion.div
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 3.35 }}
+        transition={{ duration: 0.6, delay: 2.2 }}
         className="pointer-events-none absolute bottom-[calc(2.5rem+env(safe-area-inset-bottom))] flex flex-col items-center gap-3"
       >
         <span className="h-px w-10 bg-ink/20" aria-hidden="true" />

@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { getUserAccess } from '@/lib/auth/session';
 import { sanitizeCallbackPath } from '@/lib/auth/callback';
-import { enabledSocialProviders } from '@/lib/auth/social';
+import { enabledSocialProviders, socialAuthMode } from '@/lib/auth/social';
 /**
  * Página de acesso — renderiza o LoginForm com audience="user".
  * Redireciona para /conta em caso de autenticação bem-sucedida.
@@ -25,6 +25,7 @@ export default async function PortalAcessoPage({
       confirmationError={params.confirmation === 'error'}
       callbackUrl={sanitizeCallbackPath(params.callbackUrl)}
       socialProviders={enabledSocialProviders()}
+      socialAuthMode={socialAuthMode()}
       initialStep={params.mfa === 'required' ? 'totp' : 'credentials'}
       verified={params.verified === '1'}
     />

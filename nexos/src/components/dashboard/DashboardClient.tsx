@@ -12,6 +12,7 @@ import {
   Zap,
 } from 'lucide-react';
 import styles from './Dashboard.module.css';
+import { signOutAccount } from '@/lib/auth/client';
 
 function StatusDot({ ok }: { ok: boolean | null }) {
   const cls = ok === true ? styles.dotOk : ok === false ? styles.dotFail : '';
@@ -77,12 +78,8 @@ export function DashboardClient({
     setLoading(true);
     setMsg(null);
     try {
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
-        signal: AbortSignal.timeout(15000),
-      });
-      if (!response.ok) throw new Error();
-      router.replace('/admin-dashboard-su/secure-entry');
+      await signOutAccount();
+      window.location.replace('/admin-dashboard-su/secure-entry');
     } catch {
       setMsg('Não foi possível sair. Tente novamente.');
     } finally {

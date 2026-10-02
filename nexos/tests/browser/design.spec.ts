@@ -64,7 +64,7 @@ test('stage 1: intro keeps its sequence and completes on mobile', async ({ page 
   await page.goto('/');
   await expect(page.getByRole('button', { name: 'Continuar para o site' })).toBeVisible({ timeout: 20000 });
   await noOverflow(page);
-  const title = page.getByRole('heading', { name: 'NexOS, a performance que seu business merece.' });
+  const title = page.getByRole('heading', { name: 'A performance que seu business merece.' });
   const box = await title.boundingBox();
   expect(box!.x).toBeGreaterThanOrEqual(0);
   expect(box!.x + box!.width).toBeLessThanOrEqual(360);
@@ -87,7 +87,7 @@ test('stage 4: plate showcase and services stay clear at every breakpoint', asyn
 
   const showcase = page.locator('#showcase');
   await expect(showcase).toBeVisible();
-  await expect(showcase.getByRole('img', { name: /Placa NexOS/ })).toBeVisible();
+  await expect(showcase.getByRole('img', { name: /Placa Inteligente NexOS/ })).toBeVisible();
   await expect(showcase.getByRole('heading', { name: 'Seu próximo contato.' })).toBeVisible();
 
   const total = showcase.getByTestId('plate-total');

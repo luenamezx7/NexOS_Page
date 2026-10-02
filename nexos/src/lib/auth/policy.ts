@@ -1,7 +1,7 @@
 /** Política compartilhada entre RSC, Proxy e testes; sem dependência de Next. */
 export function isMfaSignIn(path: string): boolean {
   return path.startsWith('/callback/') || path === '/callback/:id' ||
-    path === '/magic-link/verify' || path === '/passkey/verify-authentication';
+    path === '/magic-link/verify' || path === '/passkey/verify-authentication' || path === '/supabase/callback';
 }
 
 export function loginPathFor(path: string): string {

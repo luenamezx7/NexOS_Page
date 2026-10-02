@@ -61,7 +61,7 @@ function FAQAccordionItem({
   onToggle: () => void;
 }) {
   return (
-    <div className={styles.faqItem} data-open={isOpen ? 'true' : 'false'}>
+    <div role="listitem" className={styles.faqItem} data-open={isOpen ? 'true' : 'false'}>
       <button
         type="button"
         onClick={onToggle}

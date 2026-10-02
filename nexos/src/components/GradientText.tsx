@@ -1,9 +1,8 @@
-/**
- * Texto com gradiente animado (pink → purple).
- * Usa background-clip: text + animação de movimento.
- */
+'use client';
+
+/** Theme-aware animated ink gradient. */
 import { useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
-import { motion, useMotionValue, useAnimationFrame, useTransform } from 'motion/react';
+import { motion, useMotionValue, useAnimationFrame, useTransform, useReducedMotion } from 'motion/react';
 import './GradientText.css';
 
 interface GradientTextProps {
@@ -20,7 +19,7 @@ interface GradientTextProps {
 export default function GradientText({
   children,
   className = '',
-  colors = ['#ff5c8a', '#83358F', '#ff5c8a'],
+  colors = ['var(--text-gradient-start)', 'var(--text-gradient-end)', 'var(--text-gradient-start)'],
   animationSpeed = 8,
   showBorder = false,
   direction = 'horizontal',
@@ -28,12 +27,13 @@ export default function GradientText({
   yoyo = true
 }: GradientTextProps) {
   const [isPaused, setIsPaused] = useState(false);
+  const reduced = useReducedMotion();
   const progress = useMotionValue(0);
   const elapsedRef = useRef(0);
   const lastTimeRef = useRef<number | null>(null);
   const animationDuration = animationSpeed * 1000;
   useAnimationFrame(time => {
-    if (isPaused) { lastTimeRef.current = null; return; }
+    if (isPaused || reduced || document.hidden) { lastTimeRef.current = null; return; }
     if (lastTimeRef.current === null) { lastTimeRef.current = time; return; }
     const deltaTime = time - lastTimeRef.current;
     lastTimeRef.current = time;
@@ -63,9 +63,9 @@ export default function GradientText({
     backgroundRepeat: 'repeat' as const
   };
   return (
-    <motion.div className={`animated-gradient-text ${showBorder ? 'with-border' : ''} ${className}`} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-      {showBorder && <motion.div className="gradient-overlay" style={{ ...gradientStyle, backgroundPosition }} />}
-      <motion.div className="text-content" style={{ ...gradientStyle, backgroundPosition }}>{children}</motion.div>
-    </motion.div>
+    <motion.span className={`animated-gradient-text ${showBorder ? 'with-border' : ''} ${className}`} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+      {showBorder && <motion.span className="gradient-overlay" style={{ ...gradientStyle, backgroundPosition }} />}
+      <motion.span className="text-content" style={{ ...gradientStyle, backgroundPosition }}>{children}</motion.span>
+    </motion.span>
   );
 }

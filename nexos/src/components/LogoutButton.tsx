@@ -1,23 +1,21 @@
 'use client';
 
 /**
- * Logout button — calls /api/auth/user-logout and redirects to /portal/acesso.
+ * Logout button — encerra a sessão Better Auth e abre a página de acesso.
  * Shows error state on failure.
  */
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { signOutAccount } from '@/lib/auth/client';
 
 export function LogoutButton() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
-  const router = useRouter();
   return <div className="flex flex-col gap-2">
     <button className="btn-secondary-nex" disabled={busy} onClick={async () => {
       setBusy(true); setError(false);
       try {
-        const result = await fetch('/api/auth/user-logout', { method: 'POST', signal: AbortSignal.timeout(15000) });
-        if (!result.ok) throw new Error();
-        router.replace('/portal/acesso');
+        await signOutAccount();
+        window.location.replace('/portal/acesso');
       } catch { setError(true); }
       finally { setBusy(false); }
     }}>{busy ? 'Saindo…' : 'Sair da conta'}</button>

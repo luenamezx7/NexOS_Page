@@ -1,7 +1,7 @@
 import test, { before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { randomBytes } from 'node:crypto';
+import { createHash, randomBytes } from 'node:crypto';
 import { createServer } from 'node:http';
 import { chromium } from '@playwright/test';
 import { exportJWK, generateKeyPair, SignJWT } from 'jose';
@@ -342,4 +342,104 @@ test('OAuth Google simulado verifica JWT assinado, callback e desafio MFA', asyn
   assert.equal(await (await request('/get-session', undefined, oauthJar)).json(), null);
   assert.equal((await request('/two-factor/verify-totp', { code: await createOTP(secret).totp() }, oauthJar)).status, 200);
   assert.equal((await request('/two-factor/disable', { password: PASSWORD }, jar)).status, 200);
+});
+
+test('OAuth via Supabase usa PKCE, identidade validada no servidor e MFA Better Auth', async t => {
+  const brokerAuth = createAuth({ ...authOptions, supabaseOAuth: { url: 'https://broker.example.test', key: 'public-test-key' } });
+  const call = (path, body, jar) => request(path, body, jar, { auth: brokerAuth });
+  const current = await login();
+  const setup = await (await request('/two-factor/enable', { method: 'totp', password: PASSWORD }, current)).json();
+  const secret = new TextDecoder().decode(base32.decode(new URL(setup.totpURI).searchParams.get('secret')));
+  await request('/two-factor/verify-totp', { code: await createOTP(secret).totp() }, current);
+  let challenge, exchanges = 0, revoked = 0;
+  let provider = 'google', email = 'customer@example.test';
+  t.mock.method(globalThis, 'fetch', async (input, init) => {
+    const url = new URL(typeof input === 'string' ? input : input.url);
+    assert.equal(url.origin, 'https://broker.example.test');
+    if (url.pathname.endsWith('/token')) {
+      exchanges++;
+      const body = JSON.parse(init.body);
+      assert.equal(body.auth_code, 'test-broker-code');
+      assert.equal(createHash('sha256').update(body.code_verifier).digest('base64url'), challenge);
+      return Response.json({ access_token: 'ephemeral-broker-token' });
+    }
+    if (url.pathname.endsWith('/user')) {
+      assert.equal(init.headers.Authorization, 'Bearer ephemeral-broker-token');
+      return Response.json({ id: 'broker-user', email, email_confirmed_at: new Date().toISOString(),
+        user_metadata: { role: 'admin' }, identities: [{ provider, provider_id: provider === 'google' ? 'isolated-google-user' : 'new-broker-github',
+          identity_data: { full_name: 'Cliente OAuth' } }] });
+    }
+    if (url.pathname.endsWith('/logout')) { revoked++; return new Response(null, { status: 204 }); }
+    throw new Error('Unexpected broker request');
+  });
+  for (const mode of ['existing-google', 'new-github']) {
+    provider = mode === 'existing-google' ? 'google' : 'github';
+    email = mode === 'existing-google' ? 'customer@example.test' : 'new-broker@example.test';
+    const jar = new Jar();
+    const start = await call('/sign-in/supabase', { provider, callbackURL: '/conta', errorCallbackURL: '/portal/acesso?confirmation=error' }, jar);
+    assert.equal(start.status, 200);
+    const url = new URL((await start.json()).url);
+    assert.equal(url.origin, 'https://broker.example.test');
+    assert.equal(url.searchParams.get('provider'), provider);
+    assert.equal(url.searchParams.get('redirect_to'), `${SITE}/api/auth/supabase/callback`);
+    assert.equal(url.searchParams.get('code_challenge_method'), 's256');
+    challenge = url.searchParams.get('code_challenge');
+    const pending = await pool.query('select value from verification order by "createdAt" desc limit 1');
+    assert.equal(pending.rows.length, 1);
+    assert.ok(!pending.rows[0].value.includes('verifier'));
+    const stale = new Jar(); stale.values = new Map(jar.values);
+    const callback = await call('/supabase/callback?code=test-broker-code', undefined, jar);
+    assert.equal(callback.status, 302);
+    if (provider === 'google') {
+      assert.match(callback.headers.get('location'), /mfa=required/);
+      assert.equal(await (await call('/get-session', undefined, jar)).json(), null);
+      assert.equal((await call('/two-factor/verify-totp', { code: await createOTP(secret).totp() }, jar)).status, 200);
+    } else assert.equal(callback.headers.get('location'), `${SITE}/conta`);
+    const session = await (await call('/get-session', undefined, jar)).json();
+    assert.equal(session.user.email, email);
+    assert.equal(session.user.role, 'user', 'Metadata do intermediário não concede papel administrativo');
+    const replay = await call('/supabase/callback?code=test-broker-code', undefined, stale);
+    assert.match(replay.headers.get('location'), /confirmation=error/);
+    assert.equal(await (await call('/get-session', undefined, stale)).json(), null);
+    await call('/sign-out', {}, jar);
+  }
+  assert.equal(exchanges, 2); assert.equal(revoked, 2);
+  assert.equal((await request('/two-factor/disable', { password: PASSWORD }, current)).status, 200);
+});
+
+test('OAuth Supabase recusa cookie ausente, expiração, cancelamento e identidade inválida', async t => {
+  const brokerAuth = createAuth({ ...authOptions, supabaseOAuth: { url: 'https://broker.example.test', key: 'public-test-key' } });
+  const call = (path, body, jar, headers) => request(path, body, jar, { auth: brokerAuth, headers });
+  assert.equal((await call('/sign-in/supabase', { provider: 'google', callbackURL: 'https://attacker.example' })).status, 403);
+  assert.equal((await call('/sign-in/supabase', { provider: 'google', errorCallbackURL: 'https://attacker.example' })).status, 403);
+  assert.equal((await call('/sign-in/supabase', { provider: 'google' }, undefined, { Origin: 'https://attacker.example' })).status, 403);
+  let requests = 0, verified = false, actualProvider = 'google', userStatus = 200;
+  t.mock.method(globalThis, 'fetch', async input => {
+    requests++;
+    const url = new URL(typeof input === 'string' ? input : input.url);
+    if (url.pathname.endsWith('/token')) return Response.json({ access_token: 'ephemeral-broker-token' });
+    if (url.pathname.endsWith('/user')) return Response.json({ email: 'customer@example.test',
+      email_confirmed_at: verified ? new Date().toISOString() : null,
+      identities: [{ provider: actualProvider, provider_id: 'isolated-google-user' }] }, { status: userStatus });
+    if (url.pathname.endsWith('/logout')) return new Response(null, { status: 204 });
+    throw new Error('Unexpected request');
+  });
+  assert.match((await call('/supabase/callback?code=forged')).headers.get('location'), /confirmation=error/);
+  const cancelled = new Jar();
+  await call('/sign-in/supabase', { provider: 'google', callbackURL: '/dashboard' }, cancelled);
+  const result = await call('/supabase/callback?error=access_denied', undefined, cancelled);
+  assert.match(result.headers.get('location'), /callbackUrl=%2Fdashboard/);
+  const expired = new Jar();
+  await call('/sign-in/supabase', { provider: 'google' }, expired);
+  const expiration = await pool.query('update verification set "expiresAt" = $1 where id = (select id from verification order by "createdAt" desc limit 1)', [new Date(Date.now() - 60000)]);
+  assert.equal(expiration.rowCount, 1);
+  assert.match((await call('/supabase/callback?code=test', undefined, expired)).headers.get('location'), /confirmation=error/);
+  assert.equal(requests, 0);
+  for (const invalid of ['unverified', 'wrong-provider', 'invalid-server-token']) {
+    verified = invalid !== 'unverified'; actualProvider = invalid === 'wrong-provider' ? 'github' : 'google'; userStatus = invalid === 'invalid-server-token' ? 401 : 200;
+    const jar = new Jar();
+    await call('/sign-in/supabase', { provider: 'google' }, jar);
+    assert.match((await call('/supabase/callback?code=test', undefined, jar)).headers.get('location'), /confirmation=error/);
+    assert.equal(await (await call('/get-session', undefined, jar)).json(), null);
+  }
 });

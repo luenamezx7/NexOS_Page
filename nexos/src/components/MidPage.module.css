@@ -4,13 +4,13 @@
   --mid-raised: color-mix(in srgb, var(--color-ink) 5%, var(--color-canvas));
   --mid-line: color-mix(in srgb, var(--color-ink) 14%, transparent);
   --mid-muted: color-mix(in srgb, var(--color-ink) 72%, transparent);
-  --mid-accent: #be185d;
+  --mid-accent: var(--color-ink);
   position: relative;
   background: var(--color-canvas);
   border-top: 1px solid var(--mid-line);
   scroll-margin-top: 100px;
 }
-:global(.dark) .section { --mid-accent: #ff8fab; }
+:global(.dark) .section { --mid-accent: var(--color-ink); }
 .container { width: 100%; max-width: 1280px; margin-inline: auto; padding: 48px 20px 64px; }
 .sectionNav { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; margin-bottom: 32px; border-bottom: 1px solid var(--mid-line); padding-bottom: 16px; font-size: 13px; }
 .sectionNav a, .currentSection { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; }
@@ -20,7 +20,7 @@
 .currentSection svg { color: var(--mid-accent); }
 .kicker { margin-bottom: 12px; color: var(--mid-muted); font-size: 13px; }
 .heading { font-size: clamp(32px, 4.2vw, 56px); font-weight: 600; letter-spacing: -0.035em; line-height: 1.1; text-wrap: balance; }
-.accent { color: var(--mid-accent); }
+.accent { background: linear-gradient(100deg, var(--text-gradient-start), var(--text-gradient-end)); background-clip: text; -webkit-background-clip: text; color: transparent; }
 .lead { max-width: 52ch; margin-top: 20px; font-size: 16px; line-height: 1.5; color: var(--mid-muted); text-wrap: pretty; }
 .header { margin-bottom: 32px; }
 
@@ -30,8 +30,8 @@
 .bentoCard:hover { border-color: color-mix(in srgb, var(--mid-accent) 30%, transparent); background: var(--mid-raised); }
 .bentoCard:focus-within { outline: 2px solid color-mix(in srgb, var(--mid-accent) 50%, transparent); outline-offset: 2px; }
 .featured { border-top: 2px solid var(--mid-accent); background: var(--mid-raised); }
-.featuredBadge { position: absolute; top: -12px; left: 20px; display: inline-flex; align-items: center; gap: 6px; max-width: calc(100% - 40px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 4px 10px; border-radius: 999px; background: var(--mid-accent); color: #fff; font-family: var(--font-mono); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; }
-.featuredBadgeDot { width: 6px; height: 6px; flex-shrink: 0; border-radius: 999px; background: #fff; }
+.featuredBadge { position: absolute; top: -12px; left: 20px; display: inline-flex; align-items: center; gap: 6px; max-width: calc(100% - 40px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 4px 10px; border-radius: 6px; background: var(--mid-accent); color: var(--color-canvas); font-family: var(--font-mono); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; }
+.featuredBadgeDot { width: 6px; height: 6px; flex-shrink: 0; border-radius: 999px; background: var(--color-canvas); }
 .cardTop { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin-bottom: 20px; }
 .badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border: 1px solid var(--mid-line); border-radius: 999px; background: color-mix(in srgb, var(--color-ink) 4%, transparent); font-family: var(--font-mono); font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.14em; color: var(--mid-muted); }
 .badgeDot { width: 6px; height: 6px; border-radius: 999px; background: var(--mid-accent); }

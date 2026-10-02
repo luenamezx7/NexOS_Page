@@ -15,6 +15,7 @@ import { evaluatePassword } from './password-strength';
 import { isTurnstileEnforced } from '@/lib/turnstile';
 import { securityPlugin } from './security-plugin';
 import { enqueueNotification } from '@/lib/emails/notifications';
+import { supabaseOAuth, supabaseOAuthConfig, type SupabaseOAuthOptions } from './supabase-oauth';
 
 function required(name: string, value: string | undefined, minLength = 0): string {
   const trimmed = value?.trim();
@@ -44,6 +45,7 @@ export interface AuthTestOptions {
   notifications?: boolean;
   captchaEnabled?: boolean;
   socialProviders?: ReturnType<typeof socialProviders>;
+  supabaseOAuth?: SupabaseOAuthOptions;
   mail?: {
     verification: typeof sendVerificationEmail;
     reset: typeof sendResetPasswordEmail;
@@ -58,6 +60,7 @@ export function createAuth(test: AuthTestOptions = {}) {
   const turnstileSecret = process.env.TURNSTILE_SECRET_KEY?.trim();
   const notifications = test.notifications !== false;
   const mail = test.mail ?? { verification: sendVerificationEmail, reset: sendResetPasswordEmail, magic: sendMagicLinkEmail };
+  const broker = test.supabaseOAuth ?? (test.pool ? null : supabaseOAuthConfig());
   return betterAuth({
     appName: 'NexOS',
     database: new PostgresDialect({ pool: test.pool ?? (async () => createPool()) }),
@@ -133,6 +136,7 @@ export function createAuth(test: AuthTestOptions = {}) {
         '/sign-in/email': { window: 900, max: 10 }, '/sign-up/email': { window: 900, max: 3 },
         '/request-password-reset': { window: 900, max: 3 }, '/send-verification-email': { window: 900, max: 3 },
         '/sign-in/magic-link': { window: 900, max: 3 },
+        '/sign-in/supabase': { window: 60, max: 10 },
         '/two-factor/verify-totp': { window: 300, max: 5 },
         '/two-factor/verify-backup-code': { window: 300, max: 5 },
       },
@@ -154,6 +158,7 @@ export function createAuth(test: AuthTestOptions = {}) {
           if (!verification.authenticationInfo.userVerified) throw new APIError('UNAUTHORIZED', { message: 'Confirme sua identidade no dispositivo para entrar.' });
         } },
       }),
+      ...(broker ? [supabaseOAuth(broker)] : []),
       ...(captchaEnabled && turnstileSecret ? [captcha({ provider: 'cloudflare-turnstile', secretKey: turnstileSecret, endpoints: CAPTCHA_PATHS })] : []),
       securityPlugin(notifications),
       ...(test.pool ? [] : [nextCookies()]),

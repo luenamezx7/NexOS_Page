@@ -11,29 +11,29 @@
 /* ============================================================
    NexOS — Design System v3 (humanized rebuild)
    Base: Deep Black #050505 · White · Surgical Pink #db2777
-   Ambient background: DarkVeil (WebGL) + thin grid lines.
+   Ambient background: Slipstream ASCII + thin grid lines.
    Perf rule: animate ONLY transform + opacity. No giant blurs.
    ============================================================ */
 
 @theme {
-  --font-display: "Space Grotesk", "Geist", -apple-system, system-ui, sans-serif;
-  --font-heavy: "Space Grotesk", "Geist", -apple-system, system-ui, sans-serif;
+  --font-display: var(--font-space), "Space Grotesk", system-ui, sans-serif;
+  --font-heavy: var(--font-space), "Space Grotesk", system-ui, sans-serif;
   --font-dirty: "Dirtyline", "Space Grotesk", sans-serif;
   --font-old-english: "Old English", serif;
-  --font-sans: "Geist", "Inter", -apple-system, system-ui, "Segoe UI", sans-serif;
-  --font-mono: "Geist Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-sans: var(--font-geist), "Geist", system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), "Geist Mono", ui-monospace, monospace;
 
-  /* Semantic theme tokens — light crema suave, página toda uniforme */
-  --color-canvas: #fdf6ec;
-  --color-ink: #231b14;
-  --color-glass: rgba(253, 246, 236, 0.42);
-  --color-glass-strong: rgba(253, 246, 236, 0.68);
-  --color-card: #fffaf2;
+  /* Neutral surfaces shared across both themes. */
+  --color-canvas: #fafafa;
+  --color-ink: #171717;
+  --color-glass: rgba(250, 250, 250, 0.42);
+  --color-glass-strong: rgba(250, 250, 250, 0.68);
+  --color-card: #f4f4f4;
 }
 
 .dark {
-  --color-canvas: #050505;
-  --color-ink: #ffffff;
+  --color-canvas: #0a0a0a;
+  --color-ink: #f5f5f5;
   --color-glass: rgba(0, 0, 0, 0.28);
   --color-glass-strong: rgba(0, 0, 0, 0.55);
   --color-card: rgba(255, 255, 255, 0.02);
@@ -42,13 +42,16 @@
 :root {
   --nex-black: #050505;
   --nex-white: #ffffff;
-  --nex-pink: #db2777;
+  --nex-pink: #c91c64;
   --nex-pink-hot: #ff5c8a;
   --nex-purple: #83358F;
   --nex-hairline: rgba(255, 255, 255, 0.1);
-  --section-indicator: #ff5c8a;
-  --section-indicator-glow: rgba(255, 92, 138, 0.4);
-  --section-indicator-glow-soft: rgba(255, 92, 138, 0.18);
+  --section-indicator: #171717;
+  --section-indicator-glow: transparent;
+  --section-indicator-glow-soft: transparent;
+  --ns-muted: #4d4d4d;
+  --text-gradient-start: #171717;
+  --text-gradient-end: #686868;
 
   --nex-gradient-accent: linear-gradient(90deg, #ff5c8a 0%, #83358F 50%, #ff5c8a 100%);
   --nex-gradient-accent-reverse: linear-gradient(90deg, #83358F 0%, #ff5c8a 50%, #83358F 100%);
@@ -56,28 +59,31 @@
 
   --ease-fluid: cubic-bezier(0.16, 1, 0.3, 1);
 
-  --background: #fdf6ec;
-  --foreground: #231b14;
-  --card: #fffaf2;
-  --card-foreground: #231b14;
-  --popover: #fffaf2;
-  --popover-foreground: #231b14;
-  --primary: #231b14;
-  --primary-foreground: #fdf6ec;
-  --secondary: #f5e6cc;
-  --secondary-foreground: #231b14;
-  --muted: #f5e6cc;
-  --muted-foreground: #8a7a65;
-  --accent: #f5e6cc;
-  --accent-foreground: #231b14;
+  --background: #fafafa;
+  --foreground: #171717;
+  --card: #f4f4f4;
+  --card-foreground: #171717;
+  --popover: #fafafa;
+  --popover-foreground: #171717;
+  --primary: #171717;
+  --primary-foreground: #fafafa;
+  --secondary: #ededed;
+  --secondary-foreground: #171717;
+  --muted: #ededed;
+  --muted-foreground: #626262;
+  --accent: #ededed;
+  --accent-foreground: #171717;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: #e8dcc6;
-  --input: #e8dcc6;
+  --border: #d8d8d8;
+  --input: #d8d8d8;
   --ring: #ff5c8a;
   --radius: 0.625rem;
 }
 
 .dark {
+  --ns-muted: #8f8f8f;
+  --text-gradient-start: #fafafa;
+  --text-gradient-end: #a1a1a1;
   --section-indicator: #ffffff;
   --section-indicator-glow: rgba(255, 255, 255, 0.14);
   --section-indicator-glow-soft: rgba(255, 255, 255, 0.06);
@@ -341,22 +347,6 @@ button {
   will-change: transform, opacity;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-}
-
-/* ---------- DarkVeil backdrop ---------- */
-
-.veil-wrap {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-  max-width: 100vw;
-}
-
-.veil-wrap canvas {
-  max-width: 100vw;
-  width: 100% !important;
-  height: 100% !important;
 }
 
 /* ---------- Thin industrial grid overlay ---------- */
@@ -803,7 +793,7 @@ select.field-input option {
 
 @theme inline {
   --font-heading: var(--font-sans);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-geist);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -822,4 +812,78 @@ select.field-input option {
   --color-card: var(--card);
   --color-foreground: var(--foreground);
   --color-background: var(--background);
+}
+
+/* Landing composition. The existing Header retains its own module/styles. */
+.landing-page {
+  --landing-rose: #b92261;
+  --landing-teal: #16796f;
+  --landing-amber: #996016;
+  --landing-lilac: #7950a8;
+  --landing-peach: #b45435;
+  --landing-action: #c91c64;
+  --landing-action-hover: #ac1855;
+  --text-gradient-start: var(--landing-rose);
+  --text-gradient-end: var(--landing-peach);
+}
+.dark .landing-page {
+  --landing-rose: #ff80ad;
+  --landing-teal: #70cfbd;
+  --landing-amber: #e9bc73;
+  --landing-lilac: #b79ae3;
+  --landing-peach: #f3b18c;
+}
+.landing-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 85% 30%, color-mix(in srgb, var(--landing-rose) 13%, transparent), transparent 54%),
+    radial-gradient(ellipse at 72% 85%, color-mix(in srgb, var(--landing-teal) 9%, transparent), transparent 48%);
+}
+.landing-hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  inset-inline: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--landing-rose), var(--landing-peach), transparent);
+  opacity: 0.45;
+  pointer-events: none;
+}
+.hero-container { position: relative; width: 100%; max-width: 1280px; margin-inline: auto; padding: 96px 40px 72px 176px; }
+.hero-copy { max-width: 920px; }
+.hero-heading { font-family: var(--font-display); font-size: clamp(44px, 6.2vw, 88px); font-weight: 600; line-height: 1.06; letter-spacing: -0.065em; }
+.hero-description { max-width: 46ch; margin-top: 28px; font-size: 18px; line-height: 1.65; color: var(--muted-foreground); }
+.hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px; margin-top: 36px; }
+.hero-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 48px; font-size: 14px; color: var(--color-ink); }
+.hero-secondary svg { color: var(--landing-teal); transition: transform 300ms var(--ease-fluid); }
+.hero-secondary:hover { color: var(--landing-teal); }
+.hero-secondary:hover svg { transform: translate(3px, -3px); }
+.hero-flow { --ns-muted: var(--landing-teal); position: absolute; inset: 0; opacity: 0.65; mask-image: linear-gradient(100deg, transparent 8%, #0003 40%, black 100%); }
+.hero-flow canvas { color: var(--landing-rose); }
+.hero-coordinate { position: absolute; right: 40px; bottom: 40px; font: 11px var(--font-mono); letter-spacing: 0.12em; color: var(--muted-foreground); writing-mode: vertical-rl; }
+.landing-hero .tech-badge { padding: 8px 12px; border-color: color-mix(in srgb, var(--landing-rose) 24%, transparent); background: color-mix(in srgb, var(--landing-rose) 7%, transparent); color: var(--landing-rose); letter-spacing: 0.1em; border-radius: 6px; }
+.landing-hero .tech-badge-dot { background: var(--landing-rose); box-shadow: 0 0 10px color-mix(in srgb, var(--landing-rose) 35%, transparent); border-radius: 1px; }
+.landing-intro { background-image: radial-gradient(ellipse at 65% 30%, color-mix(in srgb, var(--landing-rose) 11%, transparent), transparent 62%), radial-gradient(ellipse at 25% 80%, color-mix(in srgb, var(--landing-teal) 9%, transparent), transparent 55%); }
+.intro-accent { color: var(--landing-rose); }
+.landing-intro .intro-brand > span { color: var(--landing-teal); }
+.landing-intro .intro-enter { border-color: color-mix(in srgb, var(--landing-rose) 32%, transparent); }
+.landing-intro .intro-enter svg { color: var(--landing-rose); }
+.intro-copy { text-align: center; }
+.intro-brand { display: inline-flex; gap: 8px; align-items: flex-start; margin-bottom: 32px; font-family: var(--font-display); font-size: 24px; font-weight: 600; letter-spacing: -0.05em; }
+.intro-brand > span { font: 12px var(--font-mono); margin-top: 4px; }
+.intro-copy h1 { font-size: clamp(32px, min(6.1vw, 8dvh), 84px); font-weight: 500; line-height: 1.1; letter-spacing: -0.055em; }
+.intro-copy p { margin-top: 28px; font: 12px var(--font-mono); color: var(--muted-foreground); }
+.landing-page > a.skip-link { position: fixed; top: 12px; left: 12px; z-index: 901; transform: translateY(-160%); padding: 12px 20px; background: var(--color-ink); color: var(--color-canvas); border-radius: 8px; }
+.landing-page > a.skip-link:focus { transform: translateY(0); }
+@media (max-width: 1023px) { .hero-container { padding-inline: 48px; } .hero-coordinate { display: none; } }
+@media (max-width: 767px) {
+  .hero-container { padding: 100px 24px 64px; }
+  .hero-heading { font-size: clamp(38px, 8.2vw, 60px); }
+  .hero-description { font-size: 16px; margin-top: 24px; }
+  .hero-actions { gap: 12px; margin-top: 28px; }
+  .hero-actions > * { width: 100%; }
+  .hero-flow { opacity: 0.28; mask-image: linear-gradient(to bottom, transparent 15%, black 100%); }
 }

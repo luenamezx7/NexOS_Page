@@ -8,7 +8,8 @@ export default defineConfig({
     command: 'node --use-system-ca node_modules/next/dist/bin/next start -p 3100',
     url: 'http://localhost:3100/admin-dashboard-su/secure-entry',
     reuseExistingServer: false,
-    env: { SITE_URL: 'http://localhost:3100', TURNSTILE_ENFORCED: 'false' },
+    env: { SITE_URL: 'http://localhost:3100', TURNSTILE_ENFORCED: 'false', SOCIAL_AUTH_USE_SUPABASE: 'false',
+      GOOGLE_CLIENT_ID: 'browser-test-google-id', GOOGLE_CLIENT_SECRET: 'browser-test-google-secret' },
     timeout: 60000,
   },
 });

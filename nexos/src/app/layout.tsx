@@ -2,23 +2,14 @@ import type { Metadata, Viewport } from 'next';
 import { headers } from 'next/headers';
 import './globals.css';
 import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
-import localFont from "next/font/local";
 import { cn } from "@/lib/utils";
-import GlobalNoise from '@/components/GlobalNoise';
-import { PageBlur } from '@/components/PageBlur';
 import { SmoothScrollProvider } from '@/components/SmoothScrollProvider';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { CookieConsentProvider } from '@/components/cookie-consent';
 
-const geist = Geist({ subsets: ['latin'], variable: '--font-sans', display: 'swap' });
-const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap' });
-const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-display', display: 'swap' });
-const dirtyline = localFont({
-  src: '../../public/fonts/dirtyline.woff2',
-  variable: '--font-dirty',
-  display: 'swap',
-  weight: '400',
-});
+const geist = Geist({ subsets: ['latin'], variable: '--font-geist', display: 'swap' });
+const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono', display: 'swap' });
+const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-space', display: 'swap' });
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://nexoslab.online'),
@@ -85,13 +76,11 @@ export default async function RootLayout({
 }) {
   const headersList = await headers();
   const nonce = headersList.get('x-nonce');
-  const themeScriptContent = `(function(){try{var t=localStorage.getItem('nexos-theme');var s=t==='light'?'light':'dark';if(t==='light'){document.documentElement.classList.remove('dark');}else{document.documentElement.classList.add('dark');}document.documentElement.style.colorScheme='only '+s;var m=document.querySelector('meta[name=color-scheme]');if(m)m.content=s;}catch(e){}})()`;
+  const themeScriptContent = `(function(){var t;try{t=localStorage.getItem('nexos-theme');}catch(e){}var s=t==='light'||t==='dark'?t:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.classList.toggle('dark',s==='dark');document.documentElement.style.colorScheme='only '+s;var m=document.querySelector('meta[name=color-scheme]');if(m)m.content=s;})()`;
 
   return (
-    <html lang="pt-BR" suppressHydrationWarning className={cn("font-sans dark", geist.variable, geistMono.variable, spaceGrotesk.variable, dirtyline.variable)}>
+    <html lang="pt-BR" suppressHydrationWarning className={cn("font-sans dark", geist.variable, geistMono.variable, spaceGrotesk.variable)}>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <meta name="color-scheme" content="dark" />
         {nonce ? (
           <script nonce={nonce} dangerouslySetInnerHTML={{ __html: themeScriptContent }} />
@@ -105,13 +94,6 @@ export default async function RootLayout({
             <CookieConsentProvider>{children}</CookieConsentProvider>
           </SmoothScrollProvider>
         </ThemeProvider>
-        <GlobalNoise
-          noiseIntensity={0.03}
-          scanlineIntensity={0.02}
-          scanlineFrequency={1.0}
-          speed={1.0}
-        />
-        <PageBlur />
       </body>
     </html>
   );

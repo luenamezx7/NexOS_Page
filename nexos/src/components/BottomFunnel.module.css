@@ -4,13 +4,13 @@
   --bottom-raised: color-mix(in srgb, var(--color-ink) 5%, var(--color-canvas));
   --bottom-line: color-mix(in srgb, var(--color-ink) 14%, transparent);
   --bottom-muted: color-mix(in srgb, var(--color-ink) 72%, transparent);
-  --bottom-accent: #be185d;
+  --bottom-accent: var(--color-ink);
   position: relative;
   background: var(--color-canvas);
   border-top: 1px solid var(--bottom-line);
   scroll-margin-top: 100px;
 }
-:global(.dark) .section { --bottom-accent: #ff8fab; }
+:global(.dark) .section { --bottom-accent: var(--color-ink); }
 .container { width: 100%; max-width: 1280px; margin-inline: auto; padding: 48px 20px 64px; }
 .sectionNav { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; margin-bottom: 32px; border-bottom: 1px solid var(--bottom-line); padding-bottom: 16px; font-size: 13px; }
 .sectionNav a, .currentSection { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; }
@@ -20,7 +20,7 @@
 .currentSection svg { color: var(--bottom-accent); }
 .kicker { margin-bottom: 12px; color: var(--bottom-muted); font-size: 13px; }
 .heading { font-size: clamp(32px, 4.2vw, 56px); font-weight: 600; letter-spacing: -0.035em; line-height: 1.1; text-wrap: balance; }
-.accent { color: var(--bottom-accent); }
+.accent { background: linear-gradient(100deg, var(--text-gradient-start), var(--text-gradient-end)); background-clip: text; -webkit-background-clip: text; color: transparent; }
 .lead { max-width: 52ch; margin-top: 20px; font-size: 16px; line-height: 1.5; color: var(--bottom-muted); text-wrap: pretty; }
 .header { margin-bottom: 32px; }
 

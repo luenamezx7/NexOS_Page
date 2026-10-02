@@ -108,8 +108,13 @@ test('produção autenticada: RSC, senha, Passkey, TOTP e outbox com conta desca
     for (const kind of ['welcome', 'login', 'security']) {
       assert.ok(delivery.rows.some(row => row.kind === kind && row.status === 'sent'), `${kind}: envio pelo deploy precisa estar registrado como aceito`);
     }
-    await page.evaluate(() => fetch('/api/auth/sign-out', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }));
+    await page.goto(`${SITE}/conta`);
+    const oldCookies = (await context.cookies()).map(cookie => `${cookie.name}=${cookie.value}`).join('; ');
+    await page.getByRole('button', { name: 'Sair da conta', exact: true }).click();
+    await page.waitForURL(`${SITE}/portal/acesso`, { timeout: 30000 });
     assert.equal(await page.evaluate(async () => (await fetch('/api/auth/get-session')).json()), null);
+    const revoked = await context.request.get(`${SITE}/api/auth/get-session`, { headers: { Cookie: oldCookies } });
+    assert.equal(await revoked.json(), null, 'Sair pelo botão deve revogar a sessão também no banco');
   } finally {
     await browser?.close();
     // Escopo duplo: nunca remove uma conta preexistente ou fora desta fixture.

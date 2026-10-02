@@ -1,16 +1,15 @@
 .animated-gradient-text {
   position: relative;
-  margin: 0 auto;
-  display: flex;
+  margin: 0;
+  display: inline-flex;
   max-width: fit-content;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   border-radius: 1.25rem;
-  font-weight: 500;
+  font-weight: inherit;
   transition: box-shadow 0.5s ease-out;
-  overflow: hidden;
-  cursor: pointer;
+  overflow: visible;
 }
 .animated-gradient-text.with-border { padding: 0.35rem 0.75rem; }
 .gradient-overlay {

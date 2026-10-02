@@ -7,10 +7,9 @@ import { Header } from '@/components/Header';
 import { Hero } from '@/components/Hero';
 import { ProductShowcase } from '@/components/ProductShowcase';
 import { SectionIndicator } from '@/components/SectionIndicator';
-import { ThinkingOrbWrapper } from '@/components/ThinkingOrbWrapper';
 import BrandEntrance from '@/components/BrandEntrance';
-import Topography from '@/components/Topography';
-import { useTheme } from '@/components/ThemeProvider';
+import { Slipstream } from '@/components/ui/background-ascii-flow';
+import { ArrowDown } from 'lucide-react';
 
 // Lazy load heavy components below the fold
 const Services = dynamic(() => import('@/components/Services').then(m => m.Services), { ssr: false, loading: () => null });
@@ -20,26 +19,10 @@ const Contact = dynamic(() => import('@/components/Contact').then(m => m.Contact
 const Footer = dynamic(() => import('@/components/Footer').then(m => m.Footer), { ssr: false, loading: () => null });
 
 
-// Mesmo lazy do Hero: WebGL/canvas fora do bundle inicial, com fallback
-// estático (a intro aparece após 2.2s de loading — tempo de sobra pro chunk).
-function VeilFallback() {
-  return <div className="absolute inset-0 bg-[radial-gradient(70%_60%_at_50%_35%,rgba(255, 92, 138,0.14),transparent_75%)]" aria-hidden="true" />;
-}
-
-const DarkVeil = dynamic(() => import('@/components/DarkVeil'), {
-  ssr: false,
-  loading: VeilFallback,
-});
-
-const Grainient = dynamic(() => import('@/components/Grainient'), {
-  ssr: false,
-  loading: VeilFallback,
-});
-
 type Stage = 'loading' | 'intro' | 'brand' | 'main';
 
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
-const LOADING_MS = 2200;
+const LOADING_MS = 900;
 const BOOT_SEEN_KEY = 'nexos-boot-seen';
 
 function LoadingScreen() {
@@ -52,7 +35,10 @@ function LoadingScreen() {
       transition={{ duration: reduce ? 0.15 : 0.45, ease: FLUID_EASE }}
       className="fixed inset-0 z-[999] flex flex-col items-center justify-center gap-8 bg-canvas"
     >
-      <ThinkingOrbWrapper state="searching" size={64} label="Preparando sua experiência" />
+      <div className="flex flex-col items-center gap-3">
+        <span className="font-display text-3xl font-semibold tracking-tighter">NexOS</span>
+        <span className="font-mono text-xs text-muted-foreground">Preparando sua experiência</span>
+      </div>
       <div className="h-px w-32 overflow-hidden bg-ink/10" aria-hidden="true">
         <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: reduce ? 0 : LOADING_MS / 1000, ease: 'easeInOut' }} className="h-full origin-left bg-[#db2777]" />
       </div>
@@ -66,7 +52,6 @@ interface IntroSectionProps {
 
 function IntroSection({ onComplete }: IntroSectionProps) {
   const reduce = useReducedMotion() ?? false;
-  const { theme } = useTheme();
   const completedRef = useRef<boolean>(false);
 
   const finish = useCallback(() => {
@@ -109,10 +94,10 @@ function IntroSection({ onComplete }: IntroSectionProps) {
       aria-label="Apresentação NexOS — role para entrar"
       exit={reduce ? { opacity: 0 } : { opacity: 0, y: -32, scale: 0.985 }}
       transition={{ duration: reduce ? 0.15 : 0.65, ease: FLUID_EASE }}
-      className="fixed inset-0 z-[900] flex min-h-dvh flex-col justify-center overflow-hidden overflow-x-clip bg-canvas will-change-transform"
+      className="landing-intro fixed inset-0 z-[900] flex min-h-dvh flex-col justify-center overflow-hidden overflow-x-clip bg-canvas will-change-transform"
     >
       <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-        {theme === 'dark' ? <DarkVeil /> : <Grainient />}
+        <Slipstream className="opacity-25" cellSize={16} />
       </div>
       <div className="grid-pattern-subtle opacity-80 dark:opacity-10" aria-hidden="true" />
 
@@ -123,9 +108,11 @@ function IntroSection({ onComplete }: IntroSectionProps) {
         className="absolute inset-x-0 top-[16%] bottom-[20%] flex items-center justify-center px-6 sm:px-10 md:px-12"
         aria-label="Nexos, a performance que seu business merece."
       >
-        <h1 className="font-old-english max-w-5xl text-center !text-[clamp(24px,min(6.4vw,8dvh),88px)] !font-normal !leading-[1.2] !tracking-tight">
-          NexOS, a performance que seu business merece.
-        </h1>
+        <div className="intro-copy">
+          <span className="intro-brand">NexOS<span aria-hidden="true">®</span></span>
+          <h1>A performance que<br /><span className="intro-accent">seu business merece.</span></h1>
+          <p>O próximo passo começa aqui.</p>
+        </div>
       </motion.div>
 
       <motion.button
@@ -135,12 +122,10 @@ function IntroSection({ onComplete }: IntroSectionProps) {
         initial={reduce ? false : { opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.9, ease: FLUID_EASE }}
-        className="absolute bottom-[calc(2.5rem+env(safe-area-inset-bottom))] left-1/2 z-10 flex min-h-[48px] -translate-x-1/2 items-center gap-3 whitespace-nowrap rounded-full border border-ink/15 bg-canvas/80 px-6 py-3 text-sm font-medium text-ink/80 transition-colors duration-300 hover:bg-ink/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
+        className="intro-enter absolute bottom-[calc(2.5rem+env(safe-area-inset-bottom))] left-1/2 z-10 flex min-h-[48px] -translate-x-1/2 items-center gap-3 whitespace-nowrap rounded-full border border-ink/15 bg-canvas/80 px-6 py-3 text-sm font-medium text-ink/80 transition-colors duration-300 hover:bg-ink/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
       >
         <span className="animate-scroll-hint grid place-items-center" aria-hidden="true">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-            <path d="M12 5v14M19 12l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+          <ArrowDown size={22} strokeWidth={1.5} />
         </span>
         <span>Entrar na NexOS</span>
       </motion.button>
@@ -154,7 +139,6 @@ export default function HomeClient() {
   const introDoneRef = useRef<boolean>(false);
   const brandDoneRef = useRef<boolean>(false);
   const skippedBootRef = useRef<boolean>(false);
-  const { theme: mainTheme } = useTheme();
   const mainReduce = useReducedMotion();
 
   useEffect(() => {
@@ -164,7 +148,7 @@ export default function HomeClient() {
     skippedBootRef.current = true;
     introDoneRef.current = true;
     brandDoneRef.current = true;
-    // rAF: pula o boot sem setState síncrono no effect (lint) e sem replay de 2,2s
+    // rAF: volta direto à landing nas visitas seguintes da mesma sessão.
     const id = requestAnimationFrame(() => setStage('main'));
     return () => cancelAnimationFrame(id);
   }, []);
@@ -195,15 +179,15 @@ export default function HomeClient() {
     const raf: number = requestAnimationFrame(() => {
       timer = setTimeout(() => {
         if (heroRef.current) {
-          heroRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          heroRef.current.scrollIntoView({ behavior: mainReduce ? 'instant' : 'smooth', block: 'start' });
         }
       }, 150);
     });
     return () => { cancelAnimationFrame(raf); clearTimeout(timer); };
-  }, [stage]);
+  }, [stage, mainReduce]);
 
   return (
-    <main className="w-full max-w-full overflow-x-clip bg-canvas text-ink">
+    <main className="landing-page w-full max-w-full overflow-x-clip bg-canvas text-ink">
       <AnimatePresence>{stage === 'loading' && <LoadingScreen key="loading" />}</AnimatePresence>
 
       <AnimatePresence>{stage === 'intro' && <IntroSection key="intro" onComplete={handleIntroComplete} />}</AnimatePresence>
@@ -212,44 +196,16 @@ export default function HomeClient() {
 
       {stage === 'main' && (
         <>
+          <a href="#main-content" className="skip-link">Pular para o conteúdo</a>
           <Header />
           <SectionIndicator />
-          {/* Topography global — apenas no modo claro, discorre por toda a página */}
-          {mainTheme !== 'dark' && (
-            <div className="pointer-events-none fixed inset-0 -z-10 opacity-100" aria-hidden="true">
-              <Topography
-                lowColor="#fdf6ec"
-                midColor="#ff8fab"
-                highColor="#231b14"
-                speed={mainReduce ? 0 : 0.18}
-                morphAmount={2.4}
-                morphSpeed={0.035}
-                bands={1.8}
-                thickness={0.006}
-                scale={2.6}
-                pixelSize={1}
-                glow={0.28}
-                colorMode="elevation"
-                contrast={2.0}
-                brightness={0.9}
-                fillBands={false}
-                opacity={0.14}
-                grain={true}
-                grainIntensity={0.025}
-                mouseInteraction={!mainReduce}
-                mouseRadius={0.28}
-                mouseStrength={0.22}
-                lightMode={true}
-              />
-            </div>
-          )}
           <motion.div
             initial={mainReduce ? false : { opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: FLUID_EASE }}
             className="relative"
           >
-            <div id="main-content" role="main" className="relative">
+            <div id="main-content" className="relative">
               <Hero ref={heroRef} />
               <ProductShowcase />
               <Services />

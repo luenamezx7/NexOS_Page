@@ -1,9 +1,6 @@
 'use client';
 
-/**
- * Services section — 2 bento-cards + EmbeddedCheckoutDrawer trigger.
- * Cards com hover glow e reveal on scroll.
- */
+/** Objective-driven service exploration with the existing checkout flow. */
 import { useCallback, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { motion, useReducedMotion } from 'motion/react';
@@ -12,6 +9,7 @@ import { config } from '@/config';
 import type { Service } from '@/types';
 import { BULK_MAX_QTY } from '@/lib/bulk-pricing';
 import { HoldButton } from './HoldButton';
+import { ServiceExplorer, type ServiceGoal } from './ServiceExplorer';
 import styles from './commerce/Commerce.module.css';
 
 const EmbeddedCheckoutDrawer = dynamic(() => import('./EmbeddedCheckout').then(m => m.EmbeddedCheckoutDrawer), { ssr: false });
@@ -55,6 +53,8 @@ const DIFFERENTIALS = [
 export function Services({ className = '' }: { className?: string }) {
   const [activeService, setActiveService] = useState<Service | null>(null);
   const [quantity, setQuantity] = useState(1);
+  const [goal, setGoal] = useState<ServiceGoal>('all');
+  const visibleServices = config.services.filter(service => service.id !== 'placa' && (goal === 'all' || (goal === 'payments' ? service.id === 'teste' : service.id === 'dev')));
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const service = config.services.find(s => s.id === params.get('checkout'));
@@ -85,14 +85,16 @@ export function Services({ className = '' }: { className?: string }) {
             <h2 id="services-title" className={styles.heading}>Ideias boas merecem<br /><span className={styles.accent}>sair do papel.</span></h2>
             <p className={styles.lead}>Escolha a solução para o seu próximo passo. A NexOS cuida do design, da construção e dos detalhes.</p>
           </header>
-          <div className={styles.servicesGrid}>
-            {config.services.filter(service => service.id !== 'placa').map(service => <ServiceCard key={service.id} service={service} onCheckout={setActiveService} />)}
-            <aside className={styles.upcoming}>
+          <ServiceExplorer value={goal} onChange={setGoal} />
+          <p className={styles.resultCount} aria-live="polite">{visibleServices.length} {visibleServices.length === 1 ? 'solução disponível' : 'soluções disponíveis'}{goal !== 'all' ? ' para seu objetivo' : ''}</p>
+          <div className={styles.servicesGrid} data-single={visibleServices.length === 1}>
+            {visibleServices.map(service => <ServiceCard key={service.id} service={service} onCheckout={setActiveService} />)}
+            {goal === 'all' && <aside className={styles.upcoming}>
               <span className={styles.meta}><Plus size={16} aria-hidden="true" /> Em desenvolvimento</span>
               <h3>O próximo capítulo da NexOS.</h3>
               <p>Estamos preparando novas ferramentas para o seu negócio. Quer conversar sobre uma ideia?</p>
               <a href="#contact" className={styles.textLink}>Falar sobre meu projeto <ArrowUpRight size={16} aria-hidden="true" /></a>
-            </aside>
+            </aside>}
           </div>
           <div className={styles.differentials}>{DIFFERENTIALS.map(({ icon: Icon, title, description }) => <div key={title}><Icon size={20} strokeWidth={1.75} aria-hidden="true" /><h3>{title}</h3><p>{description}</p></div>)}</div>
         </div>

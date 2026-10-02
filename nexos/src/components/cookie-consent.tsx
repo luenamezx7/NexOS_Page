@@ -248,7 +248,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
             className="fixed inset-x-0 bottom-0 z-[65] px-4 pb-4 md:px-6 md:pb-6"
           >
             <div
-              className={`mx-auto flex w-full max-w-3xl flex-col gap-4 rounded-2xl border p-5 shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-[20px] md:flex-row md:items-center md:gap-5 md:p-6 ${
+              className={`mx-auto flex w-full max-w-3xl flex-col gap-4 rounded-2xl border p-5 shadow-[0_12px_40px_rgba(0,0,0,0.12)] md:flex-row md:items-center md:gap-5 md:p-6 ${
                 isDark ? 'border-white/15 bg-[#0a0a0a]/95' : 'border-ink/15 bg-white/95'
               }`}
             >
@@ -275,7 +275,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                 <button
                   type="button"
                   onClick={rejectAll}
-                  className={`rounded-xl border px-4 py-2.5 text-xs font-semibold transition ${
+                  className={`min-h-11 rounded-xl border px-4 py-2.5 text-xs font-semibold transition ${
                     isDark
                       ? 'border-white/15 bg-white/[0.08] text-white/80 hover:bg-white/15 hover:text-white'
                       : 'border-ink/15 bg-ink/[0.06] text-ink/70 hover:bg-ink/12 hover:text-ink'
@@ -286,7 +286,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                 <button
                   type="button"
                   onClick={openPreferences}
-                  className={`rounded-xl border px-4 py-2.5 text-xs font-semibold transition ${
+                  className={`min-h-11 rounded-xl border px-4 py-2.5 text-xs font-semibold transition ${
                     isDark
                       ? 'border-white/15 bg-white/[0.08] text-white/80 hover:bg-white/15 hover:text-white'
                       : 'border-ink/15 bg-ink/[0.06] text-ink/70 hover:bg-ink/12 hover:text-ink'
@@ -297,7 +297,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                 <button
                   type="button"
                   onClick={acceptAll}
-                  className="rounded-xl bg-[#ff5c8a] px-4 py-2.5 text-xs font-semibold text-white shadow-[0_0_16px_rgba(255, 92, 138,0.5)] transition hover:bg-[#ff5c8a]"
+                  className="min-h-11 rounded-xl bg-[var(--nex-pink)] px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-[#a91553]"
                 >
                   Aceitar tudo
                 </button>
@@ -470,7 +470,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                 <button
                   type="button"
                   onClick={acceptAll}
-                  className="flex-1 rounded-xl bg-[#ff5c8a] px-4 py-2.5 text-xs font-semibold text-white shadow-[0_0_16px_rgba(255, 92, 138,0.5)] transition hover:bg-[#ff5c8a]"
+                  className="min-h-11 flex-1 rounded-xl bg-[var(--nex-pink)] px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-[#a91553]"
                 >
                   Aceitar tudo
                 </button>

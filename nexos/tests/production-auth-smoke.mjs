@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 const site = new URL(process.env.AUTH_SMOKE_URL || 'https://nexoslab.online');
 assert.equal(site.protocol, 'https:', 'A homologação remota exige HTTPS.');
 const origin = site.origin;
+const brokerMode = process.env.AUTH_SMOKE_OAUTH_MODE !== 'direct';
 const request = (path, options = {}) => fetch(new URL(path, origin), {
   redirect: 'manual', signal: AbortSignal.timeout(30000), ...options,
 });
@@ -69,20 +70,30 @@ test('produção: WebAuthn usa o RP canônico e cadastro exige sessão', async (
 for (const provider of ['google', 'github']) {
   test(`produção: OAuth ${provider} inicia com callback correto e trata cancelamento`, async () => {
     // Só inicia e cancela. Não simula consentimento nem cria contas.
-    const started = await request('/api/auth/sign-in/social', { method: 'POST',
+    const started = await request(brokerMode ? '/api/auth/sign-in/supabase' : '/api/auth/sign-in/social', { method: 'POST',
       headers: { Origin: origin, 'Content-Type': 'application/json' },
       body: JSON.stringify({ provider, callbackURL: '/conta', errorCallbackURL: '/portal/acesso?confirmation=error&callbackUrl=%2Fconta' }),
     });
     assert.equal(started.status, 200);
     const authorization = new URL((await started.json()).url);
-    assert.equal(authorization.hostname, provider === 'google' ? 'accounts.google.com' : 'github.com');
-    assert.equal(authorization.searchParams.get('redirect_uri'), `${origin}/api/auth/callback/${provider}`);
-    const state = authorization.searchParams.get('state');
-    assert.ok(state);
+    if (brokerMode) {
+      assert.equal(authorization.hostname, 'lgfttyeezviecfqbbmqk.supabase.co');
+      assert.equal(authorization.searchParams.get('provider'), provider);
+      assert.equal(authorization.searchParams.get('redirect_to'), `${origin}/api/auth/supabase/callback`);
+      assert.equal(authorization.searchParams.get('code_challenge_method'), 's256');
+      const providerHop = await fetch(authorization, { redirect: 'manual', signal: AbortSignal.timeout(30000) });
+      assert.equal(providerHop.status, 302);
+      const providerURL = new URL(providerHop.headers.get('location'));
+      assert.equal(providerURL.hostname, provider === 'google' ? 'accounts.google.com' : 'github.com');
+      assert.equal(providerURL.searchParams.get('redirect_uri'), 'https://lgfttyeezviecfqbbmqk.supabase.co/auth/v1/callback');
+    } else {
+      assert.equal(authorization.hostname, provider === 'google' ? 'accounts.google.com' : 'github.com');
+      assert.equal(authorization.searchParams.get('redirect_uri'), `${origin}/api/auth/callback/${provider}`);
+    }
     const cookies = started.headers.getSetCookie();
     assert.ok(cookies.length > 0);
     assert.ok(cookies.every(cookie => /Secure/i.test(cookie) && /HttpOnly/i.test(cookie) && /SameSite=Lax/i.test(cookie)));
-    const cancelled = await request(`/api/auth/callback/${provider}?error=access_denied&state=${encodeURIComponent(state)}`, {
+    const cancelled = await request(brokerMode ? '/api/auth/supabase/callback?error=access_denied' : `/api/auth/callback/${provider}?error=access_denied&state=${encodeURIComponent(authorization.searchParams.get('state'))}`, {
       headers: { Cookie: cookies.map(cookie => cookie.split(';')[0]).join('; ') },
     });
     assert.equal(cancelled.status, 302);

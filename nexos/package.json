@@ -11,6 +11,7 @@
     "test:security": "node --conditions=react-server --test tests/security.test.mjs",
     "test:auth:integration": "node --use-system-ca --conditions=react-server --import tsx --test tests/better-auth.test.mjs",
     "test:auth:production": "node --use-system-ca --test tests/production-auth-smoke.mjs",
+    "test:auth:production:ui": "node --use-system-ca --test tests/production-social-ui.test.mjs",
     "test:auth:production:authenticated": "node --use-system-ca --conditions=react-server --import tsx --test tests/production-authenticated.test.mjs",
     "migrate:auth": "node --use-system-ca scripts/apply-auth-upgrade.mjs",
     "test:auth:password": "node --conditions=react-server --test tests/password-migration.test.mjs",

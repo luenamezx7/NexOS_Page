@@ -82,3 +82,23 @@ test('anonymous APIs and internal email worker fail closed', async ({ request })
   expect((await request.get('/api/internal/email-outbox')).status()).toBe(401);
   expect((await request.post('/api/account/profile', { headers: { Origin: 'https://attacker.example' }, data: {} })).status()).toBe(403);
 });
+
+test('Google and GitHub icons and OAuth actions remain available in create-account mode', async ({ page }) => {
+  const attempts: { provider: string; callbackURL: string }[] = [];
+  await page.route('**/api/auth/sign-in/social', route => {
+    attempts.push(route.request().postDataJSON());
+    return route.fulfill({ status: 400, json: { code: 'OAUTH_FAILED' } });
+  });
+  await page.goto('/portal/acesso?callbackUrl=%2Fconta');
+  for (const mode of ['login', 'signup']) {
+    if (mode === 'signup') await page.getByRole('button', { name: 'Criar uma conta', exact: true }).click();
+    for (const provider of ['google', 'github']) {
+      const button = page.getByRole('button', { name: provider === 'google' ? 'Google' : 'GitHub', exact: true });
+      await expect(button.locator(`[data-provider-icon="${provider}"]`)).toBeVisible();
+      await button.click();
+      await expect(page.locator('[data-slot="alert"]')).toContainText('Não foi possível iniciar');
+    }
+  }
+  expect(attempts.map(attempt => attempt.provider)).toEqual(['google', 'github', 'google', 'github']);
+  expect(attempts.every(attempt => attempt.callbackURL === '/conta')).toBe(true);
+});

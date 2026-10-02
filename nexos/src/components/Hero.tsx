@@ -1,39 +1,15 @@
 'use client';
 
-/**
- * Hero section — DarkVeil/Grainient + bento 4 cards + HoldButton featured.
- * Animações: parallax scroll, reveal on mount, scramble hover.
- */
+/** Brand-accented hero, ASCII flow and an editorial benefits grid. */
 import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
-import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { motion, useReducedMotion, type Variants } from 'motion/react';
 import { ArrowRight, ArrowUpRight, Zap, Layers, Gauge, Sparkles } from 'lucide-react';
-import { useTheme } from './ThemeProvider';
 import { config } from '@/config';
 import GradientText from './GradientText';
-import Topography from './Topography';
+import { Slipstream } from './ui/background-ascii-flow';
+import { HoverButton } from './ui/hover-button';
 import styles from './MidPage.module.css';
-
-
-
-
-// Lazy (abaixo): DarkVeil (WebGL/ogl ~700KB) e Grainient (canvas) saem do
-// bundle inicial. `ssr: false` porque canvas/WebGL não renderizam no
-// servidor. O fallback estático mantém o fundo idêntico durante o load.
-function VeilFallback() {
-  return <div className="absolute inset-0 bg-[radial-gradient(70%_60%_at_50%_35%,rgba(255, 92, 138,0.14),transparent_75%)]" aria-hidden="true" />;
-}
-
-const DarkVeil = dynamic(() => import('./DarkVeil'), {
-  ssr: false,
-  loading: VeilFallback,
-});
-
-const Grainient = dynamic(() => import('./Grainient'), {
-  ssr: false,
-  loading: VeilFallback,
-});
 
 interface HeroProps {
   className?: string;
@@ -57,8 +33,8 @@ interface BentoCardData {
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 const ENTER = {
-  initial: { opacity: 0, y: 30, filter: 'blur(6px)' },
-  whileInView: { opacity: 1, y: 0, filter: 'blur(0px)' },
+  initial: { opacity: 0, y: 24 },
+  whileInView: { opacity: 1, y: 0 },
   transition: { duration: 0.8, ease: FLUID_EASE },
 } as const;
 
@@ -81,7 +57,7 @@ function navigate(href: string, push?: (h: string) => void): void {
   if (href.startsWith('#')) {
     const el: HTMLElement | null = document.getElementById(href.replace('#', ''));
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      el.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
       return;
     }
   }
@@ -161,6 +137,7 @@ function BentoCard({ card, reduceMotion }: BentoCardProps) {
       viewport={{ once: true, amount: 0.25 }}
       transition={reduceMotion ? { duration: 0.4 } : undefined}
       className={`${styles.bentoCard} ${card.featured ? styles.featured : ''} ${styles[card.span]}`}
+      data-accent={card.id}
       aria-labelledby={`bento-title-${card.id}`}
     >
       {card.featured && card.featuredBadge && (
@@ -205,7 +182,6 @@ function BentoCard({ card, reduceMotion }: BentoCardProps) {
 const HeroComponent = forwardRef<HTMLElement, HeroProps>(
   ({ className = '' }: HeroProps, ref: ForwardedRef<HTMLElement>) => {
     const reduce = useReducedMotion() ?? false;
-    const { theme } = useTheme();
     const router = useRouter();
 
     return (
@@ -214,48 +190,12 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
           ref={ref}
           id="hero"
           aria-labelledby="hero-title"
-          className={`relative flex min-h-[100dvh] w-full max-w-full items-center overflow-hidden overflow-x-clip bg-canvas ${className}`}
+          className={`landing-hero relative flex min-h-[100dvh] w-full max-w-full items-center overflow-hidden bg-canvas ${className}`}
         >
-          {theme === 'dark' ? (
-            <div className="veil-wrap" aria-hidden="true">
-              <DarkVeil hueShift={340} noiseIntensity={0.08} speed={0.5} scanlineFrequency={0.3} warpAmount={3} />
-            </div>
-          ) : (
-            <div className="absolute inset-0" aria-hidden="true">
-              <Topography
-                lowColor="#f5e6cc"
-                midColor="#ff8fab"
-                highColor="#231b14"
-                speed={reduce ? 0 : 0.22}
-                morphAmount={2.2}
-                morphSpeed={0.04}
-                bands={1.6}
-                thickness={0.007}
-                scale={1.9}
-                pixelSize={1}
-                glow={0.35}
-                colorMode="elevation"
-                contrast={2.2}
-                brightness={0.95}
-                fillBands={false}
-                opacity={0.18}
-                grain={true}
-                grainIntensity={0.03}
-                mouseInteraction={!reduce}
-                mouseRadius={0.22}
-                mouseStrength={0.28}
-                lightMode={true}
-              />
-            </div>
-          )}
-          <div className="grid-pattern-subtle opacity-40 dark:opacity-5" aria-hidden="true" />
-          <div
-            className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-canvas"
-            aria-hidden="true"
-          />
-
-          <div className="relative mx-auto flex w-full max-w-6xl flex-col items-center px-4 pb-10 pt-20 sm:px-6 md:px-8 md:pb-12 md:pt-24">
-            <div className="flex min-w-0 flex-col items-center text-center">
+          <div className="hero-flow" aria-hidden="true"><Slipstream /></div>
+          <div className="hero-coordinate" aria-hidden="true">NEXOS / DIGITAL STUDIO</div>
+          <div className="hero-container">
+            <div className="hero-copy">
               <motion.div
                 initial={reduce ? { opacity: 0 } : ENTER.initial}
                 whileInView={reduce ? { opacity: 1 } : ENTER.whileInView}
@@ -264,8 +204,8 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
                 className="mb-6 will-change-transform"
               >
                 <span className="tech-badge">
-                  <span className="tech-badge-dot animate-pulse-dot" aria-hidden="true" />
-                  Seu site ta ruim ? A NexOS resolve.
+                  <span className="tech-badge-dot" aria-hidden="true" />
+                  Design + código + estratégia
                 </span>
               </motion.div>
 
@@ -275,17 +215,10 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
                 whileInView={reduce ? { opacity: 1 } : ENTER.whileInView}
                 viewport={{ once: true, amount: 0.5 }}
                 transition={{ ...ENTER.transition, delay: 0.08 }}
-                className="font-dirty w-full max-w-4xl text-balance break-words text-4xl font-black leading-none tracking-tighter text-ink will-change-transform md:text-5xl lg:text-6xl"
+                className="hero-heading"
               >
-                Construímos{' '}
-                <GradientText animationSpeed={6} className="!inline-flex !m-0 !p-0 !bg-transparent !backdrop-blur-0" showBorder={false}>
-                  soluções digitais
-                </GradientText>{' '}
-                para{' '}
-                <GradientText animationSpeed={6} className="!inline-flex !m-0 !p-0 !bg-transparent !backdrop-blur-0" showBorder={false}>
-                  seu negócio
-                </GradientText>
-                .
+                Seu negócio.<br />
+                <GradientText animationSpeed={8}>Em outra escala.</GradientText>
               </motion.h1>
 
               <motion.p
@@ -293,13 +226,9 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
                 whileInView={reduce ? { opacity: 1 } : ENTER.whileInView}
                 viewport={{ once: true, amount: 0.6 }}
                 transition={{ ...ENTER.transition, delay: 0.16 }}
-                className="mt-5 max-w-[52ch] break-words text-base leading-relaxed text-ink/70 will-change-transform"
+                className="hero-description"
               >
-                Da ideia ao mercado com design e estratégia para startups que precisam de{' '}
-                <GradientText animationSpeed={6} className="!inline-flex !m-0 !p-0 !bg-transparent !backdrop-blur-0" showBorder={false}>
-                  <span className="font-semibold">velocidade</span>
-                </GradientText>{' '}
-                sem perder qualidade.
+                Construímos experiências digitais que conectam sua marca, seus clientes e seu próximo passo.
               </motion.p>
 
               <motion.div
@@ -307,21 +236,14 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
                 whileInView={reduce ? { opacity: 1 } : ENTER.whileInView}
                 viewport={{ once: true, amount: 0.6 }}
                 transition={{ ...ENTER.transition, delay: 0.24 }}
-                className="mt-8 flex w-full flex-col items-stretch justify-center gap-3 will-change-transform sm:flex-row sm:items-center"
+                className="hero-actions"
               >
-                <motion.button
-                  type="button"
+                <HoverButton
                   onClick={() => navigate(config.hero.ctaPrimary.href, router.push)}
                   aria-label={config.hero.ctaPrimary.label}
-                  whileTap={{ scale: 0.98 }}
-                  transition={{ duration: 0.7, ease: [0.32,0.72,0,1] }}
-                  className="group btn-primary-nex btn-primary-nex--featured w-full whitespace-nowrap rounded-full px-2 py-2 pl-6 text-sm font-medium tracking-wide sm:w-auto active:scale-[0.98]"
                 >
-                  <span>{config.hero.ctaPrimary.label}</span>
-                  <span className="ml-2 grid h-8 w-8 place-items-center rounded-full bg-white/15 transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:scale-105" aria-hidden="true">
-                    <ArrowRight size={14} strokeWidth={2} />
-                  </span>
-                </motion.button>
+                  {config.hero.ctaPrimary.label}
+                </HoverButton>
 
                 <motion.button
                   type="button"
@@ -329,9 +251,10 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
                   aria-label={config.hero.ctaSecondary.label}
                   whileTap={{ scale: 0.98 }}
                   transition={{ duration: 0.2, ease: FLUID_EASE }}
-                  className="btn-secondary-nex w-full whitespace-nowrap px-6 py-3 text-sm font-medium tracking-wide touch-target sm:w-auto"
+                  className="hero-secondary"
                 >
                   {config.hero.ctaSecondary.label}
+                  <ArrowUpRight size={16} aria-hidden="true" />
                 </motion.button>
               </motion.div>
             </div>
@@ -351,7 +274,6 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
               transition={{ duration: 0.55, ease: FLUID_EASE }}
               className={styles.header}
             >
-              <p className={styles.kicker}>Benefícios</p>
               <h2 id="benefits-title" className={styles.heading}>
                 Do primeiro pixel ao<br /><span className={styles.accent}>pagamento aprovado.</span>
               </h2>

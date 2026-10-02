@@ -4,15 +4,16 @@ import { useCallback, useState } from 'react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { motion, useReducedMotion } from 'motion/react';
-import { ArrowUpRight, Minus, Nfc, Palette, Plus, QrCode } from 'lucide-react';
+import { ArrowUpRight, Box, Minus, Nfc, Palette, Plus, QrCode } from 'lucide-react';
 import { config } from '@/config';
 import { BULK_MAX_QTY, bulkTag, bulkUnitPrice } from '@/lib/bulk-pricing';
 import { HoldButton } from './HoldButton';
 import { DetailTabs, type DetailTab } from './commerce/DetailTabs';
-import { MacBookMockup } from './MacBookMockup';
+import { PlateQuiz } from './PlateQuiz';
 import styles from './commerce/Commerce.module.css';
 
 const EmbeddedCheckoutDrawer = dynamic(() => import('./EmbeddedCheckout').then(m => m.EmbeddedCheckoutDrawer), { ssr: false });
+const PlatePreview = dynamic(() => import('./PlatePreview').then(m => m.PlatePreview), { ssr: false });
 const EASE = [0.16, 1, 0.3, 1] as const;
 const money = (value: number) => value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 const personalizeUrl = `https://wa.me/${config.whatsapp.number}?text=${encodeURIComponent('Olá! Quero personalizar a Placa Inteligente NexOS com a marca do meu negócio.')}`;
@@ -26,6 +27,7 @@ const DETAILS: DetailTab[] = [
 export function ProductShowcase({ className = '' }: { className?: string }) {
   const reduce = useReducedMotion();
   const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
   const [qty, setQty] = useState(1);
   const placa = config.services.find(service => service.id === 'placa');
   const closeCheckout = useCallback(() => setCheckoutOpen(false), []);
@@ -48,13 +50,10 @@ export function ProductShowcase({ className = '' }: { className?: string }) {
               <p className={styles.lead}>Do balcão para o digital. Sua marca, seu link e duas formas de conectar: NFC e QR Code.</p>
             </motion.div>
             <motion.figure className={styles.productVisual} initial={reduce ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.7, ease: EASE }}>
-              <MacBookMockup
-                wallpaperSrc="/placas/codex-1.png"
-                wallpaperAlt="Placa NexOS de acrílico com NFC e QR Code, exibida na tela do MacBook"
-                className={styles.macbookMockup}
-                scale={0.85}
-                withShadow={false}
-              />
+              <button type="button" className={styles.plateImageButton} onClick={() => setPreviewOpen(true)} aria-label="Explorar placa em preview 3D" aria-haspopup="dialog">
+                <Image src="/placas/codex-1.png" alt="Placa Inteligente NexOS de acrílico, com NFC e QR Code, segurada em mãos" fill sizes="(max-width: 899px) 100vw, 50vw" />
+                <span className={styles.previewBadge}><Box size={16} strokeWidth={1.75} aria-hidden="true" /> Explorar em 3D <ArrowUpRight size={16} aria-hidden="true" /></span>
+              </button>
               <figcaption className={styles.photoCaption}><span><Nfc size={16} aria-hidden="true" /> Aproxime</span><span><QrCode size={16} aria-hidden="true" /> Ou escaneie</span></figcaption>
             </motion.figure>
             <div className={styles.purchase}>
@@ -76,10 +75,12 @@ export function ProductShowcase({ className = '' }: { className?: string }) {
               <a href={personalizeUrl} target="_blank" rel="noopener noreferrer" className={styles.textLink}><Palette size={16} aria-hidden="true" /> Personalizar minha placa <ArrowUpRight size={16} aria-hidden="true" /></a>
             </div>
           </div>
+          <PlateQuiz />
           <DetailTabs id="plate-details" tabs={DETAILS} />
         </div>
       </section>
       {checkoutOpen && <EmbeddedCheckoutDrawer open onClose={closeCheckout} productId={placa.id} productTitle={placa.title} productPrice={placa.price} quantity={qty} />}
+      {previewOpen && <PlatePreview onClose={() => setPreviewOpen(false)} />}
     </>
   );
 }

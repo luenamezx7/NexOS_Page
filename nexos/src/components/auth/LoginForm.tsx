@@ -11,7 +11,9 @@ import { PasswordStrengthMeter } from './PasswordStrengthMeter';
 import { evaluatePassword } from '@/lib/auth/password-strength';
 import { sanitizeCallbackPath } from '@/lib/auth/callback';
 import { useTurnstileConfig } from '@/lib/use-turnstile-config';
-import { authClient, authErrorMessage } from '@/lib/auth/client';
+import { authClient, authErrorMessage, signOutAccount } from '@/lib/auth/client';
+import { Button } from '@/components/ui/Button';
+import { SocialProviderIcon } from './SocialProviderIcon';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import styles from './LoginForm.module.css';
@@ -22,6 +24,7 @@ interface LoginFormProps {
   confirmationError?: boolean;
   callbackUrl?: string | null;
   socialProviders?: ('google' | 'github')[];
+  socialAuthMode?: 'direct' | 'supabase';
   initialStep?: 'credentials' | 'totp';
   verified?: boolean;
 }
@@ -29,7 +32,7 @@ function needsTwoFactor(data: unknown): boolean {
   return !!data && typeof data === 'object' && (data as { twoFactorRedirect?: unknown }).twoFactorRedirect === true;
 }
 
-export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, socialProviders = [], initialStep = 'credentials', verified }: LoginFormProps) {
+export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, socialProviders = [], socialAuthMode = 'direct', initialStep = 'credentials', verified }: LoginFormProps) {
   const userFlow = audience === 'user';
   const reduce = useReducedMotion();
   const busyRef = useRef(false);
@@ -98,6 +101,13 @@ export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, 
   }
   async function social(provider: 'google' | 'github') {
     await guard(async () => {
+      if (socialAuthMode === 'supabase') {
+        const result = await authClient.signIn.supabase({ provider, callbackURL: destination, errorCallbackURL });
+        if (result.error) { setError(authErrorMessage(result.error, 'Não foi possível iniciar o acesso social.')); return; }
+        if (!result.data?.url) throw new Error('Não foi possível iniciar o acesso social.');
+        window.location.assign(result.data.url);
+        return;
+      }
       const { error: err } = await authClient.signIn.social({ provider, callbackURL: destination, errorCallbackURL });
       if (err) setError(authErrorMessage(err, 'Não foi possível iniciar o acesso social.'));
     });
@@ -140,8 +150,13 @@ export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, 
           </div>
           <div className="flex flex-col gap-5">
             {(error || (step === 'credentials' && security.error)) && <Alert variant="destructive"><AlertDescription>{error || security.error}</AlertDescription></Alert>}
+            {step === 'credentials' && (mode === 'login' || mode === 'signup') && socialProviders.length > 0 &&
+              <div className="flex gap-3" role="group" data-social-auth-mode={socialAuthMode} aria-label={mode === 'signup' ? 'Criar conta com provedor' : 'Entrar com provedor'}>
+                {socialProviders.map(provider => <Button key={provider} type="button" variant="secondary" disabled={busy} onClick={() => void social(provider)} className="flex-1">
+                  <SocialProviderIcon provider={provider} />{provider === 'google' ? 'Google' : 'GitHub'}
+                </Button>)}
+              </div>}
             {step === 'credentials' && mode === 'login' && <>
-              {socialProviders.length > 0 && <div className="flex gap-3">{socialProviders.map(provider => <button key={provider} type="button" disabled={busy} onClick={() => void social(provider)} className="flex-1 rounded-xl border border-ink/15 px-4 py-2.5 text-sm disabled:opacity-60">{provider === 'google' ? 'Google' : 'GitHub'}</button>)}</div>}
               <button type="button" disabled={busy} onClick={() => void passkeyLogin()} className="flex items-center justify-center gap-2 rounded-xl border border-ink/15 px-4 py-2.5 text-sm disabled:opacity-60"><Fingerprint size={18} /> Entrar com chave de acesso</button>
               <button type="button" disabled={busy} onClick={() => goMode('magic')} className="text-sm underline underline-offset-4">Entrar por link de e-mail</button>
             </>}
@@ -179,7 +194,7 @@ export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, 
                 <Field><FieldLabel htmlFor="login-code">{backup ? 'Código de recuperação' : 'Código do autenticador'}</FieldLabel><input key={String(backup)} id="login-code" name="code" inputMode={backup ? 'text' : 'numeric'} autoComplete="one-time-code" pattern={backup ? undefined : '[0-9]{6}'} minLength={backup ? 1 : 6} maxLength={backup ? 64 : 6} required className="field-input font-mono" disabled={busy} /></Field>
                 <button type="submit" disabled={busy} className="btn-primary-nex justify-center">{busy ? 'Confirmando…' : 'Confirmar acesso'}</button>
                 <button type="button" disabled={busy} onClick={() => { setBackup(v => !v); setError(''); }} className="self-start text-sm underline underline-offset-4">{backup ? 'Usar aplicativo autenticador' : 'Usar código de recuperação'}</button>
-                <button type="button" disabled={busy} onClick={() => void guard(async () => { await authClient.signOut(); window.location.replace(loginPath); })} className="self-start text-sm underline underline-offset-4">Sair e usar outra conta</button>
+                <button type="button" disabled={busy} onClick={() => void guard(async () => { await signOutAccount(); window.location.replace(loginPath); })} className="self-start text-sm underline underline-offset-4">Sair e usar outra conta</button>
               </FieldGroup>
             </form>}
             {message && <p role="status" aria-live="polite" className="text-sm leading-relaxed">{message}</p>}
