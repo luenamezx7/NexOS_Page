@@ -201,7 +201,7 @@ export default function ContaPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-canvas flex items-center justify-center">
+      <div className="page-surface min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-2 border-ink/20 border-t-ink rounded-full animate-spin mx-auto mb-4" />
           <p className="text-ink/60 font-sans">Carregando sua conta...</p>
@@ -212,7 +212,7 @@ export default function ContaPage() {
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-canvas flex items-center justify-center p-4">
+      <div className="page-surface min-h-screen flex items-center justify-center p-4">
         <Card className="max-w-md w-full">
           <CardContent className="pt-6 text-center">
             <AlertTriangle className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
@@ -228,14 +228,14 @@ export default function ContaPage() {
   }
 
   return (
-    <div className="min-h-screen bg-canvas">
+    <div className="page-surface min-h-screen">
       <header className="sticky top-0 z-10 border-b border-ink/10 bg-glass backdrop-blur-xl">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-2 text-ink/60 hover:text-ink transition-colors">
               <ArrowLeft className="w-5 h-5" />
             </Link>
-            <h1 className="font-display text-lg font-bold text-ink">Minha Conta</h1>
+            <h1 className="account-heading brand-heading font-display font-bold">Minha Conta</h1>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-xs font-mono text-ink/40 hidden sm:block">{profile.email}</span>

@@ -5,7 +5,7 @@
   align-items: center;
   justify-content: center;
   padding: 88px 20px 56px;
-  background: var(--color-canvas);
+  background: transparent;
 }
 
 .cancel {
@@ -18,7 +18,8 @@
   width: 100%;
   border: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent);
   border-radius: 16px;
-  background: var(--color-card);
+  background: var(--surface-glass);
+  backdrop-filter: blur(12px);
 }
 
 .iconWrapper {
@@ -42,7 +43,7 @@
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: -0.03em;
-  color: var(--color-ink);
+  color: var(--display-rose);
   margin: 0 0 12px;
   text-wrap: balance;
 }
@@ -106,7 +107,7 @@
   gap: 8px;
   min-height: 44px;
   padding: 10px 20px;
-  background: #25d366;
+  background: var(--action-gradient);
   color: #fff;
   border-radius: 10px;
   font-family: var(--font-sans);
@@ -117,7 +118,7 @@
 }
 
 .whatsappLink:hover {
-  background: #128c7e;
+  background: var(--action-gradient);
   transform: translateY(-1px);
 }
 

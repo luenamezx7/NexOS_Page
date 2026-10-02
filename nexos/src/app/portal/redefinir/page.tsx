@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ResetPasswordForm } from '@/components/auth/ResetPasswordForm';
+import { MetallicSurface } from '@/components/ui/metallic-button';
 
 /**
  * Página de redefinição de senha.
@@ -24,16 +25,16 @@ export default async function ResetPasswordPage({ searchParams }: { searchParams
   if (token) return <ResetPasswordForm token={token} />;
 
   return (
-    <main className="min-h-[100dvh] bg-canvas px-6 py-16 text-ink">
+    <main className="page-surface min-h-[100dvh] px-6 py-16 text-ink">
       <div className="mx-auto flex max-w-md flex-col gap-6 text-center">
         <p className="font-mono text-xs uppercase tracking-widest text-[#be185d]">Recuperação</p>
-        <h1 className="font-display text-3xl font-bold tracking-tight">Link necessário</h1>
+        <h1 className="page-title brand-heading font-display font-bold tracking-tight">Link necessário</h1>
         <p className="text-sm leading-relaxed text-ink/70">
           Para redefinir a senha é preciso o link enviado por e-mail. Ele é de uso único e expira em
           pouco tempo. Peça um novo em “Esqueceu a senha”.
         </p>
         <Link href="/portal/acesso" className="btn-primary-nex justify-center">
-          Pedir um novo link
+          <MetallicSurface /><span className="metallic-content">Pedir um novo link</span>
         </Link>
         <p className="text-xs text-ink/55">
           Suporte ·{' '}

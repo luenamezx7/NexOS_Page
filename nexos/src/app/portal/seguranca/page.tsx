@@ -18,9 +18,9 @@ export default async function SegurancaPage({ searchParams }: { searchParams: Pr
   const accounts = await getAuth().api.listUserAccounts({ headers: await headers() });
   const params = await searchParams;
   return (
-    <main className="min-h-screen bg-canvas text-ink">
+    <main className="page-surface min-h-screen text-ink">
       <div className="mx-auto flex max-w-3xl flex-col gap-8 px-6 py-10">
-        <header className="flex flex-col gap-3"><Link href="/conta" className="self-start text-sm underline underline-offset-4">Voltar à minha conta</Link><h1 className="font-display text-3xl font-bold">Segurança da conta</h1><p className="text-muted-foreground">Gerencie sua senha, suas chaves de acesso e o aplicativo autenticador.</p></header>
+        <header className="flex flex-col gap-3"><Link href="/conta" className="self-start text-sm underline underline-offset-4">Voltar à minha conta</Link><h1 className="page-title brand-heading font-display font-bold">Segurança da conta</h1><p className="text-muted-foreground">Gerencie sua senha, suas chaves de acesso e o aplicativo autenticador.</p></header>
         <SecuritySettings enabled={access.twoFactorEnabled} hasPassword={accounts.some(a => a.providerId === 'credential')} isAdmin={access.role === 'admin'} callbackUrl={sanitizeCallbackPath(params.callbackUrl)} />
       </div>
     </main>

@@ -1,5 +1,7 @@
 'use client';
 
+import { MetallicSurface } from './ui/metallic-button';
+
 /**
  * Pane do checkout Asaas — geração de cobrança + polling.
  * Valida nome/e-mail, cria payment via /api/checkout, faz polling em /api/checkout/status.
@@ -309,7 +311,7 @@ export function AsaasCheckoutPane({
           {billingType === 'BOLETO' && (
             <div className="mt-4 flex flex-col gap-2">
               {identificationField && (
-                <div className={`flex items-center gap-2 rounded-lg border p-2.5 ${isDark ? 'border-white/10 bg-black/20' : 'border-ink/10 bg-white'}`}>
+                <div className={`flex items-center gap-2 rounded-lg border p-2.5 ${isDark ? 'border-white/10 bg-black/20' : 'border-ink/10 bg-card'}`}>
                   <code className="flex-1 break-all text-xs tracking-wide">{identificationField}</code>
                   <button type="button" onClick={() => handleCopy(identificationField, 'linha')} className="btn-secondary-nex !px-3 !py-1.5 !text-xs">
                     {copied === 'linha' ? <Check size={12} /> : <Copy size={12} />}{copied === 'linha' ? 'Copiado' : 'Copiar linha'}
@@ -322,7 +324,7 @@ export function AsaasCheckoutPane({
                 rel="noopener noreferrer"
                 className="btn-primary-nex w-full justify-center py-3.5 text-sm font-semibold"
               >
-                <ExternalLink size={16} /> Abrir boleto (PDF)
+                <MetallicSurface /><span className="metallic-content inline-flex items-center gap-2"><ExternalLink size={16} /> Abrir boleto (PDF)</span>
               </a>
               <a href={paymentUrl} target="_blank" rel="noopener noreferrer" className={`text-center text-xs underline underline-offset-4 ${isDark ? 'text-white/50 hover:text-white' : 'text-ink/50 hover:text-ink'}`}>
                 Abrir checkout completo em nova aba
@@ -334,7 +336,7 @@ export function AsaasCheckoutPane({
           {billingType === 'CREDIT_CARD' && (
             <div className="mt-4 flex flex-col gap-2">
               <a href={paymentUrl} target="_blank" rel="noopener noreferrer" className="btn-primary-nex w-full justify-center py-3.5 text-sm font-semibold">
-                <ExternalLink size={16} /> Pagar com cartão no Asaas
+                <MetallicSurface /><span className="metallic-content inline-flex items-center gap-2"><ExternalLink size={16} /> Pagar com cartão no Asaas</span>
               </a>
               <p className={`text-center text-[11px] ${isDark ? 'text-white/35' : 'text-ink/35'}`}>Checkout seguro hospedado pelo Asaas em nova aba — seu servidor não recebe dados de cartão.</p>
             </div>
@@ -380,7 +382,8 @@ export function AsaasCheckoutPane({
             className="btn-primary-nex w-full justify-center py-3.5 text-sm font-semibold disabled:opacity-60"
             aria-live="polite"
           >
-            <span className="inline-flex items-center gap-2">
+            <MetallicSurface disabled={state === 'generating' || !productId || (turnstileRequired && !turnstileToken)} />
+            <span className="metallic-content inline-flex items-center gap-2">
               {state === 'generating' ? <><Loader2 size={18} className="animate-spin" /> Gerando {billingType === 'BOLETO' ? 'boleto' : 'checkout'}…</> : <><CreditCard size={16} /> Pagar {amountLabel}{billingType === 'CREDIT_CARD' && installments > 1 ? ` em ${installments}x` : ''}</>}
             </span>
           </motion.button>

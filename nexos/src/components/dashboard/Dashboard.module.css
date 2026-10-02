@@ -6,7 +6,7 @@
   --dash-muted: color-mix(in srgb, var(--color-ink) 62%, transparent);
   --dash-accent: #be185d;
   min-height: 100dvh;
-  background: var(--color-canvas);
+   background: transparent;
   color: var(--color-ink);
 }
 :global(.dark) .page { --dash-accent: #ff8fab; }
@@ -51,7 +51,11 @@
   font-size: 15px;
   font-weight: 700;
   letter-spacing: -0.02em;
-  line-height: 1.2;
+   line-height: 1.2;
+   background: linear-gradient(110deg, var(--display-rose), var(--display-purple));
+   background-clip: text;
+   -webkit-background-clip: text;
+   color: transparent;
 }
 .meta {
   margin-top: 2px;

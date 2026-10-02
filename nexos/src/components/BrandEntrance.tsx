@@ -1,5 +1,8 @@
 'use client';
 
+import { Slipstream } from './ui/background-ascii-flow';
+import { CloudSky } from './SiteAtmosphere';
+
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import Image from 'next/image';
@@ -118,6 +121,8 @@ export default function BrandEntrance({ onComplete }: { onComplete: () => void }
         className="fixed inset-0 z-[850] flex min-h-dvh flex-col items-center justify-center overflow-hidden bg-canvas px-4"
         onClick={finish}
       >
+        <CloudSky />
+        <div className="dialog-stars" aria-hidden="true"><Slipstream density={0.75} /></div>
         <div
           aria-hidden="true"
           className="grid-pattern-subtle"
@@ -140,6 +145,8 @@ export default function BrandEntrance({ onComplete }: { onComplete: () => void }
       className="fixed inset-0 z-[850] flex min-h-dvh flex-col items-center justify-center overflow-hidden bg-canvas"
       onClick={finish}
     >
+      <CloudSky />
+      <div className="dialog-stars" aria-hidden="true"><Slipstream density={0.75} /></div>
       {/* A marca mantém o mesmo tema durante toda a entrada. */}
       <div
         aria-hidden="true"

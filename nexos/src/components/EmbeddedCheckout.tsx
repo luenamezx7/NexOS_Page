@@ -13,6 +13,8 @@ import { bulkUnitPrice } from '@/lib/bulk-pricing';
 import { useTheme } from './ThemeProvider';
 import { useScrollLock } from './useScrollLock';
 import { AsaasCheckoutPane } from './AsaasCheckoutPane';
+import { MetallicSurface } from './ui/metallic-button';
+import { Slipstream } from './ui/background-ascii-flow';
 
 // ============================================================
 // NexOS — Checkout Asaas (Pix / boleto / cartão)
@@ -253,9 +255,10 @@ export function EmbeddedCheckoutDrawer({ open, onClose, productId, productTitle,
             exit={reduce ? { opacity: 0 } : { opacity: 0, y: 20, scale: 0.98 }}
             transition={{ duration: 0.45, ease: FLUID_EASE }}
             className={`fixed inset-x-0 bottom-0 z-[71] mx-auto flex max-h-[92dvh] w-full max-w-xl flex-col overflow-hidden rounded-t-[24px] border shadow-[0_24px_80px_rgba(0,0,0,0.6)] backdrop-blur-[20px] will-change-transform md:inset-0 md:m-auto md:h-fit md:max-h-[88dvh] md:w-[min(480px,calc(100vw-2rem))] md:rounded-3xl ${
-              isDark ? 'border-white/10 bg-[#0a0a0a]/90' : 'border-ink/10 bg-[var(--color-card)] shadow-[0_24px_80px_rgba(0,0,0,0.18)]'
+              isDark ? 'border-white/10 bg-black/95' : 'border-ink/10 bg-[var(--color-card)] shadow-[0_24px_80px_rgba(36,30,39,0.18)]'
             }`}
           >
+            <div className="dialog-stars" aria-hidden="true"><Slipstream density={0.45} seed={19} /></div>
             <div className={`pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent to-transparent ${isDark ? 'via-white/15' : 'via-ink/10'}`} aria-hidden="true" />
             <div className={`pointer-events-none absolute inset-0 rounded-t-[24px] md:rounded-3xl ${isDark ? 'bg-gradient-to-b from-white/[0.07] to-transparent' : 'bg-gradient-to-b from-ink/[0.03] to-transparent'}`} aria-hidden="true" />
 
@@ -266,7 +269,7 @@ export function EmbeddedCheckoutDrawer({ open, onClose, productId, productTitle,
                 </span>
                 <div className="min-w-0">
                   <p className={`font-mono text-[11px] uppercase tracking-[0.18em] ${isDark ? 'text-white/40' : 'text-ink/40'}`}>Checkout seguro</p>
-                  <h2 id="embedded-checkout-title" className={`mt-1 truncate font-display text-lg font-bold tracking-tight ${isDark ? 'text-white' : 'text-ink'}`}>
+                   <h2 id="embedded-checkout-title" className="brand-heading mt-1 truncate font-display text-lg font-bold tracking-tight">
                     {drawerState === 'success' ? 'Pagamento confirmado' : productTitle}
                   </h2>
                   {drawerState !== 'success' && (
@@ -345,7 +348,7 @@ export function EmbeddedCheckoutDrawer({ open, onClose, productId, productTitle,
                     transition={{ delay: 0.5, duration: 0.4, ease: FLUID_EASE }}
                     className="btn-primary-nex"
                   >
-                    Falar no WhatsApp
+                    <MetallicSurface /><span className="metallic-content">Falar no WhatsApp</span>
                   </motion.a>
                   <motion.button
                     type="button"

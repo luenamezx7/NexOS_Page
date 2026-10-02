@@ -1,8 +1,9 @@
 'use client';
 
-/** Brand-accented hero, ASCII flow and an editorial benefits grid. */
+/** Rose-purple display type, sparkling ASCII flow and an editorial benefits grid. */
 import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { motion, useReducedMotion, type Variants } from 'motion/react';
 import { ArrowRight, ArrowUpRight, Zap, Layers, Gauge, Sparkles } from 'lucide-react';
 import { config } from '@/config';
@@ -10,6 +11,8 @@ import GradientText from './GradientText';
 import { Slipstream } from './ui/background-ascii-flow';
 import { HoverButton } from './ui/hover-button';
 import styles from './MidPage.module.css';
+
+const DarkVeil = dynamic(() => import('./DarkVeil'), { ssr: false });
 
 interface HeroProps {
   className?: string;
@@ -137,7 +140,6 @@ function BentoCard({ card, reduceMotion }: BentoCardProps) {
       viewport={{ once: true, amount: 0.25 }}
       transition={reduceMotion ? { duration: 0.4 } : undefined}
       className={`${styles.bentoCard} ${card.featured ? styles.featured : ''} ${styles[card.span]}`}
-      data-accent={card.id}
       aria-labelledby={`bento-title-${card.id}`}
     >
       {card.featured && card.featuredBadge && (
@@ -190,9 +192,10 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
           ref={ref}
           id="hero"
           aria-labelledby="hero-title"
-          className={`landing-hero relative flex min-h-[100dvh] w-full max-w-full items-center overflow-hidden bg-canvas ${className}`}
+          className={`landing-hero relative flex min-h-[100dvh] w-full max-w-full items-center overflow-hidden ${className}`}
         >
-          <div className="hero-flow" aria-hidden="true"><Slipstream /></div>
+          <div className="hero-veil" aria-hidden="true"><DarkVeil /></div>
+          <div className="hero-flow" aria-hidden="true"><Slipstream density={1.7} seed={913} /></div>
           <div className="hero-coordinate" aria-hidden="true">NEXOS / DIGITAL STUDIO</div>
           <div className="hero-container">
             <div className="hero-copy">
@@ -218,7 +221,7 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
                 className="hero-heading"
               >
                 Seu negócio.<br />
-                <GradientText animationSpeed={8}>Em outra escala.</GradientText>
+                <GradientText colors={['var(--display-rose)', 'var(--display-purple)', 'var(--display-rose)']} animationSpeed={12}>Em outra escala.</GradientText>
               </motion.h1>
 
               <motion.p

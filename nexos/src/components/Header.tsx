@@ -16,6 +16,7 @@ import { config } from '@/config';
 import { RobotCycler } from './RobotCycler';
 import { ThemeToggle } from './ThemeToggle';
 import styles from './Header.module.css';
+import { MetallicSurface } from './ui/metallic-button';
 
 const NAV_ITEMS = [{ label: 'Placa NFC', href: '#showcase' }, ...config.navigation];
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -88,7 +89,7 @@ export function Header() {
             <UserRound size={16} strokeWidth={1.75} aria-hidden="true" />{authenticated ? null : <span>Minha conta</span>}
           </Link>
           <ThemeToggle />
-          <button type="button" className={styles.start} onClick={() => handleNav('#services')}>Ver soluções <ArrowUpRight size={16} aria-hidden="true" /></button>
+          <button type="button" className={styles.start} onClick={() => handleNav('#services')}><MetallicSurface /><span className="metallic-content inline-flex items-center gap-2">Ver soluções <ArrowUpRight size={16} aria-hidden="true" /></span></button>
           <button ref={menuRef} type="button" aria-label={mobileOpen ? 'Fechar menu' : 'Abrir menu'} aria-expanded={mobileOpen} aria-controls="mobile-navigation" onClick={() => setMobileOpen(value => !value)} className={styles.menuButton}>
             {mobileOpen ? <X size={20} aria-hidden="true" /> : <Menu size={20} aria-hidden="true" />}
           </button>
@@ -104,7 +105,7 @@ export function Header() {
                 </li>
               ))}
             </ul>
-            <button type="button" className={styles.mobileStart} onClick={() => handleNav('#services')}>Ver soluções <ArrowUpRight size={16} aria-hidden="true" /></button>
+            <button type="button" className={styles.mobileStart} onClick={() => handleNav('#services')}><MetallicSurface /><span className="metallic-content inline-flex w-full items-center justify-between gap-2">Ver soluções <ArrowUpRight size={16} aria-hidden="true" /></span></button>
           </motion.nav>
         )}
       </AnimatePresence>

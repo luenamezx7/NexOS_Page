@@ -7,6 +7,7 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { motion, useMotionValue, useReducedMotion, useTransform, type MotionValue } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
+import { MetallicSurface } from './ui/metallic-button';
 
 const HOLD_MS = 1500;
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
@@ -164,6 +165,7 @@ export function HoldButton({ label, ariaLabel, hintId, onConfirm, className = ''
       style={ringStyle}
       className={`btn-primary-nex group touch-pan-y select-none rounded-full !py-2 !pl-6 !pr-2 active:scale-[0.98] ${featured ? 'btn-primary-nex--featured' : ''} ${className}`}
     >
+      {!background && <MetallicSurface />}
       {background && (
         <span aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
           {background}

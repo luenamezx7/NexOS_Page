@@ -28,6 +28,9 @@ function applyTheme(theme: Theme): void {
   root.style.colorScheme = `only ${theme}`;
   const meta = document.querySelector('meta[name="color-scheme"]');
   if (meta) meta.setAttribute('content', theme);
+  document.querySelectorAll('meta[name="theme-color"]').forEach(element => {
+    element.setAttribute('content', theme === 'dark' ? '#000000' : '#f3ead9');
+  });
 }
 
 function subscribe(callback: () => void) {

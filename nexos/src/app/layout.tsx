@@ -1,15 +1,16 @@
 import type { Metadata, Viewport } from 'next';
 import { headers } from 'next/headers';
 import './globals.css';
-import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
+import { Geist, Space_Grotesk, Space_Mono } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { SmoothScrollProvider } from '@/components/SmoothScrollProvider';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { CookieConsentProvider } from '@/components/cookie-consent';
+import { SiteAtmosphere } from '@/components/SiteAtmosphere';
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-geist', display: 'swap' });
-const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono', display: 'swap' });
 const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-space', display: 'swap' });
+const terminal = Space_Mono({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-terminal', display: 'swap' });
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://nexoslab.online'),
@@ -62,7 +63,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#050505',
+  themeColor: [{ media: '(prefers-color-scheme: light)', color: '#f3ead9' }, { media: '(prefers-color-scheme: dark)', color: '#000000' }],
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
@@ -79,7 +80,7 @@ export default async function RootLayout({
   const themeScriptContent = `(function(){var t;try{t=localStorage.getItem('nexos-theme');}catch(e){}var s=t==='light'||t==='dark'?t:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.classList.toggle('dark',s==='dark');document.documentElement.style.colorScheme='only '+s;var m=document.querySelector('meta[name=color-scheme]');if(m)m.content=s;})()`;
 
   return (
-    <html lang="pt-BR" suppressHydrationWarning className={cn("font-sans dark", geist.variable, geistMono.variable, spaceGrotesk.variable)}>
+    <html lang="pt-BR" suppressHydrationWarning className={cn("font-sans dark", geist.variable, spaceGrotesk.variable, terminal.variable)}>
       <head>
         <meta name="color-scheme" content="dark" />
         {nonce ? (
@@ -91,7 +92,8 @@ export default async function RootLayout({
       <body className="min-h-screen min-h-dvh w-full max-w-full overflow-x-clip antialiased">
         <ThemeProvider>
           <SmoothScrollProvider>
-            <CookieConsentProvider>{children}</CookieConsentProvider>
+            <SiteAtmosphere />
+            <div className="site-shell"><CookieConsentProvider>{children}</CookieConsentProvider></div>
           </SmoothScrollProvider>
         </ThemeProvider>
       </body>

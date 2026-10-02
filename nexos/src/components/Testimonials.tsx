@@ -170,7 +170,6 @@ export function Testimonials({ className = '' }: TestimonialsProps) {
       id="testimonials"
       aria-labelledby="testimonials-title"
       className={`${styles.section} ${className}`}
-      style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 640px' }}
     >
       <div className={styles.container}>
         <div className={styles.sectionNav} aria-label="Navegação do ecossistema">

@@ -4,13 +4,13 @@
   --mid-raised: color-mix(in srgb, var(--color-ink) 5%, var(--color-canvas));
   --mid-line: color-mix(in srgb, var(--color-ink) 14%, transparent);
   --mid-muted: color-mix(in srgb, var(--color-ink) 72%, transparent);
-  --mid-accent: var(--color-ink);
+  --mid-accent: var(--display-rose);
   position: relative;
-  background: var(--color-canvas);
+  background: transparent;
   border-top: 1px solid var(--mid-line);
   scroll-margin-top: 100px;
 }
-:global(.dark) .section { --mid-accent: var(--color-ink); }
+:global(.dark) .section { --mid-accent: var(--display-rose); }
 .container { width: 100%; max-width: 1280px; margin-inline: auto; padding: 48px 20px 64px; }
 .sectionNav { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; margin-bottom: 32px; border-bottom: 1px solid var(--mid-line); padding-bottom: 16px; font-size: 13px; }
 .sectionNav a, .currentSection { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; }
@@ -30,7 +30,7 @@
 .bentoCard:hover { border-color: color-mix(in srgb, var(--mid-accent) 30%, transparent); background: var(--mid-raised); }
 .bentoCard:focus-within { outline: 2px solid color-mix(in srgb, var(--mid-accent) 50%, transparent); outline-offset: 2px; }
 .featured { border-top: 2px solid var(--mid-accent); background: var(--mid-raised); }
-.featuredBadge { position: absolute; top: -12px; left: 20px; display: inline-flex; align-items: center; gap: 6px; max-width: calc(100% - 40px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 4px 10px; border-radius: 6px; background: var(--mid-accent); color: var(--color-canvas); font-family: var(--font-mono); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; }
+.featuredBadge { position: absolute; top: -12px; left: 20px; display: inline-flex; align-items: center; gap: 6px; max-width: calc(100% - 40px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 4px 10px; border-radius: 6px; background: var(--action-gradient); color: #fff; font-family: var(--font-mono); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; }
 .featuredBadgeDot { width: 6px; height: 6px; flex-shrink: 0; border-radius: 999px; background: var(--color-canvas); }
 .cardTop { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin-bottom: 20px; }
 .badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border: 1px solid var(--mid-line); border-radius: 999px; background: color-mix(in srgb, var(--color-ink) 4%, transparent); font-family: var(--font-mono); font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.14em; color: var(--mid-muted); }
@@ -78,7 +78,7 @@
 .terminalStatus .push { margin-left: auto; }
 
 /* Footer */
-.footerSection { --mid-surface: color-mix(in srgb, var(--color-ink) 3%, var(--color-canvas)); --mid-line: color-mix(in srgb, var(--color-ink) 14%, transparent); --mid-muted: color-mix(in srgb, var(--color-ink) 60%, transparent); --mid-accent: #be185d; position: relative; background: var(--color-canvas); border-top: 1px solid var(--mid-line); }
+.footerSection { --mid-surface: color-mix(in srgb, var(--color-ink) 3%, var(--color-canvas)); --mid-line: color-mix(in srgb, var(--color-ink) 14%, transparent); --mid-muted: color-mix(in srgb, var(--color-ink) 60%, transparent); --mid-accent: var(--display-rose); position: relative; background: transparent; border-top: 1px solid var(--mid-line); }
 :global(.dark) .footerSection { --mid-accent: #ff8fab; }
 .footerInner { width: 100%; max-width: 1280px; margin-inline: auto; padding: 48px 20px 40px; }
 .footerGrid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; }

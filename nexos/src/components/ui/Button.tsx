@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Botão reutilizável com variants primary/secondary/ghost.
  * - primary: gradiente pink + glow
@@ -8,6 +10,7 @@
 import * as React from 'react';
 import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
+import { MetallicSurface } from './metallic-button';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'ghost';
@@ -20,7 +23,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 const baseStyles = 'relative inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-canvas disabled:pointer-events-none disabled:opacity-40 select-none';
 
 const buttonVariants = {
-  primary: 'overflow-hidden rounded-[0.625rem] bg-gradient-to-b from-[#f04484] via-pink-600 to-[#c2185b] px-7 py-3.5 text-sm font-bold tracking-[0.03em] text-white shadow-[0_0_0_1px_rgba(255, 92, 138,0.28),0_10px_28px_-10px_rgba(255, 92, 138,0.55),0_0_20px_rgba(255, 92, 138,0.28)] hover:brightness-[1.07] hover:shadow-[0_0_0_1px_rgba(255, 92, 138,0.4),0_12px_32px_-10px_rgba(255, 92, 138,0.6),0_0_26px_rgba(255, 92, 138,0.35)]',
+  primary: 'btn-primary-nex isolate overflow-hidden rounded-[0.625rem] text-white',
   secondary: 'rounded-lg border border-ink/20 bg-ink/5 px-6 py-3 text-sm font-medium text-ink/90 hover:bg-ink/10 hover:border-ink/40',
   ghost: 'rounded-lg bg-transparent text-ink/80 hover:bg-ink/5 hover:text-ink',
 };
@@ -103,7 +106,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...motionProps}
         {...restProps}
       >
-        {content}
+        {variant === 'primary' && <MetallicSurface disabled={disabled || loading} />}
+        <span className="metallic-content inline-flex items-center justify-center gap-2">{content}</span>
         {shimmer && variant === 'primary' && !loading && (
           <span className="shimmer-sweep" aria-hidden="true" />
         )}

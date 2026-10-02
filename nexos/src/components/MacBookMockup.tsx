@@ -61,7 +61,7 @@ export function MacBookMockup({
           }}
         >
           {children ? (
-            <div className="h-full w-full overflow-hidden bg-white">{children}</div>
+            <div className="h-full w-full overflow-hidden bg-canvas">{children}</div>
           ) : wallpaperSrc ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img

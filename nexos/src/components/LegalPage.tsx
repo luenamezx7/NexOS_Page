@@ -11,7 +11,7 @@ export function LegalPage({ slug }: { slug: string }) {
   const doc = getLegalDoc(slug);
 
   return (
-    <main className="min-h-screen bg-canvas text-ink">
+    <main className="page-surface min-h-screen text-ink">
       <div className="mx-auto w-full max-w-3xl px-5 py-16 md:px-8 md:py-24">
         <Link
           href="/"
@@ -23,7 +23,7 @@ export function LegalPage({ slug }: { slug: string }) {
 
         <div className="mt-6 border-b border-ink/12 pb-8">
           <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#be185d]">NexOS · Legal</p>
-          <h1 className="mt-2 text-balance text-ink">{doc.title}</h1>
+          <h1 className="brand-heading mt-2 text-balance">{doc.title}</h1>
           <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.16em] text-ink/40">{doc.updated}</p>
           <p className="mt-4 text-base leading-relaxed text-ink/70">{doc.intro}</p>
         </div>
@@ -38,7 +38,7 @@ export function LegalPage({ slug }: { slug: string }) {
                 aria-current={active ? 'page' : undefined}
                 className={`inline-flex min-h-[40px] items-center rounded-lg px-4 py-2 font-mono text-[11px] uppercase tracking-[0.14em] transition ${
                   active
-                    ? 'bg-[#be185d] text-white shadow-[0_0_16px_rgba(190,24,93,0.4)]'
+                    ? 'bg-[image:var(--action-gradient)] text-white'
                     : isDark
                       ? 'border border-white/10 bg-white/[0.05] text-white/60 hover:bg-white/10 hover:text-white'
                       : 'border border-ink/10 bg-ink/[0.04] text-ink/60 hover:bg-ink/10 hover:text-ink'
@@ -50,7 +50,7 @@ export function LegalPage({ slug }: { slug: string }) {
           })}
         </nav>
 
-        <div className="bento-card mt-8 space-y-7 p-7 md:p-9">
+        <div className="surface-glass mt-8 flex flex-col gap-7 p-7 md:p-9">
           {doc.sections.map((s) => (
             <section key={s.heading} aria-label={s.heading}>
               <h2 className="!text-xl text-ink">{s.heading}</h2>

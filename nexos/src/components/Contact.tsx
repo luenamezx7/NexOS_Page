@@ -1,5 +1,7 @@
 'use client';
 
+import { MetallicSurface } from './ui/metallic-button';
+
 /**
  * Contact section — formulário com validação, POST /api/contact → Notion.
  * Estados: idle, submitting, submitted, error.
@@ -182,8 +184,7 @@ export function Contact({ className = '' }: ContactProps) {
                 Enviar outra mensagem
               </button>
               <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="btn-primary-nex">
-                <MessageSquare size={16} strokeWidth={2} aria-hidden="true" />
-                Falar no WhatsApp
+                <MetallicSurface /><span className="metallic-content inline-flex items-center gap-2"><MessageSquare size={16} strokeWidth={2} aria-hidden="true" /> Falar no WhatsApp</span>
               </a>
             </div>
           </motion.div>
@@ -323,8 +324,8 @@ export function Contact({ className = '' }: ContactProps) {
                 transition={{ duration: 0.2, ease: [0.32, 0.72, 0, 1] }}
                 className={`${styles.submit} btn-primary-nex`}
               >
-                <span>{submitting ? 'Enviando...' : 'Enviar projeto'}</span>
-                <Send size={16} strokeWidth={2} aria-hidden="true" />
+                <MetallicSurface disabled={submitting || (hasTurnstile && !turnstileToken)} />
+                <span className="metallic-content inline-flex items-center gap-2"><span>{submitting ? 'Enviando...' : 'Enviar projeto'}</span><Send size={16} strokeWidth={2} aria-hidden="true" /></span>
               </motion.button>
             </div>
 

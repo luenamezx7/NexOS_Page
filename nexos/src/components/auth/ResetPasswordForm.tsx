@@ -1,5 +1,7 @@
 'use client';
 
+import { MetallicButton } from '@/components/ui/metallic-button';
+
 /**
  * Definição da nova senha a partir do link de recuperação.
  *
@@ -104,10 +106,10 @@ export function ResetPasswordForm({ token }: { token: string }) {
 
           {done ? (
             <div className="flex flex-col gap-4">
-              <button type="button" onClick={() => window.location.replace('/portal/acesso')} className="btn-primary-nex justify-center">
+              <MetallicButton type="button" onClick={() => window.location.replace('/portal/acesso')} className="w-full">
                 Ir para o login
                 <ArrowRight size={16} />
-              </button>
+              </MetallicButton>
             </div>
           ) : (
             <form className="flex flex-col gap-5" onSubmit={(e) => { e.preventDefault(); void handleSubmit(new FormData(e.currentTarget)); }}>
@@ -162,10 +164,10 @@ export function ResetPasswordForm({ token }: { token: string }) {
                   className="field-input w-full"
                 />
               </div>
-              <button type="submit" disabled={busy} className="btn-primary-nex w-full justify-center disabled:opacity-60">
+              <MetallicButton type="submit" disabled={busy} className="w-full">
                 {busy ? 'Salvando…' : 'Salvar nova senha'}
                 <ArrowRight size={16} />
-              </button>
+              </MetallicButton>
               <Link href="/portal/acesso" className="self-start text-sm underline underline-offset-4">
                 Voltar ao login
               </Link>

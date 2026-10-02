@@ -10,6 +10,7 @@ import { SectionIndicator } from '@/components/SectionIndicator';
 import BrandEntrance from '@/components/BrandEntrance';
 import { Slipstream } from '@/components/ui/background-ascii-flow';
 import { ArrowDown } from 'lucide-react';
+import { CloudSky } from '@/components/SiteAtmosphere';
 
 // Lazy load heavy components below the fold
 const Services = dynamic(() => import('@/components/Services').then(m => m.Services), { ssr: false, loading: () => null });
@@ -94,10 +95,11 @@ function IntroSection({ onComplete }: IntroSectionProps) {
       aria-label="Apresentação NexOS — role para entrar"
       exit={reduce ? { opacity: 0 } : { opacity: 0, y: -32, scale: 0.985 }}
       transition={{ duration: reduce ? 0.15 : 0.65, ease: FLUID_EASE }}
-      className="landing-intro fixed inset-0 z-[900] flex min-h-dvh flex-col justify-center overflow-hidden overflow-x-clip bg-canvas will-change-transform"
+      className="fixed inset-0 z-[900] flex min-h-dvh flex-col justify-center overflow-hidden overflow-x-clip bg-canvas will-change-transform"
     >
+      <CloudSky />
       <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-        <Slipstream className="opacity-25" cellSize={16} />
+        <Slipstream className="intro-flow" cellSize={16} />
       </div>
       <div className="grid-pattern-subtle opacity-80 dark:opacity-10" aria-hidden="true" />
 
@@ -109,7 +111,7 @@ function IntroSection({ onComplete }: IntroSectionProps) {
         aria-label="Nexos, a performance que seu business merece."
       >
         <div className="intro-copy">
-          <span className="intro-brand">NexOS<span aria-hidden="true">®</span></span>
+          <span className="intro-brand"><span className="intro-brand-name">NexOS</span><span className="intro-registration" aria-hidden="true">®</span></span>
           <h1>A performance que<br /><span className="intro-accent">seu business merece.</span></h1>
           <p>O próximo passo começa aqui.</p>
         </div>
@@ -122,7 +124,7 @@ function IntroSection({ onComplete }: IntroSectionProps) {
         initial={reduce ? false : { opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.9, ease: FLUID_EASE }}
-        className="intro-enter absolute bottom-[calc(2.5rem+env(safe-area-inset-bottom))] left-1/2 z-10 flex min-h-[48px] -translate-x-1/2 items-center gap-3 whitespace-nowrap rounded-full border border-ink/15 bg-canvas/80 px-6 py-3 text-sm font-medium text-ink/80 transition-colors duration-300 hover:bg-ink/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
+        className="absolute bottom-[calc(2.5rem+env(safe-area-inset-bottom))] left-1/2 z-10 flex min-h-[48px] -translate-x-1/2 items-center gap-3 whitespace-nowrap rounded-full border border-ink/15 bg-canvas/80 px-6 py-3 text-sm font-medium text-ink/80 transition-colors duration-300 hover:bg-ink/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
       >
         <span className="animate-scroll-hint grid place-items-center" aria-hidden="true">
           <ArrowDown size={22} strokeWidth={1.5} />

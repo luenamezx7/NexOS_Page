@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight, Check, RotateCcw } from 'lucide-react';
 import { FieldGroup, FieldLegend, FieldSet } from './ui/field';
 import { config } from '@/config';
 import styles from './commerce/Interactions.module.css';
+import { MetallicButton } from './ui/metallic-button';
 
 const QUESTIONS = [
   { title: 'O que seu cliente precisa acessar?', options: [
@@ -70,7 +71,7 @@ export function PlateQuiz() {
               </FieldSet>
               <div className={styles.quizActions}>
                 {step > 0 ? <button type="button" onClick={() => move(step - 1)} className={styles.back}><ArrowLeft size={14} aria-hidden="true" /> Voltar</button> : <span className={styles.mono}>Duas perguntas. Sem cadastro.</span>}
-                <button type="submit" disabled={!answers[step]} className={styles.next}>{step === 1 ? 'Ver sugestão' : 'Continuar'}<ArrowRight size={16} aria-hidden="true" /></button>
+                <MetallicButton type="submit" disabled={!answers[step]} className={styles.next}>{step === 1 ? 'Ver sugestão' : 'Continuar'}<ArrowRight size={16} aria-hidden="true" /></MetallicButton>
               </div>
             </form>
           )}

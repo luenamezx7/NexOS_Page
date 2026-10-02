@@ -4,14 +4,14 @@
   --commerce-raised: color-mix(in srgb, var(--color-ink) 5%, var(--color-canvas));
   --commerce-line: color-mix(in srgb, var(--color-ink) 14%, transparent);
   --commerce-muted: color-mix(in srgb, var(--color-ink) 72%, transparent);
-  --commerce-accent: var(--color-ink);
+  --commerce-accent: var(--display-rose);
   position: relative;
-  background: var(--color-canvas);
+  background: transparent;
   border-top: 1px solid var(--commerce-line);
   scroll-margin-top: 100px;
 }
 
-:global(.dark) .section { --commerce-accent: var(--color-ink); }
+:global(.dark) .section { --commerce-accent: var(--display-rose); }
 .container { width: 100%; max-width: 1280px; margin-inline: auto; padding: 48px 20px 64px; }
 .sectionNav { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; margin-bottom: 32px; border-bottom: 1px solid var(--commerce-line); padding-bottom: 16px; font-size: 13px; }
 .sectionNav a, .currentSection { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; }
@@ -58,13 +58,13 @@
 .detailGrid ul, .features { display: grid; align-content: start; gap: 12px; }
 .detailGrid li, .features li { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; line-height: 1.5; color: var(--commerce-muted); }
 .detailGrid li svg, .features li svg { flex-shrink: 0; margin-top: 3px; color: var(--commerce-accent); }
-.servicesSection { background: color-mix(in srgb, var(--color-ink) 1%, var(--color-canvas)); }
+.servicesSection { background: transparent; }
 .servicesHeader { margin-bottom: 32px; }
 .explorer { margin-bottom: 32px; }
 .goalFilters { display: flex; flex-direction: row; flex-wrap: wrap; gap: 8px; }
 .goalFilter { position: relative; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 10px 16px; border: 1px solid var(--commerce-line); border-radius: 8px; color: var(--commerce-muted); font-size: 13px; cursor: pointer; transition: background-color 200ms, color 200ms; }
 .goalFilter input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.goalFilter[data-selected='true'] { background: var(--color-ink); color: var(--color-canvas); border-color: var(--color-ink); }
+.goalFilter[data-selected='true'] { background: var(--action-gradient); color: #fff; border-color: var(--nex-pink); }
 .goalFilter:hover:not([data-selected='true']) { background: var(--commerce-raised); color: var(--color-ink); }
 .goalFilter:has(:focus-visible) { outline: 2px solid var(--color-ink); outline-offset: 3px; }
 .goalGuide { position: relative; display: flex; align-items: flex-start; justify-content: space-between; gap: 32px; overflow: hidden; margin-top: 24px; padding: 32px; border-block: 1px solid var(--commerce-line); min-height: 220px; background: var(--commerce-surface); }

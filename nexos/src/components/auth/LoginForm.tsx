@@ -17,6 +17,7 @@ import { SocialProviderIcon } from './SocialProviderIcon';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import styles from './LoginForm.module.css';
+import { MetallicButton } from '@/components/ui/metallic-button';
 
 type Mode = 'login' | 'signup' | 'forgot' | 'magic' | 'verify-email';
 interface LoginFormProps {
@@ -131,7 +132,7 @@ export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, 
   }
 
   return (
-    <main className={userFlow ? styles.customer : 'min-h-[100dvh] bg-canvas px-6 py-8 text-ink sm:px-10'}>
+    <main className={userFlow ? styles.customer : 'page-surface min-h-[100dvh] px-6 py-8 text-ink sm:px-10'}>
       <header className={userFlow ? styles.header : 'mx-auto flex max-w-6xl items-center justify-between border-b border-ink/15 pb-6'}>
         <Link href="/" aria-label="NexOS — página inicial"><Image src="/nexos-branca-transparente.svg" alt="NexOS" width={110} height={26} priority className="logo-invert h-6 w-auto" /></Link>
         <div className="flex items-center gap-4"><Link href="/" className="flex min-h-[44px] items-center gap-2 text-sm hover:underline"><ArrowLeft size={16} /> Voltar ao site</Link><ThemeToggle /></div>
@@ -139,14 +140,14 @@ export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, 
       <div className={userFlow ? styles.content : 'mx-auto grid max-w-6xl gap-12 py-12 md:min-h-[75dvh] md:grid-cols-2 md:items-center md:gap-20'}>
         {!userFlow && <section className="rounded-2xl border border-ink/10 bg-card p-8 md:p-10">
           <p className="font-mono text-xs uppercase tracking-[.22em] text-muted-foreground">NexOS Ops • Controlled Access</p>
-          <h1 className="mt-4 font-display text-3xl font-bold leading-tight tracking-tight sm:text-4xl">Ambiente administrativo restrito.</h1>
+          <h1 className={`${styles.adminHeading} brand-heading mt-4`}>Ambiente administrativo restrito.</h1>
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">Acesso por papel, sessão revogável e autenticação em duas etapas obrigatória para operadores.</p>
         </section>}
-        <motion.section initial={reduce ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className={userFlow ? styles.panel : 'w-full max-w-md md:justify-self-end'} aria-labelledby="login-title">
+        <motion.section initial={reduce ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className={userFlow ? styles.panel : 'surface-glass w-full max-w-md p-6 md:justify-self-end md:p-8'} aria-labelledby="login-title">
           {userFlow && <p className={styles.overline}>Sua conta NexOS</p>}
           <div className={userFlow ? styles.title : 'mb-8 flex items-center gap-3'}>
             {!userFlow && <LockKeyhole size={20} />}
-            <h2 id="login-title" className="text-xl font-semibold">{step === 'totp' ? 'Verificação em duas etapas' : mode === 'signup' ? 'Criar sua conta' : mode === 'forgot' ? 'Recuperar senha' : mode === 'magic' ? 'Entrar por link de e-mail' : mode === 'verify-email' ? 'Confirme seu e-mail' : userFlow ? 'Entrar na sua conta' : 'Entrada do operador'}</h2>
+            <h2 id="login-title" className={`${styles.heading} brand-heading`}>{step === 'totp' ? 'Verificação em duas etapas' : mode === 'signup' ? 'Criar sua conta' : mode === 'forgot' ? 'Recuperar senha' : mode === 'magic' ? 'Entrar por link de e-mail' : mode === 'verify-email' ? 'Confirme seu e-mail' : userFlow ? 'Entrar na sua conta' : 'Entrada do operador'}</h2>
           </div>
           <div className="flex flex-col gap-5">
             {(error || (step === 'credentials' && security.error)) && <Alert variant="destructive"><AlertDescription>{error || security.error}</AlertDescription></Alert>}
@@ -173,7 +174,7 @@ export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, 
                 </Field>}
                 {mode === 'signup' && <Field><FieldLabel htmlFor="confirm-password">Confirmar senha</FieldLabel><input id="confirm-password" name="confirmPassword" type="password" autoComplete="new-password" required minLength={12} maxLength={256} className="field-input" disabled={busy} /></Field>}
                 <Turnstile key={captchaKey} onVerify={setCaptcha} onExpire={() => setCaptcha('')} onError={() => setCaptcha('')} />
-                <button type="submit" disabled={busy || captchaBlocked} className="btn-primary-nex w-full justify-center disabled:opacity-60">{busy ? 'Aguarde…' : mode === 'signup' ? 'Criar conta' : mode === 'forgot' ? 'Enviar link de redefinição' : mode === 'magic' ? 'Enviar link de acesso' : 'Entrar'}<ArrowRight size={16} /></button>
+                <MetallicButton type="submit" disabled={busy || captchaBlocked} className="w-full" aria-busy={busy}>{busy ? 'Aguarde…' : mode === 'signup' ? 'Criar conta' : mode === 'forgot' ? 'Enviar link de redefinição' : mode === 'magic' ? 'Enviar link de acesso' : 'Entrar'}<ArrowRight size={16} aria-hidden="true" /></MetallicButton>
                 {userFlow && <button type="button" disabled={busy} className="self-start text-sm underline underline-offset-4" onClick={() => goMode(mode === 'signup' ? 'login' : 'signup')}>{mode === 'signup' ? 'Já tenho conta' : 'Criar uma conta'}</button>}
                 {mode !== 'login' && <button type="button" disabled={busy} onClick={() => goMode('login')} className="self-start text-sm underline underline-offset-4">Voltar ao login</button>}
               </FieldGroup>
@@ -181,18 +182,18 @@ export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, 
             {step === 'credentials' && mode === 'verify-email' && <>
               <p>Enviamos um link de confirmação para {pendingEmail}. Confirme o cadastro e depois entre.</p>
               <Turnstile key={captchaKey} onVerify={setCaptcha} onExpire={() => setCaptcha('')} onError={() => setCaptcha('')} />
-              <button type="button" disabled={busy || captchaBlocked} className="btn-primary-nex justify-center" onClick={() => void guard(async () => {
+              <MetallicButton type="button" disabled={busy || captchaBlocked} className="w-full" onClick={() => void guard(async () => {
                 const result = await authClient.sendVerificationEmail({ email: pendingEmail, callbackURL: `${loginPath}?verified=1&callbackUrl=${encodeURIComponent(destination)}`, fetchOptions });
                 if (result.error) { setError(authErrorMessage(result.error, 'Não foi possível reenviar o e-mail.')); return; }
                 setMessage('Se o endereço estiver apto, você receberá um novo e-mail de confirmação.');
-              })}>Reenviar e-mail de confirmação</button>
+              })}>Reenviar e-mail de confirmação</MetallicButton>
               <button type="button" onClick={() => goMode('login')} className="self-start text-sm underline underline-offset-4">Voltar ao login</button>
             </>}
             {step === 'totp' && <form onSubmit={e => { e.preventDefault(); void verify(String(new FormData(e.currentTarget).get('code') ?? '').trim()); }}>
               <FieldGroup>
                 <p>Confirme o segundo fator para concluir o acesso. O desafio expira em 10 minutos.</p>
                 <Field><FieldLabel htmlFor="login-code">{backup ? 'Código de recuperação' : 'Código do autenticador'}</FieldLabel><input key={String(backup)} id="login-code" name="code" inputMode={backup ? 'text' : 'numeric'} autoComplete="one-time-code" pattern={backup ? undefined : '[0-9]{6}'} minLength={backup ? 1 : 6} maxLength={backup ? 64 : 6} required className="field-input font-mono" disabled={busy} /></Field>
-                <button type="submit" disabled={busy} className="btn-primary-nex justify-center">{busy ? 'Confirmando…' : 'Confirmar acesso'}</button>
+                <MetallicButton type="submit" disabled={busy} className="w-full">{busy ? 'Confirmando…' : 'Confirmar acesso'}</MetallicButton>
                 <button type="button" disabled={busy} onClick={() => { setBackup(v => !v); setError(''); }} className="self-start text-sm underline underline-offset-4">{backup ? 'Usar aplicativo autenticador' : 'Usar código de recuperação'}</button>
                 <button type="button" disabled={busy} onClick={() => void guard(async () => { await signOutAccount(); window.location.replace(loginPath); })} className="self-start text-sm underline underline-offset-4">Sair e usar outra conta</button>
               </FieldGroup>

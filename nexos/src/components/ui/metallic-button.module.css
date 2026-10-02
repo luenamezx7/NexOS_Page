@@ -1,0 +1,15 @@
+.button { position: relative; isolation: isolate; display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 52px; max-width: 100%; padding: 12px 24px; overflow: hidden; border: 1px solid #ff74c060; border-radius: 10px; color: #fff; background: var(--action-gradient); font-family: var(--font-mono); font-size: 13px; font-weight: 700; letter-spacing: -0.025em; cursor: pointer; box-shadow: inset 0 1px 0 #ffffff45, 0 6px 20px -12px #d6007070; transition: transform 200ms var(--ease-fluid), box-shadow 200ms; }
+.button:hover { box-shadow: inset 0 1px 0 #ffffff60, 0 8px 24px -12px #e6008a90; }
+.button:active { transform: translateY(1px) scale(0.985); }
+.button:focus-visible { outline: 2px solid var(--display-rose); outline-offset: 4px; }
+.button:disabled { opacity: 0.45; cursor: not-allowed; }
+.content { position: relative; z-index: 1; display: inline-flex; align-items: center; justify-content: center; gap: 10px; white-space: nowrap; }
+.iconButton { padding: 12px; width: 52px; }
+.surface { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; border-radius: inherit; background: var(--action-gradient); }
+.surface canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; border-radius: inherit; opacity: 0.85; }
+.surface::after { content: ''; position: absolute; inset: 2px; border-radius: inherit; background: linear-gradient(110deg, #c00061e6 0%, #b0077ce0 48%, #66229cdf 100%); box-shadow: inset 0 1px 0 #ffffff22, inset 0 -1px 0 #1b001b55; }
+.surface[data-render-mode="css"] { background: linear-gradient(125deg, #ffa4d9 0%, #fa168c 22%, #8326c2 62%, #e9a1ff 100%); }
+.surface[data-render-mode="css"]::after { background: linear-gradient(125deg, #e10075 0%, #bc0580 46%, #7425b4 100%); }
+:global(.metallic-content) { position: relative; z-index: 1; }
+@media (prefers-reduced-motion: reduce) { .button { transition: none; } .button:active { transform: none; } }
+@media (forced-colors: active) { .surface { display: none; } .button { border: 1px solid ButtonText; background: ButtonFace; color: ButtonText; } }

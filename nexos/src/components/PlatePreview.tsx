@@ -1,5 +1,7 @@
 'use client';
 
+import { Slipstream } from './ui/background-ascii-flow';
+
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { motion, useMotionValue, useReducedMotion, useSpring } from 'motion/react';
@@ -59,7 +61,8 @@ export function PlatePreview({ onClose }: { onClose: () => void }) {
       if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) onClose();
     }}>
       <header className={styles.dialogHeader}>
-        <div><span className={styles.mono}>NexOS / product lab</span><h2 id="plate-preview-title">Explore a placa.</h2></div>
+        <div className="dialog-stars" aria-hidden="true"><Slipstream density={0.3} /></div>
+        <div><span className={styles.mono}>NexOS / product lab</span><h2 id="plate-preview-title" className="brand-heading">Explore a placa.</h2></div>
         <button type="button" aria-label="Fechar preview" onClick={onClose} className={styles.close}><X size={20} aria-hidden="true" /></button>
       </header>
       <div className={styles.previewGrid}>

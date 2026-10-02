@@ -1,5 +1,7 @@
 'use client';
 
+import { MetallicButton } from './ui/metallic-button';
+
 import {
   createContext,
   useCallback,
@@ -249,7 +251,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
           >
             <div
               className={`mx-auto flex w-full max-w-3xl flex-col gap-4 rounded-2xl border p-5 shadow-[0_12px_40px_rgba(0,0,0,0.12)] md:flex-row md:items-center md:gap-5 md:p-6 ${
-                isDark ? 'border-white/15 bg-[#0a0a0a]/95' : 'border-ink/15 bg-white/95'
+                isDark ? 'border-white/15 bg-black/95' : 'border-ink/15 bg-canvas/95'
               }`}
             >
               <div className="flex min-w-0 flex-1 items-start gap-3">
@@ -294,13 +296,13 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                 >
                   Personalizar
                 </button>
-                <button
+                <MetallicButton
                   type="button"
                   onClick={acceptAll}
-                  className="min-h-11 rounded-xl bg-[var(--nex-pink)] px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-[#a91553]"
+                  className="min-h-11 px-4 py-2.5 text-xs"
                 >
                   Aceitar tudo
-                </button>
+                </MetallicButton>
               </div>
             </div>
           </motion.div>
@@ -332,7 +334,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
               exit={reduce ? { opacity: 0 } : { opacity: 0, y: 20, scale: 0.98 }}
               transition={{ duration: 0.45, ease: FLUID_EASE }}
               className={`fixed inset-x-0 bottom-0 z-[71] mx-auto flex max-h-[92dvh] w-full max-w-xl flex-col overflow-hidden rounded-t-[24px] border shadow-[0_24px_80px_rgba(0,0,0,0.6)] backdrop-blur-[20px] will-change-transform md:inset-0 md:m-auto md:h-fit md:max-h-[88dvh] md:w-[min(520px,calc(100vw-2rem))] md:rounded-3xl ${
-                isDark ? 'border-white/15 bg-[#0a0a0a]/95' : 'border-ink/15 bg-white/95'
+                isDark ? 'border-white/15 bg-black/95' : 'border-ink/15 bg-canvas/95'
               }`}
             >
               <div
@@ -467,13 +469,13 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                 >
                   Salvar escolhas
                 </button>
-                <button
+                <MetallicButton
                   type="button"
                   onClick={acceptAll}
-                  className="min-h-11 flex-1 rounded-xl bg-[var(--nex-pink)] px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-[#a91553]"
+                  className="min-h-11 flex-1 px-4 py-2.5 text-xs"
                 >
                   Aceitar tudo
-                </button>
+                </MetallicButton>
               </div>
 
               <div className={`border-t px-6 py-3 ${isDark ? 'border-white/10' : 'border-ink/10'}`}>
