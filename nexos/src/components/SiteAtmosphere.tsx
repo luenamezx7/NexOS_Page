@@ -1,6 +1,10 @@
 'use client';
 
 import { Slipstream } from './ui/background-ascii-flow';
+import dynamic from 'next/dynamic';
+import { useTheme } from './ThemeProvider';
+
+const DitherWave = dynamic(() => import('./ui/dither-wave'), { ssr: false });
 
 export function CloudSky() {
   return <div className="day-clouds" aria-hidden="true"><span className="sky-cloud sky-cloud-one" /><span className="sky-cloud sky-cloud-two" /><span className="sky-cloud sky-cloud-three" /></div>;
@@ -8,5 +12,10 @@ export function CloudSky() {
 
 /** One shared, non-interactive star layer for every route and landing section. */
 export function SiteAtmosphere() {
-  return <div className="site-atmosphere" aria-hidden="true"><CloudSky /><div className="night-sky"><Slipstream density={0.8} seed={731} /></div></div>;
+  const { theme } = useTheme();
+  return <div className="site-atmosphere" aria-hidden="true">
+    {theme === 'light' && <div className="day-dither"><DitherWave primaryColor="var(--nex-pink-hot)" secondaryColor="var(--nex-pink)" tertiaryColor="#f3ead9" intensity={0.65} scale={8} quality="low" maxFPS={20} pauseWhenOffscreen /></div>}
+    <CloudSky />
+    <div className="night-sky"><Slipstream density={0.8} seed={731} /></div>
+  </div>;
 }

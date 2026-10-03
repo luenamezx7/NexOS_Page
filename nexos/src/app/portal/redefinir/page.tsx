@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ResetPasswordForm } from '@/components/auth/ResetPasswordForm';
 import { MetallicSurface } from '@/components/ui/metallic-button';
+import { AuthHeader, AuthStory } from '@/components/auth/AuthFrame';
+import styles from '@/components/auth/LoginForm.module.css';
 
 /**
  * Página de redefinição de senha.
@@ -25,10 +27,13 @@ export default async function ResetPasswordPage({ searchParams }: { searchParams
   if (token) return <ResetPasswordForm token={token} />;
 
   return (
-    <main className="page-surface min-h-[100dvh] px-6 py-16 text-ink">
-      <div className="mx-auto flex max-w-md flex-col gap-6 text-center">
+    <main className={styles.customer}>
+      <AuthHeader />
+      <div className={styles.content}>
+      <AuthStory recovery />
+      <section className={`${styles.panel} flex flex-col gap-6`} aria-labelledby="reset-link-title">
         <p className="font-mono text-xs uppercase tracking-widest text-[#be185d]">Recuperação</p>
-        <h1 className="page-title brand-heading font-display font-bold tracking-tight">Link necessário</h1>
+        <h1 id="reset-link-title" className={styles.heading}>Link necessário</h1>
         <p className="text-sm leading-relaxed text-ink/70">
           Para redefinir a senha é preciso o link enviado por e-mail. Ele é de uso único e expira em
           pouco tempo. Peça um novo em “Esqueceu a senha”.
@@ -42,6 +47,7 @@ export default async function ResetPasswordPage({ searchParams }: { searchParams
             nexosperformance@gmail.com
           </a>
         </p>
+      </section>
       </div>
     </main>
   );

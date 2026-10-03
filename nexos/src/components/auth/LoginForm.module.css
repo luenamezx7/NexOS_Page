@@ -1,37 +1,53 @@
-.customer {
-  min-height: 100dvh;
-  color: var(--color-ink);
-  background: transparent;
-  padding: 16px 20px 32px;
-}
+.customer { min-height: 100dvh; padding: 16px 20px 40px; color: var(--color-ink); background: transparent; }
 .header { max-width: 1216px; margin-inline: auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; padding: 8px 16px; border: 1px solid var(--border); border-radius: 16px; background: var(--color-glass); backdrop-filter: blur(12px); box-shadow: inset 0 1px 0 #ffffff18; }
-.content { width: 100%; max-width: 440px; margin: 32px auto 0; }
-.panel { width: 100%; min-width: 0; padding: 24px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface-glass); backdrop-filter: blur(12px); box-shadow: inset 0 1px 0 #ffffff14; }
-.overline { margin-bottom: 16px; font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.04em; color: var(--display-rose); }
-.title h2 { font-size: clamp(28px, 5vw, 36px); font-weight: 600; line-height: 1.15; letter-spacing: -1px; }
-.heading { font-size: clamp(28px, 5vw, 36px); font-weight: 600; line-height: 1.15; letter-spacing: -1px; background: linear-gradient(110deg, var(--display-rose), var(--display-purple)); background-clip: text; -webkit-background-clip: text; color: transparent; }
-.description { margin: 12px 0 28px; font-size: 15px; line-height: 1.5; color: color-mix(in srgb, var(--color-ink) 72%, transparent); }
-.adminHeading { font-size: clamp(28px, 3.5vw, 44px); font-weight: 600; line-height: 1.1; letter-spacing: -0.04em; overflow-wrap: anywhere; }
-.customer .social button { min-height: 48px; border-radius: 8px; font-size: 14px; background: color-mix(in srgb, var(--color-ink) 3%, var(--color-canvas)); }
-.customer .social button:hover { background: color-mix(in srgb, var(--color-ink) 7%, var(--color-canvas)); }
-.customer :global(.field-input) { min-height: 48px; padding: 12px; border-radius: 8px; font-size: 16px; line-height: 1.5; box-shadow: none; background: color-mix(in srgb, var(--color-ink) 3%, var(--color-canvas)); }
-.customer :global(.field-input):focus { border-color: #db2777; outline: 2px solid color-mix(in srgb, #db2777 35%, transparent); outline-offset: 2px; }
-.customer :global(.btn-primary-nex) { min-height: 48px; border-radius: 8px; background: #be185d; font-size: 14px; font-weight: 600; letter-spacing: 0; box-shadow: inset 0 1px 0 #ffffff20; }
-.customer :global(.btn-primary-nex):hover { background: #a91551; box-shadow: none; filter: none; }
-.customer form label { font-size: 14px; }
-.customer form button:not([type="submit"]) { min-height: 44px; }
-.customer form > div:last-child { column-gap: 20px; row-gap: 0; }
-.customer form > div:last-child button { text-align: left; font-size: 13px; }
-.customer :global([role="alert"]) { border-radius: 8px; background: color-mix(in srgb, #db2777 5%, var(--color-canvas)); line-height: 1.5; }
-.customer nav { gap: 0 20px; }
-.customer nav a { display: inline-flex; align-items: center; min-height: 44px; color: color-mix(in srgb, var(--color-ink) 72%, transparent); font-size: 12px; }
+.headerActions { display: flex; align-items: center; gap: 16px; }
+.backLink { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 12px; color: var(--muted-foreground); }
+.backLink:hover { color: var(--display-rose); }
+.content { width: 100%; max-width: 480px; margin: 32px auto 0; }
+.panel { width: 100%; min-width: 0; max-width: 480px; padding: 28px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface-glass); backdrop-filter: blur(12px); box-shadow: inset 0 1px 0 #ffffff14; }
+.overline { margin-bottom: 14px; font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.04em; color: var(--display-rose); }
+.title { display: flex; align-items: center; gap: 10px; }
+.title > svg { flex-shrink: 0; color: var(--display-rose); }
+.heading, .title h2 { font-size: clamp(26px, 3vw, 34px); font-weight: 600; line-height: 1.15; letter-spacing: -0.045em; background: linear-gradient(110deg, var(--display-rose), var(--display-purple)); background-clip: text; -webkit-background-clip: text; color: transparent; }
+.description { margin: 12px 0 24px; font-size: 14px; line-height: 1.55; color: var(--muted-foreground); text-wrap: pretty; }
+.formStack { display: flex; flex-direction: column; gap: 14px; }
+.formGroup { gap: 18px; }
+.social { display: flex; gap: 12px; }
+.social button { min-height: 48px; }
+.passkeyButton { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 46px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 12px; background: color-mix(in srgb, var(--color-ink) 2%, transparent); }
+.passkeyButton:hover { border-color: var(--display-rose); }
+.passkeyButton:disabled { opacity: 0.5; }
+.magicLink { align-self: center; min-height: 40px; font-size: 12px; color: var(--muted-foreground); text-decoration: underline; text-underline-offset: 4px; }
+.magicLink:hover, .forgotLink:hover { color: var(--display-rose); }
+.passwordControl { position: relative; }
+.passwordControl :global(.field-input) { padding-right: 52px; }
+.passwordToggle { position: absolute; top: 2px; right: 2px; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 6px; color: var(--muted-foreground); }
+.passwordToggle:hover { color: var(--display-rose); background: color-mix(in srgb, var(--color-ink) 4%, transparent); }
+.forgotLink { align-self: flex-end; width: fit-content; min-height: 32px; padding-block: 4px; font-size: 11px; color: var(--muted-foreground); text-decoration: underline; text-underline-offset: 4px; }
+.customer :global(.field-input) { min-height: 48px; padding: 12px; border-radius: 8px; font-size: 16px; line-height: 1.5; box-shadow: none; background: var(--field-surface); }
+.customer .passwordControl :global(.field-input) { padding-right: 52px; }
+.customer :global(.field-input):focus { border-color: var(--nex-pink); outline: 2px solid color-mix(in srgb, var(--nex-pink) 30%, transparent); outline-offset: 2px; }
+.customer form label { font-size: 12px; color: var(--color-ink); }
+.customer nav { display: flex; gap: 0 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+.customer nav a { display: inline-flex; align-items: center; min-height: 40px; color: var(--muted-foreground); font-size: 11px; }
+.customer nav a:hover { color: var(--display-rose); }
+.story { display: none; }
+.storyLabel { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.05em; color: var(--muted-foreground); }
+.storyHeading { margin-top: 28px; font-size: clamp(42px, 4.7vw, 64px); font-weight: 600; line-height: 1.08; letter-spacing: -0.06em; text-wrap: balance; }
+.storyDescription { max-width: 40ch; margin-top: 24px; font-size: 16px; line-height: 1.65; color: var(--muted-foreground); text-wrap: pretty; }
+.storyFeatures { display: flex; flex-wrap: wrap; gap: 16px 24px; margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--border); }
+.storyFeatures li { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 11px; color: var(--muted-foreground); }
+.storyFeatures svg { color: var(--display-rose); }
+.storyLink { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; margin-top: 28px; font-size: 13px; }
+.storyLink svg { color: var(--display-purple); }
+.adminHeading { font-size: clamp(36px, 4vw, 52px); font-weight: 600; line-height: 1.12; letter-spacing: -0.045em; overflow-wrap: anywhere; }
 .legalNote { font-size: 12px; line-height: 1.6; }
-@media (min-width: 768px) {
-  .customer { padding: 24px 32px 48px; }
-  .content { margin-top: 48px; }
-  .panel { padding: 32px; }
-  .content { max-width: 480px; }
+@media (min-width: 768px) { .customer { padding: 24px 32px 48px; } .content { margin-top: 48px; } .panel { padding: 32px; } }
+@media (min-width: 1024px) {
+  .content { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(48px, 6vw, 96px); align-items: start; max-width: 1120px; }
+  .story { display: block; position: sticky; top: 120px; padding-top: 64px; min-width: 0; }
+  .panel { justify-self: end; }
 }
-@media (max-width: 359px) { .customer { padding-inline: 16px; } .header { gap: 8px; } .header > div { gap: 8px; } .header a { font-size: 12px; } }
-@media (max-width: 479px) { .header { padding-inline: 10px; } .header a { font-size: 11px; } .header > div { gap: 8px; } .panel { padding: 22px 18px; } }
+@media (max-width: 479px) { .header { padding-inline: 10px; } .headerActions { gap: 8px; } .backLink { font-size: 11px; } .panel { padding: 24px 18px; } .forgotLink { min-height: 40px; } .passkeyButton { font-size: 11px; } }
+@media (max-width: 359px) { .customer { padding-inline: 12px; } .header { gap: 8px; } .header img { max-width: 96px; } .panel { padding-inline: 16px; } }
 @media (prefers-reduced-transparency: reduce) { .header { background: var(--color-canvas); backdrop-filter: none; } .panel { background: var(--card); backdrop-filter: none; } }

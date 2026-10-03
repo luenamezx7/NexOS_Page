@@ -11,6 +11,7 @@ import GradientText from './GradientText';
 import { Slipstream } from './ui/background-ascii-flow';
 import { HoverButton } from './ui/hover-button';
 import styles from './MidPage.module.css';
+import { useTheme } from './ThemeProvider';
 
 const DarkVeil = dynamic(() => import('./DarkVeil'), { ssr: false });
 
@@ -185,6 +186,7 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
   ({ className = '' }: HeroProps, ref: ForwardedRef<HTMLElement>) => {
     const reduce = useReducedMotion() ?? false;
     const router = useRouter();
+    const { theme } = useTheme();
 
     return (
       <>
@@ -194,7 +196,7 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
           aria-labelledby="hero-title"
           className={`landing-hero relative flex min-h-[100dvh] w-full max-w-full items-center overflow-hidden ${className}`}
         >
-          <div className="hero-veil" aria-hidden="true"><DarkVeil /></div>
+          {theme === 'dark' && <div className="hero-veil" aria-hidden="true"><DarkVeil /></div>}
           <div className="hero-flow" aria-hidden="true"><Slipstream density={1.7} seed={913} /></div>
           <div className="hero-coordinate" aria-hidden="true">NEXOS / DIGITAL STUDIO</div>
           <div className="hero-container">

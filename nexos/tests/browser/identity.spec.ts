@@ -95,3 +95,56 @@ test('metallic login submit preserves validation, keyboard activation and disabl
   await page.reload();
   await expect(page.getByRole('button', { name: 'Entrar', exact: true })).toBeDisabled();
 });
+
+test('light password fields stay cream on focus, entry and a dark-to-light theme switch', async ({ page }) => {
+  await setTheme(page, 'light');
+  await page.goto('/portal/acesso');
+  const password = page.getByLabel('Senha', { exact: true });
+  await password.fill('visual-test-password');
+  await expect(password).toHaveCSS('background-color', 'rgb(234, 223, 205)');
+  await expect(password).toHaveCSS('-webkit-text-fill-color', 'rgb(36, 30, 39)');
+  await page.getByRole('button', { name: 'Ativar modo escuro' }).click();
+  await page.getByRole('button', { name: 'Ativar modo claro' }).click();
+  await password.focus();
+  await expect(password).toHaveCSS('background-color', 'rgb(234, 223, 205)');
+  await expect(password).toHaveCSS('color-scheme', /^(only light|light only)$/);
+});
+
+test('hero heading and actions are horizontally centered on desktop and mobile', async ({ page }) => {
+  await setTheme(page, 'dark');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  for (const width of [360, 768, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const selector of ['.hero-copy', '.hero-actions']) {
+      const bounds = await page.locator(selector).boundingBox();
+      expect(Math.abs(bounds!.x + bounds!.width / 2 - width / 2)).toBeLessThan(2);
+    }
+    const button = await page.getByRole('button', { name: 'Iniciar Projeto', exact: true }).boundingBox();
+    if (width < 768) expect(Math.abs(button!.x + button!.width / 2 - width / 2)).toBeLessThan(2);
+  }
+});
+
+test('light-only Dither Wave uses pink and cream instead of black pixels', async ({ page }) => {
+  await setTheme(page, 'light');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/portal/acesso');
+  const wave = page.locator('[data-dither-wave="local"] canvas');
+  await expect(wave).toBeVisible();
+  const colors = await wave.evaluate(element => {
+    const canvas = element as HTMLCanvasElement;
+    const data = canvas.getContext('2d')!.getImageData(0, 0, canvas.width, canvas.height).data;
+    let cream = 0, pink = 0, black = 0;
+    for (let i = 0; i < data.length; i += 4) {
+      if (data[i] === 243 && data[i + 1] === 234 && data[i + 2] === 217) cream++;
+      else if (data[i] > 180 && data[i] > data[i + 1] * 2) pink++;
+      if (data[i] + data[i + 1] + data[i + 2] < 30) black++;
+    }
+    return { cream, pink, black };
+  });
+  expect(colors.cream).toBeGreaterThan(100);
+  expect(colors.pink).toBeGreaterThan(100);
+  expect(colors.black).toBe(0);
+  await page.getByRole('button', { name: 'Ativar modo escuro' }).click();
+  await expect(page.locator('[data-dither-wave]')).toHaveCount(0);
+});

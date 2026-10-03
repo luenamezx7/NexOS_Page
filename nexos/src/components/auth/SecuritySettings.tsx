@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/input';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import styles from './SecuritySettings.module.css';
 
 interface Props { enabled: boolean; hasPassword: boolean; isAdmin: boolean; callbackUrl: string | null }
 interface SavedPasskey { id: string; name?: string | null; createdAt?: Date | string | null }
@@ -59,11 +60,11 @@ export function SecuritySettings({ enabled: initialEnabled, hasPassword: initial
     <FieldLabel htmlFor={id}>Senha atual</FieldLabel><Input id={id} type="password" autoComplete="current-password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} disabled={busy} required maxLength={256} />
   </Field>;
 
-  return <div className="flex flex-col gap-6">
+  return <div className={styles.grid}>
     {error && <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert>}
     {message && <Alert role="status"><AlertDescription>{message}</AlertDescription></Alert>}
     {isAdmin && !enabled && <Alert><AlertDescription>Operadores precisam ativar o autenticador para acessar o painel administrativo.</AlertDescription></Alert>}
-    <Card>
+    <Card className={styles.passwordCard}>
       <CardHeader><CardTitle>Senha</CardTitle><CardDescription>{hasPassword ? 'Confirme a senha atual para escolher uma nova. As outras sessões serão encerradas.' : 'Sua conta usa acesso sem senha. Você também pode cadastrar uma senha.'}</CardDescription></CardHeader>
       <CardContent><form onSubmit={e => {
         e.preventDefault(); const element = e.currentTarget; const form = new FormData(element);
@@ -88,7 +89,7 @@ export function SecuritySettings({ enabled: initialEnabled, hasPassword: initial
         <Button type="submit" disabled={busy}>{hasPassword ? 'Trocar senha' : 'Definir senha'}</Button>
       </FieldGroup></form></CardContent>
     </Card>
-    <Card>
+    <Card className={styles.authenticatorCard}>
       <CardHeader><CardTitle>Aplicativo autenticador (2FA)</CardTitle><CardDescription>{enabled ? 'Ativo. Novos acessos exigem o segundo fator, inclusive por Google, GitHub, Magic Link e Passkey.' : 'Use Google Authenticator, 1Password ou outro aplicativo TOTP.'}</CardDescription></CardHeader>
       <CardContent className="flex flex-col gap-5">
         {!enabled && !qr && <form onSubmit={e => { e.preventDefault(); void guard(async () => {
@@ -129,10 +130,10 @@ export function SecuritySettings({ enabled: initialEnabled, hasPassword: initial
         {enabled && callbackUrl && <Link href={callbackUrl} className="text-sm underline underline-offset-4">Continuar para o destino solicitado</Link>}
       </CardContent>
     </Card>
-    <Card>
+    <Card className={styles.keysCard}>
       <CardHeader><CardTitle>Chaves de acesso</CardTitle><CardDescription>Entre com Touch ID, Face ID, Windows Hello ou uma chave de segurança. O NexOS não recebe seus dados biométricos.</CardDescription></CardHeader>
       <CardContent className="flex flex-col gap-5">
-        <form onSubmit={e => { e.preventDefault(); const name = String(new FormData(e.currentTarget).get('name') ?? '').trim(); void guard(async () => {
+        <form className={styles.keysForm} onSubmit={e => { e.preventDefault(); const name = String(new FormData(e.currentTarget).get('name') ?? '').trim(); void guard(async () => {
           if (!window.isSecureContext || !window.PublicKeyCredential) throw new Error('Este navegador não suporta chaves de acesso neste endereço. Use HTTPS.');
           const result = await authClient.passkey.addPasskey({ name });
           if (result.error) throw result.error;

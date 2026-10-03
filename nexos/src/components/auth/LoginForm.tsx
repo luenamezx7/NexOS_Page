@@ -1,11 +1,9 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, ArrowRight, Eye, EyeOff, Fingerprint, LockKeyhole } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff, Fingerprint, LockKeyhole } from 'lucide-react';
 import { motion, useReducedMotion } from 'motion/react';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import { Turnstile } from '@/components/Turnstile';
 import { PasswordStrengthMeter } from './PasswordStrengthMeter';
 import { evaluatePassword } from '@/lib/auth/password-strength';
@@ -18,8 +16,16 @@ import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import styles from './LoginForm.module.css';
 import { MetallicButton } from '@/components/ui/metallic-button';
+import { AuthHeader, AuthStory } from './AuthFrame';
 
 type Mode = 'login' | 'signup' | 'forgot' | 'magic' | 'verify-email';
+const MODE_DESCRIPTION: Record<Mode, string> = {
+  login: 'Acesse seus pedidos, dados e configurações.',
+  signup: 'Crie seu acesso para comprar e acompanhar seus pedidos.',
+  forgot: 'Receba um link para definir uma nova senha.',
+  magic: 'Enviaremos um link de acesso ao seu e-mail.',
+  'verify-email': 'Confirme seu cadastro para continuar.',
+};
 interface LoginFormProps {
   audience?: 'admin' | 'user';
   confirmationError?: boolean;
@@ -132,45 +138,46 @@ export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, 
   }
 
   return (
-    <main className={userFlow ? styles.customer : 'page-surface min-h-[100dvh] px-6 py-8 text-ink sm:px-10'}>
-      <header className={userFlow ? styles.header : 'mx-auto flex max-w-6xl items-center justify-between border-b border-ink/15 pb-6'}>
-        <Link href="/" aria-label="NexOS — página inicial"><Image src="/nexos-branca-transparente.svg" alt="NexOS" width={110} height={26} priority className="logo-invert h-6 w-auto" /></Link>
-        <div className="flex items-center gap-4"><Link href="/" className="flex min-h-[44px] items-center gap-2 text-sm hover:underline"><ArrowLeft size={16} /> Voltar ao site</Link><ThemeToggle /></div>
-      </header>
-      <div className={userFlow ? styles.content : 'mx-auto grid max-w-6xl gap-12 py-12 md:min-h-[75dvh] md:grid-cols-2 md:items-center md:gap-20'}>
-        {!userFlow && <section className="rounded-2xl border border-ink/10 bg-card p-8 md:p-10">
-          <p className="font-mono text-xs uppercase tracking-[.22em] text-muted-foreground">NexOS Ops • Controlled Access</p>
+    <main className={styles.customer}>
+      <AuthHeader />
+      <div className={styles.content}>
+        {userFlow && <AuthStory recovery={mode === 'forgot'} />}
+        {!userFlow && <aside className={styles.story}>
+          <p className={styles.storyLabel}>NexOS Ops / Controlled Access</p>
           <h1 className={`${styles.adminHeading} brand-heading mt-4`}>Ambiente administrativo restrito.</h1>
-          <p className="mt-4 text-sm leading-relaxed text-muted-foreground">Acesso por papel, sessão revogável e autenticação em duas etapas obrigatória para operadores.</p>
-        </section>}
-        <motion.section initial={reduce ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className={userFlow ? styles.panel : 'surface-glass w-full max-w-md p-6 md:justify-self-end md:p-8'} aria-labelledby="login-title">
-          {userFlow && <p className={styles.overline}>Sua conta NexOS</p>}
-          <div className={userFlow ? styles.title : 'mb-8 flex items-center gap-3'}>
+          <p className={styles.storyDescription}>Acesso por papel, sessão revogável e autenticação em duas etapas obrigatória para operadores.</p>
+        </aside>}
+        <motion.section initial={reduce ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className={styles.panel} aria-labelledby="login-title">
+          <p className={styles.overline}>{userFlow ? 'Sua conta NexOS' : 'Acesso administrativo'}</p>
+          <div className={styles.title}>
             {!userFlow && <LockKeyhole size={20} />}
             <h2 id="login-title" className={`${styles.heading} brand-heading`}>{step === 'totp' ? 'Verificação em duas etapas' : mode === 'signup' ? 'Criar sua conta' : mode === 'forgot' ? 'Recuperar senha' : mode === 'magic' ? 'Entrar por link de e-mail' : mode === 'verify-email' ? 'Confirme seu e-mail' : userFlow ? 'Entrar na sua conta' : 'Entrada do operador'}</h2>
           </div>
-          <div className="flex flex-col gap-5">
+          <p className={styles.description}>{step === 'totp' ? 'Confirme sua identidade para concluir o acesso.' : !userFlow && mode === 'login' ? 'Área restrita a operadores autorizados.' : MODE_DESCRIPTION[mode]}</p>
+          <div className={styles.formStack}>
             {(error || (step === 'credentials' && security.error)) && <Alert variant="destructive"><AlertDescription>{error || security.error}</AlertDescription></Alert>}
             {step === 'credentials' && (mode === 'login' || mode === 'signup') && socialProviders.length > 0 &&
-              <div className="flex gap-3" role="group" data-social-auth-mode={socialAuthMode} aria-label={mode === 'signup' ? 'Criar conta com provedor' : 'Entrar com provedor'}>
+              <div className={styles.social} role="group" data-social-auth-mode={socialAuthMode} aria-label={mode === 'signup' ? 'Criar conta com provedor' : 'Entrar com provedor'}>
                 {socialProviders.map(provider => <Button key={provider} type="button" variant="secondary" disabled={busy} onClick={() => void social(provider)} className="flex-1">
                   <SocialProviderIcon provider={provider} />{provider === 'google' ? 'Google' : 'GitHub'}
                 </Button>)}
               </div>}
             {step === 'credentials' && mode === 'login' && <>
-              <button type="button" disabled={busy} onClick={() => void passkeyLogin()} className="flex items-center justify-center gap-2 rounded-xl border border-ink/15 px-4 py-2.5 text-sm disabled:opacity-60"><Fingerprint size={18} /> Entrar com chave de acesso</button>
-              <button type="button" disabled={busy} onClick={() => goMode('magic')} className="text-sm underline underline-offset-4">Entrar por link de e-mail</button>
+              <button type="button" disabled={busy} onClick={() => void passkeyLogin()} className={styles.passkeyButton}><Fingerprint size={18} aria-hidden="true" /> Entrar com chave de acesso</button>
+              <button type="button" disabled={busy} onClick={() => goMode('magic')} className={styles.magicLink}>Entrar por link de e-mail</button>
             </>}
             {step === 'credentials' && mode !== 'verify-email' && <form onSubmit={e => { e.preventDefault(); void submit(new FormData(e.currentTarget)); }}>
-              <FieldGroup>
+              <FieldGroup className={styles.formGroup}>
                 {mode === 'signup' && <Field><FieldLabel htmlFor="login-name">Nome</FieldLabel><input id="login-name" name="name" autoComplete="name" required maxLength={120} className="field-input" disabled={busy} /></Field>}
                 <Field><FieldLabel htmlFor="login-email">E-mail</FieldLabel><input id="login-email" name="email" type="email" autoComplete="username webauthn" required maxLength={254} className="field-input" disabled={busy} /></Field>
                 {(mode === 'login' || mode === 'signup') && <Field>
                   <FieldLabel htmlFor="login-password">Senha</FieldLabel>
-                  <input id="login-password" name="password" type={showPassword ? 'text' : 'password'} autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} required minLength={mode === 'signup' ? 12 : 1} maxLength={256} value={password} onChange={e => setPassword(e.target.value)} className="field-input" disabled={busy} />
-                  <button type="button" onClick={() => setShowPassword(v => !v)} aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'} aria-pressed={showPassword} className="flex items-center gap-2 self-start text-sm">{showPassword ? <EyeOff size={16} /> : <Eye size={16} />} {showPassword ? 'Ocultar senha' : 'Mostrar senha'}</button>
+                  <div className={styles.passwordControl}>
+                    <input id="login-password" name="password" type={showPassword ? 'text' : 'password'} autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} required minLength={mode === 'signup' ? 12 : 1} maxLength={256} value={password} onChange={e => setPassword(e.target.value)} className="field-input" disabled={busy} />
+                    <button type="button" onClick={() => setShowPassword(v => !v)} aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'} aria-pressed={showPassword} className={styles.passwordToggle}>{showPassword ? <EyeOff size={17} aria-hidden="true" /> : <Eye size={17} aria-hidden="true" />}</button>
+                  </div>
                   {mode === 'signup' && <><p className="text-sm text-muted-foreground">12+ caracteres, maiúscula, minúscula, número e símbolo.</p><PasswordStrengthMeter password={password} /></>}
-                  {mode === 'login' && <button type="button" onClick={() => goMode('forgot')} className="self-start text-sm underline underline-offset-4">Esqueceu a senha?</button>}
+                  {mode === 'login' && <button type="button" onClick={() => goMode('forgot')} className={styles.forgotLink}>Esqueceu a senha?</button>}
                 </Field>}
                 {mode === 'signup' && <Field><FieldLabel htmlFor="confirm-password">Confirmar senha</FieldLabel><input id="confirm-password" name="confirmPassword" type="password" autoComplete="new-password" required minLength={12} maxLength={256} className="field-input" disabled={busy} /></Field>}
                 <Turnstile key={captchaKey} onVerify={setCaptcha} onExpire={() => setCaptcha('')} onError={() => setCaptcha('')} />

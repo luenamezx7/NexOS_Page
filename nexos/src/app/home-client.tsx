@@ -20,32 +20,10 @@ const Contact = dynamic(() => import('@/components/Contact').then(m => m.Contact
 const Footer = dynamic(() => import('@/components/Footer').then(m => m.Footer), { ssr: false, loading: () => null });
 
 
-type Stage = 'loading' | 'intro' | 'brand' | 'main';
+type Stage = 'intro' | 'brand' | 'main';
 
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
-const LOADING_MS = 900;
 const BOOT_SEEN_KEY = 'nexos-boot-seen';
-
-function LoadingScreen() {
-  const reduce = useReducedMotion();
-  return (
-    <motion.div
-      role="status"
-      aria-label="Carregando plataforma NexOS"
-      exit={{ opacity: 0 }}
-      transition={{ duration: reduce ? 0.15 : 0.45, ease: FLUID_EASE }}
-      className="fixed inset-0 z-[999] flex flex-col items-center justify-center gap-8 bg-canvas"
-    >
-      <div className="flex flex-col items-center gap-3">
-        <span className="font-display text-3xl font-semibold tracking-tighter">NexOS</span>
-        <span className="font-mono text-xs text-muted-foreground">Preparando sua experiência</span>
-      </div>
-      <div className="h-px w-32 overflow-hidden bg-ink/10" aria-hidden="true">
-        <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: reduce ? 0 : LOADING_MS / 1000, ease: 'easeInOut' }} className="h-full origin-left bg-[#db2777]" />
-      </div>
-    </motion.div>
-  );
-}
 
 interface IntroSectionProps {
   onComplete: () => void;
@@ -104,7 +82,7 @@ function IntroSection({ onComplete }: IntroSectionProps) {
       <div className="grid-pattern-subtle opacity-80 dark:opacity-10" aria-hidden="true" />
 
       <motion.div
-        initial={reduce ? false : { opacity: 0, y: 16 }}
+        initial={false}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: FLUID_EASE }}
         className="absolute inset-x-0 top-[16%] bottom-[20%] flex items-center justify-center px-6 sm:px-10 md:px-12"
@@ -121,7 +99,7 @@ function IntroSection({ onComplete }: IntroSectionProps) {
         type="button"
         onClick={finish}
         aria-label="Continuar para o site"
-        initial={reduce ? false : { opacity: 0, y: 12 }}
+        initial={false}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.9, ease: FLUID_EASE }}
         className="absolute bottom-[calc(2.5rem+env(safe-area-inset-bottom))] left-1/2 z-10 flex min-h-[48px] -translate-x-1/2 items-center gap-3 whitespace-nowrap rounded-full border border-ink/15 bg-canvas/80 px-6 py-3 text-sm font-medium text-ink/80 transition-colors duration-300 hover:bg-ink/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
@@ -136,7 +114,8 @@ function IntroSection({ onComplete }: IntroSectionProps) {
 }
 
 export default function HomeClient() {
-  const [stage, setStage] = useState<Stage>('loading');
+  // Paint the introduction from SSR immediately; avoid a timer/hydration-gated LCP.
+  const [stage, setStage] = useState<Stage>('intro');
   const heroRef = useRef<HTMLElement>(null);
   const introDoneRef = useRef<boolean>(false);
   const brandDoneRef = useRef<boolean>(false);
@@ -169,12 +148,6 @@ export default function HomeClient() {
   }, []);
 
   useEffect(() => {
-    if (stage !== 'loading') return;
-    const timer: ReturnType<typeof setTimeout> = setTimeout(() => setStage('intro'), LOADING_MS);
-    return () => clearTimeout(timer);
-  }, [stage]);
-
-  useEffect(() => {
     if (stage !== 'main' || skippedBootRef.current) return;
     window.scrollTo(0, 0);
     let timer: ReturnType<typeof setTimeout> | undefined;
@@ -190,8 +163,6 @@ export default function HomeClient() {
 
   return (
     <main className="landing-page w-full max-w-full overflow-x-clip bg-canvas text-ink">
-      <AnimatePresence>{stage === 'loading' && <LoadingScreen key="loading" />}</AnimatePresence>
-
       <AnimatePresence>{stage === 'intro' && <IntroSection key="intro" onComplete={handleIntroComplete} />}</AnimatePresence>
 
       <AnimatePresence>{stage === 'brand' && <BrandEntrance key="brand" onComplete={handleBrandComplete} />}</AnimatePresence>

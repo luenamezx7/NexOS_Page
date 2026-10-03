@@ -13,15 +13,14 @@ import { MetallicButton } from '@/components/ui/metallic-button';
  * módulo `LoginForm.module.css`.
  */
 import { useRef, useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { motion, useReducedMotion } from 'motion/react';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import { PasswordStrengthMeter } from '@/components/auth/PasswordStrengthMeter';
 import { evaluatePassword } from '@/lib/auth/password-strength';
 import { authClient, authErrorMessage } from '@/lib/auth/client';
 import styles from '@/components/auth/LoginForm.module.css';
+import { AuthHeader, AuthStory } from './AuthFrame';
 
 export function ResetPasswordForm({ token }: { token: string }) {
   const reduce = useReducedMotion();
@@ -72,19 +71,10 @@ export function ResetPasswordForm({ token }: { token: string }) {
 
   return (
     <main className={styles.customer}>
-      <header className={styles.header}>
-        <Link href="/" className="flex items-center gap-2.5" aria-label="NexOS — página inicial">
-          <Image src="/nexos-branca-transparente.svg" alt="NexOS" width={110} height={26} priority className="logo-invert h-6 w-auto" />
-        </Link>
-        <div className="flex items-center gap-4">
-          <Link href="/" className="flex min-h-[44px] items-center gap-2 text-sm hover:underline">
-            <ArrowLeft size={16} aria-hidden="true" /> Voltar ao site
-          </Link>
-          <ThemeToggle />
-        </div>
-      </header>
+      <AuthHeader />
 
       <div className={styles.content}>
+        <AuthStory recovery />
         <motion.section
           initial={reduce ? false : { opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
