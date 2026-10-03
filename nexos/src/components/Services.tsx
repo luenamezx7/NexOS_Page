@@ -1,21 +1,20 @@
 'use client';
 
 /** Objective-driven service exploration with the existing checkout flow. */
-import { useCallback, useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
+import { useState } from 'react';
+import Link from 'next/link';
 import { motion, useReducedMotion } from 'motion/react';
 import { ArrowUpRight, Check, Code2, CreditCard, Headphones, Layers, Plus } from 'lucide-react';
 import { config } from '@/config';
 import type { Service } from '@/types';
-import { BULK_MAX_QTY } from '@/lib/bulk-pricing';
-import { HoldButton } from './HoldButton';
+import { checkoutHref } from '@/lib/checkout';
+import { MetallicSurface } from './ui/metallic-button';
 import { ServiceExplorer, type ServiceGoal } from './ServiceExplorer';
 import styles from './commerce/Commerce.module.css';
 
-const EmbeddedCheckoutDrawer = dynamic(() => import('./EmbeddedCheckout').then(m => m.EmbeddedCheckoutDrawer), { ssr: false });
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-function ServiceCard({ service, onCheckout }: { service: Service; onCheckout: (service: Service) => void }) {
+function ServiceCard({ service }: { service: Service }) {
   const reduce = useReducedMotion();
   const featured = service.id === 'dev';
   const testing = service.id === 'teste';
@@ -36,8 +35,8 @@ function ServiceCard({ service, onCheckout }: { service: Service; onCheckout: (s
       <div className={styles.serviceFooter}>
         <div><p className={styles.price}>R$ {service.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p><span className={styles.meta}>{featured ? 'por mês' : 'pagamento único'}</span></div>
         <div className={styles.serviceAction}>
-          <HoldButton label={featured ? 'Iniciar projeto' : testing ? 'Testar checkout' : service.ctaText} ariaLabel={`${featured ? 'Iniciar projeto' : testing ? 'Testar checkout' : service.ctaText}, R$ ${service.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`} hintId={`service-hold-${service.id}`} onConfirm={() => onCheckout(service)} className={styles.buyButton} />
-          <p id={`service-hold-${service.id}`} className={styles.hint}>Segure para abrir o checkout.</p>
+          <Link href={checkoutHref(service.id)} prefetch={false} className={`${styles.buyButton} btn-primary-nex`} aria-label={`${featured ? 'Iniciar projeto' : testing ? 'Testar checkout' : service.ctaText}, R$ ${service.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}><MetallicSurface /><span className="metallic-content inline-flex items-center gap-2">{featured ? 'Iniciar projeto' : testing ? 'Testar checkout' : service.ctaText}<ArrowUpRight size={16} aria-hidden="true" /></span></Link>
+          <p className={styles.hint}>Dados, revisão e pagamento em uma página.</p>
         </div>
       </div>
     </motion.article>
@@ -51,28 +50,8 @@ const DIFFERENTIALS = [
 ];
 
 export function Services({ className = '' }: { className?: string }) {
-  const [activeService, setActiveService] = useState<Service | null>(null);
-  const [quantity, setQuantity] = useState(1);
   const [goal, setGoal] = useState<ServiceGoal>('all');
   const visibleServices = config.services.filter(service => service.id !== 'placa' && (goal === 'all' || (goal === 'payments' ? service.id === 'teste' : service.id === 'dev')));
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const service = config.services.find(s => s.id === params.get('checkout'));
-    if (!service) return;
-    const requested = Number(params.get('quantity') ?? 1);
-    const frame = requestAnimationFrame(() => {
-      setQuantity(Number.isInteger(requested) && requested >= 1 && requested <= BULK_MAX_QTY ? requested : 1);
-      setActiveService(service);
-    });
-    return () => cancelAnimationFrame(frame);
-  }, []);
-  const closeCheckout = useCallback(() => {
-    setActiveService(null);
-    setQuantity(1);
-    const url = new URL(window.location.href);
-    url.searchParams.delete('checkout'); url.searchParams.delete('quantity');
-    window.history.replaceState(null, '', url.pathname + url.search + url.hash);
-  }, []);
   return (
     <>
       <section id="services" aria-labelledby="services-title" className={`${styles.section} ${styles.servicesSection} ${className}`}>
@@ -88,7 +67,7 @@ export function Services({ className = '' }: { className?: string }) {
           <ServiceExplorer value={goal} onChange={setGoal} />
           <p className={styles.resultCount} aria-live="polite">{visibleServices.length} {visibleServices.length === 1 ? 'solução disponível' : 'soluções disponíveis'}{goal !== 'all' ? ' para seu objetivo' : ''}</p>
           <div className={styles.servicesGrid} data-single={visibleServices.length === 1}>
-            {visibleServices.map(service => <ServiceCard key={service.id} service={service} onCheckout={setActiveService} />)}
+            {visibleServices.map(service => <ServiceCard key={service.id} service={service} />)}
             {goal === 'all' && <aside className={styles.upcoming}>
               <span className={styles.meta}><Plus size={16} aria-hidden="true" /> Em desenvolvimento</span>
               <h3>O próximo capítulo da NexOS.</h3>
@@ -99,7 +78,6 @@ export function Services({ className = '' }: { className?: string }) {
           <div className={styles.differentials}>{DIFFERENTIALS.map(({ icon: Icon, title, description }) => <div key={title}><Icon size={20} strokeWidth={1.75} aria-hidden="true" /><h3>{title}</h3><p>{description}</p></div>)}</div>
         </div>
       </section>
-      {activeService && <EmbeddedCheckoutDrawer open onClose={closeCheckout} productId={activeService.id} productTitle={activeService.title} productPrice={activeService.price} quantity={quantity} />}
     </>
   );
 }

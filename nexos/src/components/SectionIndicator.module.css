@@ -3,9 +3,10 @@
 .nav ul { display: flex; flex-direction: column; gap: 2px; }
 .nav button { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 6px; }
 .track { position: absolute; top: 22px; bottom: 22px; left: 22px; width: 1px; background: var(--border); pointer-events: none; }
-.track span { display: block; width: 100%; height: 100%; transform-origin: top; background: var(--muted-foreground); }
-.dot { width: 6px; height: 6px; border: 1px solid var(--muted-foreground); border-radius: 1px; background: var(--background); transition: transform 250ms var(--ease-fluid), background-color 250ms; }
-.nav button[aria-current='true'] .dot { background: var(--foreground); border-color: var(--foreground); transform: scale(1.4); }
+.track span { display: block; width: 100%; height: 100%; transform-origin: top; background: var(--section-indicator); }
+.dot { width: 6px; height: 6px; border: 1px solid color-mix(in srgb, var(--section-indicator) 55%, transparent); border-radius: 1px; background: var(--background); transition: transform 250ms var(--ease-fluid), background-color 250ms; }
+.nav button[aria-current='true'] .dot { background: var(--section-indicator); border-color: var(--section-indicator); box-shadow: 0 0 0 3px var(--section-indicator-glow-soft), 0 0 12px var(--section-indicator-glow); transform: scale(1.4); }
+.nav button[aria-current='true'] .label { color: var(--display-rose); }
 .label { position: absolute; top: 0; left: 44px; display: flex; align-items: center; height: 44px; padding-inline: 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--background); color: var(--foreground); font: 11px var(--font-mono); white-space: nowrap; opacity: 0; transform: translateX(-6px); pointer-events: none; transition: opacity 200ms, transform 250ms var(--ease-fluid); }
 .nav button:hover .label, .nav button:focus-visible .label { opacity: 1; transform: translateX(0); }
 @media (min-width: 1280px) { .nav { display: block; } }

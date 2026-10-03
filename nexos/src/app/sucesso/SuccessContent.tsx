@@ -6,6 +6,7 @@ import styles from './Success.module.css';
 import { config } from '@/config';
 import { Button } from '@/components/ui/Button';
 import { CheckCircle, MessageSquare, ArrowRight } from 'lucide-react';
+import { parsePaymentCredentials, rememberPayment, type PaymentCredentials } from '@/lib/checkout';
 
 type PixVerifyState = 'verifying' | 'confirmed' | 'failed';
 
@@ -28,15 +29,33 @@ function useAsaasVerification(
     if (!paymentId && !externalReference) return;
     let cancelled = false;
     let tries = 0;
+    let credentials: PaymentCredentials | null = null;
+
+    async function recoverCredentials() {
+      if (!externalReference && !paymentId) return null;
+      const response = await fetch('/api/checkout/order', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(externalReference ? { externalReference } : { paymentId }), cache: 'no-store', signal: AbortSignal.timeout(12000) });
+      if (!response.ok || cancelled) return null;
+      const data = await response.json();
+      const recovered = parsePaymentCredentials(data.credentials);
+      if (recovered) rememberPayment({ ...recovered, ...(paymentId ? { paymentId } : {}) });
+      return recovered;
+    }
 
     const check = async (): Promise<boolean> => {
       try {
+        if (!credentials) {
+          try { credentials = parsePaymentCredentials(JSON.parse(sessionStorage.getItem(`nexos-payment:${paymentId ?? externalReference}`) ?? 'null')); } catch {}
+          credentials ??= await recoverCredentials();
+        }
+        if (!credentials || cancelled) return false;
         const res = await fetch('/api/checkout/status', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: sessionStorage.getItem(`nexos-payment:${paymentId ?? externalReference}`) ?? '{}',
+          body: JSON.stringify(credentials),
+          cache: 'no-store',
           signal: AbortSignal.timeout(20000),
         });
+        if (res.status === 403) { credentials = await recoverCredentials(); return false; }
         const body: { paid?: boolean } = await res.json().catch(() => ({}));
         return res.ok && body.paid === true;
       } catch {
@@ -80,7 +99,7 @@ export default function SuccessContent() {
 
   const txLabel = paymentId ?? externalReference ?? 'não informado';
   const whatsappUrl = `https://wa.me/${config.whatsapp.number}?text=${encodeURIComponent(
-    `Olá! Acabei de finalizar o pagamento (pedido: ${txLabel}). Gostaria de agendar o início do meu projeto.`,
+    `Olá! Concluí o pagamento do pedido ${txLabel}. Gostaria de confirmar os próximos passos com a NexOS.`,
   )}`;
 
   if (pixState === 'verifying') {
@@ -136,7 +155,7 @@ export default function SuccessContent() {
         </div>
         <h1 className={styles.title}>Pagamento confirmado!</h1>
         <p className={styles.subtitle}>
-          Obrigado por confiar na NexOS. Seu projeto já está na nossa fila de execução.
+            Recebemos a confirmação do pagamento. Você pode acompanhar os detalhes do pedido na sua conta.
         </p>
         <div className={styles.details}>
           <p className={styles.sessionId}>
@@ -144,6 +163,9 @@ export default function SuccessContent() {
           </p>
         </div>
         <div className={styles.actions}>
+          <Button variant="primary" size="lg" onClick={() => router.push('/conta')}>
+            Ver meus pedidos
+          </Button>
           <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className={styles.whatsappButton}>
             <MessageSquare size={22} strokeWidth={2.5} aria-hidden="true" />
             <span>Continuar no WhatsApp</span>
@@ -154,7 +176,7 @@ export default function SuccessContent() {
           </Button>
         </div>
         <p className={styles.nextSteps}>
-          <strong>Próximos passos:</strong> Nossa equipe entrará em contato em até 2h úteis para alinhar o kickoff e cronograma.
+          <strong>Próximos passos:</strong> Acompanhe o pedido na sua conta. Fale com a equipe para alinhar a entrega, personalização ou execução do serviço.
         </p>
       </div>
     </div>

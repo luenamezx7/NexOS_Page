@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "test:security": "node --conditions=react-server --test tests/security.test.mjs",
+    "test:checkout": "node --conditions=react-server --import tsx --test tests/checkout.test.mjs",
     "test:auth:integration": "node --use-system-ca --conditions=react-server --import tsx --test tests/better-auth.test.mjs",
     "test:auth:production": "node --use-system-ca --test tests/production-auth-smoke.mjs",
     "test:auth:production:ui": "node --use-system-ca --test tests/production-social-ui.test.mjs",

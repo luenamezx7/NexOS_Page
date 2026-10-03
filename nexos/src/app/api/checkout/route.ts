@@ -83,6 +83,7 @@ export async function GET() {
       provider: 'asaas',
       hasKey: isAsaasConfigured(),
       turnstileRequired: isTurnstileEnforced(),
+      methods: { PIX: isPixEnabled(), BOLETO: true, CREDIT_CARD: true },
       products: config.services.map((s) => ({ id: s.id, title: s.title, price: s.price })),
     },
     { headers: securityHeaders() },
@@ -175,7 +176,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Parcelas: Asaas recebe value + installmentCount via API transparente; para UNDEFINED/BOLETO é sempre 1x
-  const effectiveBillingType = billingType === 'CREDIT_CARD' ? 'CREDIT_CARD' : billingType === 'BOLETO' ? 'BOLETO' : 'UNDEFINED';
+  const effectiveBillingType = billingType === 'PIX' ? 'PIX' : billingType === 'CREDIT_CARD' ? 'CREDIT_CARD' : billingType === 'BOLETO' ? 'BOLETO' : 'UNDEFINED';
 
   const keyHash = createHash('sha256').update(idempotencyKey).digest('hex');
   let reserved = false;

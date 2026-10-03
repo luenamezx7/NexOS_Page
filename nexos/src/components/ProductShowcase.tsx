@@ -1,18 +1,19 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { motion, useReducedMotion } from 'motion/react';
 import { ArrowUpRight, Box, Minus, Nfc, Palette, Plus, QrCode } from 'lucide-react';
 import { config } from '@/config';
 import { BULK_MAX_QTY, bulkTag, bulkUnitPrice } from '@/lib/bulk-pricing';
-import { HoldButton } from './HoldButton';
+import { MetallicSurface } from './ui/metallic-button';
+import { checkoutHref } from '@/lib/checkout';
 import { DetailTabs, type DetailTab } from './commerce/DetailTabs';
 import { PlateQuiz } from './PlateQuiz';
 import styles from './commerce/Commerce.module.css';
 
-const EmbeddedCheckoutDrawer = dynamic(() => import('./EmbeddedCheckout').then(m => m.EmbeddedCheckoutDrawer), { ssr: false });
 const PlatePreview = dynamic(() => import('./PlatePreview').then(m => m.PlatePreview), { ssr: false });
 const EASE = [0.16, 1, 0.3, 1] as const;
 const money = (value: number) => value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -26,11 +27,9 @@ const DETAILS: DetailTab[] = [
 
 export function ProductShowcase({ className = '' }: { className?: string }) {
   const reduce = useReducedMotion();
-  const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [qty, setQty] = useState(1);
   const placa = config.services.find(service => service.id === 'placa');
-  const closeCheckout = useCallback(() => setCheckoutOpen(false), []);
   if (!placa) return null;
   const unitPrice = bulkUnitPrice(placa.price, qty, placa.id);
   const tag = bulkTag(qty, placa.id);
@@ -70,8 +69,8 @@ export function ProductShowcase({ className = '' }: { className?: string }) {
                 </div>
               </div>
               {tag && <p className={styles.discount}>{tag}: desconto aplicado ao total.</p>}
-              <HoldButton label="Comprar placa" ariaLabel="Comprar placa, segure para confirmar" hintId="showcase-hold-hint" onConfirm={() => setCheckoutOpen(true)} className={styles.buyButton} />
-              <p id="showcase-hold-hint" className={styles.hint}>Segure por 1,5 segundo para abrir o checkout.</p>
+              <Link href={checkoutHref(placa.id, qty)} prefetch={false} className={`${styles.buyButton} btn-primary-nex`}><MetallicSurface /><span className="metallic-content inline-flex items-center gap-2">Comprar placa <ArrowUpRight size={16} aria-hidden="true" /></span></Link>
+              <p className={styles.hint}>Revise seu pedido antes de pagar.</p>
               <a href={personalizeUrl} target="_blank" rel="noopener noreferrer" className={styles.textLink}><Palette size={16} aria-hidden="true" /> Personalizar minha placa <ArrowUpRight size={16} aria-hidden="true" /></a>
             </div>
           </div>
@@ -79,7 +78,6 @@ export function ProductShowcase({ className = '' }: { className?: string }) {
           <DetailTabs id="plate-details" tabs={DETAILS} />
         </div>
       </section>
-      {checkoutOpen && <EmbeddedCheckoutDrawer open onClose={closeCheckout} productId={placa.id} productTitle={placa.title} productPrice={placa.price} quantity={qty} />}
       {previewOpen && <PlatePreview onClose={() => setPreviewOpen(false)} />}
     </>
   );

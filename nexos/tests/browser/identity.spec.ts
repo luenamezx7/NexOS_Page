@@ -32,8 +32,9 @@ test('white hero stars cover the left edge and stop twinkling under reduced moti
   await setTheme(page, 'dark');
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
-  const canvas = page.locator('.hero-flow canvas');
+  const canvas = page.locator('.site-atmosphere .night-sky canvas');
   await expect(canvas).toBeVisible();
+  await expect(page.locator('#hero .hero-flow canvas')).toHaveCount(0);
   const counts = await canvas.evaluate(element => {
     const canvas = element as HTMLCanvasElement;
     const pixels = canvas.getContext('2d')!.getImageData(0, 0, canvas.width, canvas.height).data;
@@ -59,7 +60,7 @@ test('dark sky responds with ASCII flow while cream mode displays clouds and pau
   await setTheme(page, 'dark');
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/');
-  const stars = page.locator('.hero-flow canvas');
+  const stars = page.locator('.site-atmosphere .night-sky canvas');
   await expect(stars).toBeVisible();
   await expect(stars).toHaveAttribute('data-ascii-flow', 'idle');
   await page.mouse.move(100, 240);
@@ -69,7 +70,7 @@ test('dark sky responds with ASCII flow while cream mode displays clouds and pau
   await page.getByRole('button', { name: 'Ativar modo claro' }).click();
   await expect(page.locator('.site-atmosphere .day-clouds')).toBeVisible();
   await expect(stars).toBeHidden();
-  await expect(page.locator('.site-atmosphere canvas')).toBeHidden();
+  await expect(page.locator('.site-atmosphere .night-sky canvas')).toBeHidden();
 });
 
 test('metallic login submit preserves validation, keyboard activation and disabled state', async ({ page }) => {
@@ -123,6 +124,21 @@ test('hero heading and actions are horizontally centered on desktop and mobile',
     const button = await page.getByRole('button', { name: 'Iniciar Projeto', exact: true }).boundingBox();
     if (width < 768) expect(Math.abs(button!.x + button!.width / 2 - width / 2)).toBeLessThan(2);
   }
+});
+
+test('hero uses one shared ASCII field and the active section marker is NexOS pink', async ({ page }) => {
+  await setTheme(page, 'dark');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: 'Seu negócio. Em outra escala.' })).toBeVisible();
+  await expect(page.locator('.site-atmosphere')).toHaveAttribute('data-hero-active', 'true');
+  await expect(page.locator('#hero canvas[data-ascii-flow]')).toHaveCount(0);
+  await expect(page.locator('.site-atmosphere .night-sky canvas')).toHaveCount(1);
+  const navigation = page.getByRole('navigation', { name: 'Navegação de seções' });
+  await expect(navigation.locator('button[aria-current="true"] > span').first()).toHaveCSS('background-color', 'rgb(255, 22, 141)');
+  await page.locator('#faq').scrollIntoViewIfNeeded();
+  await expect(page.locator('.site-atmosphere')).toHaveAttribute('data-hero-active', 'false');
 });
 
 test('light-only Dither Wave uses pink and cream instead of black pixels', async ({ page }) => {

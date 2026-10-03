@@ -52,9 +52,9 @@
   --field-surface: #eadfcd;
   --action-gradient: linear-gradient(110deg, #d60070 0%, #bc087f 46%, #762ab9 100%);
   --nex-hairline: rgba(255, 255, 255, 0.1);
-  --section-indicator: #171717;
-  --section-indicator-glow: transparent;
-  --section-indicator-glow-soft: transparent;
+  --section-indicator: var(--nex-pink-hot);
+  --section-indicator-glow: rgba(255, 22, 141, 0.25);
+  --section-indicator-glow-soft: rgba(255, 22, 141, 0.08);
   --ns-muted: #4d4d4d;
   --text-gradient-start: var(--display-rose);
   --text-gradient-end: var(--display-purple);
@@ -95,9 +95,9 @@
   --field-surface: #080508;
   --text-gradient-start: var(--display-rose);
   --text-gradient-end: var(--display-purple);
-  --section-indicator: #ffffff;
-  --section-indicator-glow: rgba(255, 255, 255, 0.14);
-  --section-indicator-glow-soft: rgba(255, 255, 255, 0.06);
+  --section-indicator: var(--nex-pink-hot);
+  --section-indicator-glow: rgba(255, 22, 141, 0.25);
+  --section-indicator-glow-soft: rgba(255, 22, 141, 0.08);
   --background: #000000;
   --foreground: oklch(0.985 0 0);
   --card: #090609;
@@ -834,7 +834,6 @@ select.field-input option {
 .hero-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 48px; font-size: 14px; color: var(--color-ink); }
 .hero-secondary svg { transition: transform 300ms var(--ease-fluid); }
 .hero-secondary:hover svg { transform: translate(3px, -3px); }
-.hero-flow { position: absolute; inset: 0; opacity: 0.9; pointer-events: none; }
 .hero-coordinate { position: absolute; right: 40px; bottom: 40px; font: 11px var(--font-mono); letter-spacing: 0.12em; color: var(--muted-foreground); writing-mode: vertical-rl; }
 .landing-hero .tech-badge { padding: 0; border: none; background: none; color: var(--muted-foreground); letter-spacing: 0.1em; }
 .landing-hero .tech-badge-dot { background: var(--display-rose); box-shadow: 0 0 8px color-mix(in srgb, var(--display-rose) 30%, transparent); border-radius: 1px; }
@@ -854,13 +853,13 @@ select.field-input option {
   .hero-description { font-size: 16px; margin-top: 24px; }
   .hero-actions { flex-direction: column; gap: 12px; margin-top: 28px; }
   .hero-actions > * { width: auto; max-width: 100%; min-width: 220px; }
-  .hero-flow { opacity: 0.8; }
 }
 
 /* Shared atmosphere and material. Route roots let the single star layer show through. */
 .site-atmosphere { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 .night-sky { position: absolute; inset: 0; display: none; opacity: 0.38; }
 .dark .night-sky { display: block; }
+.site-atmosphere[data-hero-active='true'] .night-sky { opacity: 0.88; }
 .day-dither { position: absolute; inset: 0; opacity: 0.15; mask-image: radial-gradient(ellipse at 50% 45%, transparent 18%, #0005 48%, black 100%); }
 .dark .day-dither { display: none; }
 .day-clouds { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
@@ -887,8 +886,8 @@ select.field-input option {
 .hero-veil canvas { width: 100%; height: 100%; display: block; }
 .dialog-stars { display: none; position: absolute; inset: 0; overflow: hidden; pointer-events: none; opacity: 0.22; }
 .dark .dialog-stars { display: block; }
-.hero-flow, .intro-flow { display: none; }
-.dark .hero-flow, .dark .intro-flow { display: block; }
+.intro-flow { display: none; }
+.dark .intro-flow { display: block; }
 .site-shell .btn-primary-nex > .metallic-content { font-family: var(--font-mono); }
 .site-shell :where(label, [data-slot="field-label"]) { font-family: var(--font-mono); }
 .site-shell .btn-primary-nex, .site-shell .btn-primary-glow { background: var(--action-gradient); font-family: var(--font-mono); font-weight: 700; letter-spacing: -0.025em; box-shadow: inset 0 1px 0 #ffffff35, 0 6px 24px -14px #ff168d90; }

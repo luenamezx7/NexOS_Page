@@ -1,14 +1,13 @@
 'use client';
 
 /** Rose-purple display type, sparkling ASCII flow and an editorial benefits grid. */
-import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
+import { forwardRef, useEffect, type ForwardedRef, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { motion, useReducedMotion, type Variants } from 'motion/react';
 import { ArrowRight, ArrowUpRight, Zap, Layers, Gauge, Sparkles } from 'lucide-react';
 import { config } from '@/config';
 import GradientText from './GradientText';
-import { Slipstream } from './ui/background-ascii-flow';
 import { HoverButton } from './ui/hover-button';
 import styles from './MidPage.module.css';
 import { useTheme } from './ThemeProvider';
@@ -188,6 +187,18 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
     const router = useRouter();
     const { theme } = useTheme();
 
+    useEffect(() => {
+      const hero = document.getElementById('hero');
+      const atmosphere = document.querySelector<HTMLElement>('.site-atmosphere');
+      if (!hero || !atmosphere) return;
+      // Emphasize the single shared star field; do not mount a second canvas here.
+      const observer = new IntersectionObserver(([entry]) => {
+        atmosphere.dataset.heroActive = entry.isIntersecting ? 'true' : 'false';
+      }, { threshold: 0.1 });
+      observer.observe(hero);
+      return () => { observer.disconnect(); delete atmosphere.dataset.heroActive; };
+    }, []);
+
     return (
       <>
         <section
@@ -197,7 +208,6 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
           className={`landing-hero relative flex min-h-[100dvh] w-full max-w-full items-center overflow-hidden ${className}`}
         >
           {theme === 'dark' && <div className="hero-veil" aria-hidden="true"><DarkVeil /></div>}
-          <div className="hero-flow" aria-hidden="true"><Slipstream density={1.7} seed={913} /></div>
           <div className="hero-coordinate" aria-hidden="true">NEXOS / DIGITAL STUDIO</div>
           <div className="hero-container">
             <div className="hero-copy">

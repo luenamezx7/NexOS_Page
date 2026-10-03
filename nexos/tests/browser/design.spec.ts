@@ -98,7 +98,7 @@ test('stage 4: plate showcase and services stay clear at every breakpoint', asyn
   await expect(total).toHaveText(/R\$\s?279,60/);
   await showcase.getByRole('button', { name: 'Diminuir quantidade' }).click();
   await expect(total).toHaveText(/R\$\s?209,70/);
-  await expect(showcase.getByRole('button', { name: /Comprar placa/ })).toBeVisible();
+  await expect(showcase.getByRole('link', { name: /Comprar placa/ })).toBeVisible();
   await expect(showcase.getByRole('link', { name: /Personalizar minha placa/ })).toBeVisible();
 
   const tablist = showcase.getByRole('tablist', { name: 'Detalhes da placa' });
@@ -113,13 +113,13 @@ test('stage 4: plate showcase and services stay clear at every breakpoint', asyn
   await expect(services).toBeVisible();
   await expect(services.getByRole('heading', { name: 'Ideias boas merecem' })).toBeVisible();
   await expect(services.getByRole('article', { name: /Desenvolvimento NexOS/ })).toBeVisible();
-  await expect(services.getByRole('button', { name: /Iniciar projeto/ })).toBeVisible();
+  await expect(services.getByRole('link', { name: /Iniciar projeto/ })).toBeVisible();
   await expect(services.getByRole('article', { name: /TESTE CHECKOUT|Teste de checkout/ })).toBeVisible();
 
   for (const width of [320, 360, 390, 768, 1024, 1280, 1536]) {
     await page.setViewportSize({ width, height: 900 });
     await noOverflow(page);
-    const buy = showcase.getByRole('button', { name: /Comprar placa/ });
+    const buy = showcase.getByRole('link', { name: /Comprar placa/ });
     const box = await buy.boundingBox();
     expect(box!.x).toBeGreaterThanOrEqual(0);
     expect(box!.x + box!.width).toBeLessThanOrEqual(width);
@@ -197,14 +197,14 @@ test('stage 5: full-page resolution sweep keeps layout and CTAs intact', async (
       await assertNoViewportLeaks(page, width);
     }
 
-    const buy = page.getByRole('button', { name: /Comprar placa/ });
+    const buy = page.getByRole('link', { name: /Comprar placa/ });
     const buyBox = await buy.boundingBox();
     expect(buyBox, `CTA placa @${width}`).toBeTruthy();
     expect(buyBox!.x).toBeGreaterThanOrEqual(0);
     expect(buyBox!.x + buyBox!.width).toBeLessThanOrEqual(width + 1);
     expect(buyBox!.height).toBeGreaterThanOrEqual(44);
 
-    const hire = page.getByRole('button', { name: /Iniciar projeto/ });
+    const hire = page.getByRole('link', { name: /Iniciar projeto/ });
     const hireBox = await hire.boundingBox();
     expect(hireBox, `CTA dev @${width}`).toBeTruthy();
     expect(hireBox!.x + hireBox!.width).toBeLessThanOrEqual(width + 1);
