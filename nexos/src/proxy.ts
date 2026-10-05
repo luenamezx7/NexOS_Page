@@ -48,7 +48,7 @@ export async function proxy(req: NextRequest) {
     "frame-ancestors 'none'", "form-action 'self'",
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''} https://challenges.cloudflare.com`,
     "style-src 'self' 'unsafe-inline'", "img-src 'self' data: blob: https:",
-    "font-src 'self' data:", "frame-src https://challenges.cloudflare.com",
+    "font-src 'self' data:", "frame-src https://challenges.cloudflare.com", "worker-src 'self'",
     `connect-src 'self' ${origin} ${origin.replace('https:', 'wss:')} https://challenges.cloudflare.com${process.env.NODE_ENV === 'development' ? ' ws: wss:' : ''}`,
   ].join('; ');
   req.headers.set('x-nonce', nonce);

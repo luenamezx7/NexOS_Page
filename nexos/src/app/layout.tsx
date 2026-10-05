@@ -65,7 +65,7 @@ export default async function RootLayout({
 }) {
   const headersList = await headers();
   const nonce = headersList.get('x-nonce');
-  const themeScriptContent = `(function(){var t;try{t=localStorage.getItem('nexos-theme');}catch(e){}var s=t==='light'||t==='dark'?t:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.classList.toggle('dark',s==='dark');document.documentElement.style.colorScheme='only '+s;var m=document.querySelector('meta[name=color-scheme]');if(m)m.content=s;})()`;
+  const themeScriptContent = `(function(){var t;try{t=localStorage.getItem('nexos-theme');}catch(e){}var s=t==='light'||t==='dark'?t:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.classList.toggle('dark',s==='dark');document.documentElement.style.colorScheme='only '+s;var m=document.querySelector('meta[name=color-scheme]');if(m)m.content=s;try{if(sessionStorage.getItem('nexos-boot-seen')==='1'||location.hash)document.documentElement.dataset.nexosBootSeen='1';}catch(e){}})()`;
 
   return (
     <html lang="pt-BR" suppressHydrationWarning className={cn("font-sans dark", geist.variable, spaceGrotesk.variable, terminal.variable)}>

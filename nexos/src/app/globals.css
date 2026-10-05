@@ -845,6 +845,105 @@ select.field-input option {
 .intro-brand > .intro-registration { font: 12px var(--font-mono); margin-top: 8px; color: var(--display-purple); }
 .intro-copy h1 { font-size: clamp(32px, min(6.1vw, 8dvh), 84px); font-weight: 600; line-height: 1.1; letter-spacing: -0.055em; }
 .intro-copy p { margin-top: 28px; font: 12px var(--font-mono); color: var(--muted-foreground); }
+
+/* Waves entry: the site's rose palette, independent of its light/dark theme.
+   Design read: cinematic manifesto. Variance 4 / motion 6 / density 2.
+   Native dialog occupies the top layer; no additional z-index scale is needed. */
+.waves-entry {
+  --color-canvas: #180810;
+  --color-ink: #fff3fa;
+  --star-shadow: #fff3fa;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow-x: clip;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  color: var(--color-ink);
+  color-scheme: dark;
+  background: linear-gradient(165deg, #fff3fa 0%, #ff459f 23%, #d60070 56%, #180810 100%);
+  opacity: 1;
+  transition: opacity 700ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+/* The canvas already covers the viewport. A transparent backdrop lets the home
+   appear continuously through the fade instead of flashing a solid colour. */
+.waves-entry::backdrop { background: transparent; }
+html[data-nexos-boot-seen="1"] .waves-entry:not([data-replay="true"]) { display: none; }
+.waves-entry[data-leaving="true"] { opacity: 0; }
+.waves-entry-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 500ms ease;
+}
+.waves-entry-canvas:is([data-state="pending"], [data-state="fallback"], [data-state="context-lost"]) { opacity: 0; }
+.waves-entry-stars { position: absolute; inset: 0; pointer-events: none; opacity: 0.7; }
+.waves-entry-scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 52%, #180810b3 0%, #18081073 38%, #18081000 74%);
+}
+.waves-entry-content {
+  position: relative;
+  display: flex;
+  min-height: 100%;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(28px, 5dvh, 48px);
+  padding: max(40px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(40px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+  text-align: center;
+}
+.waves-entry-title {
+  max-width: 1280px;
+  margin: 0;
+  font-family: "Satoshi", var(--font-sans);
+  font-size: clamp(40px, min(6.4vw, 10dvh), 100px);
+  font-weight: 900;
+  font-synthesis: none;
+  line-height: 1.04;
+  letter-spacing: -0.065em;
+  color: var(--color-ink);
+  text-wrap: balance;
+  text-shadow: 0 2px 20px #18081040;
+}
+.waves-entry-title > span { display: block; }
+.waves-entry .waves-entry-action { min-height: 52px; padding-inline: 28px; }
+.waves-entry-action svg { width: 18px; height: 18px; }
+@media (prefers-reduced-motion: no-preference) {
+  .waves-entry-title { animation: waves-entry-title-reveal 850ms var(--ease-fluid) both; }
+  .waves-entry-action { animation: waves-entry-reveal 850ms 100ms var(--ease-fluid) both; }
+}
+@keyframes waves-entry-reveal { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes waves-entry-title-reveal { from { transform: translateY(18px); } to { transform: translateY(0); } }
+@media (max-width: 767px) {
+  .waves-entry-title { max-width: 560px; font-size: clamp(40px, 7.5vw, 58px); letter-spacing: -0.055em; line-height: 1.08; }
+  .waves-entry-content { padding-inline: 24px; gap: 32px; }
+}
+@media (max-height: 480px) {
+  .waves-entry-title { font-size: clamp(32px, 8dvh, 48px); }
+  .waves-entry-content { gap: 24px; padding-block: 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .waves-entry, .waves-entry-canvas { transition: none; }
+}
+@media (forced-colors: active) {
+  .waves-entry { background: Canvas; color: CanvasText; }
+  .waves-entry-canvas, .waves-entry-scrim { display: none; }
+  .waves-entry-title { color: CanvasText; text-shadow: none; }
+}
 :is(.landing-page, .service-page) .skip-link { position: fixed; top: 12px; left: 12px; z-index: 901; transform: translateY(-160%); padding: 12px 20px; background: var(--color-ink); color: var(--color-canvas); border-radius: 8px; }
 :is(.landing-page, .service-page) .skip-link:focus { transform: translateY(0); }
 @media (max-width: 1023px) { .hero-container { padding-inline: 48px; } .hero-coordinate { display: none; } }

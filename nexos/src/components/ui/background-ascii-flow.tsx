@@ -1,8 +1,11 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 
-export interface SlipstreamProps { cellSize?: number; className?: string; density?: number; seed?: number }
+export interface SlipstreamProps {
+  cellSize?: number; className?: string; density?: number; seed?: number;
+  presentation?: boolean; interactive?: boolean; paused?: boolean;
+}
 interface Star { x: number; y: number; radius: number; phase: number; rate: number; glint: boolean; offsetX: number; offsetY: number }
 
 function randomGenerator(seed: number) {
@@ -16,15 +19,21 @@ function randomGenerator(seed: number) {
 }
 
 /** Stratified white ASCII stars: even coverage, independent twinkle, no React animation state. */
-export function Slipstream({ cellSize = 14, className = '', density = 1.4, seed = 0xf1044 }: SlipstreamProps) {
+export function Slipstream({ cellSize = 14, className = '', density = 1.4, seed = 0xf1044, presentation = false, interactive = true, paused = false }: SlipstreamProps) {
   const ref = useRef<HTMLCanvasElement>(null);
+  const pausedRef = useRef(paused);
+  useLayoutEffect(() => {
+    pausedRef.current = paused;
+    ref.current?.dispatchEvent(new Event('nexos-ascii-state'));
+  }, [paused]);
   useEffect(() => {
     const canvas = ref.current;
     const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx) return;
     const query = matchMedia('(prefers-reduced-motion: reduce)');
     const desktop = matchMedia('(min-width: 768px) and (pointer: fine)');
-    const animated = () => desktop.matches && !query.matches;
+    let entryOpen = Boolean(document.querySelector('.waves-entry[open]'));
+    const animated = () => (presentation || desktop.matches) && !query.matches && !pausedRef.current && (presentation || !entryOpen);
     let stars: Star[] = [], width = 0, height = 0, raf = 0, last = 0, time = 0;
     let visible = false, disposed = false, shadow = '#ffffff';
     const sprites = document.createElement('canvas'); sprites.width = 192; sprites.height = 32;
@@ -40,7 +49,7 @@ export function Slipstream({ cellSize = 14, className = '', density = 1.4, seed 
     }
     const pointer = { x: -1000, y: -1000, active: false };
     function onPointer(event: PointerEvent) {
-      if (!animated() || !visible || event.pointerType === 'touch') return;
+      if (!interactive || !animated() || !visible || event.pointerType === 'touch') return;
       const rect = canvas!.getBoundingClientRect();
       pointer.x = event.clientX - rect.left; pointer.y = event.clientY - rect.top;
       pointer.active = pointer.x >= 0 && pointer.x <= width && pointer.y >= 0 && pointer.y <= height;
@@ -50,7 +59,7 @@ export function Slipstream({ cellSize = 14, className = '', density = 1.4, seed 
     function readTheme() {
       shadow = getComputedStyle(canvas!).getPropertyValue('--star-shadow').trim() || '#ffffff';
       bakeStars();
-      if (!animated()) draw();
+      if (!animated() && !pausedRef.current) draw();
     }
     function resize() {
       const rect = canvas!.getBoundingClientRect();
@@ -117,6 +126,8 @@ export function Slipstream({ cellSize = 14, className = '', density = 1.4, seed 
     function sync() {
       cancelAnimationFrame(raf); raf = 0; last = 0;
       if (disposed) return;
+      entryOpen = Boolean(document.querySelector('.waves-entry[open]'));
+      if (pausedRef.current) { canvas!.dataset.motion = 'paused'; return; }
       canvas!.dataset.motion = animated() ? 'animated' : 'static';
       if (!animated()) { pointer.active = false; draw(); }
       else if (visible && !document.hidden) raf = requestAnimationFrame(loop);
@@ -128,14 +139,22 @@ export function Slipstream({ cellSize = 14, className = '', density = 1.4, seed 
     const themeObserver = new MutationObserver(readTheme);
     themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'style'] });
     query.addEventListener('change', sync); desktop.addEventListener('change', sync); document.addEventListener('visibilitychange', sync);
-    window.addEventListener('pointermove', onPointer, { passive: true }); document.addEventListener('pointerleave', onLeave);
+    document.addEventListener('nexos-entry-change', sync);
+    canvas.addEventListener('nexos-ascii-state', sync);
+    if (interactive) {
+      window.addEventListener('pointermove', onPointer, { passive: true }); document.addEventListener('pointerleave', onLeave);
+    }
     resize();
     return () => {
       disposed = true; cancelAnimationFrame(raf); resizeObserver.disconnect(); intersection.disconnect(); themeObserver.disconnect();
       query.removeEventListener('change', sync); desktop.removeEventListener('change', sync); document.removeEventListener('visibilitychange', sync);
-      window.removeEventListener('pointermove', onPointer); document.removeEventListener('pointerleave', onLeave);
+      document.removeEventListener('nexos-entry-change', sync);
+      canvas.removeEventListener('nexos-ascii-state', sync);
+      if (interactive) {
+        window.removeEventListener('pointermove', onPointer); document.removeEventListener('pointerleave', onLeave);
+      }
     };
-  }, [cellSize, density, seed]);
+  }, [cellSize, density, seed, presentation, interactive]);
   return <canvas ref={ref} aria-hidden="true" className={`pointer-events-none block h-full w-full ${className}`} />;
 }
 

@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils';
 import { MetallicSurface } from './metallic-button';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'inverse';
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
   fullWidth?: boolean;
@@ -26,6 +26,7 @@ const buttonVariants = {
   primary: 'btn-primary-nex isolate overflow-hidden rounded-[0.625rem] text-white',
   secondary: 'rounded-lg border border-ink/20 bg-ink/5 px-6 py-3 text-sm font-medium text-ink/90 hover:bg-ink/10 hover:border-ink/40',
   ghost: 'rounded-lg bg-transparent text-ink/80 hover:bg-ink/5 hover:text-ink',
+  inverse: 'rounded-full bg-ink text-canvas hover:bg-ink/90',
 };
 
 const sizes = {

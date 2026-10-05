@@ -1,8 +1,13 @@
 import { expect, test } from '@playwright/test';
 
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem('nexos-boot-seen', '1'));
+});
+
 test('mobile usa atmosfera estática e não carrega a fonte do rodapé no início', async ({ browser }) => {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, colorScheme: 'dark' });
   const page = await context.newPage();
+  await page.addInitScript(() => sessionStorage.setItem('nexos-boot-seen', '1'));
   const requests: string[] = [];
   page.on('request', request => requests.push(request.url()));
   try {
@@ -24,6 +29,7 @@ test('mobile usa atmosfera estática e não carrega a fonte do rodapé no iníci
 test('prefers-reduced-motion mantém os efeitos opcionais desativados no desktop', async ({ browser }) => {
   const context = await browser.newContext({ reducedMotion: 'reduce', viewport: { width: 1365, height: 768 }, colorScheme: 'dark' });
   const page = await context.newPage();
+  await page.addInitScript(() => sessionStorage.setItem('nexos-boot-seen', '1'));
   try {
     await page.goto('http://localhost:3100/');
     await expect(page.locator('.night-sky canvas')).toHaveAttribute('data-motion', 'static');

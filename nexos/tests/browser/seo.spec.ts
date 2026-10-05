@@ -3,6 +3,11 @@ import { expect, test } from '@playwright/test';
 const servicePaths = ['/criacao-de-sites', '/landing-pages', '/cardapio-digital', '/placa-nfc'];
 const publicPaths = ['/', ...servicePaths, '/privacidade', '/termos', '/lgpd', '/reembolso', '/cookies'];
 
+// These checks exercise the commercial home after the first-visit presentation.
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem('nexos-boot-seen', '1'));
+});
+
 test('home entrega serviços e links no HTML, antes de qualquer interação', async ({ request }) => {
   const response = await request.get('/');
   expect(response.status()).toBe(200);
@@ -13,7 +18,8 @@ test('home entrega serviços e links no HTML, antes de qualquer interação', as
   expect(html).toContain('id="contact"');
   for (const path of servicePaths) expect(html).toContain(`href="${path}"`);
   expect(html).not.toContain('google-site-verification-code');
-  expect(html).not.toContain('Continuar para o site');
+  expect(html).toContain('class="waves-entry"');
+  expect(html).not.toContain('<div inert=');
   expect(html).toContain('<title>NexOS Lab | Criação de Sites, Landing Pages e Placas NFC</title>');
   expect(html).not.toMatch(/lovable/i);
   expect(html).toContain('<meta name="application-name" content="NexOS Lab"');
@@ -36,6 +42,7 @@ test('home e páginas comerciais são legíveis e navegáveis sem JavaScript', a
   try {
     await page.goto('http://localhost:3100/');
     await expect(page.locator('h1')).toHaveCount(1);
+    await expect(page.locator('.waves-entry')).toBeHidden();
     await expect(page.locator('h1')).toContainText('Sites para');
     await expect(page.locator('#hero .hero-description')).toContainText('NexOS Lab');
     await expect(page.locator('footer')).toContainText('NexOS Performance');
@@ -171,9 +178,10 @@ test('dados estruturados usam informações e preço do conteúdo visível', asy
   expect(product.aggregateRating).toBeUndefined();
 });
 
-test('mobile abre no conteúdo e páginas comerciais não geram overflow', async ({ page }) => {
+test('mobile após a apresentação abre no conteúdo e páginas comerciais não geram overflow', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
+  await expect(page.locator('.waves-entry')).toHaveCount(0);
   await expect(page.locator('h1')).toContainText('Sites para');
   await expect(page.getByRole('button', { name: 'Continuar para o site' })).toHaveCount(0);
   await page.getByRole('button', { name: 'Abrir menu' }).click();
@@ -187,7 +195,7 @@ test('mobile abre no conteúdo e páginas comerciais não geram overflow', async
   }
 });
 
-test('apresentação é opcional e pode ser fechada com Escape', async ({ page }) => {
+test('apresentação pode ser revista e fechada com Escape', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'Ver apresentação', exact: true }).click();
   await expect(page.getByRole('dialog', { name: /Apresentação NexOS/ })).toBeVisible();
@@ -199,6 +207,7 @@ test('apresentação é opcional e pode ser fechada com Escape', async ({ page }
 
 test('atalho de teclado para o conteúdo só aparece quando recebe foco', async ({ page }) => {
   await page.goto('/');
+  await expect(page.locator('.waves-entry')).toHaveCount(0);
   const skipLink = page.getByRole('link', { name: 'Pular para o conteúdo' });
   expect(await skipLink.evaluate(el => el.getBoundingClientRect().bottom)).toBeLessThan(0);
   await page.keyboard.press('Tab');

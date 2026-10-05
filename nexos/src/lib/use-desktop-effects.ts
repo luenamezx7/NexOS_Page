@@ -7,11 +7,15 @@ const DESKTOP_EFFECTS = '(min-width: 768px) and (pointer: fine) and (prefers-red
 function subscribe(callback: () => void) {
   const media = window.matchMedia(DESKTOP_EFFECTS);
   media.addEventListener('change', callback);
-  return () => media.removeEventListener('change', callback);
+  document.addEventListener('nexos-entry-change', callback);
+  return () => {
+    media.removeEventListener('change', callback);
+    document.removeEventListener('nexos-entry-change', callback);
+  };
 }
 
 function snapshot() {
-  return window.matchMedia(DESKTOP_EFFECTS).matches;
+  return window.matchMedia(DESKTOP_EFFECTS).matches && !document.querySelector('.waves-entry[open]');
 }
 
 /** Keep optional GPU effects out of the first paint and off touch/reduced-motion devices. */

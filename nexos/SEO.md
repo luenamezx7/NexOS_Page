@@ -3,7 +3,7 @@
 ## P1 — Conteúdo e rastreamento
 
 - [x] Home com conteúdo comercial no HTML inicial, sem clique ou rolagem para desbloquear.
-- [x] Apresentação visual opcional, acessível pelo botão “Ver apresentação” no rodapé.
+- [x] Abertura Waves na primeira visita da aba, com entrada direta, sem repetição na sessão e com replay pelo botão “Ver apresentação” no rodapé. Links diretos para seções e navegação sem JavaScript seguem para o conteúdo.
 - [x] Seções de serviços, contato, FAQ e rodapé renderizadas no servidor.
 - [x] Conteúdo legível mesmo com JavaScript desativado.
 - [x] JavaScript e CSS de `/_next/` liberados no robots da aplicação.
@@ -212,3 +212,91 @@ Publicação: deployment **`dpl_9TVbTJ3kXbg5q3SwXRPLcRtDPq7W`**, confirmado como
 Observação adicional da navegação em produção: algumas cargas diretas com JavaScript registraram o erro recuperável React #418 (hidratação); outras execuções com respostas interceptadas pelo navegador não o reproduziram. A página continuou funcional e o HTML público e favicon estavam íntegros. O domínio injeta scripts externos do Cloudflare, mas estes experimentos não comprovaram a causa nem uma regressão em relação ao deployment anterior. Investigar esse aviso separadamente; não considerar a ausência de erro numa repetição como resolução.
 
 **Próximas ações na conta Google:** após publicar, inspecionar a home, testar a URL publicada e solicitar indexação uma vez para atualizar os sinais de marca e favicon. Registrar a última data de rastreamento e a canônica escolhida pelo Google. Em **Desempenho → Resultados da pesquisa**, filtrar consultas por `nexos` e comparar impressões e posição média nas próximas semanas. Se houver indexação mas pouca visibilidade, manter nome, site e link oficial consistentes no Instagram e em perfis públicos reais da empresa; buscar referências legítimas de clientes/parceiros. A consulta curta “nexos” pode competir com outras entidades; dados estruturados e favicon não garantem posição ou exibição imediata. O Google pode levar dias ou semanas para reprocessar a home e o ícone.
+
+### Evidência dos prints e home antiga com www — 05/10/2026
+
+Foram analisadas quatro capturas em `PRINTS-IA`: três de 05/10 e uma de 04/10. As capturas de 05/10 mostram:
+
+- Na consulta `nexos lab online`, o domínio aparece como resultado orgânico, abaixo do resumo de IA. Portanto, nessas capturas a descoberta não se limita à consulta pelo domínio exato.
+- O resultado da home exibe `https://www.nexoslab.online`, título do link **Lovable App**, descrição antiga iniciada por “Acelere seu negócio com NexOS” e o favicon antigo “OS”.
+- Na consulta `nexoslab.online`, as quatro páginas comerciais sem `www` já aparecem com títulos e descrições NexOS. O processamento do buscador está mostrando versões de épocas distintas da home e das páginas comerciais.
+- Na área visível da consulta `nexos lab`, aparecem outras empresas com nomes semelhantes. As capturas não permitem concluir ausência em toda a lista, posição estável ou desempenho para `nexos performance`, que não foi mostrado.
+
+Reverificação atual do site, com user-agents de navegador e Googlebot:
+
+- A home sem `www` retorna 200 e título **NexOS Lab | Criação de Sites, Landing Pages e Placas NFC**, sem qualquer ocorrência de Lovable no HTML.
+- A versão HTTPS com `www` retorna **307** para a home sem `www`, que serve o título e ícones novos; não foi encontrada uma aplicação Lovable ainda ativa nessa cadeia.
+- HTTP redireciona com 308 para HTTPS. O redirecionamento de `www` preserva caminho e parâmetros. A regra anterior à aplicação continua devolvendo um código temporário 307, apesar da regra permanente já existente no Next.js.
+
+O título, descrição e ícone antigos nas capturas são compatíveis com uma representação ainda desatualizada no índice ou sinais antigos usados pelo Google; o conteúdo atual não os fornece. Confirmar no Search Console inspecionando **as duas URLs** (`https://nexoslab.online/` e `https://www.nexoslab.online/`): última data de rastreamento, canônica declarada e escolhida pelo Google e, se disponível, **Ver página rastreada → HTML**, pesquisando `Lovable`. Testar a URL publicada da home canônica e solicitar indexação se essa solicitação ainda não tiver sido feita após a publicação do favicon. Revisar a regra externa de `www` no painel responsável para redirecionamento permanente 301/308; não presumir que o 307 seja a causa única do título antigo ou da posição nas buscas. Não usar remoção de resultados ou `noindex` para tentar atualizar o título.
+
+### Search Console: conflito de canônicas confirmado e www corrigido — 05/10/2026
+
+O proprietário substituiu as capturas anteriores por oito prints do Search Console em `PRINTS-IA`, de 15:55 a 15:58. Eles confirmam:
+
+| URL | Estado registrado no índice | Último rastreamento mostrado | Canônica |
+| --- | --- | --- | --- |
+| `https://www.nexoslab.online/` | Indexada | 09/09/2026, 19:25:39 | Nenhuma declarada; Google escolheu a própria URL com www |
+| `https://nexoslab.online/` | Não indexada separadamente: “Cópia, o Google e o usuário selecionaram uma página canônica diferente” | 03/10/2026, 21:17:25 | Declarada sem www; Google escolheu a versão com www |
+
+Ambas as inspeções registram rastreamento e indexação permitidos e busca de página com êxito. O teste em tempo real de `www` informa disponibilidade para o Google, o que não significa mudança da canônica escolhida no índice. A captura de 15:58:38 mostra **Indexação solicitada** para a home sem www; não é necessário repetir esse pedido agora. “Nenhum sitemap de referência foi detectado” aparece nesses registros de URL, mas não comprova que o sitemap atual não tenha sido enviado ou esteja inválido: a verificação pública confirmou HTTP 200 e dez URLs canônicas no sitemap.
+
+O Google ainda está usando uma versão da home com www rastreada antes das correções recentes. Isso é consistente com o resultado “Lovable App” e favicon antigo observado anteriormente. O HTML da página rastreada de setembro não foi fornecido nos prints; não foi presumido que a captura de HTML do teste em tempo real fosse uma cópia desse registro antigo.
+
+Investigação da infraestrutura:
+
+- A resposta temporária 307 de www continha `x-vercel-id`; `server: cloudflare` sozinho não determinava a origem da regra.
+- A API Vercel, acessada pela CLI autenticada na equipe `nex-os2`, confirmou que apenas o domínio sem www estava associado ao projeto `prj_HuEB41QNsOmunUVqGs09ximPX3PM`. A consulta de aliases para www não encontrou alias na equipe. A configuração de DNS indica nameservers Cloudflare e serviço externo, sem presumir necessidade de alteração de DNS.
+- Foi adicionado **`www.nexoslab.online` ao mesmo projeto**, como domínio de redirecionamento para **`nexoslab.online`**, com **`redirectStatusCode: 308`**. A Vercel confirmou **`verified: true`**. Uma segunda leitura confirmou os dois domínios e a configuração permanente.
+
+Validação pública após a alteração: www retorna **308 permanente** na home, na página de sites com query string e em `/favicon.png`, tanto com user-agent de navegador quanto Googlebot. Caminhos e parâmetros são preservados e os destinos retornam 200. A home canônica continua com o título NexOS Lab e sem Lovable. Não foi necessário alterar DNS, trocar a canônica da aplicação ou fazer novo deploy.
+
+**Próximo acompanhamento:** manter a solicitação de indexação já enviada e observar no Search Console um rastreamento posterior às correções de 05/10, a escolha da home sem www como canônica e o reprocessamento do título e favicon. Pode-se executar **Testar URL publicada** em www para conferir a resposta atual, lembrando que o teste pode acompanhar o redirecionamento e exibir a disponibilidade do destino. Quando o índice se atualizar, www pode passar a “Página com redirecionamento”; isso é esperado, não um motivo para removê-lo manualmente ou usar noindex. Se a home sem www continuar excluída após novo rastreamento, comparar novamente as duas inspeções e os sinais de canônica. A correção consolida os endereços, mas não garante posição para buscas de marca ou atualização imediata da pesquisa.
+
+### Abertura Waves solicitada pelo proprietário — 05/10/2026
+
+- Nova tela anterior à home, com a frase exata **“Nexos, a performance que seu business merece.”**, em Satoshi Black 900 auto-hospedada, centralizada e responsiva.
+- Fragment shader fornecido preservado em `src/lib/shaders/waves.ts`. Um único triângulo fullscreen em WebGL1 nativo, sem biblioteca de renderização, com todas as cores e uniforms empacotadas exatamente conforme a receita. Presença do cursor e coordenadas do ponteiro permanecem zero.
+- DPR limitado a 2, fluxo limitado a 30 FPS sem mudar a velocidade temporal `seconds * -0.73`. RAF pausado com aba oculta; preferência de movimento reduzido renderiza um quadro estático. Recursos WebGL são liberados no fechamento, e perda/restauração de contexto é tratada.
+- Fallback estático mantém a paleta se WebGL não estiver disponível. Um scrim independente do canvas garante a leitura da frase sem alterar o shader.
+- Entrada por botão, Enter ou Escape. Dialog nativo na top layer, com título, foco contido, travamento e restauração da rolagem. Conclusão vai diretamente à home, sem etapa adicional de logo ou temporizador obrigatório.
+- Uma abertura por sessão de aba (`nexos-boot-seen`); replay pelo rodapé. Links com hash seguem diretamente para a seção. Armazenamento indisponível não bloqueia a entrada.
+- Conteúdo comercial completo permanece no HTML inicial, com um único h1 da home, títulos, canônicas, sitemap e favicon preservados. Sem JavaScript, o fallback `noscript` oculta a apresentação e a home continua acessível. Essa preservação técnica não constitui garantia de posição na busca.
+- Os outros efeitos opcionais GPU e a animação das estrelas são pausados durante a apresentação, evitando múltiplos backgrounds ativos.
+
+Validação local: build/TypeScript aprovados, ESLint sem erros nos arquivos envolvidos (Button mantém avisos preexistentes de props não utilizadas) e **24 testes de navegador aprovados** nas suítes Waves, SEO e desempenho. Verificados: uniforms reais e shader ligado em WebGL1, desenho, foco/teclado, memória de sessão, pausa/resumo, movimento reduzido e retorno, DPR em retina, fallback sem WebGL, perda/restauração de contexto, links diretos, SEO e navegação sem JavaScript. Revisão visual nos temas claro e escuro em 1366 × 768, 360 × 740 e 844 × 390, sem overflow ou cortes.
+
+A primeira publicação (`dpl_CoVWZVjWteFr8iLTdeGtGkVA34Sr`) foi validada no domínio em desktop e mobile: shader animado, entrada, persistência de sessão e navegação sem JavaScript funcionais, sem erros de execução nas verificações. Uma medição Lighthouse mobile de 05/10 às 20:05 UTC apontou LCP 6,6 s e TBT 3.054 ms, indicando custo excessivo da compilação inicial no thread principal. Isso motivou a otimização a seguir, mantendo o fragment shader original.
+
+Otimização final: WebGL1 é renderizado em **OffscreenCanvas em um Dedicated Worker** nos navegadores compatíveis. O renderer nativo compartilhado mantém a mesma receita e oferece compatibilidade no thread principal quando necessário. O worker é encerrado ao fechar a apresentação; visibilidade, tamanho/DPR e preferência de movimento são sincronizados pelo componente, sem React state por frame. A CSP permite somente workers da própria origem (`worker-src 'self'`). O script inicial com nonce evita flash da abertura em retornos da sessão e links diretos; o replay continua disponível. Build/TypeScript, lint e **25 testes de navegador**, incluindo o worker real e pausa/restauração, aprovados; **14 testes de segurança** aprovados.
+
+Fechamento: ativação e remoção da abertura são agendadas após o primeiro frame, evitando forçar hidratação síncrona da home inteira no layout effect. A frase fica legível imediatamente, com revelação por deslocamento, enquanto o botão mantém a entrada suave. A versão final foi publicada no deployment **`dpl_31CvJ5xvtHYaQyMfFzSBevYh12C8`**, confirmado **Ready** e associado ao domínio. Worker animado, texto exato, fechamento com Escape, sessão sem reapresentação, desktop/mobile sem erros de execução e redirecionamento www 308 revalidados em produção.
+
+Última medição Lighthouse 13.5.0, perfil mobile padrão, em produção:
+
+| Métrica | Resultado |
+| --- | --- |
+| Performance | 65/100 |
+| SEO | 100/100 |
+| Acessibilidade | 100/100 |
+| Boas práticas | 81/100 |
+| FCP | 1,8 s |
+| LCP | 3,9 s |
+| TBT | 575 ms |
+| CLS | 0,001 |
+
+Sem erros de console nesse relatório. A otimização reduziu o bloqueio em relação à primeira implementação da abertura (3.054 ms), mas a performance mobile e a meta de LCP de 2,5 s ainda têm espaço de melhoria. As medições são sintéticas, sujeitas a variação, e não substituem dados de campo nem comprovam posição na busca. Relatório local: `C:\Users\User\AppData\Local\Temp\opencode\nexos-waves-final-lighthouse.json`.
+
+### Refinamento da abertura: rosa, transição e estrelas ASCII — 05/10/2026
+
+Solicitado pelo proprietário: substituir apenas a paleta azul pelos tons rosados da marca, suavizar a transição que apresentava cortes e adicionar as estrelas do ASCII Flow à apresentação.
+
+- Paleta baixa → alta: **#180810, #D60070, #FF459F, #FFF3FA**, alinhando o rosa principal e o rosa de destaque do site. Fallback, scrim e cores de leitura usam a mesma família. Texto, fonte e parâmetros matemáticos do shader permanecem iguais.
+- Estrelas brancas e glifos ASCII reaproveitam o componente `Slipstream`, em uma camada decorativa sobre as ondas e sob o scrim/texto. Brilho discreto, sem interação com o cursor, com movimento reduzido respeitado e pausa na saída. A atmosfera da home continua suspensa durante a abertura.
+- Saída com crossfade de **700 ms**, backdrop transparente e conclusão pelo evento real de transição. O último quadro do shader é congelado após confirmação do renderer, mantendo canvas/worker alocados até a saída terminar; as estrelas também preservam o último quadro. Isso evita tela escura, descarte do drawing buffer e competição entre renderização e fade.
+- O topo da home é preparado enquanto a abertura ainda está opaca, inclusive ao voltar da apresentação aberta no rodapé. Cada replay recebe uma instância própria e callbacks antigos não podem fechar uma nova apresentação.
+- Build/TypeScript e lint aprovados. **27 testes** de Waves, SEO e desempenho aprovados, incluindo pixels brancos reais das estrelas, shaders/worker, fallback, pausa, movimento reduzido, crossfade intermediário e replay em 1366 e 390 px. Revisão visual desktop/mobile nos temas claro e escuro.
+
+As medições Lighthouse anteriores acima correspondem à versão anterior à camada de estrelas e a este refinamento; não foram apresentadas como medições novas dessa alteração.
+
+Publicação confirmada: **`dpl_5Q1Gs7AfaEdX8NLFrSwqpnGrkh3n`**, estado **Ready**, alias `https://nexoslab.online`. Em produção, paleta rosada, estrelas animadas/pixels brancos, pausa de ambos os canvases durante o crossfade, backdrop transparente e chegada ao topo da home foram verificados em 1366 e 390 px, sem erros de execução nas verificações. Nova medição Lighthouse mobile: **performance 67/100, acessibilidade 100/100, SEO 100/100 e boas práticas 81/100**. Relatório: `C:\Users\User\AppData\Local\Temp\opencode\nexos-waves-rose-stars-lighthouse.json`; resultados sintéticos, sujeitos a variação.
