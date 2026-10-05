@@ -833,6 +833,7 @@ select.field-input option {
 .hero-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px 28px; margin-top: 36px; }
 .hero-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 48px; font-size: 14px; color: var(--color-ink); }
 .hero-secondary svg { transition: transform 300ms var(--ease-fluid); }
+.hero-accent { background: linear-gradient(110deg, var(--display-rose), var(--display-purple)); background-clip: text; -webkit-background-clip: text; color: transparent; }
 .hero-secondary:hover svg { transform: translate(3px, -3px); }
 .hero-coordinate { position: absolute; right: 40px; bottom: 40px; font: 11px var(--font-mono); letter-spacing: 0.12em; color: var(--muted-foreground); writing-mode: vertical-rl; }
 .landing-hero .tech-badge { padding: 0; border: none; background: none; color: var(--muted-foreground); letter-spacing: 0.1em; }
@@ -844,8 +845,8 @@ select.field-input option {
 .intro-brand > .intro-registration { font: 12px var(--font-mono); margin-top: 8px; color: var(--display-purple); }
 .intro-copy h1 { font-size: clamp(32px, min(6.1vw, 8dvh), 84px); font-weight: 600; line-height: 1.1; letter-spacing: -0.055em; }
 .intro-copy p { margin-top: 28px; font: 12px var(--font-mono); color: var(--muted-foreground); }
-.landing-page > a.skip-link { position: fixed; top: 12px; left: 12px; z-index: 901; transform: translateY(-160%); padding: 12px 20px; background: var(--color-ink); color: var(--color-canvas); border-radius: 8px; }
-.landing-page > a.skip-link:focus { transform: translateY(0); }
+:is(.landing-page, .service-page) .skip-link { position: fixed; top: 12px; left: 12px; z-index: 901; transform: translateY(-160%); padding: 12px 20px; background: var(--color-ink); color: var(--color-canvas); border-radius: 8px; }
+:is(.landing-page, .service-page) .skip-link:focus { transform: translateY(0); }
 @media (max-width: 1023px) { .hero-container { padding-inline: 48px; } .hero-coordinate { display: none; } }
 @media (max-width: 767px) {
   .hero-container { padding: 100px 24px 64px; }

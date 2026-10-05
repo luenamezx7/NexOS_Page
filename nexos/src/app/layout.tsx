@@ -7,19 +7,22 @@ import { SmoothScrollProvider } from '@/components/SmoothScrollProvider';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { CookieConsentProvider } from '@/components/cookie-consent';
 import { SiteAtmosphere } from '@/components/SiteAtmosphere';
+import { JsonLd } from '@/components/JsonLd';
+import { config } from '@/config';
+import { organizationData, pageMetadata, SITE_URL } from '@/lib/seo';
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-geist', display: 'swap' });
 const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-space', display: 'swap' });
-const terminal = Space_Mono({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-terminal', display: 'swap' });
+const terminal = Space_Mono({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-terminal', display: 'swap', preload: false });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://nexoslab.online'),
+  metadataBase: new URL(SITE_URL),
+  applicationName: config.brand.fullName,
   title: {
-    default: 'NexOS — Serviços Digitais de Escala',
-    template: '%s | NexOS',
+    default: `${config.brand.fullName} | ${config.meta.title}`,
+    template: `%s | ${config.brand.name}`,
   },
-  description: 'Desenvolvimento, design e estratégia para produtos digitais que escalam. Da ideia ao mercado com velocidade e qualidade.',
-  keywords: ['desenvolvimento web', 'product design', 'estratégia digital', 'MVP', 'startup', 'React', 'Next.js'],
+  description: config.meta.description,
   authors: [{ name: 'NexOS' }],
   creator: 'NexOS',
   publisher: 'NexOS',
@@ -34,32 +37,9 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  openGraph: {
-    type: 'website',
-    locale: 'pt_BR',
-    url: 'https://nexos.digital',
-    siteName: 'NexOS',
-    title: 'NexOS — Serviços Digitais de Escala',
-    description: 'Desenvolvimento, design e estratégia para produtos digitais que escalam.',
-    images: [
-      {
-        url: '/og-image.svg',
-        width: 1200,
-        height: 630,
-        alt: 'NexOS - Serviços Digitais de Escala',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'NexOS — Serviços Digitais de Escala',
-    description: 'Desenvolvimento, design e estratégia para produtos digitais que escalam.',
-    images: ['/og-image.png'],
-    creator: '@nexos',
-  },
-  verification: {
-    google: 'google-site-verification-code',
-  },
+  openGraph: pageMetadata('/', config.meta.title, config.meta.description).openGraph,
+  twitter: pageMetadata('/', config.meta.title, config.meta.description).twitter,
+  verification: process.env.GOOGLE_SITE_VERIFICATION ? { google: process.env.GOOGLE_SITE_VERIFICATION } : undefined,
 };
 
 export const viewport: Viewport = {
@@ -90,6 +70,10 @@ export default async function RootLayout({
         )}
       </head>
       <body className="min-h-screen min-h-dvh w-full max-w-full overflow-x-clip antialiased">
+        <JsonLd data={organizationData} />
+        <noscript>
+          <style>{`.landing-page [style*="opacity"], .service-page [style*="opacity"] { opacity: 1 !important; transform: none !important; } .presentation-replay { display: none !important; }`}</style>
+        </noscript>
         <ThemeProvider>
           <SmoothScrollProvider>
             <SiteAtmosphere />

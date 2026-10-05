@@ -3,6 +3,8 @@ import type { SiteConfig } from './types';
 export const config: SiteConfig = {
   brand: {
     name: 'NexOS',
+    fullName: 'NexOS Lab',
+    alternateNames: ['NexOS Performance'],
     tagline: 'Serviços Digitais de Escala',
     logo: 'NX',
     },
@@ -73,9 +75,10 @@ export const config: SiteConfig = {
   ],
   footer: {
     links: [
-      { label: 'Desenvolvimento', href: '#services' },
-      { label: 'Design', href: '#services' },
-      { label: 'Estratégia', href: '#services' },
+      { label: 'Criação de sites', href: '/criacao-de-sites' },
+      { label: 'Landing pages', href: '/landing-pages' },
+      { label: 'Cardápio digital', href: '/cardapio-digital' },
+      { label: 'Placa NFC + QR Code', href: '/placa-nfc' },
     ],
     legal: [
       { label: 'Política de Privacidade', href: '/privacidade' },
@@ -93,8 +96,8 @@ export const config: SiteConfig = {
     message: 'Olá, vim pelo site da NexOS e gostaria de conversar sobre meu projeto.',
   },
   meta: {
-    title: 'NexOS — Serviços Digitais de Escala',
-    description: 'Desenvolvimento, design e estratégia para produtos digitais que escalam. Da ideia ao mercado com velocidade e qualidade.',
-    ogImage: '/nex',
+    title: 'Criação de Sites, Landing Pages e Placas NFC',
+    description: 'NexOS Lab, também conhecida como NexOS Performance: sites, landing pages e cardápios digitais para empresas. Placas NFC com QR Code para seu atendimento.',
+    ogImage: '/og',
   },
 };

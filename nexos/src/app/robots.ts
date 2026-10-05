@@ -1,9 +1,9 @@
 import type { MetadataRoute } from 'next';
+import { siteUrl } from '@/lib/seo';
 
 // robots.txt padrão de mercado: tudo liberado, exceto áreas
 // técnicas e transacionais (API, pós-pagamento, assets internos).
 export default function robots(): MetadataRoute.Robots {
-  const base = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://nexos.digital').replace(/\/$/, '');
   return {
     rules: [
       {
@@ -13,7 +13,6 @@ export default function robots(): MetadataRoute.Robots {
           '/api/',
           '/sucesso',
           '/cancelado',
-          '/_next/',
           '/conta',
           '/portal/',
           '/admin-dashboard-su/',
@@ -22,6 +21,6 @@ export default function robots(): MetadataRoute.Robots {
         ],
       },
     ],
-    sitemap: `${base}/sitemap.xml`,
+    sitemap: siteUrl('/sitemap.xml'),
   };
 }

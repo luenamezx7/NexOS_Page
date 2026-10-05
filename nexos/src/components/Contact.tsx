@@ -7,9 +7,10 @@ import { MetallicSurface } from './ui/metallic-button';
  * Estados: idle, submitting, submitted, error.
  * CAPTCHA Turnstile quando habilitado.
  */
-import { useState, type FormEvent, type ChangeEvent } from 'react';
+import { useRef, useState, type FormEvent, type ChangeEvent } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { motion, useReducedMotion } from 'motion/react';
+import { motion, useInView, useReducedMotion } from 'motion/react';
 import {
   ArrowRight,
   ArrowUpRight,
@@ -22,9 +23,11 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { config } from '@/config';
-import { Turnstile } from './Turnstile';
 import { useTurnstileConfig } from '@/lib/use-turnstile-config';
 import styles from './BottomFunnel.module.css';
+import { CloudflareEmailBoundary } from './CloudflareEmailBoundary';
+
+const Turnstile = dynamic(() => import('./Turnstile').then(module => module.Turnstile), { ssr: false });
 
 interface FormData {
   name: string;
@@ -59,6 +62,8 @@ interface ContactProps {
 
 export function Contact({ className = '' }: ContactProps) {
   const reduce = useReducedMotion() ?? false;
+  const contactRef = useRef<HTMLElement>(null);
+  const nearContact = useInView(contactRef, { once: true, margin: '400px' });
   const [formData, setFormData] = useState<FormData>(EMPTY_FORM);
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitting, setSubmitting] = useState<boolean>(false);
@@ -194,7 +199,8 @@ export function Contact({ className = '' }: ContactProps) {
   }
 
   return (
-    <section id="contact" aria-labelledby="contact-title" className={`${styles.section} ${className}`}>
+    <CloudflareEmailBoundary>
+    <section ref={contactRef} id="contact" aria-labelledby="contact-title" className={`${styles.section} ${className}`}>
       <div className={styles.container}>
         <div className={styles.sectionNav} aria-label="Navegação de contato">
           <span className={styles.currentSection}><MessageSquare size={16} aria-hidden="true" /> Contato</span>
@@ -310,8 +316,8 @@ export function Contact({ className = '' }: ContactProps) {
             </div>
 
             {hasTurnstile && (
-              <div style={{ marginTop: 20 }}>
-                <Turnstile key={captchaKey} onVerify={setTurnstileToken} onExpire={() => setTurnstileToken(null)} onError={() => { setTurnstileToken(null); setSubmitError('Verificação indisponível. Atualize a página e tente novamente.'); }} />
+              <div style={{ marginTop: 20 }} className="min-h-[65px]">
+                {nearContact && <Turnstile key={captchaKey} onVerify={setTurnstileToken} onExpire={() => setTurnstileToken(null)} onError={() => { setTurnstileToken(null); setSubmitError('Verificação indisponível. Atualize a página e tente novamente.'); }} />}
               </div>
             )}
 
@@ -387,5 +393,6 @@ export function Contact({ className = '' }: ContactProps) {
         </div>
       </div>
     </section>
+    </CloudflareEmailBoundary>
   );
 }

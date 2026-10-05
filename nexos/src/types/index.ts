@@ -29,6 +29,8 @@ export interface FooterLink {
 export interface SiteConfig {
   brand: {
     name: string;
+    fullName: string;
+    alternateNames: string[];
     tagline: string;
     logo: string;
   };

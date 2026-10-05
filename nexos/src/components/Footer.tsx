@@ -5,7 +5,6 @@
  * Redes sociais, links legais, copyright.
  */
 import Link from 'next/link';
-import { motion, useReducedMotion, type Variants } from 'motion/react';
 import { ArrowUpRight, GitBranch, MessageSquare } from 'lucide-react';
 import { config } from '@/config';
 import type { FooterLink } from '@/types';
@@ -13,22 +12,6 @@ import { Signature } from './signature';
 import { useTheme } from './ThemeProvider';
 import { openCookiePreferences } from './cookie-consent';
 import styles from './MidPage.module.css';
-
-const FLUID_EASE = [0.16, 1, 0.3, 1] as const;
-
-const STAGGER_PARENT: Variants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } },
-};
-
-const RELIEF_CHILD: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.55, ease: FLUID_EASE },
-  },
-};
 
 function InstagramIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -49,17 +32,11 @@ const SOCIAL_ICONS = {
 interface FooterColumnProps {
   title: string;
   links: FooterLink[];
-  reduceMotion: boolean;
 }
 
-function FooterColumn({ title, links, reduceMotion }: FooterColumnProps) {
+function FooterColumn({ title, links }: FooterColumnProps) {
   return (
-    <motion.nav
-      variants={reduceMotion ? undefined : RELIEF_CHILD}
-      initial={reduceMotion ? { opacity: 0 } : undefined}
-      whileInView={reduceMotion ? { opacity: 1 } : undefined}
-      viewport={{ once: true, amount: 0.4 }}
-      transition={reduceMotion ? { duration: 0.4 } : undefined}
+    <nav
       aria-label={title}
     >
       <h3 className={styles.colTitle}>{title}</h3>
@@ -73,31 +50,21 @@ function FooterColumn({ title, links, reduceMotion }: FooterColumnProps) {
           </li>
         ))}
       </ul>
-    </motion.nav>
+    </nav>
   );
 }
 
-export function Footer() {
-  const reduce = useReducedMotion() ?? false;
+export function Footer({ onViewPresentation }: { onViewPresentation?: () => void } = {}) {
   const { theme } = useTheme();
   const currentYear: number = new Date().getFullYear();
 
   return (
     <footer role="contentinfo" className={styles.footerSection}>
       <div className={styles.footerInner}>
-        <motion.div
-          variants={reduce ? undefined : STAGGER_PARENT}
-          initial={reduce ? { opacity: 0 } : 'hidden'}
-          whileInView={reduce ? { opacity: 1 } : 'show'}
-          viewport={{ once: true, amount: 0.2 }}
+        <div
           className={styles.footerGrid}
         >
-          <motion.div
-            variants={reduce ? undefined : RELIEF_CHILD}
-            initial={reduce ? { opacity: 0 } : undefined}
-            whileInView={reduce ? { opacity: 1 } : undefined}
-            viewport={{ once: true, amount: 0.4 }}
-            transition={reduce ? { duration: 0.4 } : undefined}
+          <div
             className={styles.brandBlock}
           >
             <Link href="/" className={styles.brandLink} aria-label={`${config.brand.name} — Página inicial`}>
@@ -115,7 +82,7 @@ export function Footer() {
             </Link>
             <p className={styles.brandTag}>{config.brand.tagline}</p>
             <p className={styles.brandDesc}>
-              Construímos soluções digitais para seu negócio. Da ideia ao mercado com velocidade e qualidade.
+              {config.brand.fullName}, também conhecida como {config.brand.alternateNames.join(' e ')}, desenvolve sites, landing pages, cardápios digitais e soluções NFC para empresas.
             </p>
             <address className={styles.brandAddress}>
               CNPJ 69.194.842/0001-28 · Rua Joaquim Anicacio Pinto, 0 — Residencial Prefeito Ely Rocha · Piracanjuba/GO · CEP 75643-242
@@ -138,26 +105,26 @@ export function Footer() {
                 );
               })}
             </div>
-          </motion.div>
+          </div>
 
-          <FooterColumn title="Serviços" links={config.footer.links} reduceMotion={reduce} />
+          <FooterColumn title="Serviços" links={config.footer.links} />
           <FooterColumn
             title="Empresa"
-            reduceMotion={reduce}
             links={[
-              { label: 'Contato', href: '#contact' },
-              { label: 'Cases', href: '#testimonials' },
-              { label: 'Serviços', href: '#services' },
+              { label: 'Contato', href: '/#contact' },
+              { label: 'Ecossistema', href: '/#testimonials' },
+              { label: 'Serviços', href: '/#services' },
             ]}
           />
-          <FooterColumn title="Legal" links={config.footer.legal} reduceMotion={reduce} />
-        </motion.div>
+          <FooterColumn title="Legal" links={config.footer.legal} />
+        </div>
 
         <div className={styles.footerBottom}>
           <p className={styles.copyright}>
             © {currentYear} {config.brand.name}. Todos os direitos reservados.
           </p>
           <div className={styles.footerMeta}>
+            {onViewPresentation && <button type="button" onClick={onViewPresentation} className={`${styles.cookieBtn} presentation-replay`}>Ver apresentação</button>}
             <button type="button" onClick={openCookiePreferences} className={styles.cookieBtn}>
               Gerenciar cookies
             </button>

@@ -3,22 +3,9 @@ import { config } from '@/config';
 import HomeClient from './home-client';
 import { redirect } from 'next/navigation';
 import { checkoutHref, checkoutQuantity } from '@/lib/checkout';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
-  title: config.meta.title,
-  description: config.meta.description,
-  openGraph: {
-    title: config.meta.title,
-    description: config.meta.description,
-    images: [config.meta.ogImage],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: config.meta.title,
-    description: config.meta.description,
-    images: [config.meta.ogImage],
-  },
-};
+export const metadata: Metadata = pageMetadata('/', config.meta.title, config.meta.description);
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ checkout?: string | string[]; quantity?: string | string[] }> }) {
   const params = await searchParams;

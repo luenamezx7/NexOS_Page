@@ -28,7 +28,7 @@ function ServiceCard({ service }: { service: Service }) {
         <div>
           <h3 id={`service-title-${service.id}`}>{testing ? 'Teste de checkout' : service.title}</h3>
           <p>{testing ? 'Confira o fluxo de pagamento integrado ao Asaas. O valor desta cobrança é de R$ 5,00.' : service.description}</p>
-          {featured && <div className={styles.useCases} aria-label="Aplicações"><span>Landing pages</span><span>Cardápios</span><span>Portfólios</span></div>}
+          {featured && <div className={styles.useCases} aria-label="Conheça cada solução"><Link href="/landing-pages" className="hover:underline">Landing pages</Link><Link href="/cardapio-digital" className="hover:underline">Cardápios</Link><Link href="/criacao-de-sites" className="hover:underline">Sites e portfólios</Link></div>}
         </div>
         <ul className={styles.features}>{service.features.map(feature => <li key={feature}><Check size={16} strokeWidth={2} aria-hidden="true" /><span>{feature}</span></li>)}</ul>
       </div>

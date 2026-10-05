@@ -2,15 +2,13 @@
 
 /** Rose-purple display type, sparkling ASCII flow and an editorial benefits grid. */
 import { forwardRef, useEffect, type ForwardedRef, type ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { motion, useReducedMotion, type Variants } from 'motion/react';
 import { ArrowRight, ArrowUpRight, Zap, Layers, Gauge, Sparkles } from 'lucide-react';
 import { config } from '@/config';
-import GradientText from './GradientText';
-import { HoverButton } from './ui/hover-button';
+import { HoverLink } from './ui/hover-button';
 import styles from './MidPage.module.css';
 import { useTheme } from './ThemeProvider';
+import { useDesktopEffects } from '@/lib/use-desktop-effects';
 
 const DarkVeil = dynamic(() => import('./DarkVeil'), { ssr: false });
 
@@ -31,41 +29,6 @@ interface BentoCardData {
   span: 'span7' | 'span5';
   featured?: boolean;
   featuredBadge?: string;
-}
-
-const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
-
-const ENTER = {
-  initial: { opacity: 0, y: 24 },
-  whileInView: { opacity: 1, y: 0 },
-  transition: { duration: 0.8, ease: FLUID_EASE },
-} as const;
-
-const STAGGER_PARENT: Variants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.1, delayChildren: 0.05 } },
-};
-
-const RELIEF_CHILD: Variants = {
-  hidden: { opacity: 0, y: 40, scale: 0.98 },
-  show: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: { duration: 0.8, ease: FLUID_EASE },
-  },
-};
-
-function navigate(href: string, push?: (h: string) => void): void {
-  if (href.startsWith('#')) {
-    const el: HTMLElement | null = document.getElementById(href.replace('#', ''));
-    if (el) {
-      el.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
-      return;
-    }
-  }
-  if (push) push(href);
-  else window.location.href = href;
 }
 
 const BENTO_CARDS: BentoCardData[] = [
@@ -127,18 +90,11 @@ const BENTO_CARDS: BentoCardData[] = [
 
 interface BentoCardProps {
   card: BentoCardData;
-  reduceMotion: boolean;
 }
 
-function BentoCard({ card, reduceMotion }: BentoCardProps) {
-  const router = useRouter();
+function BentoCard({ card }: BentoCardProps) {
   return (
-    <motion.article
-      variants={reduceMotion ? undefined : RELIEF_CHILD}
-      initial={reduceMotion ? { opacity: 0 } : undefined}
-      whileInView={reduceMotion ? { opacity: 1 } : undefined}
-      viewport={{ once: true, amount: 0.25 }}
-      transition={reduceMotion ? { duration: 0.4 } : undefined}
+    <article
       className={`${styles.bentoCard} ${card.featured ? styles.featured : ''} ${styles[card.span]}`}
       aria-labelledby={`bento-title-${card.id}`}
     >
@@ -167,25 +123,23 @@ function BentoCard({ card, reduceMotion }: BentoCardProps) {
       </div>
 
       <div className={styles.cardAction}>
-        <button
-          type="button"
-          onClick={() => navigate(card.ctaHref, router.push)}
+        <a
+          href={card.ctaHref}
           aria-label={card.ctaLabel}
           className="btn-secondary-nex"
         >
           <span>{card.ctaLabel}</span>
           <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
-        </button>
+        </a>
       </div>
-    </motion.article>
+    </article>
   );
 }
 
 const HeroComponent = forwardRef<HTMLElement, HeroProps>(
   ({ className = '' }: HeroProps, ref: ForwardedRef<HTMLElement>) => {
-    const reduce = useReducedMotion() ?? false;
-    const router = useRouter();
     const { theme } = useTheme();
+    const effects = useDesktopEffects();
 
     useEffect(() => {
       const hero = document.getElementById('hero');
@@ -204,74 +158,54 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
         <section
           ref={ref}
           id="hero"
+          tabIndex={-1}
           aria-labelledby="hero-title"
           className={`landing-hero relative flex min-h-[100dvh] w-full max-w-full items-center overflow-hidden ${className}`}
         >
-          {theme === 'dark' && <div className="hero-veil" aria-hidden="true"><DarkVeil /></div>}
+          {effects && theme === 'dark' && <div className="hero-veil" aria-hidden="true"><DarkVeil /></div>}
           <div className="hero-coordinate" aria-hidden="true">NEXOS / DIGITAL STUDIO</div>
           <div className="hero-container">
             <div className="hero-copy">
-              <motion.div
-                initial={reduce ? { opacity: 0 } : ENTER.initial}
-                whileInView={reduce ? { opacity: 1 } : ENTER.whileInView}
-                viewport={{ once: true, amount: 0.6 }}
-                transition={ENTER.transition}
-                className="mb-6 will-change-transform"
-              >
+              <div className="mb-6">
                 <span className="tech-badge">
                   <span className="tech-badge-dot" aria-hidden="true" />
                   Design + código + estratégia
                 </span>
-              </motion.div>
+              </div>
 
-              <motion.h1
+              <h1
                 id="hero-title"
-                initial={reduce ? { opacity: 0 } : ENTER.initial}
-                whileInView={reduce ? { opacity: 1 } : ENTER.whileInView}
-                viewport={{ once: true, amount: 0.5 }}
-                transition={{ ...ENTER.transition, delay: 0.08 }}
                 className="hero-heading"
               >
-                Seu negócio.<br />
-                <GradientText colors={['var(--display-rose)', 'var(--display-purple)', 'var(--display-rose)']} animationSpeed={12}>Em outra escala.</GradientText>
-              </motion.h1>
+                Sites para<br />
+                <span className="hero-accent">seu negócio.</span>
+              </h1>
 
-              <motion.p
-                initial={reduce ? { opacity: 0 } : ENTER.initial}
-                whileInView={reduce ? { opacity: 1 } : ENTER.whileInView}
-                viewport={{ once: true, amount: 0.6 }}
-                transition={{ ...ENTER.transition, delay: 0.16 }}
+              <p
                 className="hero-description"
               >
-                Construímos experiências digitais que conectam sua marca, seus clientes e seu próximo passo.
-              </motion.p>
+                A {config.brand.fullName} cria sites, landing pages e cardápios digitais. Conecte seu atendimento presencial com placas NFC e QR Code.
+              </p>
 
-              <motion.div
-                initial={reduce ? { opacity: 0 } : ENTER.initial}
-                whileInView={reduce ? { opacity: 1 } : ENTER.whileInView}
-                viewport={{ once: true, amount: 0.6 }}
-                transition={{ ...ENTER.transition, delay: 0.24 }}
+              <div
                 className="hero-actions"
               >
-                <HoverButton
-                  onClick={() => navigate(config.hero.ctaPrimary.href, router.push)}
+                <HoverLink
+                  href={config.hero.ctaPrimary.href}
                   aria-label={config.hero.ctaPrimary.label}
                 >
                   {config.hero.ctaPrimary.label}
-                </HoverButton>
+                </HoverLink>
 
-                <motion.button
-                  type="button"
-                  onClick={() => navigate(config.hero.ctaSecondary.href, router.push)}
+                <a
+                  href={config.hero.ctaSecondary.href}
                   aria-label={config.hero.ctaSecondary.label}
-                  whileTap={{ scale: 0.98 }}
-                  transition={{ duration: 0.2, ease: FLUID_EASE }}
                   className="hero-secondary"
                 >
                   {config.hero.ctaSecondary.label}
                   <ArrowUpRight size={16} aria-hidden="true" />
-                </motion.button>
-              </motion.div>
+                </a>
+              </div>
             </div>
           </div>
         </section>
@@ -282,11 +216,7 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
               <span className={styles.currentSection}><Sparkles size={16} aria-hidden="true" /> Por que a NexOS</span>
               <a href="#showcase">Conhecer a Placa NFC <ArrowUpRight size={16} aria-hidden="true" /></a>
             </div>
-            <motion.header
-              initial={reduce ? { opacity: 0 } : { opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.4 }}
-              transition={{ duration: 0.55, ease: FLUID_EASE }}
+            <header
               className={styles.header}
             >
               <h2 id="benefits-title" className={styles.heading}>
@@ -295,18 +225,14 @@ const HeroComponent = forwardRef<HTMLElement, HeroProps>(
               <p className={styles.lead}>
                 Marca, performance e conversão no mesmo lugar — sem trocar de agência a cada etapa.
               </p>
-            </motion.header>
-            <motion.div
-              variants={reduce ? undefined : STAGGER_PARENT}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true, amount: 0.12 }}
+            </header>
+            <div
               className={styles.bentoGrid}
             >
               {BENTO_CARDS.map((card: BentoCardData) => (
-                <BentoCard key={card.id} card={card} reduceMotion={reduce} />
+                <BentoCard key={card.id} card={card} />
               ))}
-            </motion.div>
+            </div>
           </div>
         </section>
       </>

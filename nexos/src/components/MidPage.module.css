@@ -74,7 +74,7 @@
 .pillarPilar { text-transform: uppercase; letter-spacing: 0.12em; color: color-mix(in srgb, var(--color-ink) 35%, transparent); }
 .pillarAction { grid-column: 1 / -1; margin-top: 4px; }
 .pillarAction :global(.btn-secondary-nex) { width: 100%; min-height: 44px; justify-content: space-between; border-radius: 8px; font-size: 13px; }
-.terminalStatus { display: flex; flex-wrap: wrap; gap: 4px 16px; padding: 10px 16px; border-top: 1px solid var(--mid-line); background: color-mix(in srgb, var(--color-ink) 2%, transparent); font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; color: color-mix(in srgb, var(--color-ink) 40%, transparent); }
+.terminalStatus { display: flex; flex-wrap: wrap; gap: 4px 16px; padding: 10px 16px; border-top: 1px solid var(--mid-line); background: color-mix(in srgb, var(--color-ink) 2%, transparent); font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--mid-muted); }
 .terminalStatus .push { margin-left: auto; }
 
 /* Footer */

@@ -7,23 +7,22 @@ import { Header } from '@/components/Header';
 import { Hero } from '@/components/Hero';
 import { ProductShowcase } from '@/components/ProductShowcase';
 import { SectionIndicator } from '@/components/SectionIndicator';
-import BrandEntrance from '@/components/BrandEntrance';
 import { Slipstream } from '@/components/ui/background-ascii-flow';
 import { ArrowDown } from 'lucide-react';
 import { CloudSky } from '@/components/SiteAtmosphere';
 
-// Lazy load heavy components below the fold
-const Services = dynamic(() => import('@/components/Services').then(m => m.Services), { ssr: false, loading: () => null });
-const Testimonials = dynamic(() => import('@/components/Testimonials').then(m => m.Testimonials), { ssr: false, loading: () => null });
-const FAQ = dynamic(() => import('@/components/FAQ').then(m => m.FAQ), { ssr: false, loading: () => null });
-const Contact = dynamic(() => import('@/components/Contact').then(m => m.Contact), { ssr: false, loading: () => null });
-const Footer = dynamic(() => import('@/components/Footer').then(m => m.Footer), { ssr: false, loading: () => null });
+// Split client bundles while keeping commercial content in the server HTML.
+const Services = dynamic(() => import('@/components/Services').then(m => m.Services));
+const Testimonials = dynamic(() => import('@/components/Testimonials').then(m => m.Testimonials));
+const FAQ = dynamic(() => import('@/components/FAQ').then(m => m.FAQ));
+const Contact = dynamic(() => import('@/components/Contact').then(m => m.Contact));
+const Footer = dynamic(() => import('@/components/Footer').then(m => m.Footer));
+const BrandEntrance = dynamic(() => import('@/components/BrandEntrance'), { ssr: false });
 
 
 type Stage = 'intro' | 'brand' | 'main';
 
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
-const BOOT_SEEN_KEY = 'nexos-boot-seen';
 
 interface IntroSectionProps {
   onComplete: () => void;
@@ -69,7 +68,8 @@ function IntroSection({ onComplete }: IntroSectionProps) {
 
   return (
     <motion.div
-      role="region"
+      role="dialog"
+      aria-modal="true"
       aria-label="Apresentação NexOS — role para entrar"
       exit={reduce ? { opacity: 0 } : { opacity: 0, y: -32, scale: 0.985 }}
       transition={{ duration: reduce ? 0.15 : 0.65, ease: FLUID_EASE }}
@@ -97,6 +97,7 @@ function IntroSection({ onComplete }: IntroSectionProps) {
 
       <motion.button
         type="button"
+        autoFocus
         onClick={finish}
         aria-label="Continuar para o site"
         initial={false}
@@ -114,24 +115,19 @@ function IntroSection({ onComplete }: IntroSectionProps) {
 }
 
 export default function HomeClient() {
-  // Paint the introduction from SSR immediately; avoid a timer/hydration-gated LCP.
-  const [stage, setStage] = useState<Stage>('intro');
+  // Every visitor receives the complete landing page without an interaction gate.
+  const [stage, setStage] = useState<Stage>('main');
   const heroRef = useRef<HTMLElement>(null);
   const introDoneRef = useRef<boolean>(false);
   const brandDoneRef = useRef<boolean>(false);
-  const skippedBootRef = useRef<boolean>(false);
+  const presentationPlayedRef = useRef<boolean>(false);
   const mainReduce = useReducedMotion();
 
-  useEffect(() => {
-    let seen = false;
-    try { seen = sessionStorage.getItem(BOOT_SEEN_KEY) === '1'; } catch { seen = false; }
-    if (!seen && !new URLSearchParams(window.location.search).has('checkout')) return;
-    skippedBootRef.current = true;
-    introDoneRef.current = true;
-    brandDoneRef.current = true;
-    // rAF: volta direto à landing nas visitas seguintes da mesma sessão.
-    const id = requestAnimationFrame(() => setStage('main'));
-    return () => cancelAnimationFrame(id);
+  const replayPresentation = useCallback(() => {
+    introDoneRef.current = false;
+    brandDoneRef.current = false;
+    presentationPlayedRef.current = true;
+    setStage('intro');
   }, []);
 
   const handleIntroComplete = useCallback(() => {
@@ -143,17 +139,29 @@ export default function HomeClient() {
   const handleBrandComplete = useCallback(() => {
     if (brandDoneRef.current) return;
     brandDoneRef.current = true;
-    try { sessionStorage.setItem(BOOT_SEEN_KEY, '1'); } catch { /* sem storage */ }
     setStage('main');
   }, []);
 
   useEffect(() => {
-    if (stage !== 'main' || skippedBootRef.current) return;
+    if (stage === 'main') return;
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      setStage('main');
+    };
+    window.addEventListener('keydown', onEscape, true);
+    return () => window.removeEventListener('keydown', onEscape, true);
+  }, [stage]);
+
+  useEffect(() => {
+    if (stage !== 'main' || !presentationPlayedRef.current) return;
     window.scrollTo(0, 0);
     let timer: ReturnType<typeof setTimeout> | undefined;
     const raf: number = requestAnimationFrame(() => {
       timer = setTimeout(() => {
         if (heroRef.current) {
+          heroRef.current.focus({ preventScroll: true });
           heroRef.current.scrollIntoView({ behavior: mainReduce ? 'instant' : 'smooth', block: 'start' });
         }
       }, 150);
@@ -167,29 +175,22 @@ export default function HomeClient() {
 
       <AnimatePresence>{stage === 'brand' && <BrandEntrance key="brand" onComplete={handleBrandComplete} />}</AnimatePresence>
 
-      {stage === 'main' && (
-        <>
-          <a href="#main-content" className="skip-link">Pular para o conteúdo</a>
-          <Header />
-          <SectionIndicator />
-          <motion.div
-            initial={mainReduce ? false : { opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: FLUID_EASE }}
-            className="relative"
-          >
-            <div id="main-content" className="relative">
-              <Hero ref={heroRef} />
-              <ProductShowcase />
-              <Services />
-              <Testimonials />
-              <FAQ />
-              <Contact />
-            </div>
-            <Footer />
-          </motion.div>
-        </>
-      )}
+      <div inert={stage !== 'main'}>
+        <a href="#main-content" className="skip-link">Pular para o conteúdo</a>
+        <Header />
+        <SectionIndicator />
+        <div className="relative">
+          <div id="main-content" tabIndex={-1} className="relative">
+            <Hero ref={heroRef} />
+            <ProductShowcase />
+            <Services />
+            <Testimonials />
+            <FAQ />
+            <Contact />
+          </div>
+          <Footer onViewPresentation={replayPresentation} />
+        </div>
+      </div>
     </main>
   );
 }

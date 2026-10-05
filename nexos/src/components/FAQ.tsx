@@ -1,11 +1,5 @@
-'use client';
-
-import { useState } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { ArrowUpRight, ChevronDown, CircleHelp, MessageSquare } from 'lucide-react';
 import styles from './BottomFunnel.module.css';
-
-const FLUID_EASE = [0.16, 1, 0.3, 1] as const;
 
 interface FAQItem {
   id: string;
@@ -53,47 +47,26 @@ const FAQ_ITEMS: FAQItem[] = [
 
 function FAQAccordionItem({
   item,
-  isOpen,
-  onToggle,
+  initiallyOpen,
 }: {
   item: FAQItem;
-  isOpen: boolean;
-  onToggle: () => void;
+  initiallyOpen: boolean;
 }) {
   return (
-    <div role="listitem" className={styles.faqItem} data-open={isOpen ? 'true' : 'false'}>
-      <button
-        type="button"
-        onClick={onToggle}
-        aria-expanded={isOpen}
-        aria-controls={`faq-answer-${item.id}`}
-        className={styles.faqTrigger}
-      >
+    <details name="nexos-faq" className={styles.faqItem} open={initiallyOpen}>
+      <summary className={styles.faqTrigger}>
         <span className={styles.faqIndex} aria-hidden="true">{item.id}</span>
         <span className={styles.faqQuestion}>{item.question}</span>
         <span className={styles.faqIcon} aria-hidden="true">
           <ChevronDown size={16} strokeWidth={2} />
         </span>
-      </button>
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            id={`faq-answer-${item.id}`}
-            role="region"
-            aria-label={item.question}
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.35, ease: FLUID_EASE }}
-            className={styles.faqPanel}
-          >
-            <div className={styles.faqAnswer}>
-              <p>{item.answer}</p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+      </summary>
+      <div id={`faq-answer-${item.id}`} role="region" aria-label={item.question} className={styles.faqPanel}>
+        <div className={styles.faqAnswer}>
+          <p>{item.answer}</p>
+        </div>
+      </div>
+    </details>
   );
 }
 
@@ -102,9 +75,6 @@ interface FAQProps {
 }
 
 export function FAQ({ className = '' }: FAQProps) {
-  const reduce = useReducedMotion() ?? false;
-  const [openId, setOpenId] = useState<string | null>(FAQ_ITEMS[0].id);
-
   return (
     <section id="faq" aria-labelledby="faq-title" className={`${styles.section} ${className}`}>
       <div className={styles.container}>
@@ -113,13 +83,7 @@ export function FAQ({ className = '' }: FAQProps) {
           <a href="#contact">Falar com a gente <ArrowUpRight size={16} aria-hidden="true" /></a>
         </div>
 
-        <motion.header
-          initial={reduce ? false : { opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.55, ease: FLUID_EASE }}
-          className={styles.header}
-        >
+        <header className={styles.header}>
           <p className={styles.kicker}>FAQ</p>
           <h2 id="faq-title" className={styles.heading}>
             Perguntas frequentes.<br /><span className={styles.accent}>Respostas diretas.</span>
@@ -127,18 +91,15 @@ export function FAQ({ className = '' }: FAQProps) {
           <p className={styles.lead}>
             Performance, placas e checkout. Sem clichê — só o que impacta seu negócio.
           </p>
-        </motion.header>
+        </header>
 
-        <div className={styles.faqList} role="list" aria-label="Perguntas frequentes">
+        <ul className={`${styles.faqList} list-none`} role="list" aria-label="Perguntas frequentes">
           {FAQ_ITEMS.map((item) => (
-            <FAQAccordionItem
-              key={item.id}
-              item={item}
-              isOpen={openId === item.id}
-              onToggle={() => setOpenId((prev) => (prev === item.id ? null : item.id))}
-            />
+            <li key={item.id}>
+              <FAQAccordionItem item={item} initiallyOpen={item.id === FAQ_ITEMS[0].id} />
+            </li>
           ))}
-        </div>
+        </ul>
 
         <p className={styles.faqFooter}>
           <CircleHelp size={16} aria-hidden="true" />

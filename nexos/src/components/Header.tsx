@@ -19,29 +19,14 @@ import styles from './Header.module.css';
 import { MetallicSurface } from './ui/metallic-button';
 
 const NAV_ITEMS = [{ label: 'Placa NFC', href: '#showcase' }, ...config.navigation];
-const EASE = [0.16, 1, 0.3, 1] as const;
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [authenticated, setAuthenticated] = useState(false);
   const menuRef = useRef<HTMLButtonElement>(null);
   const reduce = useReducedMotion();
   const { scrollY } = useScroll();
   useMotionValueEvent(scrollY, 'change', latest => setScrolled(latest > 10));
-
-  useEffect(() => {
-    let active = true;
-    const check = async () => {
-      try {
-        const response = await fetch('/api/auth/session?requireMfa=false', { cache: 'no-store', signal: AbortSignal.timeout(8000) });
-        const data = await response.json();
-        if (active && data?.ok === true) setAuthenticated(true);
-      } catch { /* ignore */ }
-    };
-    void check();
-    return () => { active = false; };
-  }, []);
 
   const handleNav = useCallback((hash: string) => {
     setMobileOpen(false);
@@ -61,11 +46,8 @@ export function Header() {
   }, [mobileOpen]);
 
   return (
-    <motion.header
+    <header
       role="banner"
-      initial={reduce ? false : { opacity: 0, y: -12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: EASE }}
       className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}
     >
       <div className={styles.bar}>
@@ -85,8 +67,8 @@ export function Header() {
           </ul>
         </nav>
         <div className={styles.actions}>
-          <Link href="/portal/acesso" className={styles.account}>
-            <UserRound size={16} strokeWidth={1.75} aria-hidden="true" />{authenticated ? null : <span>Minha conta</span>}
+          <Link href="/portal/acesso" prefetch={false} className={styles.account}>
+            <UserRound size={16} strokeWidth={1.75} aria-hidden="true" /><span>Minha conta</span>
           </Link>
           <ThemeToggle />
           <button type="button" className={styles.start} onClick={() => handleNav('#services')}><MetallicSurface /><span className="metallic-content inline-flex items-center gap-2">Ver soluções <ArrowUpRight size={16} aria-hidden="true" /></span></button>
@@ -109,7 +91,7 @@ export function Header() {
           </motion.nav>
         )}
       </AnimatePresence>
-    </motion.header>
+    </header>
   );
 }
 

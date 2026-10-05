@@ -23,6 +23,8 @@ export function Slipstream({ cellSize = 14, className = '', density = 1.4, seed 
     const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx) return;
     const query = matchMedia('(prefers-reduced-motion: reduce)');
+    const desktop = matchMedia('(min-width: 768px) and (pointer: fine)');
+    const animated = () => desktop.matches && !query.matches;
     let stars: Star[] = [], width = 0, height = 0, raf = 0, last = 0, time = 0;
     let visible = false, disposed = false, shadow = '#ffffff';
     const sprites = document.createElement('canvas'); sprites.width = 192; sprites.height = 32;
@@ -38,7 +40,7 @@ export function Slipstream({ cellSize = 14, className = '', density = 1.4, seed 
     }
     const pointer = { x: -1000, y: -1000, active: false };
     function onPointer(event: PointerEvent) {
-      if (query.matches || !visible || event.pointerType === 'touch') return;
+      if (!animated() || !visible || event.pointerType === 'touch') return;
       const rect = canvas!.getBoundingClientRect();
       pointer.x = event.clientX - rect.left; pointer.y = event.clientY - rect.top;
       pointer.active = pointer.x >= 0 && pointer.x <= width && pointer.y >= 0 && pointer.y <= height;
@@ -48,7 +50,7 @@ export function Slipstream({ cellSize = 14, className = '', density = 1.4, seed 
     function readTheme() {
       shadow = getComputedStyle(canvas!).getPropertyValue('--star-shadow').trim() || '#ffffff';
       bakeStars();
-      if (query.matches) draw();
+      if (!animated()) draw();
     }
     function resize() {
       const rect = canvas!.getBoundingClientRect();
@@ -78,18 +80,18 @@ export function Slipstream({ cellSize = 14, className = '', density = 1.4, seed 
       if (!width || !height) return;
       ctx!.clearRect(0, 0, width, height);
       for (const star of stars) {
-        const wave = query.matches ? 0.65 : (Math.sin(time * star.rate + star.phase) + 1) / 2;
+        const wave = (Math.sin((animated() ? time * star.rate : 0) + star.phase) + 1) / 2;
         const alpha = 0.28 + wave * 0.66;
         const baseX = star.x * width, baseY = star.y * height;
         const dx = baseX - pointer.x, dy = baseY - pointer.y;
         const distance = pointer.active ? Math.hypot(dx, dy) : 1;
-        const influence = !query.matches && pointer.active ? Math.max(0, 1 - distance / 180) ** 2 : 0;
+        const influence = animated() && pointer.active ? Math.max(0, 1 - distance / 180) ** 2 : 0;
         const flowX = -dy / (distance || 1) * influence * 48;
         const flowY = dx / (distance || 1) * influence * 48;
         star.offsetX += (flowX - star.offsetX) * 0.16;
         star.offsetY += (flowY - star.offsetY) * 0.16;
-        const x = baseX + star.offsetX + (query.matches ? 0 : Math.sin(time * 0.06 + star.phase) * 2);
-        const y = baseY + star.offsetY + (query.matches ? 0 : Math.cos(time * 0.08 + star.phase) * 3);
+        const x = baseX + star.offsetX + (animated() ? Math.sin(time * 0.06 + star.phase) * 2 : 0);
+        const y = baseY + star.offsetY + (animated() ? Math.cos(time * 0.08 + star.phase) * 3 : 0);
         ctx!.globalAlpha = alpha;
         // Cached glow sprites avoid hundreds of shadow-blur operations per frame.
         const flowing = influence > 0.055;
@@ -108,14 +110,15 @@ export function Slipstream({ cellSize = 14, className = '', density = 1.4, seed 
     }
     function loop(now: number) {
       raf = 0;
-      if (disposed || !visible || document.hidden || query.matches) return;
+      if (disposed || !visible || document.hidden || !animated()) return;
       if (!last || now - last >= 33) { time += last ? Math.min((now - last) / 1000, 0.1) : 0; last = now; draw(); }
       raf = requestAnimationFrame(loop);
     }
     function sync() {
       cancelAnimationFrame(raf); raf = 0; last = 0;
       if (disposed) return;
-      if (query.matches) draw();
+      canvas!.dataset.motion = animated() ? 'animated' : 'static';
+      if (!animated()) { pointer.active = false; draw(); }
       else if (visible && !document.hidden) raf = requestAnimationFrame(loop);
     }
     const resizeObserver = new ResizeObserver(resize);
@@ -124,12 +127,12 @@ export function Slipstream({ cellSize = 14, className = '', density = 1.4, seed 
     intersection.observe(canvas);
     const themeObserver = new MutationObserver(readTheme);
     themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'style'] });
-    query.addEventListener('change', sync); document.addEventListener('visibilitychange', sync);
+    query.addEventListener('change', sync); desktop.addEventListener('change', sync); document.addEventListener('visibilitychange', sync);
     window.addEventListener('pointermove', onPointer, { passive: true }); document.addEventListener('pointerleave', onLeave);
     resize();
     return () => {
       disposed = true; cancelAnimationFrame(raf); resizeObserver.disconnect(); intersection.disconnect(); themeObserver.disconnect();
-      query.removeEventListener('change', sync); document.removeEventListener('visibilitychange', sync);
+      query.removeEventListener('change', sync); desktop.removeEventListener('change', sync); document.removeEventListener('visibilitychange', sync);
       window.removeEventListener('pointermove', onPointer); document.removeEventListener('pointerleave', onLeave);
     };
   }, [cellSize, density, seed]);

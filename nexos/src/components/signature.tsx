@@ -4,9 +4,8 @@
  * Assinatura SVG (Lastoria) — 120px com opentype.js.
  * viewBox dinâmico, overflow visible.
  */
-import { useEffect, useId, useState } from "react";
-import { motion } from "motion/react";
-import { parse as parseFont } from "opentype.js";
+import { useEffect, useId, useRef, useState } from "react";
+import { motion, useInView } from "motion/react";
 
 type SignatureGlyph = {
   advanceWidth?: number;
@@ -70,6 +69,7 @@ async function loadFontFromPaths(fontPaths: string[]): Promise<SignatureFont> {
       }
 
       const fontBuffer = await response.arrayBuffer();
+      const { parse: parseFont } = await import('opentype.js');
       const font = parseFont(fontBuffer) as SignatureFont;
       fontCache.set(cacheKey, font);
 
@@ -174,6 +174,9 @@ export function Signature({
   inView = false,
   once = true,
 }: SignatureProps) {
+  const ref = useRef<SVGSVGElement>(null);
+  const visible = useInView(ref, { once, margin: '200px' });
+  const active = !inView || visible;
   const [paths, setPaths] = useState<string[]>([]);
   const [width, setWidth] = useState<number>(300);
   const horizontalPadding = fontSize * 0.35;
@@ -182,6 +185,7 @@ export function Signature({
   const maskId = `signature-reveal-${useId().replace(/:/g, "")}`;
 
   useEffect(() => {
+    if (!active) return;
     let isCancelled = false;
 
     async function loadSignaturePaths() {
@@ -214,10 +218,11 @@ export function Signature({
     return () => {
       isCancelled = true;
     };
-  }, [text, fontSize, baseline, horizontalPadding]);
+  }, [active, text, fontSize, baseline, horizontalPadding]);
 
   return (
     <motion.svg
+      ref={ref}
       key={paths.length}
       width={width}
       height={SVG_HEIGHT}

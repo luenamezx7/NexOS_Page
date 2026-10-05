@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ArrowLeft, ShieldCheck } from 'lucide-react';
 import { LEGAL_DOCS, getLegalDoc } from './legal-content';
 import { useTheme } from './ThemeProvider';
+import { CloudflareEmailBoundary } from './CloudflareEmailBoundary';
 
 export function LegalPage({ slug }: { slug: string }) {
   const { theme } = useTheme();
@@ -11,6 +12,7 @@ export function LegalPage({ slug }: { slug: string }) {
   const doc = getLegalDoc(slug);
 
   return (
+    <CloudflareEmailBoundary>
     <main className="page-surface min-h-screen text-ink">
       <div className="mx-auto w-full max-w-3xl px-5 py-16 md:px-8 md:py-24">
         <Link
@@ -64,6 +66,7 @@ export function LegalPage({ slug }: { slug: string }) {
         </div>
       </div>
     </main>
+    </CloudflareEmailBoundary>
   );
 }
 
