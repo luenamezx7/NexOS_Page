@@ -37,6 +37,7 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       { source: '/entrar', destination: '/portal/acesso', permanent: true },
+      { source: '/favicon.ico', destination: '/favicon.png', permanent: true },
       { source: '/login', destination: '/admin-dashboard-su/secure-entry', permanent: true },
     ];
   },
@@ -61,6 +62,11 @@ const nextConfig: NextConfig = {
         // Fontes e assets de marca não mudam sem troca de nome: cache longo imutável.
         source: '/:path*\\.(svg|png|jpe?g|webp|avif|otf|ttf|woff2?)$',
         headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+      },
+      {
+        // The search favicon keeps the same URL across brand updates.
+        source: '/favicon.png',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=86400' }],
       },
     ];
   },

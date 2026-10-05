@@ -26,7 +26,8 @@ test('home entrega serviços e links no HTML, antes de qualquer interação', as
   expect(websites[0].alternateName).toEqual(expect.arrayContaining(['NexOS', 'NexOS Performance']));
   expect(websites[0].alternateName).toContain(new URL(websites[0].url).hostname);
   const organization = entities.find(item => item['@type'] === 'Organization');
-  expect(organization.alternateName).toEqual(expect.arrayContaining(['NexOS Lab', 'NexOS Performance']));
+  expect(organization.name).toBe('NexOS Lab');
+  expect(organization.alternateName).toEqual(expect.arrayContaining(['NexOS', 'NexOS Performance']));
 });
 
 test('home e páginas comerciais são legíveis e navegáveis sem JavaScript', async ({ browser }) => {
@@ -38,6 +39,9 @@ test('home e páginas comerciais são legíveis e navegáveis sem JavaScript', a
     await expect(page.locator('h1')).toContainText('Sites para');
     await expect(page.locator('#hero .hero-description')).toContainText('NexOS Lab');
     await expect(page.locator('footer')).toContainText('NexOS Performance');
+    await expect(page.locator('#faq summary').first()).toHaveText(/NexOS, NexOS Lab e NexOS Performance são a mesma empresa\?/);
+    await expect(page.locator('#faq details').first().locator('p')).toBeVisible();
+    await expect(page.locator('#faq details').first().locator('p')).toContainText('Nosso site oficial é nexoslab.online');
     await expect(page.getByRole('heading', { name: 'Desenvolvimento NexOS' })).toBeVisible();
     expect(await page.locator('#services').evaluate(el => getComputedStyle(el).opacity)).toBe('1');
     await page.getByRole('link', { name: 'Criação de sites', exact: true }).click();
@@ -102,6 +106,57 @@ test('imagem social é um PNG real de 1200 por 630', async ({ request }) => {
   expect(bytes.subarray(0, 8).toString('hex')).toBe('89504e470d0a1a0a');
   expect(bytes.readUInt32BE(16)).toBe(1200);
   expect(bytes.readUInt32BE(20)).toBe(630);
+});
+
+test('favicon de busca tem URL fixa, PNG quadrado e é servido aos crawlers sem login', async ({ browser, request }, testInfo) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  try {
+    for (const path of ['/', '/criacao-de-sites']) {
+      await page.goto(`http://localhost:3100${path}`);
+      await expect(page.locator('head link[rel="icon"][type="image/png"]')).toHaveAttribute('href', '/favicon.png');
+      await expect(page.locator('head link[rel="icon"][type="image/png"]')).toHaveAttribute('sizes', '192x192');
+      await expect(page.locator('head link[rel="icon"][type="image/svg+xml"]')).toHaveAttribute('href', '/icon.svg');
+    }
+    const icon = await request.get('/favicon.png', { headers: { 'User-Agent': 'Googlebot-Image/1.0' } });
+    expect(icon.status()).toBe(200);
+    expect(icon.headers()['content-type']).toContain('image/png');
+    expect(icon.headers()['x-robots-tag']).toBeUndefined();
+    const bytes = await icon.body();
+    expect(bytes.subarray(0, 8).toString('hex')).toBe('89504e470d0a1a0a');
+    expect(bytes.readUInt32BE(16)).toBe(192);
+    expect(bytes.readUInt32BE(20)).toBe(192);
+    const legacy = await request.get('/favicon.ico', { maxRedirects: 0 });
+    expect(legacy.status()).toBe(308);
+    expect(legacy.headers().location).toBe('/favicon.png');
+    const svg = await request.get('/icon.svg');
+    expect(svg.status()).toBe(200);
+    expect(await svg.text()).toContain('viewBox="0 0 307 257"');
+    await page.goto('http://localhost:3100/favicon.png');
+    const renderedIcon = page.locator('img');
+    await expect(renderedIcon).toBeVisible();
+    const colors = await renderedIcon.evaluate((image: HTMLImageElement) => {
+      const canvas = document.createElement('canvas');
+      canvas.width = image.naturalWidth;
+      canvas.height = image.naturalHeight;
+      const context = canvas.getContext('2d')!;
+      context.drawImage(image, 0, 0);
+      const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+      let white = 0;
+      let black = 0;
+      for (let i = 0; i < pixels.length; i += 4) {
+        if (pixels[i] > 240 && pixels[i + 1] > 240 && pixels[i + 2] > 240) white++;
+        if (pixels[i] < 15 && pixels[i + 1] < 15 && pixels[i + 2] < 15) black++;
+      }
+      return { white, black };
+    });
+    // A valid PNG must contain the actual contrasting mark, not an empty render.
+    expect(colors.white).toBeGreaterThan(1000);
+    expect(colors.black).toBeGreaterThan(1000);
+    await renderedIcon.screenshot({ path: testInfo.outputPath('favicon.png') });
+  } finally {
+    await context.close();
+  }
 });
 
 test('dados estruturados usam informações e preço do conteúdo visível', async ({ page }) => {

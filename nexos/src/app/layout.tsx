@@ -18,14 +18,22 @@ const terminal = Space_Mono({ subsets: ['latin'], weight: ['400', '700'], variab
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   applicationName: config.brand.fullName,
+  icons: {
+    icon: [
+      { url: '/favicon.png', type: 'image/png', sizes: '192x192' },
+      { url: '/icon.svg', type: 'image/svg+xml', sizes: 'any' },
+    ],
+    shortcut: '/favicon.png',
+    apple: { url: '/favicon.png', type: 'image/png', sizes: '192x192' },
+  },
   title: {
     default: `${config.brand.fullName} | ${config.meta.title}`,
     template: `%s | ${config.brand.name}`,
   },
   description: config.meta.description,
-  authors: [{ name: 'NexOS' }],
-  creator: 'NexOS',
-  publisher: 'NexOS',
+  authors: [{ name: config.brand.fullName }],
+  creator: config.brand.fullName,
+  publisher: config.brand.fullName,
   robots: {
     index: true,
     follow: true,

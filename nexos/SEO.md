@@ -185,3 +185,30 @@ Diagnóstico de rastreamento e limites da auditoria:
 - Nota SEO do Lighthouse e aprovação do sitemap não comprovam indexação nem posição para uma consulta.
 
 **Próximo diagnóstico necessário:** no Search Console, usar **Inspeção de URL** para `https://nexoslab.online/` e conferir **Indexação de páginas**, a última data de rastreamento e a canônica selecionada pelo Google. Solicitar uma captura dessa tela ao proprietário. Se a URL não estiver no Google, registrar o motivo exato (não descoberta, descoberta sem indexação, rastreada sem indexação, duplicidade, erro ou bloqueio) antes de escolher a próxima correção. Se já estiver no Google, investigar associação de marca e consultas/impressões no relatório de desempenho. Testar a URL publicada e solicitar indexação após esta publicação; não repetir pedidos diariamente esperando acelerar o processamento.
+
+### Buscas de marca e favicon da pesquisa — 05/10/2026
+
+O proprietário informou que encontra o site pesquisando pelo domínio exato, mas não por “nexos”, “nexos lab” ou “nexos performance”, e pediu o mesmo ícone do navegador nos resultados.
+
+Auditoria do deployment ativo `dpl_HtWsKvB8wnu3uSPiciBw8ZBT5rff`:
+
+- Home HTTP 200, canônica no domínio oficial, `index, follow` e sem cabeçalho `noindex`.
+- Os três nomes já estavam nos metadados e no nó `WebSite`. Não foi identificado bloqueio do Googlebot ou Googlebot-Image no robots publicado. Isso não comprova rastreamento real, indexação ou posição por consulta.
+- Havia apenas um favicon SVG retangular, 307 × 257, com query gerada pelo Next.js. `/favicon.ico` retornava 404.
+- A [documentação atual de favicons do Google](https://developers.google.com/search/docs/appearance/favicon-in-search) exige proporção quadrada, recomenda mais de 48 × 48 px e lista formatos raster como PNG e ICO; SVG não consta nessa lista. A URL deve ser estável e acessível aos crawlers.
+
+Correções:
+
+- SVG original preservado integralmente em `public/icon.svg`, mantendo a URL pública `/icon.svg`.
+- `/favicon.png` gera no build um PNG 192 × 192 a partir desse SVG, sem recorte ou distorção. O desenho fica centralizado sobre fundo preto para preservar o contraste em resultados claros e escuros.
+- Metadados globais anunciam explicitamente o PNG com URL fixa e dimensões, além do SVG para navegadores. `/favicon.ico` redireciona permanentemente para o PNG.
+- `Organization.name`, autoria e publicação usam `NexOS Lab`, alinhados a `WebSite.name`; `NexOS` e `NexOS Performance` são nomes alternativos da mesma organização.
+- A FAQ esclarece os três nomes em texto visível, aberto inicialmente e disponível sem JavaScript, incluindo o domínio oficial e os serviços oferecidos.
+
+Validação local: TypeScript, ESLint dos arquivos envolvidos e build aprovados; **17 testes** de SEO/desempenho aprovados. O teste de favicon verifica os links no HTML, acesso como Googlebot-Image, PNG real quadrado, desenho contrastante não vazio, redirecionamento legado e preservação do SVG. O PNG gerado também foi revisado visualmente.
+
+Publicação: deployment **`dpl_9TVbTJ3kXbg5q3SwXRPLcRtDPq7W`**, confirmado como **Ready**, com alias `https://nexoslab.online`. Dez páginas públicas verificadas com HTTP 200, canônicas próprias, nome e alternativas da organização e links explícitos para os dois formatos de ícone. `/favicon.png` retorna PNG 192 × 192, inclusive com user-agent Googlebot-Image, com cache público de um dia; `/favicon.ico` retorna 308 para o PNG. FAQ e associação de marca foram verificadas sem JavaScript; viewport de 360 px e navegação mobile claro/escuro em 390 px sem overflow.
+
+Observação adicional da navegação em produção: algumas cargas diretas com JavaScript registraram o erro recuperável React #418 (hidratação); outras execuções com respostas interceptadas pelo navegador não o reproduziram. A página continuou funcional e o HTML público e favicon estavam íntegros. O domínio injeta scripts externos do Cloudflare, mas estes experimentos não comprovaram a causa nem uma regressão em relação ao deployment anterior. Investigar esse aviso separadamente; não considerar a ausência de erro numa repetição como resolução.
+
+**Próximas ações na conta Google:** após publicar, inspecionar a home, testar a URL publicada e solicitar indexação uma vez para atualizar os sinais de marca e favicon. Registrar a última data de rastreamento e a canônica escolhida pelo Google. Em **Desempenho → Resultados da pesquisa**, filtrar consultas por `nexos` e comparar impressões e posição média nas próximas semanas. Se houver indexação mas pouca visibilidade, manter nome, site e link oficial consistentes no Instagram e em perfis públicos reais da empresa; buscar referências legítimas de clientes/parceiros. A consulta curta “nexos” pode competir com outras entidades; dados estruturados e favicon não garantem posição ou exibição imediata. O Google pode levar dias ou semanas para reprocessar a home e o ícone.

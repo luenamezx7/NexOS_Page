@@ -39,8 +39,9 @@ export const organizationData = {
     {
       '@type': 'Organization',
       '@id': siteUrl('/#organization'),
-      name: config.brand.name,
-      alternateName: [config.brand.fullName, ...config.brand.alternateNames],
+      name: config.brand.fullName,
+      alternateName: [config.brand.name, ...config.brand.alternateNames],
+      description: config.meta.description,
       url: siteUrl(),
       logo: siteUrl('/nexos-logo-light.svg'),
       email: 'nexosperformance@gmail.com',

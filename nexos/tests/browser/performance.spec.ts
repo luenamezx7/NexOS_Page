@@ -59,7 +59,7 @@ test('CTA principal funciona sem JavaScript e favicon SVG é servido corretament
     await expect(action).toHaveAttribute('href', '#services');
     await action.click();
     await expect(page).toHaveURL(/#services$/);
-    const icon = await page.locator('link[rel="icon"]').first().getAttribute('href');
+    const icon = await page.locator('link[rel="icon"][type="image/svg+xml"]').getAttribute('href');
     expect(icon).toContain('/icon.svg');
     const response = await request.get(icon!);
     expect(response.status()).toBe(200);
@@ -75,7 +75,7 @@ test('FAQ da home funciona sem JavaScript e mantém uma resposta aberta por vez'
   try {
     await page.goto('http://localhost:3100/');
     const items = page.locator('#faq details');
-    await expect(items).toHaveCount(6);
+    await expect(items).toHaveCount(7);
     await expect(page.locator('#faq details[open]')).toHaveCount(1);
     const second = items.nth(1);
     await second.locator('summary').click();
