@@ -8,6 +8,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { motion, useMotionValue, useReducedMotion, useTransform, type MotionValue } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
 import { MetallicSurface } from './ui/metallic-button';
+import { useTheme } from './ThemeProvider';
 
 const HOLD_MS = 1500;
 const FLUID_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
@@ -29,13 +30,15 @@ interface HoldButtonProps {
 }
 
 export function HoldButton({ label, ariaLabel, hintId, onConfirm, className = '', featured = false, progress: progressProp, background, affirm = false }: HoldButtonProps) {
+  const { theme } = useTheme();
+  const shadowColor = theme === 'light' ? '60,123,225' : '255,92,138';
   const internalProgress = useMotionValue(0);
   const progress = progressProp ?? internalProgress;
   const boxShadow = useTransform(
     progress,
     [0, 1],
     [
-      'inset 0 1px 0 rgba(255,255,255,0.25), 0 0 0 1px rgba(255, 92, 138,0.28), 0 10px 28px -10px rgba(255, 92, 138,0.55), 0 0 20px rgba(255, 92, 138,0.28)',
+      `inset 0 1px 0 rgba(255,255,255,0.25), 0 0 0 1px rgba(${shadowColor},0.28), 0 10px 28px -10px rgba(${shadowColor},0.55), 0 0 20px rgba(${shadowColor},0.28)`,
       'inset 0 1px 0 rgba(255,255,255,0.22), 0 0 0 1px rgba(16,185,129,0.55), 0 10px 28px -10px rgba(16,185,129,0.55), 0 0 22px rgba(16,185,129,0.45)',
     ],
   );

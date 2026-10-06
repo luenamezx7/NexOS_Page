@@ -41,8 +41,8 @@
 .quantity button:hover:not(:disabled) { background: var(--commerce-raised); }
 .quantity button:disabled { cursor: not-allowed; opacity: 0.35; }
 .quantity output { min-width: 24px; text-align: center; font-size: 16px; font-variant-numeric: tabular-nums; }
-.buyButton:global(.btn-primary-nex) { width: 100%; min-height: 48px; border-radius: 8px; background: #be185d; box-shadow: inset 0 1px 0 #ffffff25; font-size: 14px; letter-spacing: 0; transition: background-color 180ms; }
-.buyButton:global(.btn-primary-nex):hover { background: #a91551; filter: none; box-shadow: inset 0 1px 0 #ffffff25; }
+.buyButton:global(.btn-primary-nex) { width: 100%; min-height: 48px; border-radius: 8px; background: var(--commerce-buy); box-shadow: inset 0 1px 0 #ffffff25; font-size: 14px; letter-spacing: 0; transition: background-color 180ms; }
+.buyButton:global(.btn-primary-nex):hover { background: var(--commerce-buy-hover); filter: none; box-shadow: inset 0 1px 0 #ffffff25; }
 .hint { margin: 8px 0 12px; font-size: 12px; color: var(--commerce-muted); text-align: center; }
 .textLink { display: inline-flex; align-items: center; justify-content: flex-start; gap: 8px; min-height: 44px; font-size: 14px; font-weight: 500; }
 .textLink:hover { color: var(--commerce-accent); }

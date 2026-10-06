@@ -250,7 +250,7 @@ export default function ContaPage() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#ff5c8a] to-[#83358F] flex items-center justify-center shadow-lg">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--brand-choice)] to-[var(--brand-secondary)] flex items-center justify-center shadow-lg">
                     <User className="w-5 h-5 text-white" />
                   </div>
                   <div>
@@ -345,7 +345,7 @@ export default function ContaPage() {
           <Card>
             <CardHeader>
               <div className="flex items-center gap-3">
-                <ShieldCheck className="w-5 h-5 text-[#ff5c8a]" />
+                <ShieldCheck className="w-5 h-5 text-[color:var(--brand-choice)]" />
                 <CardTitle className="font-display text-lg">Segurança</CardTitle>
               </div>
             </CardHeader>
@@ -393,7 +393,7 @@ export default function ContaPage() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <MapPin className="w-5 h-5 text-[#ff5c8a]" />
+                <MapPin className="w-5 h-5 text-[color:var(--brand-choice)]" />
                   <CardTitle className="font-display text-lg">Endereços</CardTitle>
                 </div>
                 <Button
@@ -484,7 +484,7 @@ export default function ContaPage() {
                       key={addr.id}
                       className={`p-4 rounded-lg border transition-colors ${
                         addr.is_default
-                          ? 'border-[#ff5c8a]/40 bg-[#ff5c8a]/[0.04] dark:border-[#ff5c8a]/30 dark:bg-[#ff5c8a]/[0.06]'
+                          ? 'border-[var(--brand-choice)]/40 bg-[var(--brand-choice)]/[0.04] dark:border-[var(--brand-choice)]/30 dark:bg-[var(--brand-choice)]/[0.06]'
                           : 'border-ink/10 bg-ink/[0.01] dark:bg-transparent'
                       }`}
                     >
@@ -494,7 +494,7 @@ export default function ContaPage() {
                             {addressTypeLabels[addr.type]}
                           </span>
                           {addr.is_default && (
-                            <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-[#ff5c8a]/15 text-[#ff5c8a] dark:bg-[#ff5c8a]/20">
+                            <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-[var(--brand-choice)]/15 text-[color:var(--brand-choice)] dark:bg-[var(--brand-choice)]/20">
                               Padrão
                             </span>
                           )}
@@ -551,7 +551,7 @@ export default function ContaPage() {
           <Card>
             <CardHeader>
               <div className="flex items-center gap-3">
-                <Package className="w-5 h-5 text-[#ff5c8a]" />
+                <Package className="w-5 h-5 text-[color:var(--brand-choice)]" />
                 <CardTitle className="font-display text-lg">Meus Pedidos</CardTitle>
               </div>
             </CardHeader>
@@ -626,7 +626,7 @@ export default function ContaPage() {
           <Card>
             <CardHeader>
               <div className="flex items-center gap-3">
-                <ShieldCheck className="w-5 h-5 text-[#ff5c8a]" />
+                <ShieldCheck className="w-5 h-5 text-[color:var(--brand-choice)]" />
                 <CardTitle className="font-display text-lg">LGPD & Privacidade</CardTitle>
               </div>
             </CardHeader>
@@ -638,19 +638,19 @@ export default function ContaPage() {
                   </h3>
                   <ul className="space-y-2 text-sm text-ink/70">
                     <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-[#ff5c8a] mt-0.5 shrink-0" />
+                      <Check className="w-4 h-4 text-[color:var(--brand-choice)] mt-0.5 shrink-0" />
                       <span>Acesso: solicitar quais dados temos sobre você</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-[#ff5c8a] mt-0.5 shrink-0" />
+                      <Check className="w-4 h-4 text-[color:var(--brand-choice)] mt-0.5 shrink-0" />
                       <span>Correção: solicitar alteração de dados incompletos</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-[#ff5c8a] mt-0.5 shrink-0" />
+                      <Check className="w-4 h-4 text-[color:var(--brand-choice)] mt-0.5 shrink-0" />
                       <span>Eliminação: solicitar exclusão de dados desnecessários</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-[#ff5c8a] mt-0.5 shrink-0" />
+                      <Check className="w-4 h-4 text-[color:var(--brand-choice)] mt-0.5 shrink-0" />
                       <span>Portabilidade: dados em formato legível</span>
                     </li>
                   </ul>
@@ -661,19 +661,19 @@ export default function ContaPage() {
                   </h3>
                   <ul className="space-y-2 text-sm text-ink/70">
                     <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-[#ff5c8a] mt-0.5 shrink-0" />
+                      <Check className="w-4 h-4 text-[color:var(--brand-choice)] mt-0.5 shrink-0" />
                       <span>Criptografia de dados sensíveis</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-[#ff5c8a] mt-0.5 shrink-0" />
+                      <Check className="w-4 h-4 text-[color:var(--brand-choice)] mt-0.5 shrink-0" />
                       <span>Acesso restrito à equipe autorizada</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-[#ff5c8a] mt-0.5 shrink-0" />
+                      <Check className="w-4 h-4 text-[color:var(--brand-choice)] mt-0.5 shrink-0" />
                       <span>Logs de acesso e auditoria</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-[#ff5c8a] mt-0.5 shrink-0" />
+                      <Check className="w-4 h-4 text-[color:var(--brand-choice)] mt-0.5 shrink-0" />
                       <span>Política de retenção de dados</span>
                     </li>
                   </ul>

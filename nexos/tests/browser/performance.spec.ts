@@ -1,17 +1,14 @@
 import { expect, test } from '@playwright/test';
-
-test.beforeEach(async ({ page }) => {
-  await page.addInitScript(() => sessionStorage.setItem('nexos-boot-seen', '1'));
-});
+import { enterPresentation } from './helpers/presentation';
 
 test('mobile usa atmosfera estática e não carrega a fonte do rodapé no início', async ({ browser }) => {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, colorScheme: 'dark' });
   const page = await context.newPage();
-  await page.addInitScript(() => sessionStorage.setItem('nexos-boot-seen', '1'));
   const requests: string[] = [];
   page.on('request', request => requests.push(request.url()));
   try {
     await page.goto('http://localhost:3100/');
+    await enterPresentation(page);
     await expect(page.locator('.night-sky canvas')).toHaveAttribute('data-motion', 'static');
     await expect(page.locator('.hero-veil canvas')).toHaveCount(0);
     await expect(page.locator('[data-dither-wave]')).toHaveCount(0);
@@ -29,9 +26,9 @@ test('mobile usa atmosfera estática e não carrega a fonte do rodapé no iníci
 test('prefers-reduced-motion mantém os efeitos opcionais desativados no desktop', async ({ browser }) => {
   const context = await browser.newContext({ reducedMotion: 'reduce', viewport: { width: 1365, height: 768 }, colorScheme: 'dark' });
   const page = await context.newPage();
-  await page.addInitScript(() => sessionStorage.setItem('nexos-boot-seen', '1'));
   try {
     await page.goto('http://localhost:3100/');
+    await enterPresentation(page);
     await expect(page.locator('.night-sky canvas')).toHaveAttribute('data-motion', 'static');
     await expect(page.locator('.hero-veil canvas')).toHaveCount(0);
     await expect(page.locator('h1')).toBeVisible();
@@ -48,6 +45,7 @@ test('captcha só carrega perto do contato e o envio continua bloqueado sem veri
     return route.fulfill({ contentType: 'application/javascript', body: 'window.turnstile={render:function(el){el.textContent="Widget de teste";return "test-widget";},remove:function(){}};' });
   });
   await page.goto('/');
+  await enterPresentation(page);
   await expect(page.getByRole('button', { name: 'Enviar projeto', exact: true })).toBeDisabled();
   expect(widgetRequests).toBe(0);
   await page.locator('#contact').scrollIntoViewIfNeeded();
@@ -97,6 +95,7 @@ test('header público não consulta sessão durante a carga inicial', async ({ p
   const sessionRequests: string[] = [];
   page.on('request', request => { if (request.url().includes('/api/auth/session')) sessionRequests.push(request.url()); });
   await page.goto('/');
+  await enterPresentation(page);
   await expect(page.getByRole('link', { name: 'Minha conta', exact: true })).toHaveAttribute('href', '/portal/acesso');
   expect(sessionRequests).toEqual([]);
 });
@@ -107,5 +106,6 @@ test('contato preserva o mailto e publica a exceção de transformação do Clou
   expect(html).toContain('<!--email_off-->');
   expect(html).toContain('<!--/email_off-->');
   await page.goto('/');
+  await enterPresentation(page);
   await expect(page.locator('#contact a[href^="mailto:"]')).toHaveAttribute('href', 'mailto:nexosperformance@gmail.com');
 });

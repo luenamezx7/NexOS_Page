@@ -1,12 +1,8 @@
 import { expect, test } from '@playwright/test';
+import { enterPresentation } from './helpers/presentation';
 
 const servicePaths = ['/criacao-de-sites', '/landing-pages', '/cardapio-digital', '/placa-nfc'];
 const publicPaths = ['/', ...servicePaths, '/privacidade', '/termos', '/lgpd', '/reembolso', '/cookies'];
-
-// These checks exercise the commercial home after the first-visit presentation.
-test.beforeEach(async ({ page }) => {
-  await page.addInitScript(() => sessionStorage.setItem('nexos-boot-seen', '1'));
-});
 
 test('home entrega serviços e links no HTML, antes de qualquer interação', async ({ request }) => {
   const response = await request.get('/');
@@ -181,6 +177,7 @@ test('dados estruturados usam informações e preço do conteúdo visível', asy
 test('mobile após a apresentação abre no conteúdo e páginas comerciais não geram overflow', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
+  await enterPresentation(page);
   await expect(page.locator('.waves-entry')).toHaveCount(0);
   await expect(page.locator('h1')).toContainText('Sites para');
   await expect(page.getByRole('button', { name: 'Continuar para o site' })).toHaveCount(0);
@@ -195,21 +192,28 @@ test('mobile após a apresentação abre no conteúdo e páginas comerciais não
   }
 });
 
-test('apresentação pode ser revista e fechada com Escape', async ({ page }) => {
+test('apresentação pode ser revista e concluída apenas por scroll', async ({ page }) => {
   await page.goto('/');
+  await enterPresentation(page);
+  const cookies = page.getByRole('dialog', { name: 'Aviso de cookies' });
+  if (await cookies.isVisible()) await cookies.getByRole('button', { name: 'Recusar', exact: true }).click();
   await page.getByRole('button', { name: 'Ver apresentação', exact: true }).click();
   await expect(page.getByRole('dialog', { name: /Apresentação NexOS/ })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Continuar para o site' })).toBeFocused();
   await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog', { name: /Apresentação NexOS/ })).toBeVisible();
+  await enterPresentation(page);
   await expect(page.getByRole('dialog', { name: /Apresentação NexOS/ })).toHaveCount(0);
   await expect(page.locator('#hero')).toBeFocused();
 });
 
 test('atalho de teclado para o conteúdo só aparece quando recebe foco', async ({ page }) => {
   await page.goto('/');
+  await enterPresentation(page);
   await expect(page.locator('.waves-entry')).toHaveCount(0);
   const skipLink = page.getByRole('link', { name: 'Pular para o conteúdo' });
   expect(await skipLink.evaluate(el => el.getBoundingClientRect().bottom)).toBeLessThan(0);
+  // The handoff focuses the hero. Return to the document's first keyboard stop.
+  await page.evaluate(() => { document.body.tabIndex = -1; document.body.focus(); document.body.removeAttribute('tabindex'); });
   await page.keyboard.press('Tab');
   await expect(skipLink).toBeFocused();
   expect(await skipLink.evaluate(el => el.getBoundingClientRect().top)).toBeGreaterThanOrEqual(0);

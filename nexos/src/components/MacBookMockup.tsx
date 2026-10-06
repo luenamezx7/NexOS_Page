@@ -34,7 +34,7 @@ export function MacBookMockup({
   return (
     <div className={`relative select-none ${className}`} style={{ width: baseW, maxWidth: '92vw' }} role="img" aria-label="MacBook Air 13 — Figma mackbook_1.svg">
       {withShadow && (
-        <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-[52%] h-[72%] w-[96%] -translate-x-1/2 -translate-y-1/2 rounded-[2rem] bg-gradient-to-br from-[#ff5c8a]/18 via-[#83358F]/18 to-[#ff5c8a]/14 blur-[36px]" />
+        <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-[52%] h-[72%] w-[96%] -translate-x-1/2 -translate-y-1/2 rounded-[2rem] bg-gradient-to-br from-[var(--brand-choice)]/18 via-[var(--brand-secondary)]/18 to-[var(--brand-choice)]/14 blur-[36px]" />
       )}
 
       <motion.div
@@ -75,7 +75,7 @@ export function MacBookMockup({
               decoding="async"
             />
           ) : (
-            <div className="h-full w-full bg-gradient-to-br from-[#83358F] via-[#7c3aed] to-[#ff5c8a]" />
+            <div className="h-full w-full bg-gradient-to-br from-[var(--brand-secondary)] via-[var(--mockup-middle)] to-[var(--brand-choice)]" />
           )}
           {/* Notch replica por cima da imagem — evita que a imagem cubra o entalhe/câmera */}
           <div

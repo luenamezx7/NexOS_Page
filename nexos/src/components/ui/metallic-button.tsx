@@ -5,6 +5,7 @@ import { forwardRef, useEffect, useRef, type ButtonHTMLAttributes } from 'react'
 import { cn } from '@/lib/utils';
 import { FRAGMENT_SHADER, VERTEX_SHADER } from './metallic-button-shaders';
 import styles from './metallic-button.module.css';
+import { useTheme } from '@/components/ThemeProvider';
 
 interface MetallicShaderUniforms {
   colorBack: string; colorTint: string; repetition: number; softness: number; angle: number;
@@ -109,7 +110,11 @@ export interface MetallicSurfaceProps {
 }
 
 /** The same finish can be inserted into existing hold buttons and semantic links. */
-export function MetallicSurface({ baseColor = '#8a0648', sheenColor = '#ff168d', bandCount = 4, edgeBlur = 0.5, flowAngle = 45, zoom = 8, warp = 0, redFringe = 0.3, blueFringe = 0.3, idleSpeed = 0, hoverSpeed = 0.8, clickSpeed = 1.4, disabled = false }: MetallicSurfaceProps) {
+export function MetallicSurface({ baseColor, sheenColor, bandCount = 4, edgeBlur = 0.5, flowAngle = 45, zoom = 8, warp = 0, redFringe, blueFringe = 0.3, idleSpeed = 0, hoverSpeed = 0.8, clickSpeed = 1.4, disabled = false }: MetallicSurfaceProps) {
+  const { theme } = useTheme();
+  const resolvedBase = baseColor ?? (theme === 'light' ? '#08436f' : '#8a0648');
+  const resolvedSheen = sheenColor ?? (theme === 'light' ? '#86cbf9' : '#ff168d');
+  const resolvedRedFringe = redFringe ?? (theme === 'light' ? 0 : 0.3);
   const ref = useRef<HTMLSpanElement>(null);
   useEffect(() => {
     const surface = ref.current;
@@ -120,7 +125,7 @@ export function MetallicSurface({ baseColor = '#8a0648', sheenColor = '#ff168d',
     let mount: MetallicShaderMount | null = null, visible = false, hovered = false, pressed = false;
     let idle: number | undefined;
     function cancelIdle() { if (idle !== undefined) { if ('cancelIdleCallback' in window) window.cancelIdleCallback(idle); else clearTimeout(idle); idle = undefined; } }
-    const uniforms = { colorBack: baseColor, colorTint: sheenColor, repetition: bandCount, softness: edgeBlur, angle: flowAngle, scale: zoom, distortion: warp, shiftRed: redFringe, shiftBlue: blueFringe };
+    const uniforms = { colorBack: resolvedBase, colorTint: resolvedSheen, repetition: bandCount, softness: edgeBlur, angle: flowAngle, scale: zoom, distortion: warp, shiftRed: resolvedRedFringe, shiftBlue: blueFringe };
     function sync() {
       if (!visible || document.hidden || !desktop.matches || query.matches || disabled) {
         cancelIdle(); mount?.dispose(); mount = null; surface!.dataset.renderMode = 'css'; return;
@@ -142,7 +147,7 @@ export function MetallicSurface({ baseColor = '#8a0648', sheenColor = '#ff168d',
     const intersection = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); }); intersection.observe(surface);
     query.addEventListener('change', sync); desktop.addEventListener('change', sync); document.addEventListener('visibilitychange', sync);
     return () => { cancelIdle(); intersection.disconnect(); mount?.dispose(); for (const [name, listener] of events) button.removeEventListener(name, listener); query.removeEventListener('change', sync); desktop.removeEventListener('change', sync); document.removeEventListener('visibilitychange', sync); };
-  }, [baseColor, sheenColor, bandCount, edgeBlur, flowAngle, zoom, warp, redFringe, blueFringe, idleSpeed, hoverSpeed, clickSpeed, disabled]);
+  }, [resolvedBase, resolvedSheen, bandCount, edgeBlur, flowAngle, zoom, warp, resolvedRedFringe, blueFringe, idleSpeed, hoverSpeed, clickSpeed, disabled]);
   return <span ref={ref} className={styles.surface} data-metallic-surface data-render-mode="css" aria-hidden="true" />;
 }
 

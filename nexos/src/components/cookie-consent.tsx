@@ -256,7 +256,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
             >
               <div className="flex min-w-0 flex-1 items-start gap-3">
                 <span
-                  className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[#ff5c8a]/30 bg-[#ff5c8a]/10 text-[#ff5c8a]"
+                  className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[var(--brand-choice)]/30 bg-[var(--brand-choice)]/10 text-[color:var(--brand-choice)]"
                   aria-hidden="true"
                 >
                   <Cookie size={17} strokeWidth={2} />
@@ -342,7 +342,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
               >
                 <div className="flex min-w-0 items-center gap-3">
                   <span
-                    className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[#ff5c8a]/30 bg-[#ff5c8a]/10 text-[#ff5c8a]"
+                    className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[var(--brand-choice)]/30 bg-[var(--brand-choice)]/10 text-[color:var(--brand-choice)]"
                     aria-hidden="true"
                   >
                     <Cookie size={17} strokeWidth={2} />
@@ -422,8 +422,8 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                         aria-checked={on}
                         aria-label={`${cat.title}: ${on ? 'ativado' : 'desativado'}`}
                         onClick={() => toggleDraft(cat.key)}
-                        className={`relative h-7 w-12 shrink-0 rounded-full border transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff5c8a]/60 ${
-                          on ? 'border-[#ff5c8a] bg-[#ff5c8a]' : isDark ? 'border-white/15 bg-white/10' : 'border-ink/15 bg-ink/10'
+                        className={`relative h-7 w-12 shrink-0 rounded-full border transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-choice)]/60 ${
+                          on ? 'border-[var(--brand-choice)] bg-[var(--brand-choice)]' : isDark ? 'border-white/15 bg-white/10' : 'border-ink/15 bg-ink/10'
                         }`}
                         id={`cookie-switch-${cat.key}`}
                       >

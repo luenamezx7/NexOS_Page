@@ -7,6 +7,7 @@ import { Hero } from '@/components/Hero';
 import { ProductShowcase } from '@/components/ProductShowcase';
 import { SectionIndicator } from '@/components/SectionIndicator';
 import WavesEntrance from '@/components/WavesEntrance';
+import { usePresentationVisit } from '@/components/PresentationVisitProvider';
 
 // Split client bundles while keeping commercial content in the server HTML.
 const Services = dynamic(() => import('@/components/Services').then(m => m.Services));
@@ -16,8 +17,9 @@ const Contact = dynamic(() => import('@/components/Contact').then(m => m.Contact
 const Footer = dynamic(() => import('@/components/Footer').then(m => m.Footer));
 
 export default function HomeClient() {
+  const { eligible, consume } = usePresentationVisit();
   // The entry is visual only: all commercial sections remain in the initial HTML.
-  const [entrance, setEntrance] = useState({ visible: true, replay: false, key: 0 });
+  const [entrance, setEntrance] = useState({ visible: eligible, replay: false, key: 0 });
   const entranceGeneration = useRef(0);
   const heroRef = useRef<HTMLElement>(null);
   const focusRaf = useRef(0);
@@ -39,6 +41,7 @@ export default function HomeClient() {
   }, [entrance.key]);
 
   useEffect(() => () => cancelAnimationFrame(focusRaf.current), []);
+  useEffect(() => { consume(); }, [consume]);
 
   return (
     <main className="landing-page w-full max-w-full overflow-x-clip bg-canvas text-ink">

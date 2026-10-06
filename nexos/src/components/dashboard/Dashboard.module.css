@@ -4,7 +4,7 @@
   --dash-raised: color-mix(in srgb, var(--color-ink) 5%, var(--color-canvas));
   --dash-line: color-mix(in srgb, var(--color-ink) 14%, transparent);
   --dash-muted: color-mix(in srgb, var(--color-ink) 62%, transparent);
-  --dash-accent: #be185d;
+  --dash-accent: var(--primary);
   min-height: 100dvh;
    background: transparent;
   color: var(--color-ink);

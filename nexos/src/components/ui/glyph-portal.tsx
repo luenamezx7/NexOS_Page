@@ -37,6 +37,7 @@ export type GlyphPortalProps = {
   fontWeight?: number;
   annotations?: boolean;
   enterLabel?: string;
+  showEnterLink?: boolean;
   className?: string;
   style?: GlyphPortalStyle;
   /** Called once per rendered scroll frame, never through React state. */
@@ -102,7 +103,7 @@ function characterList(text: string) {
 export default function GlyphPortal({
   word = "SUBLIME", focusChar, interactive = true, background, front, children, scrollLength = 2.4,
   fontFamily = DEFAULT_FONT, fontWeight = 900, annotations = false,
-  enterLabel = "Enter section", className, style, onProgress, lines, enabled = true, transparentReveal = false,
+  enterLabel = "Enter section", className, style, onProgress, lines, enabled = true, transparentReveal = false, showEnterLink = true,
 }: GlyphPortalProps) {
   const uid = `gp-${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
   const clipId = `${uid}-clip`;
@@ -281,8 +282,10 @@ export default function GlyphPortal({
       if (transparentReveal) {
         maskTransform?.setAttribute("transform", `scale(${scale}) rotate(${roll})`);
         liveWord?.setAttribute("transform", `scale(${scale}) rotate(${roll})`);
-        section.style.setProperty("--gp-scene-opacity", t >= 1 ? "0" : "1");
-        section.style.setProperty("--gp-word-opacity", String(1 - smooth(0.36, 0.72, p)));
+        // Crossfade independently of SVG mask support: the hero must already be
+        // visible when the camera finishes, with no empty background-only tail.
+        section.style.setProperty("--gp-scene-opacity", String(1 - smooth(0.28, 0.68, p)));
+        section.style.setProperty("--gp-word-opacity", String(1 - smooth(0.32, 0.68, p)));
         section.dataset.gpScale = scale.toFixed(5);
       }
       marks.setAttribute("transform", transform);
@@ -491,7 +494,7 @@ export default function GlyphPortal({
         <span data-gp-fallback aria-hidden="true" style={{ fontFamily, fontWeight: weight }}>{text}</span>
         <div data-gp-caption>
           <span data-gp-hint aria-hidden="true">{interactive ? "Scroll to enter." : annotations ? "A passage through type" : ""}</span>
-          <a data-gp-enter href={`#${uid}-content`}>{enterLabel}<span aria-hidden="true">↘</span></a>
+          {showEnterLink && <a data-gp-enter href={`#${uid}-content`}>{enterLabel}<span aria-hidden="true">↘</span></a>}
         </div>
       </div>
       <div data-gp-content id={`${uid}-content`} tabIndex={-1}>

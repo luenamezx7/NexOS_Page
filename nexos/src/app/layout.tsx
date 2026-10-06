@@ -9,6 +9,7 @@ import { CookieConsentProvider } from '@/components/cookie-consent';
 import { SiteAtmosphere } from '@/components/SiteAtmosphere';
 import { JsonLd } from '@/components/JsonLd';
 import { config } from '@/config';
+import { PresentationVisitProvider } from '@/components/PresentationVisitProvider';
 import { organizationData, pageMetadata, SITE_URL } from '@/lib/seo';
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-geist', display: 'swap' });
@@ -51,7 +52,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [{ media: '(prefers-color-scheme: light)', color: '#f3ead9' }, { media: '(prefers-color-scheme: dark)', color: '#000000' }],
+  themeColor: [{ media: '(prefers-color-scheme: light)', color: '#eff8ff' }, { media: '(prefers-color-scheme: dark)', color: '#000000' }],
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
@@ -65,7 +66,7 @@ export default async function RootLayout({
 }) {
   const headersList = await headers();
   const nonce = headersList.get('x-nonce');
-  const themeScriptContent = `(function(){var t;try{t=localStorage.getItem('nexos-theme');}catch(e){}var s=t==='light'||t==='dark'?t:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.classList.toggle('dark',s==='dark');document.documentElement.style.colorScheme='only '+s;var m=document.querySelector('meta[name=color-scheme]');if(m)m.content=s;try{if(sessionStorage.getItem('nexos-boot-seen')==='1'||location.hash)document.documentElement.dataset.nexosBootSeen='1';}catch(e){}})()`;
+  const themeScriptContent = `(function(){var t;try{t=localStorage.getItem('nexos-theme');}catch(e){}var s=t==='light'||t==='dark'?t:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.classList.toggle('dark',s==='dark');document.documentElement.style.colorScheme='only '+s;var m=document.querySelector('meta[name=color-scheme]');if(m)m.content=s;var n=performance.getEntriesByType('navigation')[0];if(location.pathname==='/'&&n&&n.type==='reload')document.documentElement.dataset.nexosEntryReload='1';if(location.hash&&!document.documentElement.dataset.nexosEntryReload)document.documentElement.dataset.nexosEntrySkip='1';})()`;
 
   return (
     <html lang="pt-BR" suppressHydrationWarning className={cn("font-sans dark", geist.variable, spaceGrotesk.variable, terminal.variable)}>
@@ -83,10 +84,12 @@ export default async function RootLayout({
           <style>{`.landing-page [style*="opacity"], .service-page [style*="opacity"] { opacity: 1 !important; transform: none !important; } .presentation-replay { display: none !important; }`}</style>
         </noscript>
         <ThemeProvider>
+          <PresentationVisitProvider>
           <SmoothScrollProvider>
             <SiteAtmosphere />
             <div className="site-shell"><CookieConsentProvider>{children}</CookieConsentProvider></div>
           </SmoothScrollProvider>
+          </PresentationVisitProvider>
         </ThemeProvider>
       </body>
     </html>

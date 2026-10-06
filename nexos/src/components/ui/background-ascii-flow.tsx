@@ -35,12 +35,12 @@ export function Slipstream({ cellSize = 14, className = '', density = 1.4, seed 
     let entryOpen = Boolean(document.querySelector('.waves-entry[open]'));
     const animated = () => (presentation || desktop.matches) && !query.matches && !pausedRef.current && (presentation || !entryOpen);
     let stars: Star[] = [], width = 0, height = 0, raf = 0, last = 0, time = 0;
-    let visible = false, disposed = false, shadow = '#ffffff';
+    let visible = false, disposed = false, shadow = '#ffffff', color = '#ffffff';
     const sprites = document.createElement('canvas'); sprites.width = 192; sprites.height = 32;
     const sprite = sprites.getContext('2d');
     if (!sprite) return;
     function bakeStars() {
-      sprite!.clearRect(0, 0, 192, 32); sprite!.fillStyle = '#ffffff'; sprite!.shadowColor = shadow;
+      sprite!.clearRect(0, 0, 192, 32); sprite!.fillStyle = color; sprite!.shadowColor = shadow;
       sprite!.shadowBlur = 4; sprite!.beginPath(); sprite!.arc(16, 16, 2, 0, Math.PI * 2); sprite!.fill();
       sprite!.shadowBlur = 8; sprite!.font = `${Math.max(10, cellSize)}px monospace`;
       sprite!.textAlign = 'center'; sprite!.textBaseline = 'middle'; sprite!.fillText('+', 48, 16);
@@ -58,6 +58,7 @@ export function Slipstream({ cellSize = 14, className = '', density = 1.4, seed 
     function onLeave() { pointer.active = false; canvas!.dataset.asciiFlow = 'idle'; }
     function readTheme() {
       shadow = getComputedStyle(canvas!).getPropertyValue('--star-shadow').trim() || '#ffffff';
+      color = getComputedStyle(canvas!).getPropertyValue('--star-color').trim() || '#ffffff';
       bakeStars();
       if (!animated() && !pausedRef.current) draw();
     }

@@ -19,16 +19,20 @@ for (const width of [1366, 390]) {
     await page.mouse.move(width / 2, 200);
     await page.mouse.wheel(0, 240);
     await expect.poll(async () => Number(await portal.getAttribute('data-gp-progress'))).toBeGreaterThan(0.05);
-    for (const progress of [0.25, 0.55, 0.83]) {
+    for (const progress of [0.25, 0.55, 0.65]) {
       await dialog.evaluate((e, top) => e.scrollTo({ top, behavior: 'instant' }), travel * progress);
       await expect.poll(async () => Number(await portal.getAttribute('data-gp-progress'))).toBeCloseTo(progress, 1);
+      if (progress >= 0.55) {
+        const opacity = await portal.evaluate(e => Number(e.style.getPropertyValue('--gp-scene-opacity')));
+        expect(opacity).toBeLessThan(0.3);
+      }
       expect(Number(await portal.getAttribute('data-gp-scale'))).toBeGreaterThan(initialScale);
       expect(await page.evaluate(() => window.scrollY)).toBe(0);
       await page.screenshot({ path: testInfo.outputPath(`portal-${width}-${progress}.png`) });
     }
     await dialog.evaluate(e => e.scrollTo({ top: 0, behavior: 'instant' }));
     await expect.poll(async () => Number(await portal.getAttribute('data-gp-progress'))).toBeLessThan(0.01);
-    await dialog.evaluate((e, top) => e.scrollTo({ top, behavior: 'instant' }), travel);
+    await dialog.evaluate((e, top) => e.scrollTo({ top, behavior: 'instant' }), travel * 0.71);
     await expect(dialog).toHaveCount(0);
     await expect(page.locator('#hero')).toBeFocused();
     await expect(page.getByRole('heading', { name: /Sites para/ })).toBeVisible();
@@ -38,12 +42,17 @@ for (const width of [1366, 390]) {
   });
 }
 
-test('botão percorre o portal sem salto nem duplicar o hero', async ({ page }) => {
+test('apresentação não oferece botão ou link de entrada', async ({ page }) => {
   await page.goto('/');
   const dialog = page.getByRole('dialog', { name: 'Apresentação NexOS' });
   const portal = dialog.locator('[data-gp-transparent]');
   await expect(portal).toHaveAttribute('data-gp-motion', 'on', { timeout: 15000 });
-  await dialog.getByRole('button', { name: 'Continuar para o site' }).click();
+  await expect(dialog.getByRole('button')).toHaveCount(0);
+  await expect(dialog.locator('[data-gp-enter]')).toHaveCount(0);
+  await page.keyboard.press('Enter');
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeVisible();
+  await page.keyboard.press('End');
   await expect(dialog).toHaveCount(0, { timeout: 15000 });
   await expect(page.locator('#hero')).toBeFocused();
   await expect(page.locator('#hero')).toHaveCount(1);
@@ -65,7 +74,7 @@ test('toque percorre o portal no celular', async ({ browser }) => {
     }
     await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
     await expect.poll(async () => Number(await portal.getAttribute('data-gp-progress'))).toBeGreaterThan(0.1);
-    await page.keyboard.press('Escape');
+    await page.keyboard.press('End');
     await expect(dialog).toHaveCount(0);
     await expect(page.locator('#hero')).toBeFocused();
   } finally { await context.close(); }
@@ -76,7 +85,8 @@ test('movimento reduzido mantém a leitura e entrada direta', async ({ page }) =
   await page.goto('/');
   const dialog = page.getByRole('dialog', { name: 'Apresentação NexOS' });
   await expect(dialog.getByRole('heading')).toBeVisible();
-  await dialog.getByRole('button', { name: 'Continuar para o site' }).click();
+  await expect(dialog).toBeFocused();
+  await page.keyboard.press('PageDown');
   await expect(dialog).toHaveCount(0);
   await expect(page.getByRole('heading', { name: /Sites para/ })).toBeVisible();
 });
