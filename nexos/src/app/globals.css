@@ -876,6 +876,22 @@ select.field-input option {
 .waves-entry::backdrop { background: transparent; }
 html[data-nexos-boot-seen="1"] .waves-entry:not([data-replay="true"]) { display: none; }
 .waves-entry[data-leaving="true"] { opacity: 0; }
+.waves-entry[data-portal="true"] { background: transparent; scrollbar-width: none; }
+.waves-entry[data-portal="true"]::-webkit-scrollbar { display: none; }
+.waves-entry-portal { min-height: 100svh; }
+.waves-entry-portal [data-gp-opening-scene] { background: linear-gradient(165deg, #fff3fa 0%, #ff459f 23%, #d60070 56%, #180810 100%); }
+.waves-entry-portal [data-gp-caption], .waves-entry-portal [data-gp-touch-picker] { display: none; }
+.waves-entry-portal [data-gp-content] { padding: 0; background: transparent; }
+.waves-entry-portal:not([data-gp-motion="on"]) [data-gp-content] { display: none; }
+.waves-entry-portal[data-gp-ready] .waves-entry-title {
+  position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap; text-shadow: none; animation: none;
+}
+.waves-entry-portal[data-gp-ready] .waves-entry-portal-action {
+  position: absolute; inset: calc(var(--gp-word-bottom) + 32px) 0 auto;
+  display: flex; justify-content: center;
+}
+.waves-entry-portal [data-gp-front]:focus-within { opacity: var(--gp-caption, 1); }
 .waves-entry-canvas {
   position: absolute;
   inset: 0;

@@ -254,8 +254,8 @@ for (const width of [1366, 390]) {
     const dialog = page.getByRole('dialog', { name: 'Apresentação NexOS' });
     const canvas = dialog.locator('[data-waves-background]');
     await expect(canvas).toHaveAttribute('data-state', 'animated', { timeout: 20000 });
-    await dialog.getByRole('button', { name: 'Continuar para o site' }).click();
-    await expect(dialog).toHaveAttribute('data-leaving', 'true', { timeout: 20000 });
+    await page.keyboard.press('Escape');
+    await page.waitForFunction(() => document.querySelector('.waves-entry')?.getAttribute('data-leaving') === 'true', {}, { timeout: 20000 });
     await expect(canvas).toHaveAttribute('data-state', 'paused');
     await expect(dialog.locator('.waves-entry-stars canvas')).toHaveAttribute('data-motion', 'paused');
     await page.waitForTimeout(180);
@@ -278,7 +278,7 @@ for (const width of [1366, 390]) {
     if (await cookies.isVisible()) await cookies.getByRole('button', { name: 'Recusar', exact: true }).click();
     await page.getByRole('button', { name: 'Ver apresentação', exact: true }).click();
     await expect(dialog).toBeVisible();
-    await dialog.getByRole('button', { name: 'Continuar para o site' }).click();
+    await page.keyboard.press('Escape');
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
     await expect(dialog).toHaveCount(0);
     await expect(page.locator('#hero')).toBeFocused();
