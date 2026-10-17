@@ -88,6 +88,7 @@
 }
 
 .sectionLabel {
+  composes: topography-glass topography-glass--compact from global;
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;

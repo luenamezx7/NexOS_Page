@@ -206,10 +206,11 @@ export default function WavesEntrance({ replay, onComplete }: WavesEntranceProps
             className="waves-entry-topography" />}
           <div className="waves-entry-stars" aria-hidden="true"><Slipstream presentation interactive={false} paused={leaving} density={1.3} seed={731} /></div>
           <div className="waves-entry-scrim" aria-hidden="true" />
+          {theme === 'light' && <div className="waves-entry-reading-glass topography-glass" aria-hidden="true" />}
         </>}
         front={<div className="waves-entry-content">
           <h2 id="waves-entry-title" className="waves-entry-title"><span>Nexos, a performance</span>{' '}<span>que seu business merece.</span></h2>
-          <p id="waves-entry-scroll-hint" className="waves-entry-instruction"><ChevronDown aria-hidden="true" />{mobile ? 'Arraste para continuar' : 'Role para continuar'}</p>
+          <p id="waves-entry-scroll-hint" className="waves-entry-instruction topography-glass topography-glass--compact"><ChevronDown aria-hidden="true" />{mobile ? 'Arraste para continuar' : 'Role para continuar'}</p>
         </div>}><span aria-hidden="true" /></GlyphPortal>
     </dialog>
   </>;

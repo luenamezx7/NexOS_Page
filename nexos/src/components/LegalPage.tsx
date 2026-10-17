@@ -17,20 +17,20 @@ export function LegalPage({ slug }: { slug: string }) {
       <div className="mx-auto w-full max-w-3xl px-5 py-16 md:px-8 md:py-24">
         <Link
           href="/"
-          className="inline-flex min-h-[44px] items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-ink/55 transition-colors hover:text-ink"
+          className="topography-glass topography-glass--compact inline-flex min-h-[44px] items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-ink/55 transition-colors hover:text-ink"
         >
           <ArrowLeft size={14} strokeWidth={2} aria-hidden="true" />
           Voltar ao site
         </Link>
 
-        <div className="mt-6 border-b border-ink/12 pb-8">
+        <div className="topography-glass topography-glass--copy mt-6 border-b border-ink/12 pb-8">
           <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--display-rose)]">NexOS · Legal</p>
           <h1 className="brand-heading mt-2 text-balance">{doc.title}</h1>
           <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.16em] text-ink/40">{doc.updated}</p>
           <p className="mt-4 text-base leading-relaxed text-ink/70">{doc.intro}</p>
         </div>
 
-        <nav aria-label="Documentos legais" className="mt-6 flex flex-wrap gap-2">
+        <nav aria-label="Documentos legais" className="topography-glass topography-glass--compact mt-6 flex flex-wrap gap-2">
           {LEGAL_DOCS.map((d) => {
             const active = d.slug === doc.slug;
             return (
