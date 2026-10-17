@@ -29,7 +29,7 @@ function applyTheme(theme: Theme): void {
   const meta = document.querySelector('meta[name="color-scheme"]');
   if (meta) meta.setAttribute('content', theme);
   document.querySelectorAll('meta[name="theme-color"]').forEach(element => {
-    element.setAttribute('content', theme === 'dark' ? '#000000' : '#eff8ff');
+    element.setAttribute('content', theme === 'dark' ? '#000000' : '#fdf6ec');
   });
 }
 

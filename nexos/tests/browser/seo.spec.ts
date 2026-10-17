@@ -196,7 +196,9 @@ test('apresentação pode ser revista e concluída apenas por scroll', async ({ 
   await page.goto('/');
   await enterPresentation(page);
   const cookies = page.getByRole('dialog', { name: 'Aviso de cookies' });
-  if (await cookies.isVisible()) await cookies.getByRole('button', { name: 'Recusar', exact: true }).click();
+  await expect(cookies).toBeVisible();
+  await cookies.getByRole('button', { name: 'Recusar', exact: true }).click();
+  await expect(cookies).toHaveCount(0);
   await page.getByRole('button', { name: 'Ver apresentação', exact: true }).click();
   await expect(page.getByRole('dialog', { name: /Apresentação NexOS/ })).toBeVisible();
   await page.keyboard.press('Escape');

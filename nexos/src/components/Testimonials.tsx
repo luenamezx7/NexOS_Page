@@ -1,12 +1,10 @@
 'use client';
 
-/**
- * Testimonials section — carousel de depoimentos.
- * Autoplay com pause on hover, dots de navegação.
- */
+/** Technical ecosystem overview; kept under the existing section ID for links. */
 import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion, useReducedMotion, type Variants } from 'motion/react';
+import { motion, type Variants } from 'motion/react';
+import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { ArrowUpRight, Check, Copy, Cpu, CreditCard, Layers, Terminal, Workflow } from 'lucide-react';
 import styles from './MidPage.module.css';
 
@@ -52,7 +50,7 @@ const VALUE_CARDS: ValueCard[] = [
     overline: 'TECNOLOGIA FÍSICA',
     title: 'Conexão por Aproximação Sem Atrito',
     description:
-      'Placas de acrílico cristal cortadas a laser com NFC e QR Code integrado. Permitem que seu cliente acesse cardápios, portfólios ou redes sociais em menos de 1 segundo, eliminando barreiras no atendimento.',
+      'NFC e QR Code no mesmo ponto de contato. Seu cliente aproxima o celular ou usa a câmera para acessar o destino escolhido por você.',
     metric: 'Instantâneo',
     metricLabel: 'NFC / QR',
     actionTag: 'Adquirir em Lote',
@@ -63,11 +61,11 @@ const VALUE_CARDS: ValueCard[] = [
   {
     id: 'BENTO_EMBEDDED_CHECKOUT',
     overline: 'CHECKOUT TRANSPARENTE',
-    title: 'Conversão Máxima Sem Redirecionamentos',
+    title: 'Um caminho claro até o pagamento',
     description:
-      'Processe pagamentos diretamente na sua landing page sem enviar o cliente para links externos. Reduza o abandono de carrinho mantendo a coesão visual e a confiança do comprador no mesmo ambiente.',
-    metric: '+35%',
-    metricLabel: 'taxa de finalização',
+      'Oferta, revisão do pedido e pagamento conectados. Uma experiência que mantém o cliente orientado em cada etapa.',
+    metric: 'Integrado',
+    metricLabel: 'pedido / pagamento',
     actionTag: 'Ver Demonstração',
     actionHref: '#services',
     icon: <CreditCard size={15} strokeWidth={1.75} aria-hidden="true" />,
@@ -76,13 +74,13 @@ const VALUE_CARDS: ValueCard[] = [
   {
     id: 'BENTO_PERFORMANCE_60FPS',
     overline: 'ENGINE & SPEED',
-    title: 'Fluidez Imersiva a 60–120 FPS',
+    title: 'Design que também considera o desempenho',
     description:
-      'Arquitetura acelerada por GPU que garante navegação contínua e sem interrupções em qualquer dispositivo. Otimização severa que converte visitantes em clientes engajados.',
-    metric: '< 0.8s',
-    metricLabel: 'LCP / 120Hz',
-    actionTag: 'Conhecer a Arquitetura',
-    actionHref: '#hero',
+      'Estrutura responsiva, atenção ao carregamento e movimento com propósito. A experiência se adapta ao dispositivo e às preferências de quem usa.',
+    metric: 'Responsivo',
+    metricLabel: 'desktop / mobile',
+    actionTag: 'Conhecer os serviços',
+    actionHref: '#services',
     icon: <Cpu size={15} strokeWidth={1.75} aria-hidden="true" />,
     pilar: 'PILAR 1 — PERFORMANCE ABSOLUTA',
   },
@@ -189,7 +187,7 @@ export function Testimonials({ className = '' }: TestimonialsProps) {
             Três pilares.<br /><span className={styles.accent}>Uma operação.</span>
           </h2>
           <p className={styles.lead}>
-            Performance absoluta, conexão físico-digital e conversão sem atrito — para transformar tráfego em receita.
+            Código, produto físico e pagamento. Veja como as partes se conectam na experiência NexOS.
           </p>
         </motion.header>
 

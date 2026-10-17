@@ -108,7 +108,7 @@
   min-height: 44px;
   padding: 10px 20px;
   background: var(--action-gradient);
-  color: #fff;
+  color: rgb(var(--ui-highlight));
   border-radius: 10px;
   font-family: var(--font-sans);
   font-size: 14px;

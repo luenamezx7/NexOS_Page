@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { enterPresentation } from './helpers/presentation';
 
 const reference = 'nexos-browser-order';
 const payment = { paymentUrl: 'https://sandbox.asaas.com/i/browser-order', paymentId: 'pay_browser_order', externalReference: reference, statusToken: 'browser-status-token', amount: 6990, currency: 'brl', billingType: 'CREDIT_CARD', installments: 1, bankSlipUrl: null, identificationField: null };
@@ -29,6 +30,7 @@ async function review(page: Page) {
 test('landing purchase links and legacy callbacks lead to the dedicated checkout with quantity', async ({ page }) => {
   await setup(page);
   await page.goto('/');
+  await enterPresentation(page);
   await page.getByRole('button', { name: 'Aumentar quantidade', exact: true }).click();
   await page.getByRole('link', { name: 'Comprar placa', exact: true }).click();
   await expect(page).toHaveURL(/\/checkout\?product=placa&quantity=2/);

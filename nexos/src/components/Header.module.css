@@ -8,9 +8,9 @@
   margin-inline: auto;
   border: 1px solid color-mix(in srgb, var(--color-ink) 14%, transparent);
   border-radius: 16px;
-   background: var(--color-glass);
-   backdrop-filter: blur(16px) saturate(130%);
-   box-shadow: inset 0 1px 0 #ffffff18, 0 8px 24px -18px rgba(var(--brand-accent-rgb), 0.13);
+  background: var(--color-glass);
+  backdrop-filter: blur(16px) saturate(120%);
+  box-shadow: inset 0 1px 0 #fdf6ec18, 0 8px 24px -18px rgba(var(--brand-accent-rgb), 0.13);
   transition: background-color 200ms, border-color 200ms;
 }
 .scrolled { background: color-mix(in srgb, var(--color-canvas) 96%, transparent); border-color: color-mix(in srgb, var(--color-ink) 22%, transparent); }
@@ -28,7 +28,8 @@
   padding: 0 12px;
   border: 1px solid transparent;
   border-radius: 8px;
-  background: linear-gradient(var(--color-canvas), var(--color-canvas)) padding-box, var(--nex-gradient-accent) border-box;
+  background: var(--color-canvas);
+  border-color: color-mix(in srgb, var(--color-ink) 16%, transparent);
   font-size: 14px;
   font-weight: 600;
   white-space: nowrap;

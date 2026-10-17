@@ -12,9 +12,9 @@
   background: linear-gradient(
     to bottom,
     transparent 0%,
-    rgba(255, 255, 255, 0.08) 40%,
-    rgba(255, 255, 255, 0.15) 50%,
-    rgba(255, 255, 255, 0.08) 60%,
+    rgba(253, 246, 236, 0.08) 40%,
+    rgba(253, 246, 236, 0.15) 50%,
+    rgba(253, 246, 236, 0.08) 60%,
     transparent 100%
   );
   opacity: 0;
@@ -30,9 +30,9 @@
   background: linear-gradient(
     to top,
     transparent 0%,
-    rgba(255, 255, 255, 0.08) 40%,
-    rgba(255, 255, 255, 0.15) 50%,
-    rgba(255, 255, 255, 0.08) 60%,
+    rgba(253, 246, 236, 0.08) 40%,
+    rgba(253, 246, 236, 0.15) 50%,
+    rgba(253, 246, 236, 0.08) 60%,
     transparent 100%
   );
 }
@@ -41,9 +41,9 @@
   background: linear-gradient(
     to left,
     transparent 0%,
-    rgba(255, 255, 255, 0.08) 40%,
-    rgba(255, 255, 255, 0.15) 50%,
-    rgba(255, 255, 255, 0.08) 60%,
+    rgba(253, 246, 236, 0.08) 40%,
+    rgba(253, 246, 236, 0.15) 50%,
+    rgba(253, 246, 236, 0.08) 60%,
     transparent 100%
   );
 }
@@ -52,9 +52,9 @@
   background: linear-gradient(
     to right,
     transparent 0%,
-    rgba(255, 255, 255, 0.08) 40%,
-    rgba(255, 255, 255, 0.15) 50%,
-    rgba(255, 255, 255, 0.08) 60%,
+    rgba(253, 246, 236, 0.08) 40%,
+    rgba(253, 246, 236, 0.15) 50%,
+    rgba(253, 246, 236, 0.08) 60%,
     transparent 100%
   );
 }

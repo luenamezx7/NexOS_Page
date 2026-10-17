@@ -10,7 +10,8 @@ import { MetallicSurface } from './ui/metallic-button';
 import { useRef, useState, type FormEvent, type ChangeEvent } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { motion, useInView, useReducedMotion } from 'motion/react';
+import { motion, useInView } from 'motion/react';
+import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import {
   ArrowRight,
   ArrowUpRight,
@@ -141,7 +142,7 @@ export function Contact({ className = '' }: ContactProps) {
     {
       id: 'whatsapp',
       label: 'WhatsApp',
-      value: 'Resposta em minutos',
+      value: 'Converse sobre seu projeto',
       href: whatsappUrl,
       external: true,
       icon: <MessageSquare size={20} strokeWidth={1.75} aria-hidden="true" />,
@@ -149,7 +150,7 @@ export function Contact({ className = '' }: ContactProps) {
     {
       id: 'email',
       label: 'E-mail',
-      value: 'Resposta em até 24h',
+      value: 'Envie os detalhes por e-mail',
       href: 'mailto:nexosperformance@gmail.com',
       external: false,
       icon: <Mail size={20} strokeWidth={1.75} aria-hidden="true" />,
@@ -219,7 +220,7 @@ export function Contact({ className = '' }: ContactProps) {
             Vamos conversar?<br /><span className={styles.accent}>Sem enrolação.</span>
           </h2>
           <p className={styles.lead}>
-            Preencha o formulário ou chame no WhatsApp. Respondemos rápido — de verdade.
+            Conte o que você tem em mente. Use o formulário ou escolha um dos canais ao lado.
           </p>
         </motion.header>
 

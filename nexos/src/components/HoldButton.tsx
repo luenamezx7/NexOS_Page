@@ -183,7 +183,7 @@ export function HoldButton({ label, ariaLabel, hintId, onConfirm, className = ''
       <motion.span
         aria-hidden="true"
         style={{ scaleX: progress }}
-        className="hold-bar absolute bottom-0 left-0 z-10 h-[3px] w-full origin-left bg-white will-change-transform"
+        className="hold-bar absolute bottom-0 left-0 z-10 h-[3px] w-full origin-left bg-[#fdf6ec] will-change-transform"
       />
     </motion.button>
   );

@@ -1,246 +1,57 @@
 'use client';
 
-/** Rose-purple display type, sparkling ASCII flow and an editorial benefits grid. */
-import { forwardRef, useEffect, type ForwardedRef, type ReactNode } from 'react';
+import { forwardRef, useSyncExternalStore } from 'react';
 import dynamic from 'next/dynamic';
-import { ArrowRight, ArrowUpRight, Zap, Layers, Gauge, Sparkles } from 'lucide-react';
+import { ArrowDown, ArrowUpRight } from 'lucide-react';
 import { config } from '@/config';
 import { HoverLink } from './ui/hover-button';
-import styles from './MidPage.module.css';
 import { useTheme } from './ThemeProvider';
-import { useDesktopEffects } from '@/lib/use-desktop-effects';
+import GradualBlur from './ui/GradualBlur';
+import { motion } from 'motion/react';
+import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 
-const DarkVeil = dynamic(() => import('./DarkVeil'), { ssr: false });
-
-interface HeroProps {
-  className?: string;
+const GradientASCII = dynamic(() => import('./ui/GradientASCII'), { ssr: false });
+const LIGHT = ['#194b9b', '#428ccb', '#adcfe8', '#fdf6ec'];
+const DARK = ['#351060', '#762cbb', '#e557b1', '#d6baff'];
+function subscribeEntry(callback: () => void) {
+  document.addEventListener('nexos-entry-change', callback);
+  return () => document.removeEventListener('nexos-entry-change', callback);
 }
 
-interface BentoCardData {
-  id: string;
-  badge: string;
-  title: string;
-  description: string;
-  metricValue: string;
-  metricLabel: string;
-  ctaLabel: string;
-  ctaHref: string;
-  icon: ReactNode;
-  span: 'span7' | 'span5';
-  featured?: boolean;
-  featuredBadge?: string;
-}
+export const Hero = forwardRef<HTMLElement, { className?: string }>(function Hero({ className = '' }, ref) {
+  const { theme } = useTheme();
+  const reduce = useReducedMotion();
+  const entryOpen = useSyncExternalStore(subscribeEntry, () => Boolean(document.querySelector('.waves-entry[open]')), () => true);
 
-const BENTO_CARDS: BentoCardData[] = [
-  {
-    id: 'branding',
-    badge: 'Branding Control',
-    title: 'Controle total do seu branding',
-    description:
-      'Design system próprio, identidade corporativa e guias de uso escaláveis. Sua marca consistente em cada pixel, do logo ao produto.',
-    metricValue: '100%',
-    metricLabel: 'consistência de marca',
-    ctaLabel: 'Ver Serviços',
-    ctaHref: '#services',
-    icon: <Layers size={18} strokeWidth={1.75} aria-hidden="true" />,
-    span: 'span7',
-  },
-  {
-    id: 'performance-valor',
-    badge: 'Performance & Valor',
-    title: 'Performance que gera valor B2B',
-    description:
-      'Modelo B2B focado em impulsionar negócios: velocidade, conversão e entrega de valor agregado mensurável para sua operação.',
-    metricValue: '+35%',
-    metricLabel: 'valor agregado B2B',
-    ctaLabel: 'Ver Serviços',
-    ctaHref: '#services',
-    icon: <Zap size={18} strokeWidth={1.75} aria-hidden="true" />,
-    span: 'span5',
-    featured: true,
-    featuredBadge: 'Destaque B2B',
-  },
-  {
-    id: 'strategy',
-    badge: 'Discovery',
-    title: 'A melhor estratégia para seu Business',
-    description:
-      'Validação de produto, roadmap técnico e plano de execução de 90 dias antes de investir em código.',
-    metricValue: '6 sem',
-    metricLabel: 'MVP médio',
-    ctaLabel: 'Agendar Discovery',
-    ctaHref: '#contact',
-    icon: <Gauge size={18} strokeWidth={1.75} aria-hidden="true" />,
-    span: 'span5',
-  },
-  {
-    id: 'mvp',
-    badge: 'MVP Development',
-    title: 'Do protótipo à validação',
-    description:
-      'Prototipagem rápida e MVPs para validar clientes: Landing Pages, Cardápios, Portfólios, Biolinks e Gateways prontos para vender.',
-    metricValue: '4 sem',
-    metricLabel: 'protótipo validado',
-    ctaLabel: 'Ver Serviços',
-    ctaHref: '#services',
-    icon: <ArrowUpRight size={18} strokeWidth={1.75} aria-hidden="true" />,
-    span: 'span7',
-  },
-];
-
-interface BentoCardProps {
-  card: BentoCardData;
-}
-
-function BentoCard({ card }: BentoCardProps) {
   return (
-    <article
-      className={`${styles.bentoCard} ${card.featured ? styles.featured : ''} ${styles[card.span]}`}
-      aria-labelledby={`bento-title-${card.id}`}
-    >
-      {card.featured && card.featuredBadge && (
-        <span className={styles.featuredBadge}>
-          <span className={styles.featuredBadgeDot} aria-hidden="true" />
-          {card.featuredBadge}
-        </span>
-      )}
-      <div className={styles.cardTop}>
-        <span className={styles.badge}>
-          <span className={styles.badgeDot} aria-hidden="true" />
-          {card.badge}
-        </span>
-        <span className={styles.iconBox} aria-hidden="true">
-          {card.icon}
-        </span>
+    <section ref={ref} id="hero" tabIndex={-1} aria-labelledby="hero-title" className={`landing-hero ${className}`}>
+      <div className="hero-ascii" aria-hidden="true">
+        {!entryOpen && <GradientASCII colors={theme === 'light' ? LIGHT : DARK} lightMode={theme === 'light'}
+          shape="horizon" characters=" =+xX0S8#@" cellSize={18} density={0.75}
+          gradientOpacity={0.5} glyphOpacity={0.7} glow={0.15} grain={0.025}
+          flicker={0.1} speed={0.45} flow={0.4} dpr={1} maxFPS={30} />}
+        <div className="hero-readability" />
+        <GradualBlur height="7rem" strength={1.1} layers={6} curve="bezier" saturation={1.15} tint="var(--color-canvas)" />
       </div>
-
-      <h3 id={`bento-title-${card.id}`}>{card.title}</h3>
-      <p>{card.description}</p>
-
-      <div className={styles.metric}>
-        <span className={styles.metricValue}>{card.metricValue}</span>
-        <span className={styles.metricLabel}>{card.metricLabel}</span>
+      <div className="hero-container">
+        <motion.div className="hero-copy" initial={reduce ? false : 'hidden'} animate={entryOpen ? 'hidden' : 'show'}
+          variants={{ hidden: {}, show: { transition: { staggerChildren: 0.13, delayChildren: 0.1 } } }}>
+          <p className="hero-eyebrow"><span aria-hidden="true" /> NEXOS LAB / DESIGN + CÓDIGO</p>
+          <motion.h1 id="hero-title" className="hero-heading" variants={{ hidden: reduce ? {} : { opacity: 0, y: 38 }, show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } } }}>Sites para<br /><span className="hero-accent">seu negócio.</span></motion.h1>
+          <motion.p className="hero-description" variants={{ hidden: reduce ? {} : { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.7 } } }}>A {config.brand.fullName} cria sites, landing pages e cardápios digitais. Conecte seu atendimento presencial com placas NFC e QR Code.</motion.p>
+          <motion.div className="hero-actions" variants={{ hidden: reduce ? {} : { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.65 } } }}>
+            <HoverLink href={config.hero.ctaPrimary.href}>{config.hero.ctaPrimary.label}</HoverLink>
+            <a href="#showcase" className="hero-secondary">Conhecer a placa <ArrowUpRight size={17} aria-hidden="true" /></a>
+          </motion.div>
+        </motion.div>
+        <div className="hero-bottom">
+          <span>ESTÚDIO DIGITAL · PRODUTOS CONECTADOS</span>
+          <a href="#fisico-digital">Explore a NexOS <ArrowDown size={16} aria-hidden="true" /></a>
+          <span aria-hidden="true">[ SCROLL TO EXPLORE ]</span>
+        </div>
       </div>
-
-      <div className={styles.cardAction}>
-        <a
-          href={card.ctaHref}
-          aria-label={card.ctaLabel}
-          className="btn-secondary-nex"
-        >
-          <span>{card.ctaLabel}</span>
-          <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
-        </a>
-      </div>
-    </article>
+    </section>
   );
-}
+});
 
-const HeroComponent = forwardRef<HTMLElement, HeroProps>(
-  ({ className = '' }: HeroProps, ref: ForwardedRef<HTMLElement>) => {
-    const { theme } = useTheme();
-    const effects = useDesktopEffects();
-
-    useEffect(() => {
-      const hero = document.getElementById('hero');
-      const atmosphere = document.querySelector<HTMLElement>('.site-atmosphere');
-      if (!hero || !atmosphere) return;
-      // Emphasize the single shared star field; do not mount a second canvas here.
-      const observer = new IntersectionObserver(([entry]) => {
-        atmosphere.dataset.heroActive = entry.isIntersecting ? 'true' : 'false';
-      }, { threshold: 0.1 });
-      observer.observe(hero);
-      return () => { observer.disconnect(); delete atmosphere.dataset.heroActive; };
-    }, []);
-
-    return (
-      <>
-        <section
-          ref={ref}
-          id="hero"
-          tabIndex={-1}
-          aria-labelledby="hero-title"
-          className={`landing-hero relative flex min-h-[100dvh] w-full max-w-full items-center overflow-hidden ${className}`}
-        >
-          {effects && theme === 'dark' && <div className="hero-veil" aria-hidden="true"><DarkVeil /></div>}
-          <div className="hero-coordinate" aria-hidden="true">NEXOS / DIGITAL STUDIO</div>
-          <div className="hero-container">
-            <div className="hero-copy">
-              <div className="mb-6">
-                <span className="tech-badge">
-                  <span className="tech-badge-dot" aria-hidden="true" />
-                  Design + código + estratégia
-                </span>
-              </div>
-
-              <h1
-                id="hero-title"
-                className="hero-heading"
-              >
-                Sites para<br />
-                <span className="hero-accent">seu negócio.</span>
-              </h1>
-
-              <p
-                className="hero-description"
-              >
-                A {config.brand.fullName} cria sites, landing pages e cardápios digitais. Conecte seu atendimento presencial com placas NFC e QR Code.
-              </p>
-
-              <div
-                className="hero-actions"
-              >
-                <HoverLink
-                  href={config.hero.ctaPrimary.href}
-                  aria-label={config.hero.ctaPrimary.label}
-                >
-                  {config.hero.ctaPrimary.label}
-                </HoverLink>
-
-                <a
-                  href={config.hero.ctaSecondary.href}
-                  aria-label={config.hero.ctaSecondary.label}
-                  className="hero-secondary"
-                >
-                  {config.hero.ctaSecondary.label}
-                  <ArrowUpRight size={16} aria-hidden="true" />
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section aria-labelledby="benefits-title" className={styles.section}>
-          <div className={styles.container}>
-            <div className={styles.sectionNav} aria-label="Navegação de benefícios">
-              <span className={styles.currentSection}><Sparkles size={16} aria-hidden="true" /> Por que a NexOS</span>
-              <a href="#showcase">Conhecer a Placa NFC <ArrowUpRight size={16} aria-hidden="true" /></a>
-            </div>
-            <header
-              className={styles.header}
-            >
-              <h2 id="benefits-title" className={styles.heading}>
-                Do primeiro pixel ao<br /><span className={styles.accent}>pagamento aprovado.</span>
-              </h2>
-              <p className={styles.lead}>
-                Marca, performance e conversão no mesmo lugar — sem trocar de agência a cada etapa.
-              </p>
-            </header>
-            <div
-              className={styles.bentoGrid}
-            >
-              {BENTO_CARDS.map((card: BentoCardData) => (
-                <BentoCard key={card.id} card={card} />
-              ))}
-            </div>
-          </div>
-        </section>
-      </>
-    );
-  },
-);
-
-HeroComponent.displayName = 'Hero';
-
-export const Hero = HeroComponent;
 export default Hero;

@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-import Image from 'next/image';
+import { useState, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { motion, useReducedMotion } from 'motion/react';
+import { motion } from 'motion/react';
+import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { ArrowUpRight, Box, Minus, Nfc, Palette, Plus, QrCode } from 'lucide-react';
 import { config } from '@/config';
 import { BULK_MAX_QTY, bulkTag, bulkUnitPrice } from '@/lib/bulk-pricing';
@@ -12,11 +12,13 @@ import { MetallicSurface } from './ui/metallic-button';
 import { checkoutHref } from '@/lib/checkout';
 import { DetailTabs, type DetailTab } from './commerce/DetailTabs';
 import { PlateQuiz } from './PlateQuiz';
+import { PlateFan } from './commerce/PlateFan';
 import styles from './commerce/Commerce.module.css';
 
 const PlatePreview = dynamic(() => import('./PlatePreview').then(m => m.PlatePreview), { ssr: false });
 const EASE = [0.16, 1, 0.3, 1] as const;
 const money = (value: number) => value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+const subscribeHydration = () => () => {};
 const personalizeUrl = `https://wa.me/${config.whatsapp.number}?text=${encodeURIComponent('Olá! Quero personalizar a Placa Inteligente NexOS com a marca do meu negócio.')}`;
 
 const DETAILS: DetailTab[] = [
@@ -27,6 +29,7 @@ const DETAILS: DetailTab[] = [
 
 export function ProductShowcase({ className = '' }: { className?: string }) {
   const reduce = useReducedMotion();
+  const hydrated = useSyncExternalStore(subscribeHydration, () => true, () => false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [qty, setQty] = useState(1);
   const placa = config.services.find(service => service.id === 'placa');
@@ -50,11 +53,9 @@ export function ProductShowcase({ className = '' }: { className?: string }) {
               <Link href="/placa-nfc" className={styles.textLink}>Conhecer a placa e suas aplicações <ArrowUpRight size={16} aria-hidden="true" /></Link>
             </motion.div>
             <motion.figure className={styles.productVisual} initial={reduce ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.7, ease: EASE }}>
-              <button type="button" className={styles.plateImageButton} onClick={() => setPreviewOpen(true)} aria-label="Explorar placa em preview 3D" aria-haspopup="dialog">
-                <Image src="/placas/codex-1.png" alt="Placa Inteligente NexOS de acrílico, com NFC e QR Code, segurada em mãos" fill sizes="(max-width: 899px) 100vw, 50vw" />
-                <span className={styles.previewBadge}><Box size={16} strokeWidth={1.75} aria-hidden="true" /> Explorar em 3D <ArrowUpRight size={16} aria-hidden="true" /></span>
-              </button>
+              <PlateFan />
               <figcaption className={styles.photoCaption}><span><Nfc size={16} aria-hidden="true" /> Aproxime</span><span><QrCode size={16} aria-hidden="true" /> Ou escaneie</span></figcaption>
+              <button type="button" className={styles.preview3d} onClick={() => setPreviewOpen(true)} aria-label="Explorar placa em preview 3D" aria-haspopup="dialog"><Box size={16} aria-hidden="true" /> Abrir preview espacial <ArrowUpRight size={16} aria-hidden="true" /></button>
             </motion.figure>
             <div className={styles.purchase}>
               <div className={styles.priceRow}>
@@ -64,9 +65,9 @@ export function ProductShowcase({ className = '' }: { className?: string }) {
                   <span className={styles.meta}>{money(unitPrice)} por unidade</span>
                 </div>
                 <div className={styles.quantity} role="group" aria-label="Quantidade de placas">
-                  <button type="button" aria-label="Diminuir quantidade" disabled={qty <= 1} onClick={() => setQty(value => Math.max(1, value - 1))}><Minus size={16} aria-hidden="true" /></button>
+                  <button type="button" aria-label="Diminuir quantidade" disabled={!hydrated || qty <= 1} onClick={() => setQty(value => Math.max(1, value - 1))}><Minus size={16} aria-hidden="true" /></button>
                   <output aria-live="polite" aria-label="Quantidade selecionada">{qty}</output>
-                  <button type="button" aria-label="Aumentar quantidade" disabled={qty >= BULK_MAX_QTY} onClick={() => setQty(value => Math.min(BULK_MAX_QTY, value + 1))}><Plus size={16} aria-hidden="true" /></button>
+                  <button type="button" aria-label="Aumentar quantidade" disabled={!hydrated || qty >= BULK_MAX_QTY} onClick={() => setQty(value => Math.min(BULK_MAX_QTY, value + 1))}><Plus size={16} aria-hidden="true" /></button>
                 </div>
               </div>
               {tag && <p className={styles.discount}>{tag}: desconto aplicado ao total.</p>}

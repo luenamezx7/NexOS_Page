@@ -1,16 +1,20 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion, useReducedMotion, useScroll, useSpring } from 'motion/react';
+import { motion, useScroll, useSpring } from 'motion/react';
+import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import styles from './SectionIndicator.module.css';
 
 const SECTIONS = [
   { id: 'hero', label: 'Início', number: '01' },
-  { id: 'showcase', label: 'Placa Inteligente', number: '02' },
-  { id: 'services', label: 'Serviços', number: '03' },
-  { id: 'testimonials', label: 'Ecossistema', number: '04' },
-  { id: 'faq', label: 'FAQ', number: '05' },
-  { id: 'contact', label: 'Contato', number: '06' },
+  { id: 'fisico-digital', label: 'O estúdio', number: '02' },
+  { id: 'metrics', label: 'Dados', number: '03' },
+  { id: 'showcase', label: 'Placa Inteligente', number: '04' },
+  { id: 'services', label: 'Serviços', number: '05' },
+  { id: 'delivery-process', label: 'Processo', number: '06' },
+  { id: 'testimonials', label: 'Ecossistema', number: '07' },
+  { id: 'faq', label: 'FAQ', number: '08' },
+  { id: 'contact', label: 'Contato', number: '09' },
 ];
 
 export function SectionIndicator() {

@@ -1,7 +1,8 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
+import { motion } from 'motion/react';
+import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { Check } from 'lucide-react';
 import styles from './Commerce.module.css';
 

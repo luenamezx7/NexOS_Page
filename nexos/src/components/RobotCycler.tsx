@@ -5,7 +5,9 @@
  * Alterna entre ícones de robô com transição suave.
  */
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
+import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
+import Image from 'next/image';
 
 const ROBOT_IMAGES = ['/nexosrobot-1.svg', '/nexosrobot-2.svg', '/nexosrobot-3.svg'] as const;
 
@@ -47,23 +49,6 @@ export function RobotCycler({
     return () => window.clearInterval(id);
   }, [intervalMs, reduce]);
 
-  // reduced-motion: mostra só o primeiro sem animação
-  if (reduce) {
-    return (
-      <img
-        src={ROBOT_IMAGES[0]}
-        alt=""
-        aria-hidden="true"
-        className={className}
-        style={style}
-        draggable={false}
-        decoding="async"
-        loading="eager"
-        width={112}
-      />
-    );
-  }
-
   return (
     <span
       aria-hidden="true"
@@ -72,14 +57,14 @@ export function RobotCycler({
     >
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.img
-          key={index}
-          src={ROBOT_IMAGES[index]}
+          key={reduce ? 0 : index}
+          src={ROBOT_IMAGES[reduce ? 0 : index]}
           alt=""
           draggable={false}
-          initial={{ opacity: 0 }}
+          initial={false}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: fadeMs / 1000, ease: FLUID_EASE }}
+          transition={{ duration: reduce ? 0 : fadeMs / 1000, ease: FLUID_EASE }}
           className="absolute inset-0 h-full w-full object-contain will-change-transform"
           style={{ backfaceVisibility: 'hidden' } as React.CSSProperties}
           width={112}
@@ -87,7 +72,7 @@ export function RobotCycler({
         />
       </AnimatePresence>
       {/* spacer mantém proporção 307/257 sem layout shift e sem gargalo (decode off-main) */}
-      <img
+      <Image
         src={ROBOT_IMAGES[0]}
         alt=""
         aria-hidden="true"

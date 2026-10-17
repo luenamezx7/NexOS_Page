@@ -23,7 +23,9 @@ test('tema claro usa Topography WebGL2 e uma paleta azul real', async ({ page },
   [134 / 255, 203 / 255, 249 / 255].forEach((value, i) => expect(uniforms.mid[i]).toBeCloseTo(value, 5));
   await page.screenshot({ path: testInfo.outputPath('topography-intro-light.png') });
   await enterPresentation(page);
-  await expect(page.locator('.site-atmosphere [data-topography]')).toHaveAttribute('data-motion', 'animated', { timeout: 15000 });
+  await expect(page.locator('#hero [data-topography]')).toHaveCount(0);
+  await page.locator('#fisico-digital').scrollIntoViewIfNeeded();
+  await expect(page.locator('[data-scene="waves"] [data-topography]').first()).toHaveAttribute('data-motion', 'animated', { timeout: 15000 });
   await page.screenshot({ path: testInfo.outputPath('topography-hero-light.png') });
   expect(errors).toEqual([]);
 });
@@ -34,7 +36,7 @@ test('paleta clara é consistente em home, serviço, acesso e páginas legais', 
   for (const route of ['/', '/criacao-de-sites', '/portal/acesso', '/termos']) {
     await page.goto(route);
     if (route === '/') await enterPresentation(page);
-    await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(239, 248, 255)');
+    await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(253, 246, 236)');
     const palette = await page.evaluate(() => {
       const style = getComputedStyle(document.documentElement);
       return { primary: style.getPropertyValue('--primary').trim(), gradient: style.getPropertyValue('--action-gradient') };
@@ -59,8 +61,9 @@ test('tema escuro preserva rosa e alternância não deixa canvases antigos', asy
   await page.goto('/'); await enterPresentation(page);
   expect(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--primary').trim())).toBe('#d60070');
   await page.getByRole('button', { name: 'Ativar modo claro' }).click();
-  await expect(page.locator('.site-atmosphere [data-topography]')).toHaveCount(1);
+  await page.locator('#fisico-digital').scrollIntoViewIfNeeded();
+  await expect(page.locator('[data-scene="waves"] [data-topography]').first()).toBeVisible();
   await page.getByRole('button', { name: 'Ativar modo escuro' }).click();
-  await expect(page.locator('.site-atmosphere [data-topography]')).toHaveCount(0);
+  await expect(page.locator('[data-scene="waves"] [data-topography]')).toHaveCount(0);
   expect(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--primary').trim())).toBe('#d60070');
 });

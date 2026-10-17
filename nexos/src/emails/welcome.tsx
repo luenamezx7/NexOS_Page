@@ -41,7 +41,7 @@ const styles = {
   heading: {
     fontSize: '28px',
     fontWeight: 700,
-    color: '#ffffff',
+    color: '#fdf6ec',
     margin: '0 0 16px',
     textAlign: 'center' as const,
   },
@@ -70,7 +70,7 @@ const styles = {
   featuresHeading: {
     fontSize: '18px',
     fontWeight: 600,
-    color: '#ffffff',
+    color: '#fdf6ec',
     margin: '0 0 16px',
     textAlign: 'center' as const,
   },

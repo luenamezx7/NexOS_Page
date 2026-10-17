@@ -45,7 +45,7 @@ const styles = {
     padding: 0,
     backgroundColor: '#0a0a0a',
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
-    color: '#ffffff',
+    color: '#fdf6ec',
     lineHeight: 1.6,
   },
   preheader: {

@@ -240,7 +240,7 @@ export function Signature({
         <mask id={maskId} maskUnits="userSpaceOnUse">
           {renderMotionPaths({
             paths,
-            stroke: "white",
+            stroke: "#fdf6ec",
             strokeWidth: fontSize * 0.22,
             strokeLinecap: "round",
             strokeLinejoin: "round",

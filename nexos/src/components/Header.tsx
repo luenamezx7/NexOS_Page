@@ -10,7 +10,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion, AnimatePresence, useReducedMotion, useScroll, useMotionValueEvent } from 'motion/react';
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'motion/react';
+import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { ArrowUpRight, Menu, UserRound, X } from 'lucide-react';
 import { config } from '@/config';
 import { RobotCycler } from './RobotCycler';
@@ -18,7 +19,7 @@ import { ThemeToggle } from './ThemeToggle';
 import styles from './Header.module.css';
 import { MetallicSurface } from './ui/metallic-button';
 
-const NAV_ITEMS = [{ label: 'Placa NFC', href: '#showcase' }, ...config.navigation];
+const NAV_ITEMS = [{ label: 'Placa NFC', href: '#showcase' }, ...config.navigation.map(item => item.href === '#testimonials' ? { ...item, label: 'Ecossistema' } : item)];
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);

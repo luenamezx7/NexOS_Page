@@ -4,21 +4,27 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { Header } from '@/components/Header';
 import { Hero } from '@/components/Hero';
-import { ProductShowcase } from '@/components/ProductShowcase';
 import { SectionIndicator } from '@/components/SectionIndicator';
 import WavesEntrance from '@/components/WavesEntrance';
+import { SectionBackground } from '@/components/sections/SectionBackground';
 import { usePresentationVisit } from '@/components/PresentationVisitProvider';
+import { LandingPageBlur } from '@/components/sections/LandingPageBlur';
 
-// Split client bundles while keeping commercial content in the server HTML.
 const Services = dynamic(() => import('@/components/Services').then(m => m.Services));
 const Testimonials = dynamic(() => import('@/components/Testimonials').then(m => m.Testimonials));
 const FAQ = dynamic(() => import('@/components/FAQ').then(m => m.FAQ));
 const Contact = dynamic(() => import('@/components/Contact').then(m => m.Contact));
 const Footer = dynamic(() => import('@/components/Footer').then(m => m.Footer));
 
+// Split bundles without removing the commercial content from the server HTML.
+const MetricsSection = dynamic(() => import('@/components/sections/MetricsSection').then(m => m.MetricsSection));
+const DeliveryProcess = dynamic(() => import('@/components/sections/DeliveryProcess').then(m => m.DeliveryProcess));
+const PlacaNFCSection = dynamic(() => import('@/components/sections/PlacaNFCSection').then(m => m.PlacaNFCSection));
+const CTAFinal = dynamic(() => import('@/components/sections/CTAFinal').then(m => m.CTAFinal));
+const FisicoDigitalSection = dynamic(() => import('@/components/sections/FisicoDigitalSection').then(m => m.FisicoDigitalSection));
+
 export default function HomeClient() {
   const { eligible, consume } = usePresentationVisit();
-  // The entry is visual only: all commercial sections remain in the initial HTML.
   const [entrance, setEntrance] = useState({ visible: eligible, replay: false, key: 0 });
   const entranceGeneration = useRef(0);
   const heroRef = useRef<HTMLElement>(null);
@@ -31,7 +37,6 @@ export default function HomeClient() {
   }, []);
 
   const handleEntranceComplete = useCallback((entered: boolean) => {
-    // A pending skip/exit from an older presentation must not close a fresh replay.
     if (entrance.key !== entranceGeneration.current) return;
     setEntrance({ visible: false, replay: false, key: entrance.key });
     if (!entered) return;
@@ -53,15 +58,36 @@ export default function HomeClient() {
         <div className="relative">
           <div id="main-content" tabIndex={-1} className="relative">
             <Hero ref={heroRef} />
-            <ProductShowcase />
-            <Services />
-            <Testimonials />
-            <FAQ />
-            <Contact />
+            <SectionBackground index={0} scene="waves">
+              <FisicoDigitalSection />
+            </SectionBackground>
+            <SectionBackground index={1}>
+              <MetricsSection />
+            </SectionBackground>
+            <SectionBackground index={2} scene="product">
+              <PlacaNFCSection />
+            </SectionBackground>
+            <SectionBackground index={3}>
+              <Services />
+            </SectionBackground>
+            <SectionBackground index={4} scene="waves">
+              <DeliveryProcess />
+            </SectionBackground>
+            <SectionBackground index={5} scene="image">
+              <Testimonials />
+            </SectionBackground>
+            <SectionBackground index={6}>
+              <FAQ />
+            </SectionBackground>
+            <SectionBackground index={7} scene="image">
+              <CTAFinal />
+            </SectionBackground>
+            <SectionBackground index={8}><Contact /></SectionBackground>
           </div>
           <Footer onViewPresentation={replayPresentation} />
         </div>
       </div>
+      <LandingPageBlur />
     </main>
   );
 }

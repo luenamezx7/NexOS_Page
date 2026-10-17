@@ -18,31 +18,31 @@ const FAQ_ITEMS: FAQItem[] = [
     id: '02',
     question: 'O que está incluso no Desenvolvimento NexOS?',
     answer:
-      'Entrega sob medida com arquitetura limpa, CI/CD, observabilidade e documentação técnica. Código em Next.js/TypeScript pronto para escalar a 60–120 FPS sem gargalos.',
+      'O projeto é definido com você: objetivo, páginas, identidade visual e funcionalidades. Sites, landing pages e cardápios digitais são algumas das aplicações. O escopo é alinhado antes do desenvolvimento.',
   },
   {
     id: '03',
     question: 'Como funciona a Placa Inteligente NFC + QR Code?',
     answer:
-      'Acrílico cristal cortado a laser com chip NFC e QR Code. O cliente aproxima o celular ou escaneia e abre seu link em menos de 1 segundo — cardápio, portfólio ou Instagram sem atrito.',
+      'A placa reúne NFC e QR Code. O cliente aproxima um celular compatível ou lê o código com a câmera para abrir o link escolhido: cardápio, portfólio, redes sociais ou outra página.',
   },
   {
     id: '04',
     question: 'O checkout é seguro?',
     answer:
-      'Sim. O pagamento roda no Asaas: Pix com QR na hora, boleto e cartão em até 12x, com confirmação automática em segundos. Recebemos apenas nome e e-mail para o recibo — nenhum dado bancário toca nossos servidores.',
+      'O fluxo utiliza o Asaas para processar o pagamento. Você revisa o pedido, preenche os dados necessários e escolhe entre as formas de pagamento disponíveis no checkout.',
   },
   {
     id: '05',
     question: 'Qual o prazo de entrega?',
     answer:
-      'Placas: envio em até 3 dias úteis após confirmação. Desenvolvimento: kickoff em 48h e entregas incrementais — MVP validado em ciclos curtos com performance <0.8s LCP.',
+      'O prazo depende do produto, da personalização ou do escopo do serviço. Converse com a NexOS para combinar as etapas e a previsão de entrega do seu pedido.',
   },
   {
     id: '06',
     question: 'Preciso ter CNPJ para comprar?',
     answer:
-      'Não. O Pix funciona com CPF e cai na hora. Para faturamento empresarial emitimos nota — chame no WhatsApp após o pagamento.',
+      'Você pode informar CPF ou CNPJ no checkout. Para dúvidas sobre dados de cobrança e faturamento, fale com a NexOS antes de concluir o pedido.',
   },
   {
     id: '07',
@@ -82,7 +82,7 @@ interface FAQProps {
 
 export function FAQ({ className = '' }: FAQProps) {
   return (
-    <section id="faq" aria-labelledby="faq-title" className={`${styles.section} ${className}`}>
+    <section id="faq" aria-labelledby="faq-title" className={`${styles.section} ${styles.faqSection} ${className}`}>
       <div className={styles.container}>
         <div className={styles.sectionNav} aria-label="Navegação de suporte">
           <span className={styles.currentSection}><CircleHelp size={16} aria-hidden="true" /> Dúvidas frequentes</span>
@@ -95,7 +95,7 @@ export function FAQ({ className = '' }: FAQProps) {
             Perguntas frequentes.<br /><span className={styles.accent}>Respostas diretas.</span>
           </h2>
           <p className={styles.lead}>
-            Performance, placas e checkout. Sem clichê — só o que impacta seu negócio.
+            Sobre o projeto, a placa e o pedido. Se precisar de mais detalhes, fale com a gente.
           </p>
         </header>
 

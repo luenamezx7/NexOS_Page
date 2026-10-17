@@ -3,8 +3,9 @@
 /** Objective-driven service exploration with the existing checkout flow. */
 import { useState } from 'react';
 import Link from 'next/link';
-import { motion, useReducedMotion } from 'motion/react';
-import { ArrowUpRight, Check, Code2, CreditCard, Headphones, Layers, Plus } from 'lucide-react';
+import { motion } from 'motion/react';
+import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
+import { ArrowUpRight, Check, Code2, CreditCard, Headphones, Layers } from 'lucide-react';
 import { config } from '@/config';
 import type { Service } from '@/types';
 import { checkoutHref } from '@/lib/checkout';
@@ -19,7 +20,7 @@ function ServiceCard({ service }: { service: Service }) {
   const featured = service.id === 'dev';
   const testing = service.id === 'teste';
   return (
-    <motion.article initial={reduce ? false : { opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.55, ease: EASE }} className={`${styles.serviceCard} ${featured ? styles.featured : ''}`} aria-labelledby={`service-title-${service.id}`}>
+    <motion.article initial={reduce ? false : { opacity: 0, y: 32 }} whileInView={{ opacity: 1, y: 0 }} whileHover={reduce ? undefined : { y: -5 }} viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.7, ease: EASE }} className={`${styles.serviceCard} ${featured ? styles.featured : ''}`} aria-labelledby={`service-title-${service.id}`}>
       <div className={styles.cardTop}>
         <span className={styles.serviceIcon}>{testing ? <CreditCard size={22} strokeWidth={1.75} aria-hidden="true" /> : <Code2 size={22} strokeWidth={1.75} aria-hidden="true" />}</span>
         <span className={styles.meta}>{featured ? 'Feito para o seu negócio' : testing ? 'Validação técnica' : 'Solução NexOS'}</span>
@@ -68,12 +69,6 @@ export function Services({ className = '' }: { className?: string }) {
           <p className={styles.resultCount} aria-live="polite">{visibleServices.length} {visibleServices.length === 1 ? 'solução disponível' : 'soluções disponíveis'}{goal !== 'all' ? ' para seu objetivo' : ''}</p>
           <div className={styles.servicesGrid} data-single={visibleServices.length === 1}>
             {visibleServices.map(service => <ServiceCard key={service.id} service={service} />)}
-            {goal === 'all' && <aside className={styles.upcoming}>
-              <span className={styles.meta}><Plus size={16} aria-hidden="true" /> Em desenvolvimento</span>
-              <h3>O próximo capítulo da NexOS.</h3>
-              <p>Estamos preparando novas ferramentas para o seu negócio. Quer conversar sobre uma ideia?</p>
-              <a href="#contact" className={styles.textLink}>Falar sobre meu projeto <ArrowUpRight size={16} aria-hidden="true" /></a>
-            </aside>}
           </div>
           <div className={styles.differentials}>{DIFFERENTIALS.map(({ icon: Icon, title, description }) => <div key={title}><Icon size={20} strokeWidth={1.75} aria-hidden="true" /><h3>{title}</h3><p>{description}</p></div>)}</div>
         </div>
