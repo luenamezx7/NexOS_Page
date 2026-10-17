@@ -19,8 +19,8 @@ test('tema claro usa Topography WebGL2 e uma paleta azul real', async ({ page },
       mid: Array.from(gl.getUniform(program, gl.getUniformLocation(program, 'uMid')!) as Float32Array), error: gl.getError() };
   });
   expect(uniforms.light).toBe(1); expect(uniforms.error).toBe(0);
-  [36 / 255, 112 / 255, 179 / 255].forEach((value, i) => expect(uniforms.low[i]).toBeCloseTo(value, 5));
-  [134 / 255, 203 / 255, 249 / 255].forEach((value, i) => expect(uniforms.mid[i]).toBeCloseTo(value, 5));
+  [0, 82 / 255, 1].forEach((value, i) => expect(uniforms.low[i]).toBeCloseTo(value, 5));
+  [0, 140 / 255, 1].forEach((value, i) => expect(uniforms.mid[i]).toBeCloseTo(value, 5));
   await page.screenshot({ path: testInfo.outputPath('topography-intro-light.png') });
   await enterPresentation(page);
   await expect(page.locator('#hero [data-topography]')).toHaveCount(0);
@@ -41,12 +41,12 @@ test('paleta clara é consistente em home, serviço, acesso e páginas legais', 
       const style = getComputedStyle(document.documentElement);
       return { primary: style.getPropertyValue('--primary').trim(), gradient: style.getPropertyValue('--action-gradient') };
     });
-    expect(palette.primary).toBe('#1466a8'); expect(palette.gradient).not.toContain('#d60070');
+    expect(palette.primary).toBe('#0052ff'); expect(palette.gradient).not.toContain('#e6007e');
     const surface = page.locator('[data-metallic-surface]').first();
     if (await surface.count()) {
       const finish = await surface.evaluate(e => getComputedStyle(e, '::after').backgroundImage);
-      expect(finish).toContain('20, 85, 140');
-      expect(finish).not.toContain('225, 0, 117');
+      expect(finish).toContain('0, 64, 230');
+      expect(finish).not.toContain('230, 0, 126');
     }
     for (const width of [360, 1366]) {
       await page.setViewportSize({ width, height: 844 });
@@ -59,11 +59,11 @@ test('paleta clara é consistente em home, serviço, acesso e páginas legais', 
 test('tema escuro preserva rosa e alternância não deixa canvases antigos', async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem('nexos-theme', 'dark'));
   await page.goto('/'); await enterPresentation(page);
-  expect(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--primary').trim())).toBe('#d60070');
+  expect(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--primary').trim())).toBe('#e6007e');
   await page.getByRole('button', { name: 'Ativar modo claro' }).click();
   await page.locator('#fisico-digital').scrollIntoViewIfNeeded();
   await expect(page.locator('[data-scene="waves"] [data-topography]').first()).toBeVisible();
   await page.getByRole('button', { name: 'Ativar modo escuro' }).click();
   await expect(page.locator('[data-scene="waves"] [data-topography]')).toHaveCount(0);
-  expect(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--primary').trim())).toBe('#d60070');
+  expect(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--primary').trim())).toBe('#e6007e');
 });

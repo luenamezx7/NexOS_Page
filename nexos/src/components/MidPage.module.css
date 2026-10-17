@@ -79,7 +79,7 @@
 
 /* Footer */
 .footerSection { --mid-surface: color-mix(in srgb, var(--color-ink) 3%, var(--color-canvas)); --mid-line: color-mix(in srgb, var(--color-ink) 14%, transparent); --mid-muted: color-mix(in srgb, var(--color-ink) 60%, transparent); --mid-accent: var(--display-rose); position: relative; background: transparent; border-top: 1px solid var(--mid-line); }
-:global(.dark) .footerSection { --mid-accent: #ff8fab; }
+:global(.dark) .footerSection { --mid-accent: var(--display-rose); }
 .footerInner { width: 100%; max-width: 1280px; margin-inline: auto; padding: 48px 20px 40px; }
 .footerGrid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; }
 .brandBlock { min-width: 0; }

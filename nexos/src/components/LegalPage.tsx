@@ -24,7 +24,7 @@ export function LegalPage({ slug }: { slug: string }) {
         </Link>
 
         <div className="mt-6 border-b border-ink/12 pb-8">
-          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#be185d]">NexOS · Legal</p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--display-rose)]">NexOS · Legal</p>
           <h1 className="brand-heading mt-2 text-balance">{doc.title}</h1>
           <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.16em] text-ink/40">{doc.updated}</p>
           <p className="mt-4 text-base leading-relaxed text-ink/70">{doc.intro}</p>

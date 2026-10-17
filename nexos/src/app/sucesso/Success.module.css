@@ -46,7 +46,7 @@
   height: 40px;
   border-radius: 50%;
   border: 3px solid color-mix(in srgb, var(--color-canvas) 25%, transparent);
-  border-top-color: #ff5c8a;
+  border-top-color: var(--display-rose);
   animation: success-spin 1s linear infinite;
 }
 

@@ -11,8 +11,8 @@ import { motion } from 'motion/react';
 import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 
 const GradientASCII = dynamic(() => import('./ui/GradientASCII'), { ssr: false });
-const LIGHT = ['#194b9b', '#428ccb', '#adcfe8', '#fdf6ec'];
-const DARK = ['#351060', '#762cbb', '#e557b1', '#d6baff'];
+const LIGHT = ['#0040e6', '#0052ff', '#008cff', '#fdf6ec'];
+const DARK = ['#3b007a', '#9200ff', '#ff008c', '#b33dff'];
 function subscribeEntry(callback: () => void) {
   document.addEventListener('nexos-entry-change', callback);
   return () => document.removeEventListener('nexos-entry-change', callback);

@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { Mesh, Program, Renderer, Triangle, Vec2 } from 'ogl';
 
 const vertex = `attribute vec2 position; void main(){gl_Position=vec4(position,0.,1.);}`;
-// Low-resolution silk field: restrained rose/violet ribbons, transparent between folds.
+// Low-resolution silk field: hot pink / electric violet ribbons, transparent between folds.
 const fragment = `
 precision mediump float;
 uniform vec2 uResolution;
@@ -17,7 +17,7 @@ void main(){
   fold+=.45*sin(p.y*4.2+p.x*2.1+t*.7);
   float silk=pow(clamp(.5+.5*sin(fold*2.4+p.y*2.1),0.,1.),3.);
   float fade=smoothstep(.1,.85,uv.x)*(1.-smoothstep(.7,1.2,uv.y));
-  vec3 tint=mix(vec3(.91,.0,.43),vec3(.44,.10,.72),uv.y*.7+uv.x*.3);
+  vec3 tint=mix(vec3(1.,0.,.54902),vec3(.57255,0.,1.),uv.y*.7+uv.x*.3);
   gl_FragColor=vec4(tint,silk*fade*.7);
 }`;
 

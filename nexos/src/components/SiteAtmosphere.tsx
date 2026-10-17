@@ -24,7 +24,7 @@ export function SiteAtmosphere() {
   // The landing owns its scenes: no global waves behind the ASCII hero.
   if (pathname === '/') return null;
   return <div className="site-atmosphere" aria-hidden="true">
-    {theme === 'light' && <div className="day-topography"><Topography lowColor="#2470b3" midColor="#86cbf9" highColor="#fdf6ec" lightMode paused={entryOpen} mouseInteraction={false} maxFPS={24} dprLimit={1} /></div>}
+    {theme === 'light' && <div className="day-topography"><Topography lowColor="#0052ff" midColor="#008cff" highColor="#fdf6ec" lightMode paused={entryOpen} mouseInteraction={false} maxFPS={24} dprLimit={1} /></div>}
     <CloudSky />
     <div className="night-sky"><Slipstream density={1.3} seed={731} /></div>
   </div>;

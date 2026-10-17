@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" fill="none">
   <defs>
-    <linearGradient id="line" x1="200" y1="1000" x2="1400" y2="0" gradientUnits="userSpaceOnUse"><stop stop-color="#237cac" stop-opacity="0"/><stop offset=".5" stop-color="#9e85ff"/><stop offset="1" stop-color="#c8e7ff" stop-opacity=".2"/></linearGradient>
-    <radialGradient id="halo"><stop stop-color="#8253ee" stop-opacity=".4"/><stop offset="1" stop-color="#8253ee" stop-opacity="0"/></radialGradient>
-    <pattern id="grid" width="64" height="64" patternUnits="userSpaceOnUse"><path d="M64 0H0V64" stroke="#a0b7ff" stroke-opacity=".12"/></pattern>
+    <linearGradient id="line" x1="200" y1="1000" x2="1400" y2="0" gradientUnits="userSpaceOnUse"><stop stop-color="#0052ff" stop-opacity="0"/><stop offset=".5" stop-color="#9200ff"/><stop offset="1" stop-color="#ff008c" stop-opacity=".4"/></linearGradient>
+    <radialGradient id="halo"><stop stop-color="#9200ff" stop-opacity=".4"/><stop offset="1" stop-color="#9200ff" stop-opacity="0"/></radialGradient>
+    <pattern id="grid" width="64" height="64" patternUnits="userSpaceOnUse"><path d="M64 0H0V64" stroke="#008cff" stroke-opacity=".12"/></pattern>
   </defs>
   <ellipse cx="1020" cy="510" rx="660" ry="480" fill="url(#halo)"/>
   <path fill="url(#grid)" d="M0 0h1600v1000H0z"/>
@@ -18,5 +18,5 @@
     <path d="M-150 1320C450 1220 350 370 1050 400s450 550 900 420"/>
     <path d="M-150 1360C450 1260 350 410 1050 440s450 550 900 420"/>
   </g>
-  <g stroke="#bca1ff" stroke-opacity=".45"><circle cx="1050" cy="400" r="210"/><circle cx="1050" cy="400" r="222" stroke-dasharray="1 14"/><path d="M1050 160v32m0 416v32M810 400h32m416 0h32"/></g>
+  <g stroke="#b33dff" stroke-opacity=".6"><circle cx="1050" cy="400" r="210"/><circle cx="1050" cy="400" r="222" stroke-dasharray="1 14"/><path d="M1050 160v32m0 416v32M810 400h32m416 0h32"/></g>
 </svg>

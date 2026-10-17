@@ -44,39 +44,40 @@
   --nex-white: #fdf6ec;
   --ui-highlight: 253, 246, 236;
   --ui-highlight-color: #fdf6ec;
-  --nex-pink: #1466a8;
-  --nex-pink-hot: #1c6eae;
-  --nex-purple: #3c7be1;
-  --display-rose: #176bb2;
-  --display-purple: #3985bd;
-  --brand-choice: #176bb2;
-  --brand-secondary: #86cbf9;
-  --mockup-middle: #3c7be1;
-  --brand-accent-rgb: 60, 123, 225;
-  --brand-choice-rgb: 23, 107, 178;
-  --star-shadow: #b5e4ff;
-  --star-color: #2470b3;
+  --nex-pink: #0052ff;
+  --nex-pink-hot: #0064ff;
+  --nex-purple: #008cff;
+  --display-rose: #0052ff;
+  --display-purple: #0064eb;
+  --brand-choice: #0052ff;
+  --brand-secondary: #008cff;
+  --mockup-middle: #0064ff;
+  --brand-accent-rgb: 0, 82, 255;
+  --brand-choice-rgb: 0, 82, 255;
+  --brand-secondary-rgb: 0, 140, 255;
+  --star-shadow: #008cff;
+  --star-color: #0052ff;
   --surface-glass: rgba(250, 243, 228, 0.9);
   --field-surface: #faf4ea;
-  --action-gradient: linear-gradient(110deg, #14558c 0%, #1f6ca7 46%, #2d73ab 100%);
-  --metallic-veil: linear-gradient(110deg, #14558ce6 0%, #1f6ca7e0 48%, #2d73abdf 100%);
-  --metallic-static-base: linear-gradient(125deg, #bbe9ff 0%, #2f87c9 22%, #1c67a5 62%, #bfdffc 100%);
-  --metallic-static-veil: linear-gradient(125deg, #14558c 0%, #1f6ca7 46%, #2d73ab 100%);
+  --action-gradient: linear-gradient(110deg, #0040e6 0%, #0052ff 46%, #0070f0 100%);
+  --metallic-veil: linear-gradient(110deg, #0040e6e6 0%, #0052ffe0 48%, #0070f0df 100%);
+  --metallic-static-base: linear-gradient(125deg, #70cfff 0%, #008cff 22%, #0040e6 62%, #70b5ff 100%);
+  --metallic-static-veil: linear-gradient(125deg, #0040e6 0%, #0052ff 46%, #0070f0 100%);
   --metallic-inner-shadow: #082d4955;
-  --header-brand: #1466a8;
-  --commerce-buy: #14558c;
-  --commerce-buy-hover: #1f6ca7;
+  --header-brand: #0052ff;
+  --commerce-buy: #0052ff;
+  --commerce-buy-hover: #0040e6;
   --nex-hairline: color-mix(in srgb, var(--color-ink) 12%, transparent);
   --section-indicator: var(--nex-pink-hot);
-  --section-indicator-glow: rgba(60, 123, 225, 0.25);
-  --section-indicator-glow-soft: rgba(60, 123, 225, 0.08);
+  --section-indicator-glow: rgba(var(--brand-accent-rgb), 0.32);
+  --section-indicator-glow-soft: rgba(var(--brand-accent-rgb), 0.12);
   --ns-muted: #4d4d4d;
   --text-gradient-start: var(--display-rose);
   --text-gradient-end: var(--display-purple);
 
-  --nex-gradient-accent: linear-gradient(90deg, #2470b3 0%, #86cbf9 50%, #3c7be1 100%);
-  --nex-gradient-accent-reverse: linear-gradient(90deg, #86cbf9 0%, #2470b3 50%, #86cbf9 100%);
-  --nex-gradient-accent-radial: radial-gradient(ellipse at center, #86cbf9 0%, #2470b3 70%, transparent 100%);
+  --nex-gradient-accent: linear-gradient(90deg, #0052ff 0%, #008cff 50%, #0040e6 100%);
+  --nex-gradient-accent-reverse: linear-gradient(90deg, #008cff 0%, #0052ff 50%, #008cff 100%);
+  --nex-gradient-accent-radial: radial-gradient(ellipse at center, #008cff 0%, #0052ff 70%, transparent 100%);
 
   --ease-fluid: cubic-bezier(0.16, 1, 0.3, 1);
 
@@ -86,44 +87,45 @@
   --card-foreground: #102d44;
   --popover: #fdf6ec;
   --popover-foreground: #102d44;
-  --primary: #1466a8;
+  --primary: #0052ff;
   --primary-foreground: #fdf6ec;
   --secondary: #f5e8d1;
   --secondary-foreground: #102d44;
   --muted: #efe0c8;
   --muted-foreground: #466c88;
-  --accent: #ead9b8;
-  --accent-foreground: #14558c;
+  --accent: #dbe7ff;
+  --accent-foreground: #0040e6;
   --destructive: oklch(0.577 0.245 27.325);
   --border: #e8d4b0;
   --input: #e0c99e;
-  --ring: #1466a8;
+  --ring: #0052ff;
   --radius: 0.625rem;
 }
 
 .dark {
-  --nex-pink: #d60070;
-  --nex-pink-hot: #ff168d;
-  --nex-purple: #9d35ef;
-  --brand-choice: #ff5c8a;
-  --brand-secondary: #83358f;
-  --mockup-middle: #7c3aed;
-  --brand-accent-rgb: 255, 22, 141;
-  --brand-choice-rgb: 255, 92, 138;
-  --action-gradient: linear-gradient(110deg, #d60070 0%, #bc087f 46%, #762ab9 100%);
-  --metallic-veil: linear-gradient(110deg, #c00061e6 0%, #b0077ce0 48%, #66229cdf 100%);
-  --metallic-static-base: linear-gradient(125deg, #ffa4d9 0%, #fa168c 22%, #8326c2 62%, #e9a1ff 100%);
-  --metallic-static-veil: linear-gradient(125deg, #e10075 0%, #bc0580 46%, #7425b4 100%);
+  --nex-pink: #e6007e;
+  --nex-pink-hot: #ff008c;
+  --nex-purple: #9200ff;
+  --brand-choice: #ff008c;
+  --brand-secondary: #9200ff;
+  --mockup-middle: #8200ff;
+  --brand-accent-rgb: 255, 0, 140;
+  --brand-choice-rgb: 255, 0, 140;
+  --brand-secondary-rgb: 146, 0, 255;
+  --action-gradient: linear-gradient(110deg, #e6007e 0%, #d000bc 46%, #8200ff 100%);
+  --metallic-veil: linear-gradient(110deg, #e6007ee6 0%, #d000bce0 48%, #8200ffdf 100%);
+  --metallic-static-base: linear-gradient(125deg, #ff54cf 0%, #ff008c 22%, #9200ff 62%, #c04dff 100%);
+  --metallic-static-veil: linear-gradient(125deg, #e6007e 0%, #d000bc 46%, #8200ff 100%);
   --metallic-inner-shadow: #1b001b55;
-  --header-brand: #db2777;
-  --commerce-buy: #be185d;
-  --commerce-buy-hover: #a91551;
-  --nex-gradient-accent: linear-gradient(90deg, #ff168d 0%, #9d35ef 50%, #ff168d 100%);
-  --nex-gradient-accent-reverse: linear-gradient(90deg, #9d35ef 0%, #ff168d 50%, #9d35ef 100%);
-  --nex-gradient-accent-radial: radial-gradient(ellipse at center, #ff5c8a 0%, #83358f 70%, transparent 100%);
+  --header-brand: #ff008c;
+  --commerce-buy: #e6007e;
+  --commerce-buy-hover: #cc006f;
+  --nex-gradient-accent: linear-gradient(90deg, #ff008c 0%, #9200ff 50%, #ff008c 100%);
+  --nex-gradient-accent-reverse: linear-gradient(90deg, #9200ff 0%, #ff008c 50%, #9200ff 100%);
+  --nex-gradient-accent-radial: radial-gradient(ellipse at center, #ff008c 0%, #9200ff 70%, transparent 100%);
   --ns-muted: #8f8f8f;
-  --display-rose: #ff459f;
-  --display-purple: #c16cff;
+  --display-rose: #ff008c;
+  --display-purple: #b33dff;
   --star-shadow: #ffffff;
   --star-color: #ffffff;
   --surface-glass: rgba(9, 6, 9, 0.84);
@@ -131,15 +133,15 @@
   --text-gradient-start: var(--display-rose);
   --text-gradient-end: var(--display-purple);
   --section-indicator: var(--nex-pink-hot);
-  --section-indicator-glow: rgba(255, 22, 141, 0.25);
-  --section-indicator-glow-soft: rgba(255, 22, 141, 0.08);
+  --section-indicator-glow: rgba(var(--brand-accent-rgb), 0.32);
+  --section-indicator-glow-soft: rgba(var(--brand-accent-rgb), 0.12);
   --background: #000000;
   --foreground: oklch(0.985 0 0);
   --card: #090609;
   --card-foreground: oklch(0.985 0 0);
   --popover: #0c080d;
   --popover-foreground: oklch(0.985 0 0);
-  --primary: #d60070;
+  --primary: #e6007e;
   --primary-foreground: #ffffff;
   --ui-highlight: 255, 255, 255;
   --ui-highlight-color: #ffffff;
@@ -147,12 +149,12 @@
   --secondary-foreground: oklch(0.985 0 0);
   --muted: #171018;
   --muted-foreground: oklch(0.708 0 0);
-  --accent: #241021;
+  --accent: #35002e;
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: #ff168d;
+  --ring: #ff008c;
 }
 
 /* ---------- Self-hosted Dirtyline + Satoshi + Old English ---------- */
@@ -472,7 +474,7 @@ button {
   letter-spacing: 0.03em;
   border-radius: 0.625rem;
   color: rgb(var(--ui-highlight));
-  background: linear-gradient(to bottom, #f04484 0%, #db2777 55%, #c2185b 100%);
+  background: var(--action-gradient);
   border: 1px solid rgba(var(--ui-highlight), 0.14);
   box-shadow:
     inset 0 1px 0 rgba(var(--ui-highlight), 0.25),
@@ -518,7 +520,7 @@ button {
   font-size: 0.9375rem;
   font-weight: 700;
   letter-spacing: 0.04em;
-  background: linear-gradient(to bottom, #e63f83 0%, #db2777 48%, #be185d 100%);
+  background: var(--action-gradient);
   box-shadow:
     inset 0 1px 0 rgba(var(--ui-highlight), 0.22),
     inset 0 -1px 0 rgba(0, 0, 0, 0.22),
@@ -527,7 +529,7 @@ button {
 }
 
 .btn-primary-nex--featured:hover {
-  background: linear-gradient(to bottom, #e0488a 0%, #db2777 48%, #c2175b 100%);
+  background: var(--action-gradient);
   box-shadow:
     inset 0 1px 0 rgba(var(--ui-highlight), 0.22),
     inset 0 -1px 0 rgba(0, 0, 0, 0.22),
@@ -647,7 +649,7 @@ button {
   box-shadow: 0 0 8px rgba(var(--brand-choice-rgb), 0.8);
 }
 
-/* Glass rosado suave — REVERSÍVEL: troque glass-highlight por chrome-highlight ou text-[#ff5c8a] */
+/* Glass highlight follows the active theme's saturated accent. */
 .glass-highlight {
   background: rgba(var(--brand-choice-rgb), 0.08);
   backdrop-filter: blur(8px) saturate(1.2);
@@ -657,13 +659,13 @@ button {
   padding: 0.08em 0.32em 0.12em;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
-  color: #ff5c8a;
+  color: var(--display-rose);
   font-weight: 600;
 }
 .dark .glass-highlight {
   background: rgba(var(--brand-choice-rgb), 0.10);
   border-color: rgba(var(--brand-choice-rgb), 0.18);
-  color: #ff8fab;
+  color: var(--display-rose);
 }
 
 /* Accent Gradient Utilities */
@@ -707,13 +709,13 @@ button {
 .gradient-accent-glow {
   box-shadow:
     0 0 16px rgba(var(--brand-choice-rgb), 0.4),
-    0 0 32px rgba(131, 53, 143, 0.3);
+    0 0 32px rgba(var(--brand-secondary-rgb), 0.3);
 }
 
 .gradient-accent-glow-soft {
   box-shadow:
     0 0 8px rgba(var(--brand-choice-rgb), 0.25),
-    0 0 16px rgba(131, 53, 143, 0.15);
+    0 0 16px rgba(var(--brand-secondary-rgb), 0.15);
 }
 
 /* Accent radial for backgrounds */
@@ -730,12 +732,12 @@ button {
   0%, 100% {
     box-shadow:
       0 0 16px rgba(var(--brand-choice-rgb), 0.4),
-      0 0 32px rgba(131, 53, 143, 0.3);
+      0 0 32px rgba(var(--brand-secondary-rgb), 0.3);
   }
   50% {
     box-shadow:
       0 0 24px rgba(var(--brand-choice-rgb), 0.6),
-      0 0 48px rgba(131, 53, 143, 0.5);
+      0 0 48px rgba(var(--brand-secondary-rgb), 0.5);
   }
 }
 
@@ -868,17 +870,17 @@ select.field-input option {
   --font-mono: var(--font-code), ui-monospace, monospace;
   --landing-line: color-mix(in srgb, var(--color-ink) 14%, transparent);
   --landing-muted: color-mix(in srgb, var(--color-ink) 70%, var(--color-canvas));
-  --landing-accent: #2369a6;
+  --landing-accent: var(--display-rose);
   --landing-edge-tint: #fdf6ec25;
 }
-.dark .landing-page { --landing-accent: #c595ff; --landing-edge-tint: #0d051b25; }
+.dark .landing-page { --landing-accent: var(--display-purple); --landing-edge-tint: #0d051b25; }
 .landing-page :where(h1, h2, h3) { font-family: var(--font-display); }
 .landing-page footer { background: var(--color-canvas); }
 .landing-page .btn-primary-nex, .landing-page .btn-primary-glow { font-family: var(--font-mono); letter-spacing: 0; font-weight: 500; }
 .landing-page:has(input:focus-visible, textarea:focus-visible, select:focus-visible) :is(.landing-edge-blur, .landing-header-blur) { opacity: 0; }
 .landing-hero { position: relative; isolation: isolate; display: flex; align-items: center; min-height: min(900px, 100svh); overflow: hidden; background: var(--color-canvas); }
-.hero-ascii { position: absolute; inset: 0; z-index: -1; background: radial-gradient(ellipse at 50% 10%, #86b5d54d, transparent 70%); }
-.dark .hero-ascii { background: radial-gradient(ellipse at 50% 15%, #54207555, transparent 70%); }
+.hero-ascii { position: absolute; inset: 0; z-index: -1; background: radial-gradient(ellipse at 50% 10%, rgba(var(--brand-secondary-rgb), 0.3), transparent 70%); }
+.dark .hero-ascii { background: radial-gradient(ellipse at 50% 15%, rgba(var(--brand-secondary-rgb), 0.36), transparent 70%); }
 .hero-readability { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--color-canvas) 82%, transparent), transparent 75%); pointer-events: none; }
 .hero-container { position: relative; width: 100%; max-width: 1280px; margin-inline: auto; padding: 160px 40px 104px; }
 .hero-copy { max-width: 1000px; margin-inline: auto; text-align: center; }
@@ -904,7 +906,7 @@ select.field-input option {
 .intro-copy h1 { font-size: clamp(32px, min(6.1vw, 8dvh), 84px); font-weight: 600; line-height: 1.1; letter-spacing: -0.055em; }
 .intro-copy p { margin-top: 28px; font: 12px var(--font-mono); color: var(--muted-foreground); }
 
-/* Waves entry: the site's rose palette, independent of its light/dark theme.
+/* Waves entry: electric blue by day, hot pink / violet by night.
    Design read: cinematic manifesto. Variance 4 / motion 6 / density 2.
    Native dialog occupies the top layer; no additional z-index scale is needed. */
 .waves-entry {
@@ -912,8 +914,8 @@ select.field-input option {
   --entry-background: linear-gradient(155deg, #fdf6ec 0%, #faf3e4 40%, #f5e8d1 72%, #efe0c8 100%);
   --color-canvas: #fdf6ec;
   --color-ink: var(--entry-ink);
-  --star-shadow: #86cbf9;
-  --star-color: #2470b3;
+  --star-shadow: #008cff;
+  --star-color: #0052ff;
   position: fixed;
   inset: 0;
   width: 100%;
@@ -934,8 +936,8 @@ select.field-input option {
 }
 .dark .waves-entry {
   --entry-ink: #fff3fa;
-  --entry-background: linear-gradient(165deg, #fff3fa 0%, #ff459f 23%, #d60070 56%, #180810 100%);
-  --color-canvas: #180810;
+  --entry-background: linear-gradient(165deg, #ff54cf 0%, #ff008c 23%, #9200ff 56%, #180028 100%);
+  --color-canvas: #180028;
   --star-shadow: #fff3fa;
   --star-color: #ffffff;
   color-scheme: dark;
@@ -981,7 +983,7 @@ html:not(.dark) .waves-entry-stars { opacity: 0.28; }
   pointer-events: none;
   background: radial-gradient(ellipse at 50% 52%, #fdf6ec50 0%, #fdf6ec18 38%, #fdf6ec00 74%);
 }
-.dark .waves-entry-scrim { background: radial-gradient(ellipse at 50% 52%, #180810b3 0%, #18081073 38%, #18081000 74%); }
+.dark .waves-entry-scrim { background: radial-gradient(ellipse at 50% 52%, #180028b3 0%, #18002873 38%, #18002800 74%); }
 .waves-entry-content {
   position: relative;
   display: flex;
@@ -1057,10 +1059,10 @@ html:not(.dark) .waves-entry-stars { opacity: 0.28; }
 .day-clouds { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
 .dark .day-clouds { display: none; }
 .sky-cloud { position: absolute; background:
-  radial-gradient(ellipse 26% 45% at 27% 65%, #a4d4f46b 46%, #a4d4f42b 67%, transparent 86%),
-  radial-gradient(ellipse 30% 63% at 49% 47%, #c0e3fc87 40%, #c0e3fc35 65%, transparent 84%),
-  radial-gradient(ellipse 25% 47% at 73% 66%, #8fc7f066 44%, #8fc7f026 66%, transparent 86%),
-  radial-gradient(ellipse 63% 25% at 50% 79%, #a7d8f84d 40%, transparent 82%);
+  radial-gradient(ellipse 26% 45% at 27% 65%, #008cff6b 46%, #008cff2b 67%, transparent 86%),
+  radial-gradient(ellipse 30% 63% at 49% 47%, #30a6ff87 40%, #30a6ff35 65%, transparent 84%),
+  radial-gradient(ellipse 25% 47% at 73% 66%, #0052ff66 44%, #0052ff26 66%, transparent 86%),
+  radial-gradient(ellipse 63% 25% at 50% 79%, #008cff4d 40%, transparent 82%);
 }
 .sky-cloud-one { top: 5%; left: -18%; width: 85%; height: 40%; transform: rotate(-8deg); }
 .sky-cloud-two { right: -20%; bottom: 2%; width: 80%; height: 40%; transform: rotate(7deg); opacity: 0.85; }

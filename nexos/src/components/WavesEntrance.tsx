@@ -201,7 +201,7 @@ export default function WavesEntrance({ replay, onComplete }: WavesEntranceProps
         onProgress={portalProgress}
         background={<>
           {theme === 'dark' ? <WavesBackground active={active} paused={leaving} /> : <Topography
-            lowColor="#2470b3" midColor="#86cbf9" highColor="#fdf6ec" lightMode
+            lowColor="#0052ff" midColor="#008cff" highColor="#fdf6ec" lightMode
             active={active} paused={leaving} mouseInteraction maxFPS={24} dprLimit={1.25}
             className="waves-entry-topography" />}
           <div className="waves-entry-stars" aria-hidden="true"><Slipstream presentation interactive={false} paused={leaving} density={1.3} seed={731} /></div>

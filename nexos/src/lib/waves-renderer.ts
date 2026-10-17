@@ -123,9 +123,9 @@ export function createWavesRenderer(
       gl.enableVertexAttribArray(position);
       gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
       gl.uniform3fv(gl.getUniformLocation(program, 'u_colors[0]'), new Float32Array([
-        // NexOS rose palette: #180810, #D60070, #FF459F, #FFF3FA.
-        24 / 255, 8 / 255, 16 / 255, 214 / 255, 0, 112 / 255,
-        1, 69 / 255, 159 / 255, 1, 243 / 255, 250 / 255,
+        // NexOS electric palette: #180028, #9200FF, #FF008C, #FF54CF.
+        24 / 255, 0, 40 / 255, 146 / 255, 0, 1,
+        1, 0, 140 / 255, 1, 84 / 255, 207 / 255,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       ]));
       gl.uniform4f(gl.getUniformLocation(program, 'u_shape'), 2.00, 0.54, 0.47, 0.04);

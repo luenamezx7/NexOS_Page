@@ -112,8 +112,8 @@ export interface MetallicSurfaceProps {
 /** The same finish can be inserted into existing hold buttons and semantic links. */
 export function MetallicSurface({ baseColor, sheenColor, bandCount = 4, edgeBlur = 0.5, flowAngle = 45, zoom = 8, warp = 0, redFringe, blueFringe = 0.3, idleSpeed = 0, hoverSpeed = 0.8, clickSpeed = 1.4, disabled = false }: MetallicSurfaceProps) {
   const { theme } = useTheme();
-  const resolvedBase = baseColor ?? (theme === 'light' ? '#08436f' : '#8a0648');
-  const resolvedSheen = sheenColor ?? (theme === 'light' ? '#86cbf9' : '#ff168d');
+  const resolvedBase = baseColor ?? (theme === 'light' ? '#0035bd' : '#a60068');
+  const resolvedSheen = sheenColor ?? (theme === 'light' ? '#008cff' : '#ff008c');
   const resolvedRedFringe = redFringe ?? (theme === 'light' ? 0 : 0.3);
   const ref = useRef<HTMLSpanElement>(null);
   useEffect(() => {

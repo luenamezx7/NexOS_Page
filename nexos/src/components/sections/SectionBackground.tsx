@@ -22,7 +22,7 @@ export function SectionBackground({
     <div ref={ref} className={styles.scene} data-tone={index % 2 ? 'alternate' : 'base'} data-scene={scene}>
       <div className={styles.scenery} aria-hidden="true">
         {scene === 'waves' && theme === 'light' && visible && (
-          <Topography lowColor="#266da7" midColor="#8cbfe6" highColor="#fdf6ec" lightMode
+          <Topography lowColor="#0052ff" midColor="#008cff" highColor="#fdf6ec" lightMode
             mouseInteraction={false} maxFPS={24} dprLimit={1} opacity={0.75} thickness={0.018} glow={0.65} className={styles.contours} />
         )}
         {(scene === 'product' || scene === 'image') && <motion.div className={styles.fieldImage}

@@ -1,12 +1,12 @@
-// Original fragment shader; only the palette was changed to NexOS rose tones.
+// Original fragment shader; palette supplied by the NexOS waves renderer.
 export const WAVES_FRAGMENT_SHADER = `
 // "Waves" — made with the 21st.dev Shader Builder
 // Packed WebGL1 uniforms (the shader exposes readable u_* aliases as macros):
 //   u_colors[8] (first 4 used)
-//   vec3(0.094118, 0.031373, 0.062745) // #180810
-//   vec3(0.839216, 0.000000, 0.439216) // #D60070
-//   vec3(1.000000, 0.270588, 0.623529) // #FF459F
-//   vec3(1.000000, 0.952941, 0.980392) // #FFF3FA
+//   vec3(0.094118, 0.000000, 0.156863) // #180028
+//   vec3(0.572549, 0.000000, 1.000000) // #9200FF
+//   vec3(1.000000, 0.000000, 0.549020) // #FF008C
+//   vec3(1.000000, 0.329412, 0.811765) // #FF54CF
 //   u_scene = vec4(canvas width, canvas height, seconds * -0.73, 4.0)
 //   u_shape = vec4(2.00, 0.54, 0.47, 0.04)
 //   u_surface = vec4(1.54, 1.16, 0.00, 1.00)

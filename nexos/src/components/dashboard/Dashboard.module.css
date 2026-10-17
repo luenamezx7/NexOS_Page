@@ -9,7 +9,7 @@
    background: transparent;
   color: var(--color-ink);
 }
-:global(.dark) .page { --dash-accent: #ff8fab; }
+:global(.dark) .page { --dash-accent: var(--display-rose); }
 
 .header {
   position: sticky;

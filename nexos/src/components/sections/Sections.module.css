@@ -8,11 +8,11 @@
 .sceneContent { position: relative; }
 .contours { position: absolute; inset: 0; opacity: .7; mask-image: linear-gradient(90deg, #0005, #000 65%); }
 .scene[data-scene="waves"] .scenery { background: radial-gradient(ellipse at 85% 45%, color-mix(in srgb, var(--primary) 8%, transparent), transparent 65%); }
-:global(.dark) .scene[data-scene="waves"] .scenery { background: radial-gradient(ellipse at 85% 30%, #6528ab24, transparent 65%); }
+:global(.dark) .scene[data-scene="waves"] .scenery { background: radial-gradient(ellipse at 85% 30%, rgba(var(--brand-secondary-rgb), .2), transparent 65%); }
 .fieldImage { position: absolute; inset: -24px; background: url('/nexos-field.svg') center / cover no-repeat; opacity: .4; mask-image: linear-gradient(90deg, transparent, #000 55%, #000); }
 :global(.dark) .fieldImage { opacity: .65; }
-.scene[data-scene="product"] .scenery { background: radial-gradient(ellipse at 25% 30%, #6c9bd830, transparent 60%); }
-:global(.dark) .scene[data-scene="product"] .scenery { background: radial-gradient(ellipse at 24% 30%, #7d2fc13d, transparent 65%); }
+.scene[data-scene="product"] .scenery { background: radial-gradient(ellipse at 25% 30%, rgba(var(--brand-accent-rgb), .2), transparent 60%); }
+:global(.dark) .scene[data-scene="product"] .scenery { background: radial-gradient(ellipse at 24% 30%, rgba(var(--brand-secondary-rgb), .28), transparent 65%); }
 .section { scroll-margin-top: 100px; border-top: 1px solid var(--landing-line); }
 .container { width: min(100%, 1280px); margin-inline: auto; padding: 56px 40px 88px; }
 .eyebrow { display: flex; justify-content: space-between; gap: 16px; padding-bottom: 18px; margin-bottom: 54px; border-bottom: 1px solid var(--landing-line); color: var(--landing-muted); font: 10px var(--font-mono); letter-spacing: .1em; }
