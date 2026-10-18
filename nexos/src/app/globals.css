@@ -1105,6 +1105,7 @@ html:not(.dark) .topography-glass--compact { padding: 12px 16px; }
 html:not(.dark) .service-page main > .topography-glass { margin-block: 24px; }
 html:not(.dark) .service-page > header.topography-glass { margin-top: 20px; width: calc(100% - 40px); }
 html:not(.dark) .service-page footer { border-radius: 0; border-inline: 0; border-bottom: 0; }
+@media (max-width: 767px) { .service-page > header > div > a { display: none; } }
 html:not(.dark) .waves-entry-reading-glass {
   position: absolute;
   inset: calc(var(--gp-word-top, 26%) - 32px) clamp(16px, 5vw, 80px) calc(100% - var(--gp-word-bottom, 59%) - 32px);
