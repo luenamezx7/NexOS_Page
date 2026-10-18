@@ -8,6 +8,7 @@ import { useTheme } from '../ThemeProvider';
 import GradualBlur from '../ui/GradualBlur';
 import styles from './Sections.module.css';
 import { usePresentationActive } from '@/lib/use-presentation-active';
+import { TOPOGRAPHY_PALETTE } from '@/lib/brand-palette';
 
 const Topography = dynamic(() => import('../ui/Topography'), { ssr: false });
 
@@ -25,7 +26,7 @@ export function SectionBackground({
     <div ref={ref} className={styles.scene} data-tone={index % 2 ? 'alternate' : 'base'} data-scene={scene}>
       <div className={styles.scenery} aria-hidden="true">
         {scene === 'waves' && theme === 'light' && near && !entryOpen && (
-          <Topography lowColor="#0052ff" midColor="#008cff" highColor="#fdf6ec" lightMode
+          <Topography {...TOPOGRAPHY_PALETTE} lightMode
             paused={!visible} mouseInteraction={false} maxFPS={24} dprLimit={1} opacity={0.75} thickness={0.018} glow={0.65} className={styles.contours} />
         )}
         {(scene === 'product' || scene === 'image') && <motion.div className={styles.fieldImage}

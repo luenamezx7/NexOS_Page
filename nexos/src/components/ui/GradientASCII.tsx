@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import './GradientASCII.css';
+import { HERO_PALETTES } from '@/lib/brand-palette';
 
 const MAX_COLORS = 8;
 const MAX_CLICKS = 4;
@@ -14,7 +15,7 @@ const ATLAS_CELL_W = 60;
 const ATLAS_CELL_H = 100;
 const ATLAS_COLUMNS = 16;
 const FONT_SCALE = 0.78;
-const DEFAULT_COLORS = ['#1e3fd8', '#f6f8ff', '#a5d8ff', '#38bdf8'];
+const DEFAULT_COLORS = HERO_PALETTES.dark;
 const DEFAULT_CHARACTERS = ' =+xX0S8#@';
 const DEFAULT_FONT = '"Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
 const SHAPES = { horizon: 0, pinch: 1, rise: 2, eclipse: 3 };

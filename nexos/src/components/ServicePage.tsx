@@ -8,6 +8,7 @@ import { servicePages, type ServicePageContent } from '@/lib/service-pages';
 import { JsonLd } from './JsonLd';
 import { ThemeToggle } from './ThemeToggle';
 import { Footer } from './Footer';
+import { BrandMark } from './BrandMark';
 
 export function ServicePage({ service }: { service: ServicePageContent }) {
   const product = config.services.find(item => item.id === service.productId)!;
@@ -55,7 +56,7 @@ export function ServicePage({ service }: { service: ServicePageContent }) {
       <JsonLd data={structuredData} />
       <a href="#main-content" className="skip-link">Pular para o conteúdo</a>
       <header className="topography-glass mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-5 md:px-8">
-        <Link href="/" aria-label="NexOS, página inicial"><Image src="/nexos-branca-transparente.svg" width={112} height={28} alt="NexOS" className="logo-invert" /></Link>
+        <Link href="/" aria-label="NexOS, página inicial"><BrandMark /></Link>
         <div className="flex items-center gap-4"><Link href="/#services" className="text-sm hover:underline">Ver soluções</Link><ThemeToggle /></div>
       </header>
       <main id="main-content" tabIndex={-1} className="mx-auto max-w-6xl px-5 md:px-8">

@@ -8,7 +8,7 @@
 .overline { margin-bottom: 14px; font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.04em; color: var(--display-rose); }
 .title { display: flex; align-items: center; gap: 10px; }
 .title > svg { flex-shrink: 0; color: var(--display-rose); }
-.heading, .title h2 { font-size: clamp(26px, 3vw, 34px); font-weight: 600; line-height: 1.15; letter-spacing: -0.045em; background: linear-gradient(110deg, var(--display-rose), var(--display-purple)); background-clip: text; -webkit-background-clip: text; color: transparent; }
+.heading, .title h2 { font-size: clamp(26px, 3vw, 34px); font-weight: 600; line-height: 1.15; letter-spacing: -0.045em; background: var(--visor-text-gradient); background-clip: text; -webkit-background-clip: text; color: transparent; }
 .description { margin: 12px 0 24px; font-size: 14px; line-height: 1.55; color: var(--muted-foreground); text-wrap: pretty; }
 .formStack { display: flex; flex-direction: column; gap: 14px; }
 .formGroup { gap: 18px; }

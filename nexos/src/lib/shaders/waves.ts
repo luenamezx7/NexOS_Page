@@ -2,12 +2,9 @@
 export const WAVES_FRAGMENT_SHADER = `
 // "Waves" — made with the 21st.dev Shader Builder
 // Packed WebGL1 uniforms (the shader exposes readable u_* aliases as macros):
-//   u_colors[8] (first 4 used)
-//   vec3(0.094118, 0.000000, 0.156863) // #180028
-//   vec3(0.572549, 0.000000, 1.000000) // #9200FF
-//   vec3(1.000000, 0.000000, 0.549020) // #FF008C
-//   vec3(1.000000, 0.329412, 0.811765) // #FF54CF
-//   u_scene = vec4(canvas width, canvas height, seconds * -0.73, 4.0)
+//   u_colors[8]: shadow, violet, blue, cyan, gold, orange, coral, magenta.
+//   Exact source colors live in brand-palette.ts (the mascot's mirrored visor).
+//   u_scene = vec4(canvas width, canvas height, seconds * -0.73, 8.0)
 //   u_shape = vec4(2.00, 0.54, 0.47, 0.04)
 //   u_surface = vec4(1.54, 1.16, 0.00, 1.00)
 //   u_finish = vec4(0.00, 0.21, 0.002, 0.10)

@@ -10,10 +10,9 @@ import GradualBlur from './ui/GradualBlur';
 import { motion } from 'motion/react';
 import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { usePresentationActive } from '@/lib/use-presentation-active';
+import { HERO_PALETTES } from '@/lib/brand-palette';
 
 const GradientASCII = dynamic(() => import('./ui/GradientASCII'), { ssr: false });
-const LIGHT = ['#0040e6', '#0052ff', '#008cff', '#fdf6ec'];
-const DARK = ['#3b007a', '#9200ff', '#ff008c', '#b33dff'];
 
 export const Hero = forwardRef<HTMLElement, { className?: string }>(function Hero({ className = '' }, ref) {
   const { theme } = useTheme();
@@ -23,7 +22,7 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
   return (
     <section ref={ref} id="hero" tabIndex={-1} aria-labelledby="hero-title" className={`landing-hero ${className}`}>
       <div className="hero-ascii" aria-hidden="true">
-        {!entryOpen && <GradientASCII colors={theme === 'light' ? LIGHT : DARK} lightMode={theme === 'light'}
+        {!entryOpen && <GradientASCII colors={HERO_PALETTES[theme]} lightMode={theme === 'light'}
           shape="horizon" characters=" =+xX0S8#@" cellSize={18} density={0.75}
           gradientOpacity={0.5} glyphOpacity={0.7} glow={0.15} grain={0.025}
           flicker={0.1} speed={0.45} flow={0.4} dpr={1} maxFPS={30} visibilityMargin="-96px 0px 0px" />}

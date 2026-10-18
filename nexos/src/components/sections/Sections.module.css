@@ -1,14 +1,14 @@
 .scene { --section-ground: #fdf6ec; position: relative; isolation: isolate; background: var(--section-ground); --color-canvas: var(--section-ground); }
-.scene[data-tone="alternate"] { --section-ground: #e6eef8; }
+.scene[data-tone="alternate"] { --section-ground: color-mix(in srgb, var(--visor-cyan) 7%, #fdf6ec); }
 :global(.dark) .scene { --section-ground: #000; }
-:global(.dark) .scene[data-tone="alternate"] { --section-ground: #12091f; }
-.scene[data-scene="product"] { --section-ground: #dce7f5; }
-:global(.dark) .scene[data-scene="product"] { --section-ground: #0c0318; }
+:global(.dark) .scene[data-tone="alternate"] { --section-ground: color-mix(in srgb, var(--visor-violet) 12%, #000); }
+.scene[data-scene="product"] { --section-ground: color-mix(in srgb, var(--visor-gold) 10%, #fdf6ec); }
+:global(.dark) .scene[data-scene="product"] { --section-ground: color-mix(in srgb, var(--visor-plum) 14%, #000); }
 .scenery { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
 .sceneContent { position: relative; }
 .contours { position: absolute; inset: 0; opacity: .7; mask-image: linear-gradient(90deg, #0005, #000 65%); }
-.scene[data-scene="waves"] .scenery { background: radial-gradient(ellipse at 85% 45%, color-mix(in srgb, var(--primary) 8%, transparent), transparent 65%); }
-:global(.dark) .scene[data-scene="waves"] .scenery { background: radial-gradient(ellipse at 85% 30%, rgba(var(--brand-secondary-rgb), .2), transparent 65%); }
+.scene[data-scene="waves"] .scenery { background: radial-gradient(ellipse at 85% 45%, color-mix(in srgb, var(--visor-cyan) 12%, transparent), transparent 65%), radial-gradient(ellipse at 15% 70%, color-mix(in srgb, var(--visor-orange) 10%, transparent), transparent 60%); }
+:global(.dark) .scene[data-scene="waves"] .scenery { background: radial-gradient(ellipse at 85% 30%, color-mix(in srgb, var(--visor-cyan) 20%, transparent), transparent 65%), radial-gradient(ellipse at 15% 70%, color-mix(in srgb, var(--visor-magenta) 14%, transparent), transparent 60%); }
 .fieldImage { position: absolute; inset: -24px; background: url('/nexos-field.svg') center / cover no-repeat; opacity: .4; mask-image: linear-gradient(90deg, transparent, #000 55%, #000); }
 :global(.dark) .fieldImage { opacity: .65; }
 .scene[data-scene="product"] .scenery { background: radial-gradient(ellipse at 25% 30%, rgba(var(--brand-accent-rgb), .2), transparent 60%); }
@@ -19,7 +19,7 @@
 .kicker, .monoLabel { font: 11px var(--font-mono); letter-spacing: .05em; color: var(--landing-muted); }
 .kicker { margin-bottom: 18px; }
 .heading { font-size: clamp(32px, 3.7vw, 52px); font-weight: 700; letter-spacing: -.045em; line-height: 1.08; text-wrap: balance; }
-.heading > span { color: var(--landing-accent); }
+.heading > span { background: var(--visor-text-gradient); background-clip: text; -webkit-background-clip: text; color: transparent; }
 .lead { margin-top: 22px; max-width: 51ch; color: var(--landing-muted); font-size: 16px; line-height: 1.7; text-wrap: pretty; }
 .textLink { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; font: 12px var(--font-mono); margin-top: 22px; }
 .textLink svg { transition: transform .25s var(--ease-fluid); }
@@ -87,7 +87,7 @@
 .finalCta { padding-bottom: 64px; }
 .ctaLayout { display: flex; align-items: center; justify-content: space-between; gap: 32px; }
 .ctaLayout h2 { font-size: clamp(36px, 5.4vw, 72px); line-height: 1.05; font-weight: 700; letter-spacing: -.05em; }
-.ctaLayout h2 span { color: var(--landing-accent); }
+.ctaLayout h2 span { background: var(--visor-text-gradient); background-clip: text; -webkit-background-clip: text; color: transparent; }
 .ctaArrow { width: 110px; height: 110px; flex-shrink: 0; color: var(--landing-accent); }
 .ctaBottom { display: flex; justify-content: space-between; align-items: end; gap: 40px; border-top: 1px solid var(--landing-line); margin-top: 48px; padding-top: 32px; }
 .ctaBottom > p { max-width: 40ch; font-size: 15px; color: var(--landing-muted); }
@@ -137,3 +137,4 @@
   .ctaActions :global(.btn-primary-nex) { width: 100%; padding-inline: 16px; gap: 12px; font-size: 12px; }
 }
 @media (prefers-reduced-motion: reduce) { .textLink svg { transition: none; } }
+@media (forced-colors: active) { .heading > span, .ctaLayout h2 span { background: none; color: CanvasText; } }

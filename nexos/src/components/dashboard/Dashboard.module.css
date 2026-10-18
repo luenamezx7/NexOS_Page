@@ -52,7 +52,7 @@
   font-weight: 700;
   letter-spacing: -0.02em;
    line-height: 1.2;
-   background: linear-gradient(110deg, var(--display-rose), var(--display-purple));
+   background: var(--visor-text-gradient);
    background-clip: text;
    -webkit-background-clip: text;
    color: transparent;

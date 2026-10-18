@@ -7,6 +7,7 @@ import { FRAGMENT_SHADER, VERTEX_SHADER } from './metallic-button-shaders';
 import styles from './metallic-button.module.css';
 import { useTheme } from '@/components/ThemeProvider';
 import { usePresentationActive } from '@/lib/use-presentation-active';
+import { VISOR_PALETTE } from '@/lib/brand-palette';
 
 interface MetallicShaderUniforms {
   colorBack: string; colorTint: string; repetition: number; softness: number; angle: number;
@@ -115,8 +116,8 @@ export interface MetallicSurfaceProps {
 export function MetallicSurface({ baseColor, sheenColor, bandCount = 4, edgeBlur = 0.5, flowAngle = 45, zoom = 8, warp = 0, redFringe, blueFringe = 0.3, idleSpeed = 0, hoverSpeed = 0.8, clickSpeed = 1.4, disabled = false }: MetallicSurfaceProps) {
   const { theme } = useTheme();
   const entryOpen = usePresentationActive();
-  const resolvedBase = baseColor ?? (theme === 'light' ? '#0035bd' : '#a60068');
-  const resolvedSheen = sheenColor ?? (theme === 'light' ? '#008cff' : '#ff008c');
+  const resolvedBase = baseColor ?? (theme === 'light' ? VISOR_PALETTE.violet : VISOR_PALETTE.plum);
+  const resolvedSheen = sheenColor ?? (theme === 'light' ? VISOR_PALETTE.cyan : VISOR_PALETTE.gold);
   const resolvedRedFringe = redFringe ?? (theme === 'light' ? 0 : 0.3);
   const ref = useRef<HTMLSpanElement>(null);
   useEffect(() => {

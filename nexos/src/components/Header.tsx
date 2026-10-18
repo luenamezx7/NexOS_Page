@@ -8,13 +8,13 @@
  * - Scroll → glass-header--scrolled
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'motion/react';
 import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { ArrowUpRight, Menu, UserRound, X } from 'lucide-react';
 import { config } from '@/config';
-import { RobotCycler } from './RobotCycler';
+import { BrandMark } from './BrandMark';
+import { VisorSpectrum } from './VisorSpectrum';
 import { ThemeToggle } from './ThemeToggle';
 import styles from './Header.module.css';
 import { MetallicSurface } from './ui/metallic-button';
@@ -55,8 +55,7 @@ export function Header() {
     >
       <div className={styles.bar}>
         <a href="#hero" aria-label="NexOS, início" onClick={event => { event.preventDefault(); handleNav('#hero'); }} className={styles.brand}>
-          <Image src="/nexos-branca-transparente.svg" alt="NexOS" width={112} height={28} className="logo-invert h-auto w-full" />
-          <RobotCycler className={`logo-invert ${styles.robot}`} intervalMs={2200} fadeMs={650} />
+          <BrandMark />
         </a>
         <nav className={styles.desktopNav} aria-label="Navegação principal">
           <ul role="list" className="flex gap-6">
@@ -74,7 +73,7 @@ export function Header() {
             <UserRound size={16} strokeWidth={1.75} aria-hidden="true" /><span>Minha conta</span>
           </Link>
           <ThemeToggle />
-          <button type="button" className={styles.start} onClick={() => handleNav('#services')}><MetallicSurface /><span className="metallic-content inline-flex items-center gap-2">Ver soluções <ArrowUpRight size={16} aria-hidden="true" /></span></button>
+          <button type="button" className={styles.start} onClick={() => handleNav('#services')}><MetallicSurface /><span className="metallic-content inline-flex items-center gap-2">Ver soluções <ArrowUpRight size={16} aria-hidden="true" /></span><VisorSpectrum className={styles.spectrum} /></button>
           <button ref={menuRef} type="button" aria-label={mobileOpen ? 'Fechar menu' : 'Abrir menu'} aria-expanded={mobileOpen} aria-controls="mobile-navigation" onClick={() => setMobileOpen(value => !value)} className={styles.menuButton}>
             {mobileOpen ? <X size={20} aria-hidden="true" /> : <Menu size={20} aria-hidden="true" />}
           </button>

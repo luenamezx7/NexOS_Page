@@ -7,6 +7,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Renderer, Program, Mesh, Triangle } from 'ogl';
 import './Grainient.css';
+import { VISOR_PALETTE } from '@/lib/brand-palette';
 
 interface GrainientProps {
   timeSpeed?: number;
@@ -169,9 +170,9 @@ const Grainient: React.FC<GrainientProps> = ({
   centerX = 0.0,
   centerY = 0.0,
   zoom = 0.9,
-  color1 = '#FF9FFC',
-  color2 = '#5227FF',
-  color3 = '#B497CF',
+  color1 = VISOR_PALETTE.magenta,
+  color2 = VISOR_PALETTE.blue,
+  color3 = VISOR_PALETTE.cyan,
   lightMode = false,
   className = ''
 }) => {

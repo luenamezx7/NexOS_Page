@@ -15,9 +15,7 @@
 }
 .scrolled { background: color-mix(in srgb, var(--color-canvas) 96%, transparent); border-color: color-mix(in srgb, var(--color-ink) 22%, transparent); }
 .bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 64px; padding: 8px 12px; }
-.brand { display: flex; align-items: center; gap: 8px; width: 100px; flex-shrink: 0; }
-.brand > img { width: 76px; }
-.robot { width: 22px; height: 24px; flex-shrink: 0; }
+.brand { display: flex; align-items: center; width: 116px; flex-shrink: 0; }
 .actions { display: flex; align-items: center; gap: 8px; }
 .account {
   display: inline-flex;
@@ -45,19 +43,18 @@
 .mobileNav a, .mobileStart { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 48px; padding: 12px 16px; font-size: 16px; border-radius: 8px; }
 .mobileNav a:hover { background: color-mix(in srgb, var(--color-ink) 5%, transparent); }
 .mobileStart, .start { position: relative; isolation: isolate; overflow: hidden; background: var(--action-gradient); color: white; font-weight: 700; }
+.spectrum { position: absolute; inset: auto 0 0; z-index: 1; }
 @media (max-width: 389px) {
   .header { left: 8px; right: 8px; }
   .bar { gap: 4px; padding-inline: 8px; }
-  .brand { width: 72px; }
-  .brand > img { width: 72px; }
-  .robot, .account svg { display: none; }
+  .brand { width: 44px; }
+  .account svg { display: none; }
   .actions { gap: 4px; }
   .account { padding-inline: 8px; font-size: 13px; }
 }
 @media (min-width: 1200px) {
   .bar { gap: 24px; padding-inline: 24px; }
-  .brand { width: 138px; }
-  .brand > img { width: 108px; }
+  .brand { width: 152px; }
   .desktopNav { display: flex; align-items: center; gap: 4px; }
   .navLink { display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 8px; font-size: 14px; font-weight: 500; white-space: nowrap; }
   .start { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 8px; font-size: 14px; white-space: nowrap; }

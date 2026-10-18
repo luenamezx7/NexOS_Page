@@ -1,0 +1,148 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" viewBox="0 0 640 640" fill="none" role="img" aria-labelledby="wolf-title wolf-desc">
+  <title id="wolf-title">Mascote lobo — cabeça com capuz</title>
+  <desc id="wolf-desc">Lobo claro sorridente com visor espelhado multicolorido, duas pequenas presas e capuz preto abaixado. Ilustração vetorial com fundo transparente.</desc>
+  <defs>
+    <linearGradient id="hood-base" x1="118" y1="370" x2="502" y2="611" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#32343F"/><stop offset=".48" stop-color="#1C1D25"/><stop offset="1" stop-color="#101117"/>
+    </linearGradient>
+    <linearGradient id="hood-fold" x1="132" y1="441" x2="269" y2="587" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#373943"/><stop offset=".48" stop-color="#252731"/><stop offset="1" stop-color="#181921"/>
+    </linearGradient>
+    <linearGradient id="ear-fur" x1="181" y1="46" x2="286" y2="224" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FCFBF8"/><stop offset=".58" stop-color="#EDECE8"/><stop offset="1" stop-color="#C7C5CC"/>
+    </linearGradient>
+    <linearGradient id="ear-inner" x1="196" y1="79" x2="263" y2="207" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#787580"/><stop offset="1" stop-color="#55535F"/>
+    </linearGradient>
+    <linearGradient id="fur-base" x1="185" y1="207" x2="465" y2="466" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F3F2EF"/><stop offset=".52" stop-color="#E8E7E3"/><stop offset="1" stop-color="#C7C5CB"/>
+    </linearGradient>
+    <linearGradient id="forehead" x1="258" y1="141" x2="357" y2="266" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#C9C6D0"/><stop offset="1" stop-color="#9996A3"/>
+    </linearGradient>
+    <linearGradient id="white-fur" x1="282" y1="340" x2="368" y2="505" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFEFB"/><stop offset=".68" stop-color="#F4F2EE"/><stop offset="1" stop-color="#E0DED9"/>
+    </linearGradient>
+    <linearGradient id="muzzle" x1="278" y1="351" x2="364" y2="453" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A2A0AC"/><stop offset=".52" stop-color="#858390"/><stop offset="1" stop-color="#6B6977"/>
+    </linearGradient>
+    <linearGradient id="nose" x1="305" y1="351" x2="332" y2="394" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#32313A"/><stop offset=".55" stop-color="#17171D"/><stop offset="1" stop-color="#0D0D13"/>
+    </linearGradient>
+    <linearGradient id="mirror" x1="105" y1="290" x2="535" y2="290" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3328BC"/>
+      <stop offset=".035" stop-color="#005DDA"/>
+      <stop offset=".082" stop-color="#0BD2D3"/>
+      <stop offset=".13" stop-color="#95E9DA"/>
+      <stop offset=".182" stop-color="#FFF7CB"/>
+      <stop offset=".225" stop-color="#FFE36B"/>
+      <stop offset=".275" stop-color="#FF913E"/>
+      <stop offset=".313" stop-color="#FC3768"/>
+      <stop offset=".36" stop-color="#E6008B"/>
+      <stop offset=".44" stop-color="#9E087A"/>
+      <stop offset=".53" stop-color="#650C66"/>
+      <stop offset=".615" stop-color="#9E087B"/>
+      <stop offset=".70" stop-color="#EB008D"/>
+      <stop offset=".758" stop-color="#FC3866"/>
+      <stop offset=".81" stop-color="#FFAB37"/>
+      <stop offset=".853" stop-color="#FFF19A"/>
+      <stop offset=".897" stop-color="#A4E8DB"/>
+      <stop offset=".94" stop-color="#0BCFD0"/>
+      <stop offset=".976" stop-color="#086BD6"/>
+      <stop offset="1" stop-color="#3929BD"/>
+    </linearGradient>
+    <linearGradient id="lens-depth" x1="320" y1="226" x2="320" y2="356" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22002F" stop-opacity=".16"/>
+      <stop offset=".32" stop-color="#22002F" stop-opacity="0"/>
+      <stop offset=".72" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity=".10"/>
+    </linearGradient>
+    <linearGradient id="lens-glint" x1="181" y1="230" x2="208" y2="350" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFDF1" stop-opacity=".60"/>
+      <stop offset="1" stop-color="#FFFDF1" stop-opacity=".12"/>
+    </linearGradient>
+    <path id="lens-shape" d="M133 233C205 221 435 221 507 233C527 236 537 252 535 273L530 322C528 344 516 353 497 354H364C352 354 347 347 340 335C331 319 309 319 300 335C293 347 288 354 276 354H143C124 353 112 344 110 322L105 273C103 252 113 236 133 233Z"/>
+    <clipPath id="lens-clip"><use href="#lens-shape"/></clipPath>
+    <path id="head-shape" d="M320 152C254 146 205 174 170 221C158 237 150 254 147 274C117 287 91 323 78 349C98 338 114 340 130 353L107 366C123 358 137 359 150 367C122 376 112 395 109 412C126 402 141 402 157 410L140 426C158 419 174 425 182 439C207 479 260 503 320 507C380 503 433 479 458 439C466 425 482 419 500 426L483 410C499 402 514 402 531 412C528 395 518 376 490 367C503 359 517 358 533 366L510 353C526 340 542 338 562 349C549 323 523 287 493 274C490 254 482 237 470 221C435 174 386 146 320 152Z"/>
+    <clipPath id="head-clip"><use href="#head-shape"/></clipPath>
+    <g id="left-ear">
+      <path d="M205 226C188 174 175 96 167 22C225 48 282 100 308 157L274 213Z" fill="url(#ear-fur)" stroke="#35343D" stroke-width="3.5" stroke-linejoin="round"/>
+      <path d="M205 198C193 152 184 99 180 60C224 87 258 123 282 160L259 206Z" fill="url(#ear-inner)"/>
+      <path d="M194 158L209 178L217 166L238 191L247 180L266 206L240 215L208 208Z" fill="#F4F2ED"/>
+      <path d="M176 43C181 99 192 157 205 193" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity=".68"/>
+    </g>
+    <g id="left-hood-fold">
+      <path d="M105 422C128 459 172 482 225 499C268 513 297 539 320 569C283 593 235 599 189 587C137 574 103 546 90 499C83 471 91 440 105 422Z" fill="url(#hood-fold)"/>
+      <path d="M107 449C140 482 186 500 226 515C255 526 278 541 298 558C269 553 247 547 219 541C170 530 129 508 107 479Z" fill="#373944" opacity=".64"/>
+      <path d="M114 489C135 532 174 552 212 564C242 574 271 574 297 570C270 591 226 592 190 580C150 567 121 538 114 489Z" fill="#111219" opacity=".61"/>
+      <path d="M101 456C94 487 105 518 125 540" stroke="#454752" stroke-width="4" stroke-linecap="round" opacity=".67"/>
+      <path d="M144 491C177 513 218 520 246 535" stroke="#171820" stroke-width="5" stroke-linecap="round"/>
+      <path d="M177 555C203 570 227 575 254 574" stroke="#454751" stroke-width="3.5" stroke-linecap="round" opacity=".52"/>
+    </g>
+  </defs>
+
+  <g id="capuz" stroke-linejoin="round">
+    <path d="M112 365C79 404 59 459 65 498C74 553 126 584 196 599C274 615 366 615 444 599C514 584 566 553 575 498C581 459 561 404 528 365L468 353C425 391 369 411 320 412C271 411 215 391 172 353Z" fill="url(#hood-base)" stroke="#14151C" stroke-width="4"/>
+    <path d="M119 385C101 421 101 455 113 483C126 438 158 411 190 400L174 379Z" fill="#454752" opacity=".64"/>
+    <path d="M521 385C539 421 539 455 527 483C514 438 482 411 450 400L466 379Z" fill="#343640"/>
+    <path d="M174 431C214 470 270 487 320 488C370 487 426 470 466 431L477 477C439 535 385 565 320 579C255 565 201 535 163 477Z" fill="#0D0E14"/>
+    <use href="#left-hood-fold"/>
+    <use href="#left-hood-fold" transform="translate(640 0) scale(-1 1)"/>
+    <path d="M282 591C296 586 309 578 320 569C331 578 344 586 358 591" stroke="#0C0D13" stroke-width="5" stroke-linecap="round"/>
+  </g>
+
+  <g id="cabeca">
+    <use href="#left-ear"/>
+    <use href="#left-ear" transform="translate(640 0) scale(-1 1)"/>
+    <use href="#head-shape" fill="url(#fur-base)" stroke="#43424A" stroke-width="2.8" stroke-linejoin="round"/>
+    <g clip-path="url(#head-clip)">
+      <path d="M485 269C503 300 526 318 551 337C528 330 508 337 490 353C510 367 520 381 523 393C502 385 481 388 463 402C478 407 483 413 487 420C465 417 448 432 439 450C412 479 378 495 342 505C416 498 479 463 508 420L559 353Z" fill="#BEBDC3"/>
+      <path d="M151 309C126 320 113 328 98 339C120 334 138 342 151 354L167 343Z" fill="#FFFDF8"/>
+      <path d="M148 378C133 382 126 390 120 398C141 390 161 397 173 409L181 394Z" fill="#FFFDF8"/>
+      <path d="M477 370C498 374 510 384 517 393C496 387 477 392 463 405L455 391Z" fill="#EAE8E4"/>
+      <path d="M168 338C204 326 257 335 320 347C383 335 436 326 472 338C481 396 452 449 414 473C384 494 353 506 320 507C287 506 256 494 226 473C188 449 159 396 168 338Z" fill="url(#white-fur)"/>
+      <path d="M206 449C237 469 269 481 320 484C371 481 403 469 434 449C407 483 363 503 320 507C277 503 233 483 206 449Z" fill="#DEDDD8" opacity=".64"/>
+      <path d="M320 152C254 146 205 174 170 221L155 253L181 240L192 258L210 241L226 252L246 239L269 249L291 237L320 244L349 237L371 249L394 239L414 252L430 241L448 258L459 240L485 253L470 221C435 174 386 146 320 152Z" fill="url(#forehead)"/>
+      <path d="M337 152C385 158 433 181 463 217L445 224C412 195 377 177 337 166Z" fill="#9D9AA7" opacity=".55"/>
+      <path d="M300 159C265 157 225 175 201 198" stroke="#E5E1E9" stroke-width="3" stroke-linecap="round" opacity=".64"/>
+    </g>
+    <path d="M277 166C289 146 296 125 310 114C323 104 340 101 355 104C339 116 332 134 338 157L361 170Z" fill="url(#forehead)"/>
+    <path d="M300 142C311 122 325 111 343 108" stroke="#E3DFE8" stroke-width="3" stroke-linecap="round"/>
+    <path d="M320 173L301 209L320 227L339 209Z" fill="#706C7C"/>
+    <path d="M153 199C173 209 202 201 221 205C239 208 260 219 285 229L272 239C241 227 216 224 192 221C173 220 160 212 153 199Z" fill="#73707D"/>
+    <path d="M487 199C467 209 438 201 419 205C401 208 380 219 355 229L368 239C399 227 424 224 448 221C467 220 480 212 487 199Z" fill="#65626F"/>
+
+    <g id="focinho">
+      <path d="M244 360C260 351 288 351 320 354C352 351 380 351 396 360C407 369 404 400 387 425C370 449 344 462 320 464C296 462 270 449 253 425C236 400 233 369 244 360Z" fill="url(#muzzle)"/>
+      <path d="M249 379C264 368 288 365 309 367M391 379C376 368 352 365 331 367" stroke="#676572" stroke-width="4" stroke-linecap="round" opacity=".48"/>
+      <path d="M255 398C272 411 296 415 320 415C344 415 368 411 385 398C379 434 355 455 320 458C285 455 261 434 255 398Z" fill="#20141F" stroke="#55515F" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="M289 446C306 437 334 437 351 446C341 453 331 456 320 457C309 456 299 453 289 446Z" fill="#9B4659"/>
+      <path d="M309 442Q320 440 331 442" stroke="#BD6878" stroke-width="2" stroke-linecap="round"/>
+      <path d="M260 405C279 417 301 420 320 420C339 420 361 417 380 405L375 420C356 431 339 434 320 434C301 434 284 431 265 420Z" fill="#FFFEF9"/>
+      <path d="M284 419L283 428M302 422V432M320 423V433M338 422V432M356 419L357 428" stroke="#D2CFCB" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M263 407C269 411 275 414 282 417L274 435C269 429 265 418 263 407Z" fill="#FFFFFF" stroke="#D3D1CC" stroke-width="1.4" stroke-linejoin="round"/>
+      <path d="M377 407C371 411 365 414 358 417L366 435C371 429 375 418 377 407Z" fill="#FFFFFF" stroke="#D3D1CC" stroke-width="1.4" stroke-linejoin="round"/>
+      <path d="M256 398L252 394M384 398L388 394" stroke="#64616F" stroke-width="4" stroke-linecap="round"/>
+      <path d="M320 396V413" stroke="#25232C" stroke-width="3.8" stroke-linecap="round"/>
+      <path d="M289 354C301 347 339 347 351 354C358 358 354 373 347 382C339 392 329 398 320 398C311 398 301 392 293 382C286 373 282 358 289 354Z" fill="url(#nose)" stroke="#26242E" stroke-width="2"/>
+      <ellipse cx="309" cy="357" rx="13" ry="4.8" fill="#F4F1ED" opacity=".72"/>
+      <path d="M306 379C309 375 313 375 316 379M324 379C327 375 331 375 334 379" stroke="#4A4651" stroke-width="2.2" stroke-linecap="round"/>
+      <g fill="#605D6D"><circle cx="267" cy="380" r="3.3"/><circle cx="262" cy="393" r="3.3"/><circle cx="277" cy="395" r="3.3"/><circle cx="373" cy="380" r="3.3"/><circle cx="378" cy="393" r="3.3"/><circle cx="363" cy="395" r="3.3"/></g>
+    </g>
+
+    <g id="visor">
+      <use href="#lens-shape" transform="translate(0 6)" fill="#5A5665" opacity=".18"/>
+      <use href="#lens-shape" fill="url(#mirror)" stroke="#ADB1BC" stroke-width="12" stroke-linejoin="round"/>
+      <g clip-path="url(#lens-clip)">
+        <path d="M105 220H535V362H105Z" fill="url(#lens-depth)"/>
+        <path d="M181 227L198 226L206 354L189 355Z" fill="url(#lens-glint)"/>
+        <path d="M225 224L231 224L238 355L232 355Z" fill="#FFF2FA" opacity=".26"/>
+        <path d="M446 226L456 227L447 355L438 355Z" fill="#FFFAD4" opacity=".38"/>
+        <path d="M473 230L477 230L468 355L464 355Z" fill="#FFFFFF" opacity=".20"/>
+        <path d="M125 243C213 230 427 230 515 243" stroke="#FFFFFF" stroke-width="2" opacity=".18"/>
+      </g>
+      <use href="#lens-shape" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round"/>
+      <path d="M132 229C218 218 422 218 508 229" stroke="#FDFEFF" stroke-width="2.3" stroke-linecap="round"/>
+    </g>
+  </g>
+</svg>

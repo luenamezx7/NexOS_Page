@@ -1,4 +1,5 @@
 import { WAVES_FRAGMENT_SHADER, WAVES_VERTEX_SHADER } from './shaders/waves';
+import { WAVES_PALETTE } from './brand-palette';
 
 export type WavesState = 'pending' | 'animated' | 'still' | 'paused' | 'fallback' | 'context-lost';
 export interface WavesOptions { width: number; height: number; visible: boolean; reduced: boolean }
@@ -58,7 +59,7 @@ export function createWavesRenderer(
 
   function draw() {
     if (!ready || disposed || !current.visible || gl!.isContextLost()) return;
-    gl!.uniform4f(scene, canvas.width, canvas.height, elapsed * -0.73, 4.0);
+    gl!.uniform4f(scene, canvas.width, canvas.height, elapsed * -0.73, WAVES_PALETTE.length);
     gl!.drawArrays(gl!.TRIANGLES, 0, 3);
     frames++;
   }
@@ -122,12 +123,11 @@ export function createWavesRenderer(
       const position = gl.getAttribLocation(program, 'a_position');
       gl.enableVertexAttribArray(position);
       gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
-      gl.uniform3fv(gl.getUniformLocation(program, 'u_colors[0]'), new Float32Array([
-        // NexOS electric palette: #180028, #9200FF, #FF008C, #FF54CF.
-        24 / 255, 0, 40 / 255, 146 / 255, 0, 1,
-        1, 0, 140 / 255, 1, 84 / 255, 207 / 255,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      ]));
+      const colors = new Float32Array(8 * 3);
+      WAVES_PALETTE.forEach((hex, index) => {
+        colors.set([1, 3, 5].map(offset => parseInt(hex.slice(offset, offset + 2), 16) / 255), index * 3);
+      });
+      gl.uniform3fv(gl.getUniformLocation(program, 'u_colors[0]'), colors);
       gl.uniform4f(gl.getUniformLocation(program, 'u_shape'), 2.00, 0.54, 0.47, 0.04);
       gl.uniform4f(gl.getUniformLocation(program, 'u_surface'), 1.54, 1.16, 0.00, 1.00);
       gl.uniform4f(gl.getUniformLocation(program, 'u_finish'), 0.00, 0.21, 0.002, 0.10);

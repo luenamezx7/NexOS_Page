@@ -1,12 +1,12 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, ArrowUpRight, KeyRound, Package, UserRound } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import styles from './LoginForm.module.css';
+import { BrandMark } from '../BrandMark';
 
 export function AuthHeader() {
   return <header className={styles.header}>
-    <Link href="/" aria-label="NexOS — página inicial"><Image src="/nexos-branca-transparente.svg" alt="NexOS" width={110} height={26} priority className="logo-invert h-6 w-auto" /></Link>
+    <Link href="/" aria-label="NexOS — página inicial"><BrandMark /></Link>
     <div className={styles.headerActions}><Link href="/" className={styles.backLink}><ArrowLeft size={16} aria-hidden="true" /> Voltar ao site</Link><ThemeToggle /></div>
   </header>;
 }

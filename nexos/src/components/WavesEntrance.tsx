@@ -8,6 +8,7 @@ import { Slipstream } from '@/components/ui/background-ascii-flow';
 import { useScrollContext } from '@/components/SmoothScrollProvider';
 import { useTheme } from '@/components/ThemeProvider';
 import GlyphPortal from '@/components/ui/glyph-portal';
+import { TOPOGRAPHY_PALETTE } from '@/lib/brand-palette';
 
 const Topography = dynamic(() => import('@/components/ui/Topography'), { ssr: false });
 const PHRASE = 'Nexos, a performance que seu business merece.';
@@ -201,7 +202,7 @@ export default function WavesEntrance({ replay, onComplete }: WavesEntranceProps
         onProgress={portalProgress}
         background={<>
           {theme === 'dark' ? <WavesBackground active={active} paused={leaving} /> : <Topography
-            lowColor="#0052ff" midColor="#008cff" highColor="#fdf6ec" lightMode
+            {...TOPOGRAPHY_PALETTE} lightMode
             active={active} paused={leaving} mouseInteraction maxFPS={24} dprLimit={1.25}
             className="waves-entry-topography" />}
           <div className="waves-entry-stars" aria-hidden="true"><Slipstream presentation interactive={false} paused={leaving} density={1.3} seed={731} /></div>

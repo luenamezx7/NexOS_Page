@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes } from 'react';
 import styles from './hover-button.module.css';
 import { MetallicSurface } from './metallic-button';
+import { VisorSpectrum } from '../VisorSpectrum';
 
 export function HoverButton({ children, className, ...props }: ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
@@ -12,6 +13,7 @@ export function HoverButton({ children, className, ...props }: ButtonHTMLAttribu
       <MetallicSurface disabled={props.disabled} />
       <span className={styles.label}>{children}</span>
       <span className={styles.icon} aria-hidden="true"><ArrowUpRight size={18} strokeWidth={1.75} /></span>
+      <VisorSpectrum className={styles.spectrum} />
     </button>
   );
 }
@@ -22,6 +24,7 @@ export function HoverLink({ children, className, ...props }: AnchorHTMLAttribute
       <MetallicSurface />
       <span className={styles.label}>{children}</span>
       <span className={styles.icon} aria-hidden="true"><ArrowUpRight size={18} strokeWidth={1.75} /></span>
+      <VisorSpectrum className={styles.spectrum} />
     </a>
   );
 }

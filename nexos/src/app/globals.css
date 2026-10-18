@@ -10,7 +10,7 @@
 
 /* ============================================================
    NexOS — Digital / OLED identity
-   Base: creme #fdf6ec · OLED #000000 · azul (claro) / rosa (escuro)
+   Base: creme #fdf6ec · OLED #000000 · wolf visor spectrum in both themes
    Layers: stars 0, content 1, navigation 40–50, dialogs top layer.
    Perf rule: animate ONLY transform + opacity. No giant blurs.
    ============================================================ */
@@ -44,32 +44,44 @@
   --nex-white: #fdf6ec;
   --ui-highlight: 253, 246, 236;
   --ui-highlight-color: #fdf6ec;
-  --nex-pink: #0052ff;
-  --nex-pink-hot: #0064ff;
-  --nex-purple: #008cff;
-  --display-rose: #0052ff;
-  --display-purple: #0064eb;
-  --brand-choice: #0052ff;
-  --brand-secondary: #008cff;
-  --mockup-middle: #0064ff;
-  --brand-accent-rgb: 0, 82, 255;
-  --brand-choice-rgb: 0, 82, 255;
-  --brand-secondary-rgb: 0, 140, 255;
-  --star-shadow: #008cff;
-  --star-color: #0052ff;
+  /* Source: design-/mascote_lobo_header_capuz.svg, gradient #mirror. */
+  --visor-violet: #3328bc;
+  --visor-blue: #005dda;
+  --visor-cyan: #0bd2d3;
+  --visor-mint: #95e9da;
+  --visor-gold: #ffe36b;
+  --visor-orange: #ff913e;
+  --visor-coral: #fc3768;
+  --visor-magenta: #e6008b;
+  --visor-plum: #650c66;
+  --visor-gradient: linear-gradient(105deg, var(--visor-violet) 0%, var(--visor-blue) 14%, var(--visor-cyan) 28%, var(--visor-gold) 43%, var(--visor-orange) 55%, var(--visor-coral) 68%, var(--visor-magenta) 84%, var(--visor-violet) 100%);
+  --visor-text-gradient: linear-gradient(105deg, #005dda 0%, #007a7b 24%, #9a5700 44%, #ba1d47 64%, #b6006e 83%, #3328bc 100%);
+  --nex-pink: var(--visor-blue);
+  --nex-pink-hot: var(--visor-blue);
+  --nex-purple: var(--visor-violet);
+  --display-rose: var(--visor-blue);
+  --display-purple: #b6006e;
+  --brand-choice: var(--visor-blue);
+  --brand-secondary: var(--visor-cyan);
+  --mockup-middle: var(--visor-violet);
+  --brand-accent-rgb: 0, 93, 218;
+  --brand-choice-rgb: 0, 93, 218;
+  --brand-secondary-rgb: 11, 210, 211;
+  --star-shadow: var(--visor-cyan);
+  --star-color: var(--visor-blue);
   --surface-glass: rgba(250, 243, 228, 0.9);
   --reading-glass: rgba(253, 246, 236, 0.8);
   --reading-glass-border: rgba(255, 255, 255, 0.85);
   --reading-glass-shadow: inset 0 1px 0 #ffffffa6, 0 12px 36px -28px #102d4440;
   --field-surface: #faf4ea;
-  --action-gradient: linear-gradient(110deg, #0040e6 0%, #0052ff 46%, #0070f0 100%);
-  --metallic-veil: linear-gradient(110deg, #0040e6e6 0%, #0052ffe0 48%, #0070f0df 100%);
-  --metallic-static-base: linear-gradient(125deg, #70cfff 0%, #008cff 22%, #0040e6 62%, #70b5ff 100%);
-  --metallic-static-veil: linear-gradient(125deg, #0040e6 0%, #0052ff 46%, #0070f0 100%);
+  --action-gradient: linear-gradient(110deg, #005dda 0%, #3328bc 48%, #c20076 100%);
+  --metallic-veil: linear-gradient(110deg, #005ddae6 0%, #3328bce0 48%, #c20076e6 100%);
+  --metallic-static-base: var(--visor-gradient);
+  --metallic-static-veil: var(--action-gradient);
   --metallic-inner-shadow: #082d4955;
-  --header-brand: #0052ff;
-  --commerce-buy: #0052ff;
-  --commerce-buy-hover: #0040e6;
+  --header-brand: var(--visor-blue);
+  --commerce-buy: var(--visor-blue);
+  --commerce-buy-hover: var(--visor-violet);
   --nex-hairline: color-mix(in srgb, var(--color-ink) 12%, transparent);
   --section-indicator: var(--nex-pink-hot);
   --section-indicator-glow: rgba(var(--brand-accent-rgb), 0.32);
@@ -78,9 +90,9 @@
   --text-gradient-start: var(--display-rose);
   --text-gradient-end: var(--display-purple);
 
-  --nex-gradient-accent: linear-gradient(90deg, #0052ff 0%, #008cff 50%, #0040e6 100%);
-  --nex-gradient-accent-reverse: linear-gradient(90deg, #008cff 0%, #0052ff 50%, #008cff 100%);
-  --nex-gradient-accent-radial: radial-gradient(ellipse at center, #008cff 0%, #0052ff 70%, transparent 100%);
+  --nex-gradient-accent: var(--visor-gradient);
+  --nex-gradient-accent-reverse: linear-gradient(105deg, var(--visor-magenta), var(--visor-coral), var(--visor-orange), var(--visor-gold), var(--visor-cyan), var(--visor-blue), var(--visor-violet));
+  --nex-gradient-accent-radial: radial-gradient(ellipse at center, var(--visor-gold) 0%, var(--visor-coral) 25%, var(--visor-magenta) 48%, var(--visor-blue) 72%, transparent 100%);
 
   --ease-fluid: cubic-bezier(0.16, 1, 0.3, 1);
 
@@ -90,45 +102,45 @@
   --card-foreground: #102d44;
   --popover: #fdf6ec;
   --popover-foreground: #102d44;
-  --primary: #0052ff;
+  --primary: var(--visor-blue);
   --primary-foreground: #fdf6ec;
   --secondary: #f5e8d1;
   --secondary-foreground: #102d44;
   --muted: #efe0c8;
   --muted-foreground: #466c88;
-  --accent: #dbe7ff;
-  --accent-foreground: #0040e6;
+  --accent: #d9f1ee;
+  --accent-foreground: var(--visor-violet);
   --destructive: oklch(0.577 0.245 27.325);
   --border: #e8d4b0;
   --input: #e0c99e;
-  --ring: #0052ff;
+  --ring: var(--visor-blue);
   --radius: 0.625rem;
 }
 
 .dark {
-  --nex-pink: #e6007e;
-  --nex-pink-hot: #ff008c;
-  --nex-purple: #9200ff;
-  --brand-choice: #ff008c;
-  --brand-secondary: #9200ff;
-  --mockup-middle: #8200ff;
-  --brand-accent-rgb: 255, 0, 140;
-  --brand-choice-rgb: 255, 0, 140;
-  --brand-secondary-rgb: 146, 0, 255;
-  --action-gradient: linear-gradient(110deg, #e6007e 0%, #d000bc 46%, #8200ff 100%);
-  --metallic-veil: linear-gradient(110deg, #e6007ee6 0%, #d000bce0 48%, #8200ffdf 100%);
-  --metallic-static-base: linear-gradient(125deg, #ff54cf 0%, #ff008c 22%, #9200ff 62%, #c04dff 100%);
-  --metallic-static-veil: linear-gradient(125deg, #e6007e 0%, #d000bc 46%, #8200ff 100%);
+  --nex-pink: #c20076;
+  --nex-pink-hot: var(--visor-magenta);
+  --nex-purple: #8172ff;
+  --brand-choice: var(--visor-magenta);
+  --brand-secondary: var(--visor-cyan);
+  --mockup-middle: var(--visor-violet);
+  --brand-accent-rgb: 230, 0, 139;
+  --brand-choice-rgb: 230, 0, 139;
+  --brand-secondary-rgb: 11, 210, 211;
+  --action-gradient: linear-gradient(110deg, #c20076 0%, #3328bc 48%, #005dda 100%);
+  --metallic-veil: linear-gradient(110deg, #c20076e6 0%, #3328bce0 48%, #005ddae6 100%);
+  --metallic-static-base: var(--visor-gradient);
+  --metallic-static-veil: var(--action-gradient);
   --metallic-inner-shadow: #1b001b55;
-  --header-brand: #ff008c;
-  --commerce-buy: #e6007e;
-  --commerce-buy-hover: #cc006f;
-  --nex-gradient-accent: linear-gradient(90deg, #ff008c 0%, #9200ff 50%, #ff008c 100%);
-  --nex-gradient-accent-reverse: linear-gradient(90deg, #9200ff 0%, #ff008c 50%, #9200ff 100%);
-  --nex-gradient-accent-radial: radial-gradient(ellipse at center, #ff008c 0%, #9200ff 70%, transparent 100%);
+  --header-brand: var(--visor-cyan);
+  --commerce-buy: #c20076;
+  --commerce-buy-hover: #a60066;
+  --nex-gradient-accent: var(--visor-gradient);
+  --nex-gradient-accent-radial: radial-gradient(ellipse at center, var(--visor-cyan) 0%, var(--visor-blue) 25%, var(--visor-violet) 48%, var(--visor-magenta) 72%, transparent 100%);
   --ns-muted: #8f8f8f;
-  --display-rose: #ff008c;
-  --display-purple: #b33dff;
+  --display-rose: #eb008d;
+  --display-purple: var(--visor-cyan);
+  --visor-text-gradient: linear-gradient(105deg, #0bd2d3 0%, #95e9da 16%, #ffe36b 33%, #ff913e 48%, #fc3768 65%, #eb008d 82%, #8172ff 100%);
   --star-shadow: #ffffff;
   --star-color: #ffffff;
   --surface-glass: rgba(9, 6, 9, 0.84);
@@ -144,7 +156,7 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: #0c080d;
   --popover-foreground: oklch(0.985 0 0);
-  --primary: #e6007e;
+  --primary: #c20076;
   --primary-foreground: #ffffff;
   --ui-highlight: 255, 255, 255;
   --ui-highlight-color: #ffffff;
@@ -152,12 +164,12 @@
   --secondary-foreground: oklch(0.985 0 0);
   --muted: #171018;
   --muted-foreground: oklch(0.708 0 0);
-  --accent: #35002e;
+  --accent: #28152c;
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: #ff008c;
+  --ring: var(--visor-cyan);
 }
 
 /* ---------- Self-hosted Dirtyline + Satoshi + Old English ---------- */
@@ -677,7 +689,7 @@ button {
 }
 
 .gradient-accent-text {
-  background: var(--nex-gradient-accent);
+  background: var(--visor-text-gradient);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -896,20 +908,20 @@ select.field-input option {
 .hero-bottom a { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; color: var(--color-ink); }
 .hero-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 48px; font-size: 14px; color: var(--color-ink); }
 .hero-secondary svg { transition: transform 300ms var(--ease-fluid); }
-.hero-accent { color: var(--landing-accent); }
+.hero-accent { background: var(--visor-text-gradient); background-clip: text; -webkit-background-clip: text; color: transparent; }
 .hero-secondary:hover svg { transform: translate(3px, -3px); }
 .hero-coordinate { position: absolute; right: 40px; bottom: 40px; font: 11px var(--font-mono); letter-spacing: 0.12em; color: var(--muted-foreground); writing-mode: vertical-rl; }
 .landing-hero .tech-badge { padding: 0; border: none; background: none; color: var(--muted-foreground); letter-spacing: 0.1em; }
 .landing-hero .tech-badge-dot { background: var(--display-rose); box-shadow: 0 0 8px color-mix(in srgb, var(--display-rose) 30%, transparent); border-radius: 1px; }
 .intro-flow { opacity: 0.65; mask-image: radial-gradient(ellipse at center, #0003 18%, black 78%); }
-.intro-accent, .intro-brand-name { background: linear-gradient(110deg, var(--display-rose) 12%, var(--display-purple) 90%); background-clip: text; -webkit-background-clip: text; color: transparent; }
+.intro-accent, .intro-brand-name { background: var(--visor-text-gradient); background-clip: text; -webkit-background-clip: text; color: transparent; }
 .intro-copy { text-align: center; }
 .intro-brand { display: inline-flex; gap: 8px; align-items: flex-start; margin-bottom: 32px; font-family: var(--font-display); font-size: clamp(32px, 3.4vw, 48px); font-weight: 700; letter-spacing: -0.05em; }
 .intro-brand > .intro-registration { font: 12px var(--font-mono); margin-top: 8px; color: var(--display-purple); }
 .intro-copy h1 { font-size: clamp(32px, min(6.1vw, 8dvh), 84px); font-weight: 600; line-height: 1.1; letter-spacing: -0.055em; }
 .intro-copy p { margin-top: 28px; font: 12px var(--font-mono); color: var(--muted-foreground); }
 
-/* Waves entry: electric blue by day, hot pink / violet by night.
+/* Waves entry: the wolf visor spectrum, with a readable glass text panel.
    Design read: cinematic manifesto. Variance 4 / motion 6 / density 2.
    Native dialog occupies the top layer; no additional z-index scale is needed. */
 .waves-entry {
@@ -917,8 +929,8 @@ select.field-input option {
   --entry-background: linear-gradient(155deg, #fdf6ec 0%, #faf3e4 40%, #f5e8d1 72%, #efe0c8 100%);
   --color-canvas: #fdf6ec;
   --color-ink: var(--entry-ink);
-  --star-shadow: #008cff;
-  --star-color: #0052ff;
+  --star-shadow: var(--visor-cyan);
+  --star-color: var(--visor-blue);
   position: fixed;
   inset: 0;
   width: 100%;
@@ -939,8 +951,8 @@ select.field-input option {
 }
 .dark .waves-entry {
   --entry-ink: #fff3fa;
-  --entry-background: linear-gradient(165deg, #ff54cf 0%, #ff008c 23%, #9200ff 56%, #180028 100%);
-  --color-canvas: #180028;
+  --entry-background: linear-gradient(165deg, #e6008b 0%, #fc3768 17%, #ff913e 30%, #ffe36b 43%, #0bd2d3 58%, #005dda 73%, #3328bc 86%, #170b25 100%);
+  --color-canvas: #170b25;
   --star-shadow: #fff3fa;
   --star-color: #ffffff;
   color-scheme: dark;
@@ -986,7 +998,7 @@ html:not(.dark) .waves-entry-stars { opacity: 0.28; }
   pointer-events: none;
   background: radial-gradient(ellipse at 50% 52%, #fdf6ec50 0%, #fdf6ec18 38%, #fdf6ec00 74%);
 }
-.dark .waves-entry-scrim { background: radial-gradient(ellipse at 50% 52%, #180028b3 0%, #18002873 38%, #18002800 74%); }
+.dark .waves-entry-scrim { background: radial-gradient(ellipse at 50% 52%, #170b25cc 0%, #170b2599 38%, #170b2500 74%); }
 .waves-entry-content {
   position: relative;
   display: flex;
@@ -1062,17 +1074,17 @@ html:not(.dark) .waves-entry-stars { opacity: 0.28; }
 .day-clouds { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
 .dark .day-clouds { display: none; }
 .sky-cloud { position: absolute; background:
-  radial-gradient(ellipse 26% 45% at 27% 65%, #008cff6b 46%, #008cff2b 67%, transparent 86%),
-  radial-gradient(ellipse 30% 63% at 49% 47%, #30a6ff87 40%, #30a6ff35 65%, transparent 84%),
-  radial-gradient(ellipse 25% 47% at 73% 66%, #0052ff66 44%, #0052ff26 66%, transparent 86%),
-  radial-gradient(ellipse 63% 25% at 50% 79%, #008cff4d 40%, transparent 82%);
+  radial-gradient(ellipse 26% 45% at 27% 65%, #0bd2d36b 46%, #0bd2d32b 67%, transparent 86%),
+  radial-gradient(ellipse 30% 63% at 49% 47%, #ffe36b70 40%, #ffe36b28 65%, transparent 84%),
+  radial-gradient(ellipse 25% 47% at 73% 66%, #fc37684d 44%, #fc37681f 66%, transparent 86%),
+  radial-gradient(ellipse 63% 25% at 50% 79%, #005dda4d 40%, transparent 82%);
 }
 .sky-cloud-one { top: 5%; left: -18%; width: 85%; height: 40%; transform: rotate(-8deg); }
 .sky-cloud-two { right: -20%; bottom: 2%; width: 80%; height: 40%; transform: rotate(7deg); opacity: 0.85; }
 .sky-cloud-three { top: 2%; right: -5%; width: 45%; height: 28%; opacity: 0.4; }
 .site-shell { position: relative; z-index: 1; min-height: 100dvh; }
 .site-shell :where(.page-surface, .landing-page) { background-color: transparent; }
-.brand-heading { background: linear-gradient(110deg, var(--display-rose), var(--display-purple)); background-clip: text; -webkit-background-clip: text; color: transparent; }
+.brand-heading { background: var(--visor-text-gradient); background-clip: text; -webkit-background-clip: text; color: transparent; }
 .digital-label { font-family: var(--font-mono); letter-spacing: 0.04em; }
 .font-mono { font-family: var(--font-mono); }
 .page-title { font-size: clamp(28px, 4vw, 44px); line-height: 1.15; }
@@ -1138,5 +1150,14 @@ html:not(.dark) .waves-entry-instruction { width: fit-content; margin-inline: au
 html:not(.dark) .site-shell :where(input, textarea, select) { color-scheme: only light; }
 html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark; }
 @media (prefers-reduced-transparency: reduce) { .surface-glass { background: var(--card); backdrop-filter: none; -webkit-backdrop-filter: none; } }
-@media (forced-colors: active) { .brand-heading, .intro-accent, .intro-brand-name { background: none; color: CanvasText; } }
+@media (forced-colors: active) { .brand-heading, .hero-accent, .gradient-accent-text, .intro-accent, .intro-brand-name { background: none; color: CanvasText; } }
 @media (max-width: 767px) { .sky-cloud-one { left: -65%; width: 150%; height: 38%; } .sky-cloud-two { right: -55%; width: 150%; height: 42%; } .sky-cloud-three { display: none; } }
+
+/* Two small spectrum rails; transform-only, no repaint animation of large text. */
+.visor-spectrum { display: block; height: 3px; overflow: hidden; pointer-events: none; }
+.visor-spectrum::before { content: ''; display: block; width: 200%; height: 100%; background: var(--visor-gradient); background-size: 50% 100%; background-repeat: repeat-x; animation: visor-spectrum-drift 9s linear infinite; animation-play-state: paused; }
+.visor-spectrum[data-visor-motion="on"]::before { animation-play-state: running; }
+.is-scrolling .visor-spectrum::before { animation-play-state: paused; }
+@keyframes visor-spectrum-drift { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
+@media (prefers-reduced-motion: reduce) { .visor-spectrum::before { animation: none; transform: none; } }
+@media (forced-colors: active) { .visor-spectrum { display: none; } }

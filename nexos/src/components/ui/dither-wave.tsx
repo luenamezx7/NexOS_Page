@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
+import { VISOR_PALETTE } from '@/lib/brand-palette';
 
 /** Original local wave/dithering implementation. No React Bits Pro source is bundled. */
 export interface DitherWaveProps {
@@ -31,7 +32,7 @@ function color(value: string, element: HTMLElement): [number, number, number] {
   return [0, 2, 4].map(offset => parseInt(hex.slice(offset, offset + 2), 16)) as [number, number, number];
 }
 
-export default function DitherWave({ width = '100%', height = '100%', speed = 0.25, intensity = 0.7, scale = 7, downScale = 0.6, primaryColor = '#ff168d', secondaryColor = '#d60070', tertiaryColor = '#f3ead9', opacity = 1, quality = 'low', maxFPS = 20, pauseWhenOffscreen = true, className, children }: DitherWaveProps) {
+export default function DitherWave({ width = '100%', height = '100%', speed = 0.25, intensity = 0.7, scale = 7, downScale = 0.6, primaryColor = VISOR_PALETTE.magenta, secondaryColor = VISOR_PALETTE.blue, tertiaryColor = VISOR_PALETTE.gold, opacity = 1, quality = 'low', maxFPS = 20, pauseWhenOffscreen = true, className, children }: DitherWaveProps) {
   const wrapper = useRef<HTMLDivElement>(null);
   const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {

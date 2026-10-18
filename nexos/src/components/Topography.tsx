@@ -7,6 +7,7 @@
 import { useEffect, useRef } from 'react';
 import { Renderer, Program, Mesh, Triangle } from 'ogl';
 import './Topography.css';
+import { VISOR_PALETTE } from '@/lib/brand-palette';
 
 const hexToRgb = (hex: string): [number, number, number] => {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -173,9 +174,9 @@ interface TopographyProps {
 }
 
 const Topography = ({
-  lowColor = '#5227FF',
-  midColor = '#FF9FFC',
-  highColor = '#FFFFFF',
+  lowColor = VISOR_PALETTE.violet,
+  midColor = VISOR_PALETTE.magenta,
+  highColor = VISOR_PALETTE.gold,
   speed = 0.35,
   morphAmount = 3.0,
   morphSpeed = 0.05,

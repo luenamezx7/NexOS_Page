@@ -5,6 +5,7 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { Renderer, Program, Mesh, Triangle } from 'ogl';
 import './Topography.css';
+import { VISOR_PALETTE } from '@/lib/brand-palette';
 
 export interface TopographyProps {
   lowColor?: string; midColor?: string; highColor?: string; speed?: number;
@@ -160,7 +161,7 @@ type Controls = { sync: () => void; redraw: () => void };
 const ctxMap = new WeakMap<HTMLDivElement, Controls>();
 
 export default function Topography({
-  lowColor = '#5227FF', midColor = '#FF9FFC', highColor = '#FFFFFF', speed = 0.35,
+  lowColor = VISOR_PALETTE.violet, midColor = VISOR_PALETTE.magenta, highColor = VISOR_PALETTE.gold, speed = 0.35,
   morphAmount = 3.0, morphSpeed = 0.05, bands = 2.0, thickness = 0.01, scale = 1.0,
   pixelSize = 1.0, glow = 0.5, colorMode = 'elevation', contrast = 3.0, brightness = 1.0,
   fillBands = false, opacity = 1.0, grain = true, grainIntensity = 0.05,
