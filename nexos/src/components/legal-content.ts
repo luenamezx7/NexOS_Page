@@ -19,19 +19,19 @@ export const LEGAL_DOCS: LegalDoc[] = [
     title: 'Política de Privacidade',
     updated: 'Atualizado em setembro de 2026',
     intro:
-      'Esta Política descreve como a NexOS coleta, usa e protege dados pessoais no site, no checkout (Asaas) e no formulário de contato (Notion).',
+      'Esta Política descreve como a NexOS coleta, usa e protege dados pessoais no site, na sua conta e nas conversas com nosso atendimento comercial.',
     sections: [
       {
         heading: '1. Dados que coletamos',
-        body: 'Coletamos nome, e-mail, empresa, serviço de interesse e mensagem via /api/contact, além de nome e e-mail para gerar a cobrança e enviar o recibo. O pagamento é processado pelo Asaas — nenhum dado bancário toca nossos servidores.',
+        body: 'Tratamos os dados necessários para sua conta e os que você compartilha com nosso atendimento, como nome, e-mail, empresa, interesse e mensagem. A contratação é alinhada diretamente com o comercial pelo WhatsApp ou e-mail.',
       },
       {
         heading: '2. Finalidades',
-        body: 'Usamos os dados para responder contatos, gerar cobranças Pix, confirmar pagamentos, prevenir fraude (rate limit por IP) e melhorar o produto.',
+        body: 'Usamos os dados para responder contatos, preparar propostas, executar os serviços contratados, proteger sua conta e melhorar o produto.',
       },
       {
         heading: '3. Compartilhamento',
-        body: 'Compartilhamos dados estritamente com Asaas (pagamentos) e Notion (CRM de contatos). Não vendemos dados pessoais.',
+        body: 'Utilizamos fornecedores de infraestrutura e comunicação conforme necessário para manter o site e atender você. Ao abrir o WhatsApp, também se aplicam as políticas desse serviço. Não vendemos dados pessoais.',
       },
       {
         heading: '4. Retenção e direitos',
@@ -52,12 +52,12 @@ export const LEGAL_DOCS: LegalDoc[] = [
         body: 'Desenvolvimento sob medida (arquitetura limpa, CI/CD, observabilidade) e placas físicas com NFC + QR Code (envio em até 3 dias úteis após confirmação).',
       },
       {
-        heading: '2. Checkout',
-        body: 'Pagamentos via Asaas: Pix com QR na hora, boleto e cartão em até 12x, com confirmação automática. O valor é resolvido no servidor a partir do catálogo — nunca do navegador.',
+        heading: '2. Contratação comercial',
+        body: 'A aquisição de placas e a contratação de desenvolvimento são concluídas diretamente com nosso comercial. Quantidade, personalização, escopo, frete, prazos e condições de pagamento são confirmados durante o atendimento. Os valores apresentados no site orientam a conversa comercial.',
       },
       {
         heading: '3. Uso aceitável',
-        body: 'É vedado tentar burlar rate limit, injetar payloads inválidos em /api/checkout ou /api/contact, ou usar marcas NexOS sem autorização.',
+        body: 'É vedado tentar burlar os mecanismos de segurança do site, enviar dados maliciosos ou usar marcas NexOS sem autorização.',
       },
       {
         heading: '4. Suporte',
@@ -71,11 +71,11 @@ export const LEGAL_DOCS: LegalDoc[] = [
     title: 'LGPD — Direitos do Titular',
     updated: 'Atualizado em setembro de 2026 · Lei nº 13.709/2018',
     intro:
-      'A NexOS atua como controladora dos dados enviados pelo formulário e das cobranças (processadas pelo Asaas).',
+      'A NexOS atua como controladora dos dados da sua conta e dos dados compartilhados com nosso atendimento comercial.',
     sections: [
       {
         heading: '1. Bases legais',
-        body: 'Consentimento (formulário), execução de contrato (pagamento e entrega) e legítimo interesse (prevenção a fraude e segurança).',
+        body: 'Consentimento, procedimentos preliminares e execução de contrato (atendimento, contratação e entrega) e legítimo interesse (prevenção a fraude e segurança), conforme a finalidade do tratamento.',
       },
       {
         heading: '2. Seus direitos',
@@ -83,7 +83,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
       },
       {
         heading: '3. Segurança',
-        body: 'CSP restritiva, X-Content-Type-Options, rate limiting em memória e validação zod. Nenhum dado bancário é persistido — o pagamento ocorre no Asaas.',
+        body: 'Aplicamos controles de acesso, validação de dados e proteção das requisições. O site não oferece uma etapa de pagamento online; as condições são alinhadas com nosso comercial.',
       },
       {
         heading: '4. Encarregado (DPO)',
@@ -109,7 +109,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
       },
       {
         heading: '3. Como solicitar',
-        body: 'Abra o pedido via WhatsApp +55 64 99328-9250 ou nexosperformance@gmail.com com o ID da cobrança (paymentId / externalReference). Prazo de análise: 5 dias úteis; estorno no mesmo método (Pix, boleto ou cartão) em até 10 dias úteis.',
+        body: 'Abra o pedido via WhatsApp +55 64 99328-9250 ou nexosperformance@gmail.com com os dados da contratação e o comprovante de pagamento. Prazo de análise: 5 dias úteis; estorno no mesmo método de pagamento em até 10 dias úteis.',
       },
       {
         heading: '4. Exceções',
@@ -135,7 +135,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
       },
       {
         heading: '3. Terceiros',
-        body: 'Asaas (checkout/pagamento) e fontes Google carregam apenas dentro do seu contexto e seguem as políticas próprias. Não vendemos dados.',
+        body: 'Links externos, como o WhatsApp comercial, seguem as políticas próprias dos respectivos serviços. Não vendemos dados.',
       },
       {
         heading: '4. Gerenciar',

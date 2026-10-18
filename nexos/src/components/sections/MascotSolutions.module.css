@@ -1,0 +1,19 @@
+.section { border-block: 1px solid color-mix(in srgb, var(--color-ink) 14%, transparent); scroll-margin-top: 100px; }
+.container { max-width: 1280px; margin-inline: auto; padding: 40px 24px 48px; }
+.header { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 28px; }
+.kicker { color: var(--landing-accent, var(--display-rose)); font: 11px var(--font-mono); }
+.header h2 { font-size: clamp(25px, 3vw, 36px); line-height: 1.15; letter-spacing: -.035em; font-weight: 500; text-wrap: balance; }
+.header > p:last-child { max-width: 38ch; font-size: 14px; line-height: 1.6; color: color-mix(in srgb, var(--color-ink) 72%, transparent); }
+.strip { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(240px, 1fr); gap: 20px; overflow-x: auto; padding-bottom: 12px; scroll-snap-type: x proximity; scrollbar-width: thin; }
+.strip:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 5px; }
+.item { min-width: 0; scroll-snap-align: start; }
+.photo { position: relative; aspect-ratio: 1.65; overflow: hidden; border: 1px dashed color-mix(in srgb, var(--color-ink) 22%, transparent); border-radius: 8px; background: color-mix(in srgb, var(--color-ink) 3%, transparent); }
+.photo img { object-fit: cover; }
+.placeholder { display: flex; height: 100%; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: color-mix(in srgb, var(--color-ink) 50%, transparent); }
+.placeholder span, .index { font: 10px var(--font-mono); }
+.index { position: absolute; top: 12px; left: 12px; color: color-mix(in srgb, var(--color-ink) 65%, transparent); }
+.item figcaption { padding-top: 16px; }
+.item h3 { font-size: 15px; font-weight: 600; line-height: 1.4; }
+.item figcaption p { margin-top: 6px; max-width: 32ch; font-size: 13px; line-height: 1.6; color: color-mix(in srgb, var(--color-ink) 72%, transparent); }
+@media (min-width: 768px) { .container { padding-inline: 40px; } .header { grid-template-columns: 1fr 1fr; align-items: end; column-gap: 40px; } .kicker { grid-column: 1 / -1; } }
+@media (max-width: 767px) { .strip { grid-auto-columns: 76%; } }

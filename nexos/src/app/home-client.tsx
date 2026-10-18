@@ -13,7 +13,7 @@ import { LandingPageBlur } from '@/components/sections/LandingPageBlur';
 const Services = dynamic(() => import('@/components/Services').then(m => m.Services));
 const Testimonials = dynamic(() => import('@/components/Testimonials').then(m => m.Testimonials));
 const FAQ = dynamic(() => import('@/components/FAQ').then(m => m.FAQ));
-const Contact = dynamic(() => import('@/components/Contact').then(m => m.Contact));
+const MascotSolutions = dynamic(() => import('@/components/sections/MascotSolutions').then(m => m.MascotSolutions));
 const Footer = dynamic(() => import('@/components/Footer').then(m => m.Footer));
 
 // Split bundles without removing the commercial content from the server HTML.
@@ -79,10 +79,12 @@ export default function HomeClient() {
             <SectionBackground index={6}>
               <FAQ />
             </SectionBackground>
-            <SectionBackground index={7} scene="image">
+            <SectionBackground index={7}>
+              <MascotSolutions />
+            </SectionBackground>
+            <SectionBackground index={8} scene="image">
               <CTAFinal />
             </SectionBackground>
-            <SectionBackground index={8}><Contact /></SectionBackground>
           </div>
           <Footer onViewPresentation={replayPresentation} />
         </div>

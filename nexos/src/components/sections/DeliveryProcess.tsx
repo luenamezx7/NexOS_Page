@@ -29,7 +29,7 @@ export function DeliveryProcess() {
           <span className={styles.stepEnd} aria-hidden="true">{i === 3 ? <Check size={16} /> : <ArrowUpRight size={16} />}</span>
         </motion.li>)}
       </ol>
-      <div className={`${styles.processFoot} topography-glass topography-glass--compact`}><span>Escopo e prazos são alinhados para cada pedido.</span><a href="#contact">Vamos alinhar o seu? <ArrowUpRight size={16} aria-hidden="true" /></a></div>
+      <div className={`${styles.processFoot} topography-glass topography-glass--compact`}><span>Escopo e prazos são alinhados para cada pedido.</span><a href="#cta-final">Vamos alinhar o seu? <ArrowUpRight size={16} aria-hidden="true" /></a></div>
     </div>
   </section>;
 }

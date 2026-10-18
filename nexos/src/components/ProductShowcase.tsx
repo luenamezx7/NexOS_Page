@@ -9,7 +9,7 @@ import { ArrowUpRight, Box, Minus, Nfc, Palette, Plus, QrCode } from 'lucide-rea
 import { config } from '@/config';
 import { BULK_MAX_QTY, bulkTag, bulkUnitPrice } from '@/lib/bulk-pricing';
 import { MetallicSurface } from './ui/metallic-button';
-import { checkoutHref } from '@/lib/checkout';
+import { plateCommercialHref } from '@/lib/commercial';
 import { DetailTabs, type DetailTab } from './commerce/DetailTabs';
 import { PlateQuiz } from './PlateQuiz';
 import { PlateFan } from './commerce/PlateFan';
@@ -24,7 +24,7 @@ const personalizeUrl = `https://wa.me/${config.whatsapp.number}?text=${encodeURI
 const DETAILS: DetailTab[] = [
   { id: 'uso', label: 'Como funciona', title: 'Um gesto. Seu negócio conectado.', description: 'Aproxime um celular compatível com NFC ou use a câmera para ler o QR Code. O cliente abre o link que você escolheu.', items: ['NFC e QR Code na mesma placa', 'Acesso ao seu cardápio, portfólio ou redes sociais', 'Uma experiência simples no balcão, na mesa ou na recepção'] },
   { id: 'marca', label: 'Sua marca', title: 'A placa também fala por você.', description: 'Converse com a NexOS para definir a identidade da sua placa e o destino do link.', items: ['Nome e identidade do seu negócio', 'Link personalizável', 'Atendimento para alinhar a personalização'] },
-  { id: 'lotes', label: 'Em quantidade', title: 'Uma unidade ou vários pontos de contato.', description: 'Ajuste a quantidade antes de comprar. Os descontos disponíveis entram automaticamente no total.', items: ['Escolha de 1 a 50 unidades', 'Faixas de desconto a partir de 10 unidades', 'Preço por unidade e total sempre visíveis'] },
+  { id: 'lotes', label: 'Em quantidade', title: 'Uma unidade ou vários pontos de contato.', description: 'Simule a quantidade para suas mesas, balcões ou unidades. Envie a seleção ao comercial para alinhar personalização, frete e fechamento.', items: ['Simulação de 1 a 50 unidades', 'Faixas de desconto a partir de 10 unidades', 'Atendimento comercial para fechar seu pedido'] },
 ];
 
 export function ProductShowcase({ className = '' }: { className?: string }) {
@@ -50,6 +50,8 @@ export function ProductShowcase({ className = '' }: { className?: string }) {
               <p className={styles.kicker}>Placa Inteligente NexOS</p>
               <h2 id="showcase-title" className={styles.heading}>Seu próximo contato.<br /><span className={styles.accent}>A uma aproximação.</span></h2>
               <p className={styles.lead}>Do balcão para o digital. Sua marca, seu link e duas formas de conectar: NFC e QR Code.</p>
+              <p className={styles.productCopy}>Coloque seu cardápio, WhatsApp, portfólio ou redes sociais ao alcance de quem já está no seu espaço. O cliente aproxima o celular ou escaneia o código e chega direto ao endereço escolhido.</p>
+              <p className={styles.productCopy}>Ideal para mesas, balcões e recepções. Alinhamos com você a identidade da placa e como ela pode facilitar o atendimento do seu negócio.</p>
               <Link href="/placa-nfc" className={styles.textLink}>Conhecer a placa e suas aplicações <ArrowUpRight size={16} aria-hidden="true" /></Link>
             </motion.div>
             <motion.figure className={styles.productVisual} initial={reduce ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.7, ease: EASE }}>
@@ -60,7 +62,7 @@ export function ProductShowcase({ className = '' }: { className?: string }) {
             <div className={styles.purchase}>
               <div className={styles.priceRow}>
                 <div>
-                  <span className={styles.meta}>Total para {qty} {qty === 1 ? 'placa' : 'placas'}</span>
+                  <span className={styles.meta}>Simulação para {qty} {qty === 1 ? 'placa' : 'placas'}</span>
                   <p className={styles.price} aria-live="polite" data-testid="plate-total">{money(unitPrice * qty)}</p>
                   <span className={styles.meta}>{money(unitPrice)} por unidade</span>
                 </div>
@@ -71,8 +73,8 @@ export function ProductShowcase({ className = '' }: { className?: string }) {
                 </div>
               </div>
               {tag && <p className={styles.discount}>{tag}: desconto aplicado ao total.</p>}
-              <Link href={checkoutHref(placa.id, qty)} prefetch={false} className={`${styles.buyButton} btn-primary-nex`}><MetallicSurface /><span className="metallic-content inline-flex items-center gap-2">Comprar placa <ArrowUpRight size={16} aria-hidden="true" /></span></Link>
-              <p className={styles.hint}>Revise seu pedido antes de pagar.</p>
+              <a href={plateCommercialHref(qty)} target="_blank" rel="noopener noreferrer" className={`${styles.buyButton} btn-primary-nex`}><MetallicSurface /><span className="metallic-content inline-flex items-center gap-2">Adquirir Placa <ArrowUpRight size={16} aria-hidden="true" /></span></a>
+              <p className={styles.hint}>Fale com o comercial pelo WhatsApp para confirmar personalização, frete e fechar a venda.</p>
               <a href={personalizeUrl} target="_blank" rel="noopener noreferrer" className={styles.textLink}><Palette size={16} aria-hidden="true" /> Personalizar minha placa <ArrowUpRight size={16} aria-hidden="true" /></a>
             </div>
           </div>

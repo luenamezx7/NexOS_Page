@@ -29,7 +29,6 @@ function getServiceLabel(serviceId: string): string {
   const map: Record<string, string> = {
     dev: 'Desenvolvimento NexOS',
     placa: 'Placa NFC + QR Code',
-    teste: 'TESTE CHECKOUT',
     design: 'Product Design & Branding',
     strategy: 'Estratégia & Discovery',
   };

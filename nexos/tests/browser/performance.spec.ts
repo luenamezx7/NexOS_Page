@@ -38,7 +38,7 @@ test('prefers-reduced-motion mantém os efeitos opcionais desativados no desktop
   }
 });
 
-test('captcha só carrega perto do contato e o envio continua bloqueado sem verificação', async ({ page }) => {
+test('landing sem formulário não carrega captcha de contato', async ({ page }) => {
   let widgetRequests = 0;
   await page.route('**/api/security/config', route => route.fulfill({ json: { required: true, configured: true, siteKey: 'test-public-key' } }));
   await page.route('https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit', route => {
@@ -47,12 +47,12 @@ test('captcha só carrega perto do contato e o envio continua bloqueado sem veri
   });
   await page.goto('/');
   await enterPresentation(page);
-  await expect(page.getByRole('button', { name: 'Enviar projeto', exact: true })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Enviar projeto', exact: true })).toHaveCount(0);
   expect(widgetRequests).toBe(0);
-  await page.locator('#contact').scrollIntoViewIfNeeded();
-  await expect(page.getByText('Widget de teste', { exact: true })).toBeVisible();
-  expect(widgetRequests).toBe(1);
-  await expect(page.getByRole('button', { name: 'Enviar projeto', exact: true })).toBeDisabled();
+  await page.locator('#cta-final').scrollIntoViewIfNeeded();
+  await expect(page.getByText('Widget de teste', { exact: true })).toHaveCount(0);
+  expect(widgetRequests).toBe(0);
+  await expect(page.locator('#contact')).toHaveCount(0);
 });
 
 test('CTA principal funciona sem JavaScript e favicon SVG é servido corretamente', async ({ browser, request }) => {
@@ -101,12 +101,8 @@ test('header público não consulta sessão durante a carga inicial', async ({ p
   expect(sessionRequests).toEqual([]);
 });
 
-test('contato preserva o mailto e publica a exceção de transformação do Cloudflare', async ({ request, page }) => {
-  const response = await request.get('/');
-  const html = await response.text();
-  expect(html).toContain('<!--email_off-->');
-  expect(html).toContain('<!--/email_off-->');
+test('CTA final oferece contato comercial por e-mail', async ({ page }) => {
   await page.goto('/');
   await enterPresentation(page);
-  await expect(page.locator('#contact a[href^="mailto:"]')).toHaveAttribute('href', 'mailto:nexosperformance@gmail.com');
+  await expect(page.locator('#cta-final a[href^="mailto:"]')).toHaveAttribute('href', 'mailto:nexosperformance@gmail.com');
 });

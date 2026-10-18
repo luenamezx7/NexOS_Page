@@ -114,10 +114,10 @@ export const servicePages = {
       { title: 'WhatsApp e redes sociais', body: 'Facilite o acesso aos canais em que seus clientes já conversam com a empresa.' },
       { title: 'Portfólio e apresentação', body: 'Compartilhe seus trabalhos ou serviços na recepção, em encontros e em pontos de atendimento.' },
     ],
-    preparation: ['Nome e identidade visual do negócio.', 'Endereço que a placa deve abrir.', 'Quantidade de unidades e pontos de uso.', 'CEP para cálculo do frete no checkout.'],
+    preparation: ['Nome e identidade visual do negócio.', 'Endereço que a placa deve abrir.', 'Quantidade de unidades e pontos de uso.', 'CEP para o comercial calcular o frete.'],
     steps: [
       { title: 'Escolher o destino', body: 'Defina qual link o cliente deve abrir e converse com a NexOS sobre a personalização.' },
-      { title: 'Revisar o pedido', body: 'Na home, escolha a quantidade. O checkout apresenta os dados do pedido e as condições antes do pagamento.' },
+      { title: 'Alinhar com o comercial', body: 'Simule a quantidade na home e envie sua seleção pelo WhatsApp. Confirmamos personalização, frete, prazo e condições para fechar a venda.' },
       { title: 'Usar no atendimento', body: 'Posicione a placa onde o cliente possa aproximar o celular ou ler o QR Code com a câmera.' },
     ],
     questions: [

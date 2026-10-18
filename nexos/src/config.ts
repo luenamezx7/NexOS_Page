@@ -20,10 +20,10 @@ export const config: SiteConfig = {
     {
       id: 'dev',
       title: 'Desenvolvimento NexOS',
-      description: 'Desenvolvimento sob medida com arquitetura moderna, performance e escalabilidade. Focado em portfólios, cardápios, apresentações e landing pages que convertem.',
+      description: 'Seu negócio merece uma presença digital que explique o que você faz e facilite o próximo contato. Criamos sites, portfólios, cardápios digitais e landing pages com a sua identidade, navegação clara e foco no seu objetivo.',
       price: 499.9,
-      features: ['Portfólios e cardápios digitais', 'Apresentações interativas', 'Landing pages de alta conversão', 'Arquitetura limpa e testável', 'CI/CD automatizado', 'Observabilidade nativa'],
-      ctaText: 'Contratar Desenvolvimento',
+      features: ['Sites e portfólios para apresentar sua marca', 'Cardápios digitais fáceis de consultar', 'Landing pages para suas campanhas', 'Experiência adaptada ao celular', 'Design e desenvolvimento sob medida', 'Escopo e entrega alinhados com você'],
+      ctaText: 'Falar com o comercial',
     },
     {
       id: 'placa',
@@ -31,15 +31,7 @@ export const config: SiteConfig = {
       description: 'Placa discreta para contato rápido. Aproxime o NFC ou escaneie o QR Code e abra seu link instantaneamente.',
       price: 69.9,
       features: ['NFC e QR Code na mesma placa', 'Instalação simplificada', 'Link personalizável', 'Garantia estendida'],
-      ctaText: 'Comprar Placa',
-    },
-    {
-      id: 'teste',
-      title: 'TESTE CHECKOUT',
-      description: 'Produto para validar o checkout Asaas. A cobrança custa R$ 5,00 e só é paga após a confirmação no ambiente de pagamento.',
-      price: 5.0,
-      features: ['Validação do checkout', 'Pagamento via Asaas', 'Confirmação automática', 'Suporte via WhatsApp'],
-      ctaText: 'Testar Checkout',
+      ctaText: 'Adquirir Placa',
     },
   ],
   testimonials: [
@@ -71,7 +63,7 @@ export const config: SiteConfig = {
   navigation: [
     { label: 'Serviços', href: '#services' },
     { label: 'Documentos', href: '#testimonials' },
-    { label: 'Contato', href: '#contact' },
+    { label: 'Contato', href: '#cta-final' },
   ],
   footer: {
     links: [

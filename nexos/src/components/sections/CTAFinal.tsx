@@ -13,7 +13,7 @@ export function CTAFinal() {
       </div>
       <div className={styles.ctaBottom}><p>Um projeto digital, uma placa conectada ou uma ideia que ainda está tomando forma.</p><div className={styles.ctaActions}>
         <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="btn-primary-nex">Conversar com a NexOS <ArrowUpRight size={18} aria-hidden="true" /></a>
-        <a href="#contact" className={styles.textLink}>Prefiro enviar uma mensagem <ArrowUpRight size={16} aria-hidden="true" /></a>
+        <a href="mailto:nexosperformance@gmail.com" className={styles.textLink}>Prefiro conversar por e-mail <ArrowUpRight size={16} aria-hidden="true" /></a>
       </div></div>
     </div>
   </section>;

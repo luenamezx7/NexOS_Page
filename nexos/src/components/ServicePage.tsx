@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, ArrowUpRight, Check, Plus } from 'lucide-react';
 import { config } from '@/config';
-import { checkoutHref } from '@/lib/checkout';
+import { commercialHref, plateCommercialHref } from '@/lib/commercial';
 import { siteUrl } from '@/lib/seo';
 import { servicePages, type ServicePageContent } from '@/lib/service-pages';
 import { JsonLd } from './JsonLd';
@@ -14,7 +14,7 @@ export function ServicePage({ service }: { service: ServicePageContent }) {
   const product = config.services.find(item => item.id === service.productId)!;
   const isPlate = service.productId === 'placa';
   const price = product.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-  const contact = `https://wa.me/${config.whatsapp.number}?text=${encodeURIComponent(`Olá! Quero conversar sobre ${service.label.toLowerCase()} para meu negócio.`)}`;
+  const contact = isPlate ? plateCommercialHref() : commercialHref(`Olá! Quero conversar com o comercial sobre ${service.label.toLowerCase()} para meu negócio.`);
   const structuredData = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -34,7 +34,7 @@ export function ServicePage({ service }: { service: ServicePageContent }) {
         brand: { '@type': 'Brand', name: config.brand.name },
         offers: {
           '@type': 'Offer',
-          url: siteUrl(checkoutHref(product.id)),
+          url: siteUrl(service.path),
           price: product.price,
           priceCurrency: 'BRL',
           seller: { '@id': siteUrl('/#organization') },
@@ -68,7 +68,7 @@ export function ServicePage({ service }: { service: ServicePageContent }) {
             <h1 id="service-heading" className="text-balance text-4xl font-semibold leading-[1.1] tracking-tight md:text-6xl">{service.headline}</h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink/80">{service.intro}</p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <a href={contact} className="btn-primary-nex inline-flex items-center gap-2 whitespace-nowrap">Conversar sobre {isPlate ? 'a placa' : 'o projeto'} <ArrowUpRight size={16} aria-hidden="true" /></a>
+              <a href={contact} target="_blank" rel="noopener noreferrer" className="btn-primary-nex inline-flex items-center gap-2 whitespace-nowrap">{isPlate ? 'Adquirir Placa' : 'Falar com o comercial'} <ArrowUpRight size={16} aria-hidden="true" /></a>
               <a href="#como-funciona" className="btn-secondary-nex whitespace-nowrap">Como funciona</a>
             </div>
           </div>
@@ -88,8 +88,8 @@ export function ServicePage({ service }: { service: ServicePageContent }) {
           <div>
             <h2 className="text-2xl font-semibold">{isPlate ? 'Preço da placa' : 'Plano Desenvolvimento NexOS'}</h2>
             <p className="mt-5 text-4xl font-semibold tracking-tight">{price}<span className="ml-2 text-base font-normal text-ink/80">{isPlate ? 'por unidade' : 'por mês'}</span></p>
-            <p className="mt-4 leading-relaxed text-ink/80">{isPlate ? 'Valor de uma unidade. Quantidade, descontos disponíveis e frete são apresentados antes do pagamento. A criação de site ou cardápio é contratada separadamente.' : 'O escopo, o prazo, as integrações e os custos de domínio e hospedagem são alinhados antes da contratação. Converse com a NexOS para confirmar se o plano atende ao seu projeto.'}</p>
-            <Link href={isPlate ? '/#showcase' : checkoutHref(product.id)} prefetch={false} className="mt-6 inline-flex min-h-11 items-center gap-2 font-medium hover:underline">{isPlate ? 'Escolher quantidade' : 'Ver plano no checkout'} <ArrowUpRight size={16} aria-hidden="true" /></Link>
+            <p className="mt-4 leading-relaxed text-ink/80">{isPlate ? 'Valor de uma unidade. Converse com o comercial para alinhar quantidade, personalização, descontos e frete. A criação de site ou cardápio é contratada separadamente.' : 'O escopo, o prazo, as integrações e os custos de domínio e hospedagem são alinhados antes da contratação. Converse com a NexOS para confirmar se o plano atende ao seu projeto.'}</p>
+            <a href={contact} target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex min-h-11 items-center gap-2 font-medium hover:underline">{isPlate ? 'Adquirir Placa' : 'Conversar sobre o Desenvolvimento NexOS'} <ArrowUpRight size={16} aria-hidden="true" /></a>
           </div>
         </section>
         <section className="topography-glass topography-glass--copy py-14 md:py-20" aria-labelledby="questions-heading">

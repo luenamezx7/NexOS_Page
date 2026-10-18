@@ -19,7 +19,7 @@ test('presentation hands off without hydration errors; every landing section rem
   await openLanding(page, 'dark', true);
   await expect(page.locator('.waves-entry')).toHaveCount(0);
   await expect(page.locator('#hero')).toBeFocused();
-  const ids = ['hero', 'fisico-digital', 'metrics', 'showcase', 'services', 'delivery-process', 'testimonials', 'faq', 'cta-final', 'contact'];
+  const ids = ['hero', 'fisico-digital', 'metrics', 'showcase', 'services', 'delivery-process', 'testimonials', 'faq', 'mascot-solutions', 'cta-final'];
   for (const id of ids) {
     await expect(page.locator(`#${id}`)).toHaveCount(1);
     expect(await page.locator(`#${id}`).evaluate(el => Boolean(el.closest('[aria-hidden="true"]'))), id).toBe(false);
@@ -67,21 +67,22 @@ test('demonstration charts change period and product/service timeline changes it
   await expect(process.getByRole('heading', { name: 'Personalização', exact: true })).toBeVisible();
 });
 
-test('single plate opens identity fan while quantity and checkout stay tied to the real catalog', async ({ page }) => {
+test('single plate opens identity fan while quantity and commercial message stay tied to the real catalog', async ({ page }) => {
   await openLanding(page, 'light');
   const showcase = page.locator('#showcase');
   const total = showcase.getByTestId('plate-total');
   await expect(total).toHaveText(/69,90/);
   await showcase.getByRole('button', { name: 'Aumentar quantidade' }).click();
-  const checkout = showcase.getByRole('link', { name: /Comprar placa/ });
-  const href = await checkout.getAttribute('href');
+  const commercial = showcase.getByRole('link', { name: 'Adquirir Placa' });
+  const href = await commercial.getAttribute('href');
+  expect(new URL(href!).searchParams.get('text')).toContain('2 Placas Inteligentes NexOS');
   await expect(total).toHaveText(/139,80/);
   await showcase.getByRole('button', { name: 'Abrir leque de identidades da placa' }).click();
   await expect(showcase.getByRole('group', { name: 'Prévias visuais da placa' }).getByRole('radio')).toHaveCount(3);
   await showcase.getByRole('radio', { name: /Violeta digital/ }).check();
   await expect(showcase).toContainText('Violeta digital: prévia ilustrativa');
   await expect(total).toHaveText(/139,80/);
-  await expect(checkout).toHaveAttribute('href', href!);
+  await expect(commercial).toHaveAttribute('href', href!);
   await showcase.getByRole('button', { name: 'Fechar leque' }).click();
   await expect(showcase.getByRole('button', { name: 'Abrir leque de identidades da placa' })).toBeVisible();
   await showcase.getByRole('button', { name: 'Explorar placa em preview 3D' }).click();
@@ -91,22 +92,17 @@ test('single plate opens identity fan while quantity and checkout stay tied to t
   await expect(dialog).toHaveCount(0);
 });
 
-test('FAQ, final CTA, contact errors and successful submission remain usable', async ({ page }) => {
-  await page.route('**/api/security/config', route => route.fulfill({ json: { required: false, configured: false, siteKey: '' } }));
-  await page.route('**/api/contact', route => route.fulfill({ status: 200, json: { success: true } }));
+test('FAQ, mascot photo strip and final commercial CTA remain usable without a contact form', async ({ page }) => {
   await openLanding(page, 'light');
   const faq = page.locator('#faq');
   await faq.locator('summary').nth(2).click();
   await expect(faq.locator('details[open]')).toHaveCount(1);
   await expect(faq.locator('details').nth(2).locator('p')).toBeVisible();
   await expect(page.locator('#cta-final').getByRole('link', { name: 'Conversar com a NexOS' })).toHaveAttribute('href', /^https:\/\/wa.me\//);
-  await page.getByRole('button', { name: 'Enviar projeto', exact: true }).click();
-  await expect(page.getByText('Nome é obrigatório', { exact: true })).toBeVisible();
-  await page.getByLabel('Nome completo *').fill('Ana Silva');
-  await page.getByLabel('E-mail corporativo *').fill('ana@example.com');
-  await page.getByLabel('Mensagem *').fill('Gostaria de conversar sobre uma landing page.');
-  await page.getByRole('button', { name: 'Enviar projeto', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Mensagem enviada' })).toBeVisible();
+  await expect(page.locator('#contact')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Enviar projeto', exact: true })).toHaveCount(0);
+  await expect(page.locator('#mascot-solutions li')).toHaveCount(4);
+  expect(await page.evaluate(() => !!(document.querySelector('#mascot-solutions')!.compareDocumentPosition(document.querySelector('#cta-final')!) & Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
 });
 
 for (const theme of ['light', 'dark']) {
@@ -115,9 +111,15 @@ for (const theme of ['light', 'dark']) {
     await openLanding(page, theme);
     for (const width of [320, 390, 768, 1024, 1440]) {
       await page.setViewportSize({ width, height: 900 });
-      for (const id of ['hero', 'metrics', 'showcase', 'delivery-process', 'faq', 'cta-final', 'contact']) {
+      for (const id of ['hero', 'metrics', 'showcase', 'delivery-process', 'faq', 'mascot-solutions', 'cta-final']) {
         await page.locator(`#${id}`).scrollIntoViewIfNeeded();
         const leaks = await page.locator(`#${id}`).evaluate(root => [...root.querySelectorAll('h1,h2,h3,a,button,label,svg[role="img"]')].filter(el => {
+          // Content may extend inside the intentionally horizontal photo strip.
+          let parent = el.parentElement;
+          while (parent && parent !== root) {
+            if (['auto', 'scroll'].includes(getComputedStyle(parent).overflowX)) return false;
+            parent = parent.parentElement;
+          }
           const box = el.getBoundingClientRect();
           return box.width > 0 && (box.left < -1 || box.right > innerWidth + 1);
         }).map(el => el.textContent?.trim().slice(0, 60)));

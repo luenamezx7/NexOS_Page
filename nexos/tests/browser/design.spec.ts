@@ -98,7 +98,7 @@ test('stage 4: plate showcase and services stay clear at every breakpoint', asyn
   await expect(total).toHaveText(/R\$\s?279,60/);
   await showcase.getByRole('button', { name: 'Diminuir quantidade' }).click();
   await expect(total).toHaveText(/R\$\s?209,70/);
-  await expect(showcase.getByRole('link', { name: /Comprar placa/ })).toBeVisible();
+  await expect(showcase.getByRole('link', { name: 'Adquirir Placa' })).toBeVisible();
   await expect(showcase.getByRole('link', { name: /Personalizar minha placa/ })).toBeVisible();
 
   const tablist = showcase.getByRole('tablist', { name: 'Detalhes da placa' });
@@ -113,13 +113,13 @@ test('stage 4: plate showcase and services stay clear at every breakpoint', asyn
   await expect(services).toBeVisible();
   await expect(services.getByRole('heading', { name: 'Ideias boas merecem' })).toBeVisible();
   await expect(services.getByRole('article', { name: /Desenvolvimento NexOS/ })).toBeVisible();
-  await expect(services.getByRole('link', { name: /Iniciar projeto/ })).toBeVisible();
-  await expect(services.getByRole('article', { name: /TESTE CHECKOUT|Teste de checkout/ })).toBeVisible();
+  await expect(services.getByRole('link', { name: 'Falar com o comercial' })).toBeVisible();
+  await expect(services.getByRole('article')).toHaveCount(1);
 
   for (const width of [320, 360, 390, 768, 1024, 1280, 1536]) {
     await page.setViewportSize({ width, height: 900 });
     await noOverflow(page);
-    const buy = showcase.getByRole('link', { name: /Comprar placa/ });
+    const buy = showcase.getByRole('link', { name: 'Adquirir Placa' });
     const box = await buy.boundingBox();
     expect(box!.x).toBeGreaterThanOrEqual(0);
     expect(box!.x + box!.width).toBeLessThanOrEqual(width);
@@ -183,7 +183,7 @@ test('stage 5: full-page resolution sweep keeps layout and CTAs intact', async (
   await page.goto('/');
   await page.getByRole('button', { name: 'Recusar', exact: true }).click().catch(() => {});
 
-  const sections = ['#hero', '#showcase', '#services', '#testimonials', '#faq', '#contact'];
+  const sections = ['#hero', '#showcase', '#services', '#testimonials', '#faq', '#mascot-solutions', '#cta-final'];
   for (const width of WIDTHS) {
     await page.setViewportSize({ width, height: 900 });
     await page.waitForTimeout(250);
@@ -197,14 +197,14 @@ test('stage 5: full-page resolution sweep keeps layout and CTAs intact', async (
       await assertNoViewportLeaks(page, width);
     }
 
-    const buy = page.getByRole('link', { name: /Comprar placa/ });
+    const buy = page.getByRole('link', { name: 'Adquirir Placa' });
     const buyBox = await buy.boundingBox();
     expect(buyBox, `CTA placa @${width}`).toBeTruthy();
     expect(buyBox!.x).toBeGreaterThanOrEqual(0);
     expect(buyBox!.x + buyBox!.width).toBeLessThanOrEqual(width + 1);
     expect(buyBox!.height).toBeGreaterThanOrEqual(44);
 
-    const hire = page.getByRole('link', { name: /Iniciar projeto/ });
+    const hire = page.getByRole('link', { name: 'Falar com o comercial' });
     const hireBox = await hire.boundingBox();
     expect(hireBox, `CTA dev @${width}`).toBeTruthy();
     expect(hireBox!.x + hireBox!.width).toBeLessThanOrEqual(width + 1);
@@ -215,7 +215,7 @@ test('stage 5: full-page resolution sweep keeps layout and CTAs intact', async (
     expect(hbox!.x).toBeGreaterThanOrEqual(-1);
     expect(hbox!.x + hbox!.width).toBeLessThanOrEqual(width + 1);
 
-    const contactTitle = page.locator('#contact-title');
+    const contactTitle = page.locator('#cta-title');
     if ((await contactTitle.count()) > 0) {
       await contactTitle.scrollIntoViewIfNeeded();
       const cbox = await contactTitle.boundingBox();
@@ -267,21 +267,11 @@ test('stage 6: FAQ accordion and contact funnel stay usable end to end', async (
   await second.click();
   await expect(second).toHaveAttribute('aria-expanded', 'false');
 
-  const contact = page.locator('#contact');
+  const contact = page.locator('#cta-final');
   await expect(contact).toBeVisible();
-  await expect(contact.getByRole('heading', { name: 'Vamos conversar?' })).toBeVisible();
-  await expect(contact.getByRole('link', { name: /WhatsApp/ }).first()).toBeVisible();
-  await expect(contact.getByRole('link', { name: /Ver dúvidas frequentes/ })).toBeVisible();
-
-  await contact.getByRole('button', { name: /Enviar projeto/ }).click();
-  await expect(contact.getByText('Nome é obrigatório')).toBeVisible();
-  await expect(contact.getByText('E-mail é obrigatório')).toBeVisible();
-  await expect(contact.getByText('Mensagem é obrigatória')).toBeVisible();
-
-  await contact.getByLabel('Nome completo *').fill('Ana Silva');
-  await contact.getByLabel('E-mail corporativo *').fill('ana@empresa.com');
-  await contact.getByLabel('Mensagem *').fill('Quero uma landing page para minha marca.');
-  await expect(contact.getByText('Nome é obrigatório')).toHaveCount(0);
+  await expect(contact.getByRole('heading', { name: /Sua próxima ideia/ })).toBeVisible();
+  await expect(contact.getByRole('link', { name: 'Conversar com a NexOS' })).toHaveAttribute('href', /^https:\/\/wa.me\//);
+  await expect(page.locator('#contact')).toHaveCount(0);
 
   for (const width of [320, 390, 768, 1024, 1280, 1536]) {
     await page.setViewportSize({ width, height: 900 });
@@ -290,7 +280,7 @@ test('stage 6: FAQ accordion and contact funnel stay usable end to end', async (
     await noOverflow(page);
     await contact.scrollIntoViewIfNeeded();
     await noOverflow(page);
-    const send = contact.getByRole('button', { name: /Enviar projeto/ });
+    const send = contact.getByRole('link', { name: 'Conversar com a NexOS' });
     const box = await send.boundingBox();
     expect(box!.x).toBeGreaterThanOrEqual(0);
     expect(box!.x + box!.width).toBeLessThanOrEqual(width + 1);

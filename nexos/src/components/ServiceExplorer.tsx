@@ -1,22 +1,20 @@
 'use client';
 
-import { ArrowUpRight, CreditCard, LayoutGrid, ShoppingBag, SquareUserRound } from 'lucide-react';
+import { ArrowUpRight, LayoutGrid, ShoppingBag, SquareUserRound } from 'lucide-react';
 import { FieldGroup, FieldLegend, FieldSet } from './ui/field';
 import { Slipstream } from './ui/background-ascii-flow';
 import styles from './commerce/Commerce.module.css';
 
-export type ServiceGoal = 'all' | 'sell' | 'present' | 'payments';
+export type ServiceGoal = 'all' | 'sell' | 'present';
 const GOALS = [
   { id: 'all', label: 'Explorar tudo', icon: LayoutGrid },
   { id: 'sell', label: 'Quero vender', icon: ShoppingBag },
   { id: 'present', label: 'Apresentar marca', icon: SquareUserRound },
-  { id: 'payments', label: 'Validar pagamentos', icon: CreditCard },
 ] as const;
 const GUIDES: Record<ServiceGoal, { title: string; description: string; tags: string[] }> = {
   all: { title: 'Qual é seu próximo passo?', description: 'Escolha um objetivo e encontre o caminho mais direto para o seu negócio.', tags: ['Design', 'Desenvolvimento', 'Integração'] },
   sell: { title: 'Transforme interesse em ação.', description: 'Landing pages e cardápios digitais organizam sua oferta e dão ao cliente um caminho claro para comprar.', tags: ['Landing page', 'Cardápio digital', 'Contato direto'] },
   present: { title: 'Sua marca, bem apresentada.', description: 'Um portfólio ou uma apresentação digital reúne seu trabalho em uma experiência com a sua identidade.', tags: ['Portfólio', 'Apresentação', 'Identidade visual'] },
-  payments: { title: 'Conheça o fluxo de pagamento.', description: 'Explore o checkout integrado. A opção de validação abaixo custa R$ 5,00 caso você conclua o pagamento.', tags: ['Cartão', 'Boleto', 'Checkout Asaas'] },
 };
 
 export function ServiceExplorer({ value, onChange }: { value: ServiceGoal; onChange: (value: ServiceGoal) => void }) {

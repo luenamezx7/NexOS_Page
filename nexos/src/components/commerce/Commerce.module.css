@@ -24,6 +24,7 @@
 .heading { font-size: clamp(32px, 4.2vw, 56px); font-weight: 600; letter-spacing: -0.035em; line-height: 1.1; text-wrap: balance; }
 .accent { background: var(--visor-text-gradient); background-clip: text; -webkit-background-clip: text; color: transparent; }
 .lead { max-width: 52ch; margin-top: 20px; font-size: 16px; line-height: 1.5; color: var(--commerce-muted); text-wrap: pretty; }
+.productCopy { max-width: 56ch; margin-top: 16px; font-size: 14px; line-height: 1.65; color: var(--commerce-muted); text-wrap: pretty; }
 .productVisual { margin: 0; min-width: 0; display: flex; flex-direction: column; align-items: stretch; }
 .plateImageButton { position: relative; display: block; width: 100%; aspect-ratio: 1.25; overflow: hidden; border: 0; border-radius: 0; background: transparent; }
 .plateImageButton img { object-fit: contain; padding: 30px; transition: transform 700ms var(--ease-fluid); }

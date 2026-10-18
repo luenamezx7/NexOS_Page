@@ -1,5 +1,6 @@
 import { ArrowUpRight, ChevronDown, CircleHelp, MessageSquare } from 'lucide-react';
 import { config } from '@/config';
+import { commercialHref } from '@/lib/commercial';
 import styles from './BottomFunnel.module.css';
 
 interface FAQItem {
@@ -28,9 +29,9 @@ const FAQ_ITEMS: FAQItem[] = [
   },
   {
     id: '04',
-    question: 'O checkout é seguro?',
+    question: 'Como faço para contratar ou adquirir uma placa?',
     answer:
-      'O fluxo utiliza o Asaas para processar o pagamento. Você revisa o pedido, preenche os dados necessários e escolhe entre as formas de pagamento disponíveis no checkout.',
+      'Os botões da placa e do Desenvolvimento NexOS abrem uma conversa com nosso comercial no WhatsApp. Alinhamos sua necessidade, personalização ou escopo, prazos e condições para fechar a venda diretamente com você.',
   },
   {
     id: '05',
@@ -42,7 +43,7 @@ const FAQ_ITEMS: FAQItem[] = [
     id: '06',
     question: 'Preciso ter CNPJ para comprar?',
     answer:
-      'Você pode informar CPF ou CNPJ no checkout. Para dúvidas sobre dados de cobrança e faturamento, fale com a NexOS antes de concluir o pedido.',
+      'Atendemos pessoas físicas e empresas. Nosso comercial orienta quais dados são necessários para a contratação e esclarece as condições de faturamento durante a conversa.',
   },
   {
     id: '07',
@@ -86,7 +87,7 @@ export function FAQ({ className = '' }: FAQProps) {
       <div className={styles.container}>
         <div className={styles.sectionNav} aria-label="Navegação de suporte">
           <span className={styles.currentSection}><CircleHelp size={16} aria-hidden="true" /> Dúvidas frequentes</span>
-          <a href="#contact">Falar com a gente <ArrowUpRight size={16} aria-hidden="true" /></a>
+           <a href={commercialHref()} target="_blank" rel="noopener noreferrer">Falar com a gente <ArrowUpRight size={16} aria-hidden="true" /></a>
         </div>
 
         <header className={styles.header}>
@@ -111,7 +112,7 @@ export function FAQ({ className = '' }: FAQProps) {
           <CircleHelp size={16} aria-hidden="true" />
           <span>
             Ficou com dúvida?{' '}
-            <a href="#contact" className={styles.textLink}>
+            <a href={commercialHref()} target="_blank" rel="noopener noreferrer" className={styles.textLink}>
               <MessageSquare size={16} aria-hidden="true" /> Fale com a gente
             </a>
           </span>

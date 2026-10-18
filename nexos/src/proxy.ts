@@ -5,7 +5,7 @@ import { getSessionCookie } from 'better-auth/cookies';
 import { isPrivatePage, loginPathFor } from './lib/auth/policy';
 
 // Rotas mutantes que exigem mesma origem (defesa em profundidade antes dos handlers).
-const ORIGIN_PROTECTED = ['/api/auth', '/api/account', '/api/contact', '/api/checkout'];
+const ORIGIN_PROTECTED = ['/api/auth', '/api/account', '/api/contact'];
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
 function getNonce(): string {
@@ -55,7 +55,7 @@ export async function proxy(req: NextRequest) {
   req.headers.set('Content-Security-Policy', csp);
 
   // Rate-limit para APIs sensíveis
-  if (req.nextUrl.pathname.startsWith('/api/contact') || req.nextUrl.pathname.startsWith('/api/checkout')) {
+  if (req.nextUrl.pathname.startsWith('/api/contact')) {
     const ip = getIp(req);
     const now = Date.now();
     if (buckets.size >= 5000) {

@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { enterPresentation } from './helpers/presentation';
 
 async function openLanding(page: Page, theme: 'light' | 'dark' | 'system' = 'dark', skipIntro = true) {
   await page.addInitScript(({ theme, skipIntro }) => {
@@ -6,8 +7,11 @@ async function openLanding(page: Page, theme: 'light' | 'dark' | 'system' = 'dar
     if (theme !== 'system') localStorage.setItem('nexos-theme', theme);
     localStorage.setItem('nexos-cookie-consent-v1', JSON.stringify({ necessary: true, functional: false, analytics: false, marketing: false, updatedAt: new Date().toISOString() }));
   }, { theme, skipIntro });
-  await page.goto('/');
-  if (skipIntro) await expect(page.getByRole('heading', { name: 'Seu negócio. Em outra escala.' })).toBeVisible();
+  await page.goto(skipIntro ? '/#hero' : '/');
+  if (skipIntro) {
+    await expect(page.locator('#hero-title')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Aumentar quantidade' })).toBeEnabled();
+  }
 }
 
 test('plate quiz preserves answers on back, produces a contextual result and resets', async ({ page }) => {
@@ -51,25 +55,25 @@ test('spatial preview traps focus, responds to controls and returns focus on Esc
   await expect(page.locator('body')).not.toHaveCSS('overflow', 'hidden');
 });
 
-test('service objectives filter the catalog and show payment cost before checkout', async ({ page }) => {
+test('service objectives explain development and lead to the commercial team', async ({ page }) => {
   await openLanding(page);
   const services = page.locator('#services');
   await services.getByRole('radio', { name: 'Quero vender', exact: true }).check();
   await expect(services.getByRole('heading', { name: 'Desenvolvimento NexOS' })).toBeVisible();
   await expect(services.getByRole('heading', { name: 'Teste de checkout' })).toHaveCount(0);
-  await services.getByRole('radio', { name: 'Validar pagamentos', exact: true }).check();
-  await expect(services).toContainText('custa R$ 5,00');
-  await expect(services.getByRole('heading', { name: 'Teste de checkout' })).toBeVisible();
-  await expect(services.getByRole('heading', { name: 'Desenvolvimento NexOS' })).toHaveCount(0);
+  await expect(services.getByRole('radio', { name: 'Validar pagamentos', exact: true })).toHaveCount(0);
+  await services.getByRole('radio', { name: 'Apresentar marca' }).check();
+  await expect(services).toContainText('Sua marca, bem apresentada.');
+  await expect(services.getByRole('link', { name: 'Falar com o comercial' })).toHaveAttribute('href', /^https:\/\/wa.me\//);
   await services.getByRole('radio', { name: 'Explorar tudo', exact: true }).check();
-  await expect(services.getByRole('article')).toHaveCount(2);
+  await expect(services.getByRole('article')).toHaveCount(1);
 });
 
 for (const theme of ['light', 'dark'] as const) {
   test(`${theme} mobile: hero CTAs fit, modal fits and page has no horizontal overflow`, async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 740 });
     await openLanding(page, theme);
-    const cta = page.getByRole('button', { name: 'Iniciar Projeto', exact: true });
+    const cta = page.getByRole('link', { name: 'Iniciar Projeto', exact: true });
     const box = await cta.boundingBox();
     expect(box!.y + box!.height).toBeLessThan(740);
     await expect(page.getByRole('button', { name: theme === 'dark' ? 'Ativar modo claro' : 'Ativar modo escuro' })).toBeVisible();
@@ -90,11 +94,12 @@ test('system preference, manual theme persistence and reduced-motion intro', asy
   await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'reduce' });
   await openLanding(page, 'system', false);
   await expect(page.getByRole('heading', { name: 'A performance que seu business merece.' })).toBeVisible();
-  await page.getByRole('button', { name: 'Continuar para o site' }).click();
+  await enterPresentation(page);
   await expect(page.getByRole('button', { name: 'Ativar modo escuro' })).toBeVisible();
   await page.getByRole('button', { name: 'Ativar modo escuro' }).click();
   await expect(page.locator('html')).toHaveClass(/dark/);
   await page.reload();
-  await expect(page.getByRole('heading', { name: 'Seu negócio. Em outra escala.' })).toBeVisible();
+  await enterPresentation(page);
+  await expect(page.locator('#hero-title')).toBeVisible();
   await expect(page.locator('html')).toHaveClass(/dark/);
 });

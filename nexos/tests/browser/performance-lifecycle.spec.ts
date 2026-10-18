@@ -35,7 +35,7 @@ test('a navegação do header e do indicador chega à seção sem disputa de scr
   await page.goto('/#hero');
   await expect(page.locator('html')).toHaveClass(/lenis/);
   await page.getByRole('navigation', { name: 'Navegação principal', exact: true }).getByRole('link', { name: 'Contato', exact: true }).click();
-  await expect.poll(() => page.locator('#contact').evaluate(element => Math.abs(element.getBoundingClientRect().top - parseFloat(getComputedStyle(element).scrollMarginTop || '0'))), { timeout: 20000 }).toBeLessThan(4);
+  await expect.poll(() => page.locator('#cta-final').evaluate(element => Math.abs(element.getBoundingClientRect().top - parseFloat(getComputedStyle(element).scrollMarginTop || '0'))), { timeout: 20000 }).toBeLessThan(4);
   await page.getByRole('button', { name: 'Ir para Início', exact: true }).click();
   await expect.poll(() => page.evaluate(() => scrollY), { timeout: 20000 }).toBeLessThan(4);
 });
