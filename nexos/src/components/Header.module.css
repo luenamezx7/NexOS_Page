@@ -56,7 +56,7 @@
 }
 @media (min-width: 1200px) {
   .bar { gap: 24px; padding-inline: 24px; }
-  .brand { width: 192px; }
+  .brand { width: 220px; }
   .desktopNav { display: flex; align-items: center; gap: 4px; }
   .navLink { display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 8px; font-size: 14px; font-weight: 500; white-space: nowrap; }
   .start { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 8px; font-size: 14px; white-space: nowrap; }

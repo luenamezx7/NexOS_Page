@@ -25,7 +25,7 @@ A paleta foi extraída diretamente dos stops do gradiente SVG `mirror`, sem esti
 - [x] Aplicar nos headers da home, dos serviços e do acesso à conta.
 - [x] Exibir o lobo em suas cores originais, sem filtro de inversão entre temas.
 - [x] Adaptar a largura da marca para desktop e mobile, mantendo texto e mascote visíveis e alinhados também em telas estreitas.
-- [x] Usar A Lot of Love com altura visual equivalente à do mascote e alinhamento óptico entre as duas marcas.
+- [x] Usar Aerobus Dotty com o texto `nexos` em minúsculas, altura visual equivalente à do mascote e alinhamento óptico entre as duas marcas.
 
 ## Etapa 2 — tokens dos temas
 
