@@ -57,15 +57,22 @@ export default function GradualBlur({
     return Array.from({ length: count }, (_, i): CSSProperties => {
       const radius = Math.sqrt(Math.max(0, level((i + 1) / count) ** 2 - level(i / count) ** 2));
       const filter = `blur(calc(${radius.toFixed(3)}px * var(--gradual-blur-reveal, 1) * var(--gradual-blur-hover, 1))) saturate(${Math.max(0, saturation) ** (1 / count)})`;
-      const mask = `linear-gradient(${DIRECTIONS[position]}, transparent ${i / count * 100}%, #000 ${(i + 1) / count * 100}%)`;
-      return { position: 'absolute', inset: 0, backdropFilter: filter, WebkitBackdropFilter: filter,
+      // Crop only the fully transparent part of each layer. Normalizing the mask
+      // to its new box preserves the exact falloff and all original blur radii.
+      const remaining = count - i;
+      const span = `${remaining / count * 100}%`;
+      const mask = `linear-gradient(${DIRECTIONS[position]}, transparent 0%, #000 ${100 / remaining}%)`;
+      const bounds: CSSProperties = position === 'top' || position === 'bottom'
+        ? { left: 0, right: 0, [position]: 0, height: span }
+        : { top: 0, bottom: 0, [position]: 0, width: span };
+      return { position: 'absolute', ...bounds, backdropFilter: filter, WebkitBackdropFilter: filter,
         maskImage: mask, WebkitMaskImage: mask, opacity, transition: `backdrop-filter ${fade}` };
     });
   }, [layers, curve, strength, exponential, saturation, position, opacity, fade]);
 
   useEffect(() => {
     const root = rootRef.current;
-    if (!root) return;
+    if (!root || !autoHide) return;
     let source: Element | Window = window;
     if (container) {
       const resolved = typeof container === 'string' ? document.querySelector(container) : 'current' in container ? container.current : container;
@@ -82,7 +89,7 @@ export default function GradualBlur({
       const limit = element ? vertical ? element.scrollHeight - element.clientHeight : element.scrollWidth - element.clientWidth : vertical ? document.documentElement.scrollHeight - innerHeight : document.documentElement.scrollWidth - innerWidth;
       const box = root.getBoundingClientRect();
       const room = position === 'top' || position === 'left' ? offset : limit - offset;
-      const reveal = autoHide ? clamp(room / Math.max(1, vertical ? box.height : box.width)) : 1;
+      const reveal = clamp(room / Math.max(1, vertical ? box.height : box.width));
       root.style.setProperty('--gradual-blur-reveal', reveal.toFixed(3));
     };
     const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
@@ -91,18 +98,24 @@ export default function GradualBlur({
     window.addEventListener('resize', schedule);
     const resize = new ResizeObserver(schedule);
     resize.observe(source instanceof Element ? source : document.body);
-    const hideTarget = hideAtSelector ? document.querySelector(hideAtSelector) : null;
-    const observer = hideTarget ? new IntersectionObserver(([entry]) => {
-      root.dataset.hidden = String(entry.isIntersecting);
-    }) : null;
-    if (hideTarget) observer?.observe(hideTarget);
     return () => {
       cancelAnimationFrame(frame);
       source.removeEventListener('scroll', schedule);
       window.removeEventListener('resize', schedule);
-      resize.disconnect(); observer?.disconnect();
+      resize.disconnect();
     };
-  }, [autoHide, container, target, position, vertical, hideAtSelector]);
+  }, [autoHide, container, target, position, vertical]);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    const hideTarget = hideAtSelector ? document.querySelector(hideAtSelector) : null;
+    if (!root || !hideTarget) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      root.dataset.hidden = String(entry.isIntersecting);
+    });
+    observer.observe(hideTarget);
+    return () => observer.disconnect();
+  }, [hideAtSelector]);
 
   useEffect(() => {
     if (hoverIntensity === 1) return;

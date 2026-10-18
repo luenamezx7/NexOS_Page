@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef, useSyncExternalStore } from 'react';
+import { forwardRef } from 'react';
 import dynamic from 'next/dynamic';
 import { ArrowDown, ArrowUpRight } from 'lucide-react';
 import { config } from '@/config';
@@ -9,19 +9,16 @@ import { useTheme } from './ThemeProvider';
 import GradualBlur from './ui/GradualBlur';
 import { motion } from 'motion/react';
 import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
+import { usePresentationActive } from '@/lib/use-presentation-active';
 
 const GradientASCII = dynamic(() => import('./ui/GradientASCII'), { ssr: false });
 const LIGHT = ['#0040e6', '#0052ff', '#008cff', '#fdf6ec'];
 const DARK = ['#3b007a', '#9200ff', '#ff008c', '#b33dff'];
-function subscribeEntry(callback: () => void) {
-  document.addEventListener('nexos-entry-change', callback);
-  return () => document.removeEventListener('nexos-entry-change', callback);
-}
 
 export const Hero = forwardRef<HTMLElement, { className?: string }>(function Hero({ className = '' }, ref) {
   const { theme } = useTheme();
   const reduce = useReducedMotion();
-  const entryOpen = useSyncExternalStore(subscribeEntry, () => Boolean(document.querySelector('.waves-entry[open]')), () => true);
+  const entryOpen = usePresentationActive();
 
   return (
     <section ref={ref} id="hero" tabIndex={-1} aria-labelledby="hero-title" className={`landing-hero ${className}`}>
@@ -29,9 +26,9 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
         {!entryOpen && <GradientASCII colors={theme === 'light' ? LIGHT : DARK} lightMode={theme === 'light'}
           shape="horizon" characters=" =+xX0S8#@" cellSize={18} density={0.75}
           gradientOpacity={0.5} glyphOpacity={0.7} glow={0.15} grain={0.025}
-          flicker={0.1} speed={0.45} flow={0.4} dpr={1} maxFPS={30} />}
+          flicker={0.1} speed={0.45} flow={0.4} dpr={1} maxFPS={30} visibilityMargin="-96px 0px 0px" />}
         <div className="hero-readability" />
-        <GradualBlur height="7rem" strength={1.1} layers={6} curve="bezier" saturation={1.15} tint="var(--color-canvas)" />
+        {!entryOpen && <GradualBlur height="7rem" strength={1.1} layers={6} curve="bezier" saturation={1.15} tint="var(--color-canvas)" />}
       </div>
       <div className="hero-container">
         <motion.div className="hero-copy" initial={reduce ? false : 'hidden'} animate={entryOpen ? 'hidden' : 'show'}

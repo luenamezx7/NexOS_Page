@@ -7,6 +7,7 @@ import { motion, type Variants } from 'motion/react';
 import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { ArrowUpRight, Check, Copy, Cpu, CreditCard, Layers, Terminal, Workflow } from 'lucide-react';
 import styles from './MidPage.module.css';
+import { useSectionScroll } from './SmoothScrollProvider';
 
 const FLUID_EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -90,15 +91,9 @@ const CLIPBOARD_PAYLOAD = VALUE_CARDS.map(
   (c) => `$ nexos pillar --id ${c.id}\n  overline: ${c.overline}\n  title: ${c.title}\n  metric: ${c.metric} ${c.metricLabel}\n  pilar: ${c.pilar}`,
 ).join('\n\n');
 
-function navigate(href: string, push?: (h: string) => void): void {
-  const el = document.querySelector(href) as HTMLElement | null;
-  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  else if (push) push(href);
-  else window.location.href = href;
-}
-
 function ValueRow({ card }: { card: ValueCard }) {
   const router = useRouter();
+  const scrollToSection = useSectionScroll();
   return (
     <motion.li variants={RELIEF_CHILD} className={styles.pillarRow}>
       <span className={styles.pillarIcon} aria-hidden="true">
@@ -121,7 +116,7 @@ function ValueRow({ card }: { card: ValueCard }) {
       <div className={styles.pillarAction}>
         <button
           type="button"
-          onClick={() => navigate(card.actionHref, router.push)}
+          onClick={() => { if (!scrollToSection(card.actionHref)) router.push(card.actionHref); }}
           aria-label={card.actionTag}
           className="btn-secondary-nex"
         >

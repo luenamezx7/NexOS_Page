@@ -1,8 +1,11 @@
 'use client';
 
 import GradualBlur from '../ui/GradualBlur';
+import { usePresentationActive } from '@/lib/use-presentation-active';
 
 export function LandingPageBlur() {
+  const entryOpen = usePresentationActive();
+  if (entryOpen) return null;
   return <>
     <GradualBlur target="page" position="top" height="clamp(76px, 12vh, 112px)" strength={1.3}
       layers={7} curve="bezier" saturation={1.15} tint="var(--landing-edge-tint)"

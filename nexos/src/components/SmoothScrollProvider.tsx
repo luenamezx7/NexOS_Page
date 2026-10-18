@@ -1,12 +1,37 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import type Lenis from 'lenis';
 
 interface ScrollContextValue { isScrolling: boolean; lenis: Lenis | null }
 const ScrollContext = createContext<ScrollContextValue>({ isScrolling: false, lenis: null });
 export function useScrollContext() { return useContext(ScrollContext); }
+
+/** Keep programmatic navigation on the same controller as wheel scrolling. */
+export function useSectionScroll() {
+  const { lenis } = useScrollContext();
+  return useCallback((hash: string) => {
+    const target = document.getElementById(hash.replace(/^#/, ''));
+    if (!target) return false;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (lenis) {
+      const offset = -parseFloat(getComputedStyle(target).scrollMarginTop || '0');
+      lenis.scrollTo(target, {
+        offset,
+        immediate: reduce,
+        onComplete: () => {
+          // Reveal transforms and late font metrics can move a distant target
+          // during the trip. Finish on its settled position, without a jump.
+          if (!target.isConnected) return;
+          const delta = target.getBoundingClientRect().top + offset;
+          if (Math.abs(delta) > 2) lenis.scrollTo(lenis.scroll + delta, { duration: 0.25, lerp: 0 });
+        },
+      });
+    } else target.scrollIntoView({ behavior: reduce ? 'instant' : 'smooth', block: 'start' });
+    return true;
+  }, [lenis]);
+}
 
 /** Native scrolling on mobile and app screens; load Lenis only for the desktop landing. */
 export function SmoothScrollProvider({ children }: { children: ReactNode }) {
@@ -27,7 +52,7 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
       if (pathname !== '/' || !media.matches || disposed) return;
       const { default: Lenis } = await import('lenis');
       if (disposed || !media.matches || instance) return;
-      instance = new Lenis({ duration: 1.2, lerp: 0.08, wheelMultiplier: 1, infinite: false });
+      instance = new Lenis({ duration: 1.2, lerp: 0.08, wheelMultiplier: 1, infinite: false, anchors: true });
       setLenis(instance);
       instance.on('scroll', () => {
         if (!scrolling) { scrolling = true; setIsScrolling(true); }

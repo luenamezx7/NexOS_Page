@@ -84,9 +84,7 @@ export function Footer({ onViewPresentation }: { onViewPresentation?: () => void
             <p className={styles.brandDesc}>
               {config.brand.fullName}, também conhecida como {config.brand.alternateNames.join(' e ')}, desenvolve sites, landing pages, cardápios digitais e soluções NFC para empresas.
             </p>
-            <address className={styles.brandAddress}>
-              CNPJ 69.194.842/0001-28 · Rua Joaquim Anicacio Pinto, 0 — Residencial Prefeito Ely Rocha · Piracanjuba/GO · CEP 75643-242
-            </address>
+            <p className={styles.brandAddress}>CNPJ 69.194.842/0001-28</p>
             <div className={styles.socials} role="list" aria-label="Redes sociais">
               {config.footer.social.map((social) => {
                 const Icon = SOCIAL_ICONS[social.icon as keyof typeof SOCIAL_ICONS] ?? MessageSquare;

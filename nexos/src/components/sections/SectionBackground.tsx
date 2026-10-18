@@ -7,6 +7,7 @@ import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-r
 import { useTheme } from '../ThemeProvider';
 import GradualBlur from '../ui/GradualBlur';
 import styles from './Sections.module.css';
+import { usePresentationActive } from '@/lib/use-presentation-active';
 
 const Topography = dynamic(() => import('../ui/Topography'), { ssr: false });
 
@@ -14,21 +15,23 @@ export function SectionBackground({
   children, index = 0, scene = 'plain',
 }: { children: ReactNode; index?: number; scene?: 'plain' | 'waves' | 'product' | 'image' }) {
   const ref = useRef<HTMLDivElement>(null);
-  const visible = useInView(ref, { margin: '160px' });
+  const near = useInView(ref, { margin: '160px', once: true });
+  const visible = useInView(ref, { amount: 0.01 });
   const reduce = useReducedMotion();
   const { theme } = useTheme();
+  const entryOpen = usePresentationActive();
 
   return (
     <div ref={ref} className={styles.scene} data-tone={index % 2 ? 'alternate' : 'base'} data-scene={scene}>
       <div className={styles.scenery} aria-hidden="true">
-        {scene === 'waves' && theme === 'light' && visible && (
+        {scene === 'waves' && theme === 'light' && near && !entryOpen && (
           <Topography lowColor="#0052ff" midColor="#008cff" highColor="#fdf6ec" lightMode
-            mouseInteraction={false} maxFPS={24} dprLimit={1} opacity={0.75} thickness={0.018} glow={0.65} className={styles.contours} />
+            paused={!visible} mouseInteraction={false} maxFPS={24} dprLimit={1} opacity={0.75} thickness={0.018} glow={0.65} className={styles.contours} />
         )}
         {(scene === 'product' || scene === 'image') && <motion.div className={styles.fieldImage}
-          animate={!reduce && visible ? { x: [0, 18, 0], y: [0, -12, 0] } : { x: 0, y: 0 }}
+          animate={!reduce && visible && !entryOpen ? { x: [0, 18, 0], y: [0, -12, 0] } : { x: 0, y: 0 }}
           transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }} />}
-        {scene !== 'plain' && <GradualBlur height="6rem" strength={1} layers={6} tint="var(--section-ground)" zIndex={1} />}
+        {scene !== 'plain' && !entryOpen && <GradualBlur height="6rem" strength={1} layers={6} tint="var(--section-ground)" zIndex={1} />}
       </div>
       <motion.div className={styles.sceneContent} initial={reduce ? false : { opacity: 0, y: 44 }}
         whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.08 }}

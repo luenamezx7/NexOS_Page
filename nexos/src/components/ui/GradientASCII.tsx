@@ -473,6 +473,7 @@ const GradientASCII = ({
   fontFamily = DEFAULT_FONT,
   dpr,
   maxFPS = 30,
+  visibilityMargin = '0px',
   className = '',
   style,
   ...rest
@@ -501,6 +502,7 @@ const GradientASCII = ({
   fontFamily?: string;
   dpr?: number;
   maxFPS?: number;
+  visibilityMargin?: string;
   className?: string;
   style?: React.CSSProperties;
 } & React.HTMLAttributes<HTMLDivElement>) => {
@@ -873,7 +875,7 @@ const GradientASCII = ({
         last = 0;
         wake();
       }
-    });
+    }, { rootMargin: visibilityMargin });
     intersection.observe(container);
     window.addEventListener('pointermove', onPointerMove, { passive: true });
     window.addEventListener('pointerdown', onPointerDown, { passive: true });
@@ -902,7 +904,7 @@ const GradientASCII = ({
       // React StrictMode replays effects on the same canvas. Explicitly losing
       // its context here makes the second setup render a permanently lost canvas.
     };
-  }, []);
+  }, [visibilityMargin]);
 
   useEffect(() => {
     wakeRef.current?.();

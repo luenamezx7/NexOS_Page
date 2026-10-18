@@ -18,6 +18,7 @@ import { RobotCycler } from './RobotCycler';
 import { ThemeToggle } from './ThemeToggle';
 import styles from './Header.module.css';
 import { MetallicSurface } from './ui/metallic-button';
+import { useSectionScroll } from './SmoothScrollProvider';
 
 const NAV_ITEMS = [{ label: 'Placa NFC', href: '#showcase' }, ...config.navigation.map(item => item.href === '#testimonials' ? { ...item, label: 'Ecossistema' } : item)];
 
@@ -26,13 +27,14 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const menuRef = useRef<HTMLButtonElement>(null);
   const reduce = useReducedMotion();
+  const scrollToSection = useSectionScroll();
   const { scrollY } = useScroll();
   useMotionValueEvent(scrollY, 'change', latest => setScrolled(latest > 10));
 
   const handleNav = useCallback((hash: string) => {
     setMobileOpen(false);
-    requestAnimationFrame(() => document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: reduce ? 'instant' : 'smooth', block: 'start' }));
-  }, [reduce]);
+    requestAnimationFrame(() => scrollToSection(hash));
+  }, [scrollToSection]);
 
   useEffect(() => {
     if (!mobileOpen) return;

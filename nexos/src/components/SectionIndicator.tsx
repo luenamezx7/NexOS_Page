@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { motion, useScroll, useSpring } from 'motion/react';
 import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import styles from './SectionIndicator.module.css';
+import { useSectionScroll } from './SmoothScrollProvider';
 
 const SECTIONS = [
   { id: 'hero', label: 'Início', number: '01' },
@@ -19,6 +20,7 @@ const SECTIONS = [
 
 export function SectionIndicator() {
   const reduce = useReducedMotion();
+  const scrollToSection = useSectionScroll();
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 32 });
   const [activeId, setActiveId] = useState('hero');
@@ -47,7 +49,7 @@ export function SectionIndicator() {
       <div className={styles.track} aria-hidden="true"><motion.span style={{ scaleY: reduce ? scrollYProgress : progress }} /></div>
       <ul>{SECTIONS.map(section => (
         <li key={section.id}>
-          <button type="button" aria-label={`Ir para ${section.label}`} aria-current={activeId === section.id ? 'true' : undefined} onClick={() => document.getElementById(section.id)?.scrollIntoView({ behavior: reduce ? 'instant' : 'smooth', block: 'start' })}>
+          <button type="button" aria-label={`Ir para ${section.label}`} aria-current={activeId === section.id ? 'true' : undefined} onClick={() => scrollToSection(`#${section.id}`)}>
             <span className={styles.dot} aria-hidden="true" />
             <span className={styles.label} aria-hidden="true">{section.number} / {section.label}</span>
           </button>

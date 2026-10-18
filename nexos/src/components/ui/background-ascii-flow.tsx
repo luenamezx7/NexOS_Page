@@ -57,9 +57,13 @@ export function Slipstream({ cellSize = 14, className = '', density = 1.4, seed 
     }
     function onLeave() { pointer.active = false; canvas!.dataset.asciiFlow = 'idle'; }
     function readTheme() {
-      shadow = getComputedStyle(canvas!).getPropertyValue('--star-shadow').trim() || '#ffffff';
-      color = getComputedStyle(canvas!).getPropertyValue('--star-color').trim() || '#ffffff';
+      const style = getComputedStyle(canvas!);
+      const nextShadow = style.getPropertyValue('--star-shadow').trim() || '#ffffff';
+      const nextColor = style.getPropertyValue('--star-color').trim() || '#ffffff';
+      if (nextShadow === shadow && nextColor === color && sprites.dataset.baked) return;
+      shadow = nextShadow; color = nextColor;
       bakeStars();
+      sprites.dataset.baked = 'true';
       if (!animated() && !pausedRef.current) draw();
     }
     function resize() {
@@ -88,20 +92,21 @@ export function Slipstream({ cellSize = 14, className = '', density = 1.4, seed 
     }
     function draw() {
       if (!width || !height) return;
+      const moving = animated();
       ctx!.clearRect(0, 0, width, height);
       for (const star of stars) {
-        const wave = (Math.sin((animated() ? time * star.rate : 0) + star.phase) + 1) / 2;
+        const wave = (Math.sin((moving ? time * star.rate : 0) + star.phase) + 1) / 2;
         const alpha = 0.28 + wave * 0.66;
         const baseX = star.x * width, baseY = star.y * height;
         const dx = baseX - pointer.x, dy = baseY - pointer.y;
         const distance = pointer.active ? Math.hypot(dx, dy) : 1;
-        const influence = animated() && pointer.active ? Math.max(0, 1 - distance / 180) ** 2 : 0;
+        const influence = moving && pointer.active ? Math.max(0, 1 - distance / 180) ** 2 : 0;
         const flowX = -dy / (distance || 1) * influence * 48;
         const flowY = dx / (distance || 1) * influence * 48;
         star.offsetX += (flowX - star.offsetX) * 0.16;
         star.offsetY += (flowY - star.offsetY) * 0.16;
-        const x = baseX + star.offsetX + (animated() ? Math.sin(time * 0.06 + star.phase) * 2 : 0);
-        const y = baseY + star.offsetY + (animated() ? Math.cos(time * 0.08 + star.phase) * 3 : 0);
+        const x = baseX + star.offsetX + (moving ? Math.sin(time * 0.06 + star.phase) * 2 : 0);
+        const y = baseY + star.offsetY + (moving ? Math.cos(time * 0.08 + star.phase) * 3 : 0);
         ctx!.globalAlpha = alpha;
         // Cached glow sprites avoid hundreds of shadow-blur operations per frame.
         const flowing = influence > 0.055;
