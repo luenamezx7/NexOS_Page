@@ -1,9 +1,9 @@
 .scene { --section-ground: #fdf6ec; position: relative; isolation: isolate; background: var(--section-ground); --color-canvas: var(--section-ground); }
 .scene[data-tone="alternate"] { --section-ground: color-mix(in srgb, var(--visor-cyan) 7%, #fdf6ec); }
 :global(.dark) .scene { --section-ground: #000; }
-:global(.dark) .scene[data-tone="alternate"] { --section-ground: color-mix(in srgb, var(--visor-violet) 12%, #000); }
+:global(.dark) .scene[data-tone="alternate"] { --section-ground: #000; }
 .scene[data-scene="product"] { --section-ground: color-mix(in srgb, var(--visor-gold) 10%, #fdf6ec); }
-:global(.dark) .scene[data-scene="product"] { --section-ground: color-mix(in srgb, var(--visor-plum) 14%, #000); }
+:global(.dark) .scene[data-scene="product"] { --section-ground: #000; }
 .scenery { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
 .sceneContent { position: relative; }
 .contours { position: absolute; inset: 0; opacity: .7; mask-image: linear-gradient(90deg, #0005, #000 65%); }
