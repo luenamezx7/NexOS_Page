@@ -8,7 +8,7 @@ import { FieldGroup, FieldLegend, FieldSet } from '../ui/field';
 import styles from './Commerce.module.css';
 
 const STUDIES = [
-  { id: 'blue', title: 'Azul técnico', code: 'NX / 01' },
+  { id: 'blue', title: 'Roxo visor', code: 'NX / 01' },
   { id: 'violet', title: 'Violeta digital', code: 'NX / 02' },
   { id: 'mono', title: 'Monocromático', code: 'NX / 03' },
 ] as const;

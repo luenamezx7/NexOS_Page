@@ -117,7 +117,7 @@ export function MetallicSurface({ baseColor, sheenColor, bandCount = 4, edgeBlur
   const { theme } = useTheme();
   const entryOpen = usePresentationActive();
   const resolvedBase = baseColor ?? (theme === 'light' ? VISOR_PALETTE.violet : VISOR_PALETTE.plum);
-  const resolvedSheen = sheenColor ?? (theme === 'light' ? VISOR_PALETTE.cyan : VISOR_PALETTE.gold);
+  const resolvedSheen = sheenColor ?? VISOR_PALETTE.lilac;
   const resolvedRedFringe = redFringe ?? (theme === 'light' ? 0 : 0.3);
   const ref = useRef<HTMLSpanElement>(null);
   useEffect(() => {

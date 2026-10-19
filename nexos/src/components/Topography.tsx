@@ -174,9 +174,9 @@ interface TopographyProps {
 }
 
 const Topography = ({
-  lowColor = VISOR_PALETTE.violet,
-  midColor = VISOR_PALETTE.magenta,
-  highColor = VISOR_PALETTE.gold,
+  lowColor = VISOR_PALETTE.plum,
+  midColor = VISOR_PALETTE.violet,
+  highColor = VISOR_PALETTE.lilac,
   speed = 0.35,
   morphAmount = 3.0,
   morphSpeed = 0.05,

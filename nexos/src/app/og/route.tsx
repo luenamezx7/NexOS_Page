@@ -8,11 +8,11 @@ export function GET() {
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '100%', height: '100%', padding: '64px 72px', background: '#131316', color: '#f3ead9' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 28 }}>
           <span style={{ fontSize: 58, fontWeight: 700 }}>NexOS</span>
-          <span style={{ color: '#dca4ba' }}>Design + código + estratégia</span>
+          <span style={{ color: '#e873f8' }}>Design + código + estratégia</span>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', fontSize: 80, fontWeight: 700, lineHeight: 1.1 }}>
           <span>Sites para</span>
-          <span style={{ color: '#dca4ba' }}>seu negócio.</span>
+          <span style={{ color: '#e873f8' }}>seu negócio.</span>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 18, borderTop: '1px solid #494047', paddingTop: 24, fontSize: 24 }}>
           <span>Sites · Landing pages · Cardápios digitais · NFC + QR Code</span>

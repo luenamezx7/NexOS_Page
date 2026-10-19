@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import localFont from 'next/font/local';
+import purpleWolf from '../../design-/img-ref/mascote_lobo_roxo.svg';
 import styles from './BrandMark.module.css';
 
 const aerobusDotty = localFont({
@@ -14,6 +15,6 @@ const aerobusDotty = localFont({
 export function BrandMark() {
   return <span className={`${styles.mark} ${aerobusDotty.variable}`}>
     <span className={styles.wordmark} aria-hidden="true">nexos</span>
-    <Image src="/mascote-lobo-header.svg" alt="Mascote lobo da NexOS com viseira multicolorida" width={48} height={48} className={styles.mascot} />
+    <Image src={purpleWolf} alt="Mascote lobo da NexOS com viseira roxa" width={48} height={48} className={styles.mascot} />
   </span>;
 }

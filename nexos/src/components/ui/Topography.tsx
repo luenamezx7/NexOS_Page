@@ -161,7 +161,7 @@ type Controls = { sync: () => void; redraw: () => void };
 const ctxMap = new WeakMap<HTMLDivElement, Controls>();
 
 export default function Topography({
-  lowColor = VISOR_PALETTE.violet, midColor = VISOR_PALETTE.magenta, highColor = VISOR_PALETTE.gold, speed = 0.35,
+  lowColor = VISOR_PALETTE.plum, midColor = VISOR_PALETTE.violet, highColor = VISOR_PALETTE.lilac, speed = 0.35,
   morphAmount = 3.0, morphSpeed = 0.05, bands = 2.0, thickness = 0.01, scale = 1.0,
   pixelSize = 1.0, glow = 0.5, colorMode = 'elevation', contrast = 3.0, brightness = 1.0,
   fillBands = false, opacity = 1.0, grain = true, grainIntensity = 0.05,

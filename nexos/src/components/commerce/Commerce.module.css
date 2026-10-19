@@ -47,10 +47,10 @@
 .preview3d:hover { color: var(--commerce-accent); }
 .fanArea { position: relative; display: grid; align-content: center; aspect-ratio: 1.25; padding: 40px 20px 64px; }
 .fanCards { position: relative; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0; isolation: isolate; }
-.fanCard { --study-accent: var(--visor-cyan); position: relative; display: flex; flex-direction: column; justify-content: space-between; width: 38%; min-width: 0; aspect-ratio: .72; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--visor-cyan) 55%, transparent); color: #fdf6ec; background: linear-gradient(145deg, var(--visor-blue), var(--visor-violet)); padding: 18px; box-shadow: 0 16px 30px -16px #0008; cursor: pointer; margin-inline: -5%; }
+.fanCard { --study-accent: var(--visor-lilac); position: relative; display: flex; flex-direction: column; justify-content: space-between; width: 38%; min-width: 0; aspect-ratio: .72; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--visor-lilac) 55%, transparent); color: #fdf6ec; background: linear-gradient(145deg, var(--visor-violet), var(--visor-plum)); padding: 18px; box-shadow: 0 16px 30px -16px #0008; cursor: pointer; margin-inline: -5%; }
 .fanCard:first-child { margin-left: 0; }
 .fanCard:last-child { margin-right: 0; }
-.fanCard[data-study="violet"] { background: linear-gradient(145deg, #c20076, var(--visor-violet)); color: #fdf6ec; --study-accent: var(--visor-gold); border-color: color-mix(in srgb, var(--visor-coral) 60%, transparent); }
+.fanCard[data-study="violet"] { background: linear-gradient(145deg, var(--visor-plum), var(--visor-violet)); color: #fdf6ec; --study-accent: var(--visor-lilac); border-color: color-mix(in srgb, var(--visor-lilac) 60%, transparent); }
 .fanCard[data-study="mono"] { background: #202025; color: #fafafa; --study-accent: #d4d4d8; border-color: #aaa5; }
 .fanCard[data-selected="true"] { z-index: 2; outline: 2px solid var(--study-accent); outline-offset: 3px; }
 .fanCard:has(:focus-visible) { outline: 3px solid var(--study-accent); outline-offset: 5px; }

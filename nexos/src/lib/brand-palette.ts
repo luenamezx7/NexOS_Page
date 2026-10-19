@@ -1,26 +1,20 @@
-/** Sampled from the `mirror` gradient of design-/mascote_lobo_header_capuz.svg. */
+/** Sampled from the glasses in design-/img-ref/mascote_lobo_roxo.svg. */
 export const VISOR_PALETTE = {
-  violet: '#3328bc',
-  blue: '#005dda',
-  cyan: '#0bd2d3',
-  mint: '#95e9da',
-  gold: '#ffe36b',
-  orange: '#ff913e',
-  coral: '#fc3768',
-  magenta: '#e6008b',
-  plum: '#650c66',
+  violet: '#971ef4',
+  lilac: '#e873f8',
+  plum: '#34064e',
 } as const;
 
 export const TOPOGRAPHY_PALETTE = {
-  lowColor: VISOR_PALETTE.blue,
-  midColor: VISOR_PALETTE.cyan,
+  lowColor: VISOR_PALETTE.violet,
+  midColor: VISOR_PALETTE.lilac,
   highColor: '#fdf6ec',
 };
 
 export const HERO_PALETTES = {
-  light: [VISOR_PALETTE.blue, VISOR_PALETTE.cyan, VISOR_PALETTE.gold, VISOR_PALETTE.coral, VISOR_PALETTE.magenta],
-  dark: [VISOR_PALETTE.violet, VISOR_PALETTE.blue, VISOR_PALETTE.cyan, VISOR_PALETTE.gold, VISOR_PALETTE.orange, VISOR_PALETTE.coral, VISOR_PALETTE.magenta],
+  light: [VISOR_PALETTE.plum, VISOR_PALETTE.violet, VISOR_PALETTE.lilac, VISOR_PALETTE.violet, VISOR_PALETTE.plum],
+  dark: [VISOR_PALETTE.plum, VISOR_PALETTE.violet, VISOR_PALETTE.lilac, VISOR_PALETTE.violet, VISOR_PALETTE.plum],
 };
 
-export const WAVES_PALETTE = ['#170b25', VISOR_PALETTE.violet, VISOR_PALETTE.blue, VISOR_PALETTE.cyan,
-  VISOR_PALETTE.gold, VISOR_PALETTE.orange, VISOR_PALETTE.coral, VISOR_PALETTE.magenta];
+export const WAVES_PALETTE = [VISOR_PALETTE.plum, VISOR_PALETTE.violet, VISOR_PALETTE.lilac,
+  VISOR_PALETTE.violet, VISOR_PALETTE.plum];

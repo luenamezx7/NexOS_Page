@@ -1,11 +1,11 @@
 .scene { --section-ground: #fdf6ec; position: relative; isolation: isolate; background: var(--section-ground); --color-canvas: var(--section-ground); }
-.scene[data-tone="alternate"] { --section-ground: color-mix(in srgb, var(--visor-cyan) 7%, #fdf6ec); }
-.scene[data-scene="product"] { --section-ground: color-mix(in srgb, var(--visor-gold) 10%, #fdf6ec); }
+.scene[data-tone="alternate"] { --section-ground: color-mix(in srgb, var(--visor-lilac) 7%, #fdf6ec); }
+.scene[data-scene="product"] { --section-ground: color-mix(in srgb, var(--visor-lilac) 10%, #fdf6ec); }
 :global(.dark) .scene { --section-ground: #000; }
 .scenery { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
 .sceneContent { position: relative; }
 .contours { position: absolute; inset: 0; opacity: .42; mask-image: linear-gradient(90deg, #0009, transparent 38%, transparent 62%, #000b); }
-.scene[data-scene="waves"] .scenery { background: radial-gradient(ellipse at 85% 45%, color-mix(in srgb, var(--visor-cyan) 12%, transparent), transparent 65%), radial-gradient(ellipse at 15% 70%, color-mix(in srgb, var(--visor-orange) 10%, transparent), transparent 60%); }
+.scene[data-scene="waves"] .scenery { background: radial-gradient(ellipse at 85% 45%, color-mix(in srgb, var(--visor-lilac) 12%, transparent), transparent 65%), radial-gradient(ellipse at 15% 70%, color-mix(in srgb, var(--visor-violet) 10%, transparent), transparent 60%); }
 :global(.dark) .scene[data-scene="waves"] .scenery { background: none; }
 .fieldImage { position: absolute; inset: -24px; background: url('/nexos-field.svg') center / cover no-repeat; opacity: .24; mask-image: linear-gradient(90deg, #0009, transparent 26%, transparent 72%, #000c); }
 :global(.dark) .fieldImage { background-image: url('/nexos-field-dark.svg'); opacity: .3; }

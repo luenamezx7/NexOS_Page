@@ -32,7 +32,7 @@ export default async function ResetPasswordPage({ searchParams }: { searchParams
       <div className={styles.content}>
       <AuthStory recovery />
       <section className={`${styles.panel} flex flex-col gap-6`} aria-labelledby="reset-link-title">
-        <p className="font-mono text-xs uppercase tracking-widest text-[#be185d]">Recuperação</p>
+        <p className="font-mono text-xs uppercase tracking-widest text-[var(--nex-pink)]">Recuperação</p>
         <h1 id="reset-link-title" className={styles.heading}>Link necessário</h1>
         <p className="text-sm leading-relaxed text-ink/70">
           Para redefinir a senha é preciso o link enviado por e-mail. Ele é de uso único e expira em

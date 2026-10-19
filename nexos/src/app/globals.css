@@ -10,7 +10,7 @@
 
 /* ============================================================
    NexOS — Digital / OLED identity
-   Base: creme #fdf6ec · OLED #000000 · wolf visor spectrum in both themes
+   Base: creme #fdf6ec · OLED #000000 · purple wolf visor in both themes
    Layers: stars 0, content 1, navigation 40–50, dialogs top layer.
    Perf rule: animate ONLY transform + opacity. No giant blurs.
    ============================================================ */
@@ -25,7 +25,7 @@
 
   /* Neutral surfaces shared across both themes. */
   --color-canvas: #fdf6ec;
-  --color-ink: #102d44;
+  --color-ink: #24172f;
   --color-glass: rgba(253, 246, 236, 0.72);
   --color-glass-strong: rgba(253, 246, 236, 0.9);
   --color-card: #faf3e4;
@@ -52,44 +52,38 @@
   --nex-white: #fdf6ec;
   --ui-highlight: 253, 246, 236;
   --ui-highlight-color: #fdf6ec;
-  /* Source: design-/mascote_lobo_header_capuz.svg, gradient #mirror. */
-  --visor-violet: #3328bc;
-  --visor-blue: #005dda;
-  --visor-cyan: #0bd2d3;
-  --visor-mint: #95e9da;
-  --visor-gold: #ffe36b;
-  --visor-orange: #ff913e;
-  --visor-coral: #fc3768;
-  --visor-magenta: #e6008b;
-  --visor-plum: #650c66;
-  --visor-gradient: linear-gradient(105deg, var(--visor-violet) 0%, var(--visor-blue) 14%, var(--visor-cyan) 28%, var(--visor-gold) 43%, var(--visor-orange) 55%, var(--visor-coral) 68%, var(--visor-magenta) 84%, var(--visor-violet) 100%);
-  --visor-text-gradient: linear-gradient(105deg, #005dda 0%, #007a7b 24%, #9a5700 44%, #ba1d47 64%, #b6006e 83%, #3328bc 100%);
-  --nex-pink: var(--visor-blue);
-  --nex-pink-hot: var(--visor-blue);
+  /* Source: glasses in design-/img-ref/mascote_lobo_roxo.svg. */
+  --visor-violet: #971ef4;
+  --visor-lilac: #e873f8;
+  --visor-plum: #34064e;
+  --visor-gradient: linear-gradient(105deg, var(--visor-plum) 0%, var(--visor-violet) 30%, var(--visor-lilac) 50%, var(--visor-violet) 75%, var(--visor-plum) 100%);
+  --visor-text-gradient: linear-gradient(105deg, var(--visor-plum) 0%, var(--visor-violet) 55%, var(--visor-plum) 100%);
+  --nex-pink: var(--visor-violet);
+  --nex-pink-hot: var(--visor-violet);
   --nex-purple: var(--visor-violet);
-  --display-rose: var(--visor-blue);
-  --display-purple: #b6006e;
-  --brand-choice: var(--visor-blue);
-  --brand-secondary: var(--visor-cyan);
-  --mockup-middle: var(--visor-violet);
-  --brand-accent-rgb: 0, 93, 218;
-  --brand-choice-rgb: 0, 93, 218;
-  --brand-secondary-rgb: 11, 210, 211;
-  --star-shadow: var(--visor-cyan);
-  --star-color: var(--visor-blue);
+  --display-rose: var(--visor-violet);
+  --display-purple: var(--visor-plum);
+  --brand-choice: var(--visor-violet);
+  --brand-secondary: var(--visor-lilac);
+  --mockup-middle: var(--visor-plum);
+  --brand-accent-rgb: 151, 30, 244;
+  --brand-choice-rgb: 151, 30, 244;
+  --brand-secondary-rgb: 232, 115, 248;
+  --star-shadow: var(--visor-lilac);
+  --star-color: var(--visor-violet);
   --surface-glass: rgba(250, 243, 228, 0.9);
   --reading-glass: rgba(253, 246, 236, 0.94);
   --reading-glass-border: rgba(255, 255, 255, 0.85);
-  --reading-glass-shadow: inset 0 1px 0 #ffffffa6, 0 12px 36px -28px #102d4440;
+  --reading-glass-shadow: inset 0 1px 0 #ffffffa6, 0 12px 36px -28px #34064e40;
   --field-surface: #faf4ea;
-  --action-gradient: linear-gradient(110deg, #005dda 0%, #3328bc 48%, #c20076 100%);
-  --metallic-veil: linear-gradient(110deg, #005ddae6 0%, #3328bce0 48%, #c20076e6 100%);
+  --action-gradient: linear-gradient(110deg, var(--visor-violet) 0%, var(--visor-plum) 100%);
+  --metallic-veil: linear-gradient(110deg, #971ef4e6 0%, #34064ee6 100%);
   --metallic-static-base: var(--visor-gradient);
   --metallic-static-veil: var(--action-gradient);
-  --metallic-inner-shadow: #082d4955;
-  --header-brand: var(--visor-blue);
-  --commerce-buy: var(--visor-blue);
-  --commerce-buy-hover: var(--visor-violet);
+  --metallic-inner-shadow: #34064e55;
+  --header-brand: var(--visor-violet);
+  --commerce-buy: var(--visor-violet);
+  --commerce-buy-hover: var(--visor-plum);
   --nex-hairline: color-mix(in srgb, var(--color-ink) 12%, transparent);
   --section-indicator: var(--nex-pink-hot);
   --section-indicator-glow: rgba(var(--brand-accent-rgb), 0.32);
@@ -99,56 +93,56 @@
   --text-gradient-end: var(--display-purple);
 
   --nex-gradient-accent: var(--visor-gradient);
-  --nex-gradient-accent-reverse: linear-gradient(105deg, var(--visor-magenta), var(--visor-coral), var(--visor-orange), var(--visor-gold), var(--visor-cyan), var(--visor-blue), var(--visor-violet));
-  --nex-gradient-accent-radial: radial-gradient(ellipse at center, var(--visor-gold) 0%, var(--visor-coral) 25%, var(--visor-magenta) 48%, var(--visor-blue) 72%, transparent 100%);
+  --nex-gradient-accent-reverse: linear-gradient(105deg, var(--visor-lilac), var(--visor-violet), var(--visor-plum));
+  --nex-gradient-accent-radial: radial-gradient(ellipse at center, var(--visor-lilac) 0%, var(--visor-violet) 40%, var(--visor-plum) 72%, transparent 100%);
 
   --ease-fluid: cubic-bezier(0.16, 1, 0.3, 1);
 
   --background: #fdf6ec;
-  --foreground: #102d44;
+  --foreground: var(--color-ink);
   --card: #faf3e4;
-  --card-foreground: #102d44;
+  --card-foreground: var(--color-ink);
   --popover: #fdf6ec;
-  --popover-foreground: #102d44;
-  --primary: var(--visor-blue);
+  --popover-foreground: var(--color-ink);
+  --primary: var(--visor-violet);
   --primary-foreground: #fdf6ec;
-  --secondary: #f5e8d1;
-  --secondary-foreground: #102d44;
-  --muted: #efe0c8;
-  --muted-foreground: #466c88;
-  --accent: #d9f1ee;
-  --accent-foreground: var(--visor-violet);
+  --secondary: color-mix(in srgb, var(--visor-lilac) 10%, var(--color-canvas));
+  --secondary-foreground: var(--color-ink);
+  --muted: color-mix(in srgb, var(--visor-plum) 7%, var(--color-canvas));
+  --muted-foreground: #65516f;
+  --accent: color-mix(in srgb, var(--visor-lilac) 18%, var(--color-canvas));
+  --accent-foreground: var(--visor-plum);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: #e8d4b0;
-  --input: #e0c99e;
-  --ring: var(--visor-blue);
+  --border: color-mix(in srgb, var(--visor-plum) 15%, var(--color-canvas));
+  --input: color-mix(in srgb, var(--visor-plum) 22%, var(--color-canvas));
+  --ring: var(--visor-violet);
   --radius: 0.625rem;
 }
 
 .dark {
-  --nex-pink: #c20076;
-  --nex-pink-hot: var(--visor-magenta);
-  --nex-purple: #8172ff;
-  --brand-choice: var(--visor-magenta);
-  --brand-secondary: var(--visor-cyan);
-  --mockup-middle: var(--visor-violet);
-  --brand-accent-rgb: 230, 0, 139;
-  --brand-choice-rgb: 230, 0, 139;
-  --brand-secondary-rgb: 11, 210, 211;
-  --action-gradient: linear-gradient(110deg, #c20076 0%, #3328bc 48%, #005dda 100%);
-  --metallic-veil: linear-gradient(110deg, #c20076e6 0%, #3328bce0 48%, #005ddae6 100%);
+  --nex-pink: var(--visor-lilac);
+  --nex-pink-hot: var(--visor-lilac);
+  --nex-purple: var(--visor-violet);
+  --brand-choice: var(--visor-lilac);
+  --brand-secondary: var(--visor-violet);
+  --mockup-middle: var(--visor-plum);
+  --brand-accent-rgb: 232, 115, 248;
+  --brand-choice-rgb: 232, 115, 248;
+  --brand-secondary-rgb: 151, 30, 244;
+  --action-gradient: linear-gradient(110deg, var(--visor-violet) 0%, var(--visor-plum) 100%);
+  --metallic-veil: linear-gradient(110deg, #971ef4e6 0%, #34064ee6 100%);
   --metallic-static-base: var(--visor-gradient);
   --metallic-static-veil: var(--action-gradient);
-  --metallic-inner-shadow: #1b001b55;
-  --header-brand: var(--visor-cyan);
-  --commerce-buy: #c20076;
-  --commerce-buy-hover: #a60066;
+  --metallic-inner-shadow: #34064e55;
+  --header-brand: var(--visor-lilac);
+  --commerce-buy: var(--visor-violet);
+  --commerce-buy-hover: color-mix(in srgb, var(--visor-violet) 80%, var(--visor-plum));
   --nex-gradient-accent: var(--visor-gradient);
-  --nex-gradient-accent-radial: radial-gradient(ellipse at center, var(--visor-cyan) 0%, var(--visor-blue) 25%, var(--visor-violet) 48%, var(--visor-magenta) 72%, transparent 100%);
+  --nex-gradient-accent-radial: radial-gradient(ellipse at center, var(--visor-lilac) 0%, var(--visor-violet) 40%, var(--visor-plum) 72%, transparent 100%);
   --ns-muted: #8f8f8f;
-  --display-rose: #eb008d;
-  --display-purple: var(--visor-cyan);
-  --visor-text-gradient: linear-gradient(105deg, #0bd2d3 0%, #95e9da 16%, #ffe36b 33%, #ff913e 48%, #fc3768 65%, #eb008d 82%, #8172ff 100%);
+  --display-rose: var(--visor-lilac);
+  --display-purple: var(--visor-violet);
+  --visor-text-gradient: linear-gradient(105deg, var(--visor-lilac) 0%, var(--visor-violet) 55%, var(--visor-lilac) 100%);
   --star-shadow: #ffffff;
   --star-color: #ffffff;
   --surface-glass: rgba(0, 0, 0, 0.94);
@@ -169,20 +163,20 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: #0c080d;
   --popover-foreground: oklch(0.985 0 0);
-  --primary: #c20076;
-  --primary-foreground: #ffffff;
+  --primary: var(--visor-lilac);
+  --primary-foreground: var(--visor-plum);
   --ui-highlight: 255, 255, 255;
   --ui-highlight-color: #ffffff;
   --secondary: #171018;
   --secondary-foreground: oklch(0.985 0 0);
   --muted: #171018;
   --muted-foreground: oklch(0.708 0 0);
-  --accent: #28152c;
+  --accent: color-mix(in srgb, var(--visor-plum) 60%, var(--color-canvas));
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: var(--visor-cyan);
+  --ring: var(--visor-lilac);
 }
 
 /* Bun's variable font families, served locally. See FONTES.md for sources. */
@@ -330,7 +324,7 @@ body {
 
 ::selection {
   background: var(--nex-pink);
-  color: rgb(var(--ui-highlight));
+  color: var(--primary-foreground);
 }
 
 ::-webkit-scrollbar {
@@ -568,7 +562,7 @@ button {
     0 0 26px rgba(var(--brand-choice-rgb), 0.35);
 }
 
-/* Featured presence (hero CTA): machined gradient + leve brilho rosado.
+/* Featured presence (hero CTA): machined gradient + leve brilho roxo.
    Sem zoom, sem shimmer — só scramble da escrita no hover. */
 .btn-primary-nex--featured {
   padding: 1rem 2.25rem;
@@ -964,12 +958,12 @@ select.field-input option {
    Design read: cinematic manifesto. Variance 4 / motion 6 / density 2.
    Native dialog occupies the top layer; no additional z-index scale is needed. */
 .waves-entry {
-  --entry-ink: #082d49;
+  --entry-ink: var(--visor-plum);
   --entry-background: linear-gradient(155deg, #fdf6ec 0%, #faf3e4 40%, #f5e8d1 72%, #efe0c8 100%);
   --color-canvas: #fdf6ec;
   --color-ink: var(--entry-ink);
-  --star-shadow: var(--visor-cyan);
-  --star-color: var(--visor-blue);
+  --star-shadow: var(--visor-lilac);
+  --star-color: var(--visor-violet);
   position: fixed;
   inset: 0;
   width: 100%;
@@ -1113,10 +1107,10 @@ html:not(.dark) .waves-entry-stars { opacity: 0.28; }
 .day-clouds { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
 .dark .day-clouds { display: none; }
 .sky-cloud { position: absolute; background:
-  radial-gradient(ellipse 26% 45% at 27% 65%, #0bd2d36b 46%, #0bd2d32b 67%, transparent 86%),
-  radial-gradient(ellipse 30% 63% at 49% 47%, #ffe36b70 40%, #ffe36b28 65%, transparent 84%),
-  radial-gradient(ellipse 25% 47% at 73% 66%, #fc37684d 44%, #fc37681f 66%, transparent 86%),
-  radial-gradient(ellipse 63% 25% at 50% 79%, #005dda4d 40%, transparent 82%);
+  radial-gradient(ellipse 26% 45% at 27% 65%, #971ef46b 46%, #971ef42b 67%, transparent 86%),
+  radial-gradient(ellipse 30% 63% at 49% 47%, #e873f870 40%, #e873f828 65%, transparent 84%),
+  radial-gradient(ellipse 25% 47% at 73% 66%, #971ef44d 44%, #971ef41f 66%, transparent 86%),
+  radial-gradient(ellipse 63% 25% at 50% 79%, #34064e4d 40%, transparent 82%);
 }
 .sky-cloud-one { top: 5%; left: -18%; width: 85%; height: 40%; transform: rotate(-8deg); }
 .sky-cloud-two { right: -20%; bottom: 2%; width: 80%; height: 40%; transform: rotate(7deg); opacity: 0.85; }
