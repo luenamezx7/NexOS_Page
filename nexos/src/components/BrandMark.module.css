@@ -1,6 +1,15 @@
 .mark { display: inline-flex; align-items: center; gap: 8px; color: var(--color-ink); white-space: nowrap; }
 .mascot { display: block; width: 46px; height: 46px; flex-shrink: 0; object-fit: contain; }
 .wordmark { display: block; color: #000; font: 400 64px/46px var(--font-brand-logo), sans-serif; letter-spacing: 0; font-synthesis: none; transform: translateY(-.1em); }
+.wordmark, .mascot { transform-origin: center; transition: scale 280ms var(--ease-fluid), color 700ms ease; }
 :global(.dark) .wordmark { color: var(--color-ink); }
+@media (hover: hover) and (pointer: fine) {
+  .mark .wordmark:hover { scale: 1.04; color: var(--header-brand); }
+  .mark .mascot:hover { scale: 1.07; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wordmark, .mascot { transition: none; }
+  .mark .wordmark:hover, .mark .mascot:hover { scale: none; }
+}
 @media (max-width: 767px) { .mark { gap: 5px; } .mascot { width: 28px; height: 28px; } .wordmark { font-size: 42px; line-height: 28px; } }
 @media (max-width: 359px) { .mark { gap: 4px; } .mascot { width: 24px; height: 24px; } .wordmark { font-size: 35px; line-height: 24px; } }
