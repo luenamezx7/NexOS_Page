@@ -43,7 +43,7 @@ for (const theme of ['light', 'dark']) {
     if (theme === 'dark') {
       await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(0, 0, 0)');
       await expect(page.locator('.hero-ascii')).toHaveCSS('background-color', 'rgb(0, 0, 0)');
-      await expect(page.locator('.hero-ascii')).toHaveCSS('background-image', 'none');
+      await expect(page.locator('.hero-ascii')).toHaveCSS('background-image', /radial-gradient/);
       const scenes = await page.locator('[data-tone]').all();
       for (const scene of scenes) {
         await expect(scene).toHaveCSS('background-image', 'none');
