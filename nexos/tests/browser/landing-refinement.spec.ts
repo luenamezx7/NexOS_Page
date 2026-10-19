@@ -42,7 +42,7 @@ test('hero owns ASCII, light waves alternate, and dark surfaces follow the theme
   expect(light[0]).not.toBe(light[1]);
   await page.getByRole('button', { name: 'Ativar modo escuro' }).click();
   await expect(page.locator('html')).toHaveClass(/dark/);
-  await expect.poll(async () => (await backgrounds())[0]).toBe('rgb(0, 0, 0)');
+  await expect.poll(async () => (await backgrounds())[1]).toBe('rgb(0, 0, 0)');
   const dark = await backgrounds();
   expect(dark[1]).not.toBe(dark[0]);
   expect(dark[1]).not.toBe(light[1]);

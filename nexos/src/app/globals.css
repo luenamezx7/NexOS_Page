@@ -33,6 +33,7 @@
 
 .dark {
   --color-canvas: #000000;
+  --section-rose-dark: color-mix(in srgb, var(--visor-magenta) 8%, #000);
   --color-ink: #f9f3fa;
   --color-glass: rgba(0, 0, 0, 0.72);
   --color-glass-strong: rgba(0, 0, 0, 0.9);

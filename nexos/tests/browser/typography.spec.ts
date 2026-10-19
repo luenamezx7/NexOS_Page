@@ -44,8 +44,12 @@ for (const theme of ['light', 'dark']) {
       await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(0, 0, 0)');
       await expect(page.locator('.hero-ascii')).toHaveCSS('background-color', 'rgb(0, 0, 0)');
       await expect(page.locator('.hero-ascii')).toHaveCSS('background-image', 'none');
-      for (const scene of await page.locator('[data-tone]').all()) {
-        await expect(scene).toHaveCSS('background-color', 'rgb(0, 0, 0)');
+      const scenes = await page.locator('[data-tone]').all();
+      for (const [index, scene] of scenes.entries()) {
+        await expect(scene).toHaveAttribute('data-dark-tone', index % 2 === 0 ? 'alternate' : 'base');
+        await expect(scene).toHaveCSS('background-image', 'none');
+        if (index % 2 === 1) await expect(scene).toHaveCSS('background-color', 'rgb(0, 0, 0)');
+        else await expect(scene).not.toHaveCSS('background-color', 'rgb(0, 0, 0)');
       }
       for (const scenery of await page.locator('[data-scene="waves"] > [aria-hidden="true"], [data-scene="product"] > [aria-hidden="true"]').all()) {
         await expect(scenery).toHaveCSS('background-image', 'none');
