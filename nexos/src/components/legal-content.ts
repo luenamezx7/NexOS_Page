@@ -53,7 +53,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
       },
       {
         heading: '2. Contratação comercial',
-        body: 'A aquisição de placas e a contratação de desenvolvimento são concluídas diretamente com nosso comercial. Quantidade, personalização, escopo, frete, prazos e condições de pagamento são confirmados durante o atendimento. Os valores apresentados no site orientam a conversa comercial.',
+        body: 'A aquisição de placas e a contratação de desenvolvimento são concluídas diretamente com nosso comercial. Valores, quantidade, personalização, escopo, frete, prazos e condições de pagamento são definidos e confirmados durante o atendimento.',
       },
       {
         heading: '3. Uso aceitável',

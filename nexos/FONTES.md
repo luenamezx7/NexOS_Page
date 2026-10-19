@@ -8,7 +8,7 @@ Conjunto conferido no CSS de https://bun.com/ em 18/10/2026.
 | Títulos de seção | Archivo Variable | Peso 750–800, largura 85%, escala fluida |
 | Subtítulos | Archivo Variable | Peso 650–700, largura 90–100% |
 | Textos corridos, navegação, formulários e botões | Fonte nativa do sistema | Base de 16px, entrelinha 1,65–1,75 |
-| Preços, indicadores, código e rótulos técnicos | Martian Mono Variable | Algarismos tabulares; textos auxiliares com contraste próprio |
+| Quantidades, indicadores, código e rótulos técnicos | Martian Mono Variable | Algarismos tabulares; textos auxiliares com contraste próprio |
 
 Os arquivos WOFF2 são servidos localmente em `public/fonts`, com `font-display: swap`. Apenas Archivo normal e Martian Mono são pré-carregadas; o itálico carrega quando necessário. As licenças SIL Open Font License acompanham os arquivos.
 

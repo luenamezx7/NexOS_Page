@@ -13,7 +13,6 @@ import { BrandMark } from './BrandMark';
 export function ServicePage({ service }: { service: ServicePageContent }) {
   const product = config.services.find(item => item.id === service.productId)!;
   const isPlate = service.productId === 'placa';
-  const price = product.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   const contact = isPlate ? plateCommercialHref() : commercialHref(`Olá! Quero conversar com o comercial sobre ${service.label.toLowerCase()} para meu negócio.`);
   const structuredData = {
     '@context': 'https://schema.org',
@@ -32,13 +31,7 @@ export function ServicePage({ service }: { service: ServicePageContent }) {
         description: service.description,
         image: [siteUrl('/placas/codex-1.png')],
         brand: { '@type': 'Brand', name: config.brand.name },
-        offers: {
-          '@type': 'Offer',
-          url: siteUrl(service.path),
-          price: product.price,
-          priceCurrency: 'BRL',
-          seller: { '@id': siteUrl('/#organization') },
-        },
+        url: siteUrl(service.path),
       } : {
         '@type': 'Service',
         '@id': siteUrl(`${service.path}#service`),
@@ -86,9 +79,8 @@ export function ServicePage({ service }: { service: ServicePageContent }) {
         <section className="topography-glass grid gap-10 rounded-2xl border border-ink/15 bg-ink/[0.03] p-6 md:grid-cols-2 md:p-10" aria-labelledby="preparation-heading">
           <div><h2 id="preparation-heading" className="text-2xl font-semibold">O que preparar</h2><ul className="mt-6 flex flex-col gap-4">{service.preparation.map(item => <li key={item} className="flex items-start gap-3 text-ink/80"><Check size={18} className="mt-1 shrink-0" aria-hidden="true" /><span>{item}</span></li>)}</ul></div>
           <div>
-            <h2 className="text-2xl font-semibold">{isPlate ? 'Preço da placa' : 'Plano Desenvolvimento NexOS'}</h2>
-            <p className="mt-5 text-4xl font-semibold tracking-tight">{price}<span className="ml-2 text-base font-normal text-ink/80">{isPlate ? 'por unidade' : 'por mês'}</span></p>
-            <p className="mt-4 leading-relaxed text-ink/80">{isPlate ? 'Valor de uma unidade. Converse com o comercial para alinhar quantidade, personalização, descontos e frete. A criação de site ou cardápio é contratada separadamente.' : 'O escopo, o prazo, as integrações e os custos de domínio e hospedagem são alinhados antes da contratação. Converse com a NexOS para confirmar se o plano atende ao seu projeto.'}</p>
+            <h2 className="text-2xl font-semibold">Uma proposta para o seu negócio</h2>
+            <p className="mt-4 leading-relaxed text-ink/80">{isPlate ? 'Valores, quantidade, personalização e frete são alinhados diretamente com nosso comercial. Conte onde pretende usar as placas para prepararmos sua proposta. A criação de site ou cardápio é contratada separadamente.' : 'Valores, escopo, prazo, integrações e condições de contratação são alinhados diretamente com nosso comercial. Conte o que seu negócio precisa para prepararmos uma proposta adequada ao seu projeto.'}</p>
             <a href={contact} target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex min-h-11 items-center gap-2 font-medium hover:underline">{isPlate ? 'Adquirir Placa' : 'Conversar sobre o Desenvolvimento NexOS'} <ArrowUpRight size={16} aria-hidden="true" /></a>
           </div>
         </section>

@@ -166,15 +166,16 @@ test('favicon de busca usa o mascote em PNG quadrado e é servido aos crawlers s
   }
 });
 
-test('dados estruturados usam informações e preço do conteúdo visível', async ({ page }) => {
+test('dados estruturados descrevem o produto sem publicar oferta ou preço', async ({ page }) => {
   await page.goto('/placa-nfc');
   const scripts = await page.locator('script[type="application/ld+json"]').allTextContents();
   const entities = scripts.flatMap(text => JSON.parse(text)['@graph']);
   expect(entities.some(item => item['@type'] === 'Organization')).toBe(true);
   expect(entities.some(item => item['@type'] === 'BreadcrumbList')).toBe(true);
   const product = entities.find(item => item['@type'] === 'Product');
-  expect(product.offers.priceCurrency).toBe('BRL');
-  await expect(page.getByText(Number(product.offers.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), { exact: false }).first()).toBeVisible();
+  expect(product.offers).toBeUndefined();
+  expect(product.price).toBeUndefined();
+  await expect(page.locator('main')).not.toContainText(/R\$/);
   expect(product.aggregateRating).toBeUndefined();
 });
 

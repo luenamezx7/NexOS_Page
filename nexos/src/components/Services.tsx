@@ -34,7 +34,7 @@ function ServiceCard({ service }: { service: Service }) {
         <ul className={styles.features}>{service.features.map(feature => <li key={feature}><Check size={16} strokeWidth={2} aria-hidden="true" /><span>{feature}</span></li>)}</ul>
       </div>
       <div className={styles.serviceFooter}>
-        <div><p className={styles.price}>R$ {service.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p><span className={styles.meta}>{featured ? 'por mês' : 'pagamento único'}</span></div>
+        <div><h4 className={styles.commercialHeading}>Uma proposta para o seu projeto.</h4><p className={styles.commercialNote}>Valores e condições são definidos com o comercial, conforme o escopo.</p></div>
         <div className={styles.serviceAction}>
           <a href={commercialHref('Olá! Tenho interesse no Desenvolvimento NexOS. Quero conversar sobre o objetivo do meu projeto, escopo, prazos e condições de contratação.')} target="_blank" rel="noopener noreferrer" className={`${styles.buyButton} btn-primary-nex`}><MetallicSurface /><span className="metallic-content inline-flex items-center gap-2">{service.ctaText}<ArrowUpRight size={16} aria-hidden="true" /></span></a>
           <p className={styles.hint}>Conte sua ideia ao comercial. Alinhamos escopo, prazo e condições antes de fechar.</p>

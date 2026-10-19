@@ -91,14 +91,14 @@ test('stage 4: plate showcase and services stay clear at every breakpoint', asyn
   await expect(showcase.getByRole('group', { name: 'Prévias visuais da placa' }).getByRole('radio')).toHaveCount(3);
   await expect(showcase.getByRole('heading', { name: 'Seu próximo contato.' })).toBeVisible();
 
-  const total = showcase.getByTestId('plate-total');
-  await expect(total).toHaveText(/R\$\s?69,90/);
+  const quantity = showcase.getByRole('status', { name: 'Quantidade selecionada' });
+  await expect(quantity).toHaveText('1');
   await showcase.getByRole('button', { name: 'Aumentar quantidade' }).click();
   await showcase.getByRole('button', { name: 'Aumentar quantidade' }).click();
   await showcase.getByRole('button', { name: 'Aumentar quantidade' }).click();
-  await expect(total).toHaveText(/R\$\s?279,60/);
+  await expect(quantity).toHaveText('4');
   await showcase.getByRole('button', { name: 'Diminuir quantidade' }).click();
-  await expect(total).toHaveText(/R\$\s?209,70/);
+  await expect(quantity).toHaveText('3');
   await expect(showcase.getByRole('link', { name: 'Adquirir Placa' })).toBeVisible();
   await expect(showcase.getByRole('link', { name: /Personalizar minha placa/ })).toBeVisible();
 

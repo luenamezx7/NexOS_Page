@@ -70,18 +70,19 @@ test('demonstration charts change period and product/service timeline changes it
 test('illustrative plate cards stay visible while quantity and commercial message stay tied to the real catalog', async ({ page }) => {
   await openLanding(page, 'light');
   const showcase = page.locator('#showcase');
-  const total = showcase.getByTestId('plate-total');
-  await expect(total).toHaveText(/69,90/);
+  const quantity = showcase.getByRole('status', { name: 'Quantidade selecionada' });
+  await expect(quantity).toHaveText('1');
+  await expect(showcase).not.toContainText(/R\$/);
   await showcase.getByRole('button', { name: 'Aumentar quantidade' }).click();
   const commercial = showcase.getByRole('link', { name: 'Adquirir Placa' });
   const href = await commercial.getAttribute('href');
   expect(new URL(href!).searchParams.get('text')).toContain('2 Placas Inteligentes NexOS');
-  await expect(total).toHaveText(/139,80/);
+  await expect(quantity).toHaveText('2');
   await expect(showcase.locator('img')).toHaveCount(0);
   await expect(showcase.getByRole('group', { name: 'Prévias visuais da placa' }).getByRole('radio')).toHaveCount(3);
   await showcase.getByRole('radio', { name: /Violeta digital/ }).check();
   await expect(showcase).toContainText('Violeta digital: prévia ilustrativa');
-  await expect(total).toHaveText(/139,80/);
+  await expect(quantity).toHaveText('2');
   await expect(commercial).toHaveAttribute('href', href!);
   await showcase.getByRole('button', { name: 'Explorar placa em preview 3D' }).click();
   const dialog = page.getByRole('dialog', { name: 'Explore a placa.' });

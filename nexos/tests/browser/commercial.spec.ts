@@ -16,9 +16,21 @@ test('service detail CTAs lead directly to the commercial team', async ({ page }
   for (const path of ['/placa-nfc', '/criacao-de-sites', '/landing-pages', '/cardapio-digital']) {
     await page.goto(path);
     await expect(page.locator('a[href*="/checkout"]')).toHaveCount(0);
+    await expect(page.locator('main')).not.toContainText(/R\$|por mês|por unidade/);
     const action = page.getByRole('link', { name: path === '/placa-nfc' ? 'Adquirir Placa' : 'Falar com o comercial', exact: true }).first();
     await expect(action).toHaveAttribute('href', /^https:\/\/wa.me\//);
   }
+});
+
+test('landing offers have no public prices and quantity is sent to commercial', async ({ page }) => {
+  await page.goto('/#showcase');
+  await expect(page.getByRole('button', { name: 'Aumentar quantidade' })).toBeEnabled();
+  await expect(page.locator('main')).not.toContainText(/R\$|por mês|por unidade|desconto aplicado/);
+  await expect(page.getByTestId('plate-total')).toHaveCount(0);
+  await expect(page.locator('#services')).toContainText('Valores e condições são definidos com o comercial');
+  await page.getByRole('button', { name: 'Aumentar quantidade' }).click();
+  const href = await page.getByRole('link', { name: 'Adquirir Placa', exact: true }).getAttribute('href');
+  expect(new URL(href!).searchParams.get('text')).toContain('2 Placas Inteligentes NexOS');
 });
 
 for (const theme of ['light', 'dark']) {

@@ -21,7 +21,7 @@ for (const theme of ['light', 'dark']) {
     const roles = await page.evaluate(() => {
       const title = getComputedStyle(document.querySelector('#showcase-title')!);
       const body = getComputedStyle(document.querySelector('#showcase-title + p')!);
-      const price = getComputedStyle(document.querySelector('[data-testid="plate-total"]')!);
+      const quantity = getComputedStyle(document.querySelector('#showcase output')!);
       const rgb = (value: string) => (value.match(/[\d.]+/g) ?? []).slice(0, 3).map(channel => Number(channel) * (value.startsWith('color(srgb ') ? 255 : 1));
       const luminance = (value: number[]) => value.map(channel => channel / 255).map(channel => channel <= .04045 ? channel / 12.92 : ((channel + .055) / 1.055) ** 2.4).reduce((sum, channel, index) => sum + channel * [.2126, .7152, .0722][index], 0);
       const sample = document.createElement('span');
@@ -30,10 +30,10 @@ for (const theme of ['light', 'dark']) {
       const bg = luminance(rgb(getComputedStyle(sample).color));
       const fg = luminance(rgb(body.color));
       sample.remove();
-      return { titleFamily: title.fontFamily, titleSize: parseFloat(title.fontSize), bodyFamily: body.fontFamily, bodySize: parseFloat(body.fontSize), priceFamily: price.fontFamily, contrast: (Math.max(bg, fg) + .05) / (Math.min(bg, fg) + .05), archivoLoaded: document.fonts.check('800 48px "Archivo"', 'Conexões à sua marca'), monoLoaded: document.fonts.check('600 28px "Martian Mono"', 'R$ 69,90') };
+      return { titleFamily: title.fontFamily, titleSize: parseFloat(title.fontSize), bodyFamily: body.fontFamily, bodySize: parseFloat(body.fontSize), quantityFamily: quantity.fontFamily, contrast: (Math.max(bg, fg) + .05) / (Math.min(bg, fg) + .05), archivoLoaded: document.fonts.check('800 48px "Archivo"', 'Conexões à sua marca'), monoLoaded: document.fonts.check('400 16px "Martian Mono"', '12345') };
     });
     expect(roles.titleFamily).toContain('Archivo');
-    expect(roles.priceFamily).toContain('Martian Mono');
+    expect(roles.quantityFamily).toContain('Martian Mono');
     expect(roles.bodyFamily).toContain('system-ui');
     expect(roles.titleSize).toBeGreaterThan(roles.bodySize * 1.8);
     expect(roles.bodySize).toBeGreaterThanOrEqual(17);

@@ -124,7 +124,7 @@ export const servicePages = {
       { question: 'Funciona em qualquer celular?', answer: 'A aproximação exige um aparelho compatível com NFC e com o recurso habilitado. O QR Code oferece uma alternativa para celulares com câmera e leitura de códigos. Abrir o link depende de acesso à internet.' },
       { question: 'Posso escolher o link da placa?', answer: 'Sim. A placa pode direcionar para o endereço combinado com a NexOS, como WhatsApp, cardápio, portfólio ou redes sociais. Alinhe o destino e a personalização antes da produção.' },
       { question: 'A compra inclui a criação de um site?', answer: 'Não. A placa compartilha um link. O desenvolvimento de site ou cardápio digital é um serviço separado, caso você ainda precise criar o endereço de destino.' },
-      { question: 'Há desconto para várias unidades?', answer: 'A home permite selecionar até 50 unidades e apresenta faixas de desconto a partir de 10. Confira o preço por unidade, o total e o frete antes de pagar.' },
+      { question: 'Como solicito uma proposta para várias unidades?', answer: 'Selecione a quantidade desejada na home e fale com nosso comercial pelo WhatsApp. Valores, personalização, frete e condições são alinhados durante o atendimento.' },
     ],
   },
 } satisfies Record<string, ServicePageContent>;
