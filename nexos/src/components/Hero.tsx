@@ -27,8 +27,6 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
           gradientOpacity={0.5} glyphOpacity={1} glow={theme === 'dark' ? 1.1 : 0.4} grain={0.025}
           flicker={0.16} speed={0.65} flow={0.55} dpr={1} maxFPS={30} visibilityMargin="-96px 0px 0px" />}
         <div className="hero-readability" />
-        {!entryOpen && <GradualBlur position="top" height="16rem" strength={2.2} layers={32} curve="ease-in-out" saturation={1.5} tint="#FFFFFF" />}
-        {!entryOpen && <GradualBlur position="bottom" height="16rem" strength={2.2} layers={32} curve="ease-in-out" saturation={1.5} tint="#FFFFFF" />}
       </div>
       <div className="hero-container">
         <motion.div className="hero-copy" initial={reduce ? false : 'hidden'} animate={entryOpen ? 'hidden' : 'show'}
