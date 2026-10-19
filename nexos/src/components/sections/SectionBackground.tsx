@@ -23,7 +23,7 @@ export function SectionBackground({
   const entryOpen = usePresentationActive();
 
   return (
-    <div ref={ref} className={styles.scene} data-tone={index % 2 ? 'alternate' : 'base'} data-dark-tone={index % 2 ? 'base' : 'alternate'} data-scene={scene}>
+    <div ref={ref} className={styles.scene} data-tone={index % 2 ? 'alternate' : 'base'} data-scene={scene}>
       <div className={styles.scenery} aria-hidden="true">
         {scene === 'waves' && theme === 'light' && near && !entryOpen && (
           <Topography {...TOPOGRAPHY_PALETTE} lightMode

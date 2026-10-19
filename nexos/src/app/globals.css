@@ -33,7 +33,6 @@
 
 .dark {
   --color-canvas: #000000;
-  --section-rose-dark: color-mix(in srgb, var(--visor-magenta) 8%, #000);
   --color-ink: #f9f3fa;
   --color-glass: rgba(0, 0, 0, 0.72);
   --color-glass-strong: rgba(0, 0, 0, 0.9);
@@ -934,7 +933,9 @@ select.field-input option {
 .landing-hero { position: relative; isolation: isolate; display: flex; align-items: center; min-height: min(900px, 100svh); overflow: hidden; background: var(--color-canvas); }
 .hero-ascii { position: absolute; inset: 0; z-index: -1; background: radial-gradient(ellipse at 50% 10%, rgba(var(--brand-secondary-rgb), 0.3), transparent 70%); }
 .dark .hero-ascii { background: #000; }
+.dark .hero-ascii .gradient-ascii-canvas { filter: brightness(1.6) saturate(1.1); }
 .hero-readability { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 48%, color-mix(in srgb, var(--color-canvas) 96%, transparent) 8%, color-mix(in srgb, var(--color-canvas) 88%, transparent) 30%, transparent 78%); pointer-events: none; }
+.dark .hero-readability { background: radial-gradient(ellipse at 50% 44%, #000e6 0%, #000bf 22%, #00059 45%, transparent 70%); }
 .hero-container { position: relative; width: 100%; max-width: 1280px; margin-inline: auto; padding: 160px 40px 104px; }
 .hero-copy { max-width: 1000px; margin-inline: auto; text-align: center; }
 .hero-eyebrow { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 28px; color: var(--landing-muted); font: 11px var(--font-mono); letter-spacing: .12em; }

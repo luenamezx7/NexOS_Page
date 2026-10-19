@@ -45,11 +45,9 @@ for (const theme of ['light', 'dark']) {
       await expect(page.locator('.hero-ascii')).toHaveCSS('background-color', 'rgb(0, 0, 0)');
       await expect(page.locator('.hero-ascii')).toHaveCSS('background-image', 'none');
       const scenes = await page.locator('[data-tone]').all();
-      for (const [index, scene] of scenes.entries()) {
-        await expect(scene).toHaveAttribute('data-dark-tone', index % 2 === 0 ? 'alternate' : 'base');
+      for (const scene of scenes) {
         await expect(scene).toHaveCSS('background-image', 'none');
-        if (index % 2 === 1) await expect(scene).toHaveCSS('background-color', 'rgb(0, 0, 0)');
-        else await expect(scene).not.toHaveCSS('background-color', 'rgb(0, 0, 0)');
+        await expect(scene).toHaveCSS('background-color', 'rgb(0, 0, 0)');
       }
       for (const scenery of await page.locator('[data-scene="waves"] > [aria-hidden="true"], [data-scene="product"] > [aria-hidden="true"]').all()) {
         await expect(scenery).toHaveCSS('background-image', 'none');
@@ -61,6 +59,9 @@ for (const theme of ['light', 'dark']) {
       await page.locator('#hero').scrollIntoViewIfNeeded();
       await expect(page.locator('#hero canvas')).toBeVisible();
     }
+    await page.locator('#hero').scrollIntoViewIfNeeded();
+    await expect(page.locator('#hero .gradient-ascii-canvas')).toHaveAttribute('data-motion', 'static');
+    await page.locator('#hero').screenshot({ path: `test-results/type-hero-${theme}.png` });
 
     for (const width of [320, 390, 768, 1440]) {
       await page.setViewportSize({ width, height: 900 });

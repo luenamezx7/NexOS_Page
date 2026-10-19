@@ -44,7 +44,7 @@ test('hero owns ASCII, light waves alternate, and dark surfaces follow the theme
   await expect(page.locator('html')).toHaveClass(/dark/);
   await expect.poll(async () => (await backgrounds())[1]).toBe('rgb(0, 0, 0)');
   const dark = await backgrounds();
-  expect(dark[1]).not.toBe(dark[0]);
+  expect(dark.every(color => color === 'rgb(0, 0, 0)')).toBe(true);
   expect(dark[1]).not.toBe(light[1]);
   await expect(page.locator('[data-scene="waves"] canvas')).toHaveCount(0);
 });

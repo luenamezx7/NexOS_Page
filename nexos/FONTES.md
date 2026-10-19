@@ -27,4 +27,4 @@ Os papéis e tamanhos compartilhados ficam em `src/app/globals.css`. Os módulos
 
 As linhas e campos de cor continuam nas áreas visuais e nas bordas. Na placa, a textura concentra-se à esquerda e o conteúdo comercial recebe uma proteção suave de leitura. Superfícies de conteúdo nas páginas internas são mais opacas nos dois temas, preservando o fundo ao redor delas.
 
-No tema escuro, o hero e as seções alternam entre preto puro (`#000`) e um rosa profundo sólido (`--section-rose-dark`: 8% do magenta da viseira misturado ao preto), sem manchas radiais de cor. As linhas, estrelas, cards e animações coloridas permanecem; `public/nexos-field-dark.svg` mantém o desenho vetorial sem o halo preenchido da versão clara.
+No tema escuro, o hero e todas as seções usam preto puro (`#000`), sem faixas rosadas ou manchas radiais de cor. Divisórias discretas e espaçamento separam o conteúdo. As linhas, estrelas, cards e animações coloridas permanecem; `public/nexos-field-dark.svg` mantém o desenho vetorial sem o halo preenchido da versão clara.

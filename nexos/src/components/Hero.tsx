@@ -23,9 +23,9 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
     <section ref={ref} id="hero" tabIndex={-1} aria-labelledby="hero-title" className={`landing-hero ${className}`}>
       <div className="hero-ascii" aria-hidden="true">
         {!entryOpen && <GradientASCII colors={HERO_PALETTES[theme]} lightMode={theme === 'light'}
-          shape="horizon" characters=" =+xX0S8#@" cellSize={18} density={0.75}
-          gradientOpacity={theme === 'dark' ? 0 : 0.5} glyphOpacity={0.7} glow={0.15} grain={0.025}
-          flicker={0.1} speed={0.45} flow={0.4} dpr={1} maxFPS={30} visibilityMargin="-96px 0px 0px" />}
+          shape="horizon" characters=" =+xX0S8#@" cellSize={18} density={0.88}
+          gradientOpacity={theme === 'dark' ? 0 : 0.5} glyphOpacity={1} glow={theme === 'dark' ? 1.1 : 0.4} grain={0.025}
+          flicker={0.16} speed={0.65} flow={0.55} dpr={1} maxFPS={30} visibilityMargin="-96px 0px 0px" />}
         <div className="hero-readability" />
         {!entryOpen && <GradualBlur height="7rem" strength={1.1} layers={6} curve="bezier" saturation={1.15} tint="var(--color-canvas)" />}
       </div>
