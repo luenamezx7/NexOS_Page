@@ -87,7 +87,8 @@ test('stage 4: plate showcase and services stay clear at every breakpoint', asyn
 
   const showcase = page.locator('#showcase');
   await expect(showcase).toBeVisible();
-  await expect(showcase.getByRole('img', { name: /Placa Inteligente NexOS/ })).toBeVisible();
+  await expect(showcase.locator('img')).toHaveCount(0);
+  await expect(showcase.getByRole('group', { name: 'Prévias visuais da placa' }).getByRole('radio')).toHaveCount(3);
   await expect(showcase.getByRole('heading', { name: 'Seu próximo contato.' })).toBeVisible();
 
   const total = showcase.getByTestId('plate-total');

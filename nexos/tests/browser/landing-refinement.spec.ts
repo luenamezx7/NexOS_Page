@@ -67,7 +67,7 @@ test('demonstration charts change period and product/service timeline changes it
   await expect(process.getByRole('heading', { name: 'Personalização', exact: true })).toBeVisible();
 });
 
-test('single plate opens identity fan while quantity and commercial message stay tied to the real catalog', async ({ page }) => {
+test('illustrative plate cards stay visible while quantity and commercial message stay tied to the real catalog', async ({ page }) => {
   await openLanding(page, 'light');
   const showcase = page.locator('#showcase');
   const total = showcase.getByTestId('plate-total');
@@ -77,14 +77,12 @@ test('single plate opens identity fan while quantity and commercial message stay
   const href = await commercial.getAttribute('href');
   expect(new URL(href!).searchParams.get('text')).toContain('2 Placas Inteligentes NexOS');
   await expect(total).toHaveText(/139,80/);
-  await showcase.getByRole('button', { name: 'Abrir leque de identidades da placa' }).click();
+  await expect(showcase.locator('img')).toHaveCount(0);
   await expect(showcase.getByRole('group', { name: 'Prévias visuais da placa' }).getByRole('radio')).toHaveCount(3);
   await showcase.getByRole('radio', { name: /Violeta digital/ }).check();
   await expect(showcase).toContainText('Violeta digital: prévia ilustrativa');
   await expect(total).toHaveText(/139,80/);
   await expect(commercial).toHaveAttribute('href', href!);
-  await showcase.getByRole('button', { name: 'Fechar leque' }).click();
-  await expect(showcase.getByRole('button', { name: 'Abrir leque de identidades da placa' })).toBeVisible();
   await showcase.getByRole('button', { name: 'Explorar placa em preview 3D' }).click();
   const dialog = page.getByRole('dialog', { name: 'Explore a placa.' });
   await expect(dialog).toBeVisible();
@@ -125,9 +123,7 @@ for (const theme of ['light', 'dark']) {
         }).map(el => el.textContent?.trim().slice(0, 60)));
         expect(leaks, `${id} @${width}`).toEqual([]);
       }
-      await page.locator('#showcase').getByRole('button', { name: 'Abrir leque de identidades da placa' }).click();
       await page.locator('#showcase').getByRole('radio', { name: /Monocromático/ }).check();
-      await page.getByRole('button', { name: 'Fechar leque' }).click();
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     }
     const blur = page.locator('.landing-edge-blur');
