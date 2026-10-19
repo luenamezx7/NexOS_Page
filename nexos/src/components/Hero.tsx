@@ -27,8 +27,9 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
           gradientOpacity={0.5} glyphOpacity={1} glow={theme === 'dark' ? 1.1 : 0.4} grain={0.025}
           flicker={0.16} speed={0.65} flow={0.55} dpr={1} maxFPS={30} visibilityMargin="-96px 0px 0px" />}
         <div className="hero-readability" />
-        {!entryOpen && <GradualBlur position="top" height="10rem" strength={1.4} layers={24} curve="bezier" saturation={1.35} tint="var(--color-canvas)" />}
-        {!entryOpen && <GradualBlur position="bottom" height="10rem" strength={1.4} layers={24} curve="bezier" saturation={1.35} tint="var(--color-canvas)" />}
+        {!entryOpen && <GradualBlur position="top" height="16rem" strength={2.2} layers={32} curve="ease-in-out" saturation={1.5} tint="var(--color-canvas)" />}
+        {!entryOpen && <GradualBlur position="bottom" height="16rem" strength={2.2} layers={32} curve="ease-in-out" saturation={1.5} tint="var(--color-canvas)" />}
+        {!entryOpen && <div className="hero-bloom" aria-hidden="true" />}
         {!entryOpen && <div className="hero-glow" aria-hidden="true" />}
       </div>
       <div className="hero-container">
