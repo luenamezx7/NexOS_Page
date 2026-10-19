@@ -4,6 +4,7 @@ Conjunto conferido no CSS de https://bun.com/ em 18/10/2026.
 
 | Função | Família | Tratamento |
 | --- | --- | --- |
+| Logo em texto “nexos” | Raithon Realm | Peso 400, arquivo local OTF, alinhamento óptico com o mascote |
 | Hero e títulos principais | Archivo Variable | Peso 800–850, largura 78–85%, entrelinha curta |
 | Títulos de seção | Archivo Variable | Peso 750–800, largura 85%, escala fluida |
 | Subtítulos | Archivo Variable | Peso 650–700, largura 90–100% |
