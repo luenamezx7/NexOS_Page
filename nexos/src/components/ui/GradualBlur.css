@@ -1,8 +1,7 @@
 .gradual-blur {
   pointer-events: none;
 }
-.gradual-blur[data-hidden="true"] { opacity: 0; }
-.gradual-blur-tint { position: absolute; inset: 0; }
-@media (prefers-reduced-transparency: reduce), (forced-colors: active) {
-  .gradual-blur { display: none; }
+
+.gradual-blur[data-hidden="true"] {
+  opacity: 0;
 }
