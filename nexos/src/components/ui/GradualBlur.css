@@ -1,7 +1,3 @@
 .gradual-blur {
   pointer-events: none;
 }
-
-.gradual-blur[data-hidden="true"] {
-  opacity: 0;
-}

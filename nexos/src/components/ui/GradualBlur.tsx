@@ -31,19 +31,18 @@ const findScroller = (
   vertical: boolean
 ): HTMLElement | Window | null => {
   if (container) {
-    if (typeof container === 'string') return document.querySelector(container) as HTMLElement | null;
+    if (typeof container === 'string') return document.querySelector(container) as HTMLElement | Window | null;
     return 'current' in container ? container.current : container;
   }
   if (target === 'page') return window;
-  const parent = root?.parentElement;
-  if (!parent) return null;
+  const parent = root!.parentElement;
   if (!parent) return null;
   const scrolls = (node: Element) => {
     const style = getComputedStyle(node);
     return /(auto|scroll|overlay)/.test(vertical ? style.overflowY : style.overflowX);
   };
-  const sibling = Array.from(parent.children).find((child) => child !== root && scrolls(child));
-  return (sibling ?? (scrolls(parent) ? parent : null)) as HTMLElement | Window | null;
+  const sibling = Array.from(parent.children).find((child) => child !== root && scrolls(child)) as HTMLElement | undefined;
+  return sibling || (scrolls(parent) ? parent : null);
 };
 
 interface GradualBlurProps {
@@ -66,7 +65,6 @@ interface GradualBlurProps {
   zIndex?: number;
   className?: string;
   style?: React.CSSProperties;
-  hideAtSelector?: string;
 }
 
 export default function GradualBlur({
@@ -89,7 +87,6 @@ export default function GradualBlur({
   zIndex = 1000,
   className = '',
   style,
-  hideAtSelector,
 }: GradualBlurProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const edge = DIRECTIONS[position] ? position : 'bottom';
@@ -119,7 +116,7 @@ export default function GradualBlur({
         .join(' ');
       const mask = `linear-gradient(${direction}, transparent ${((i / count) * 100).toFixed(2)}%, #000 ${(((i + 1) / count) * 100).toFixed(2)}%)`;
       steps.push({
-        position: 'absolute',
+        position: 'absolute' as React.CSSProperties['position'],
         inset: 0,
         borderRadius: 'inherit',
         backdropFilter: filter,
@@ -139,7 +136,7 @@ export default function GradualBlur({
     const tintMask = `linear-gradient(${direction}, ${stops})`;
     const wash =
       tint && tint !== 'transparent'
-        ? ({
+        ? {
             position: 'absolute' as React.CSSProperties['position'],
             inset: 0,
             borderRadius: 'inherit',
@@ -148,7 +145,7 @@ export default function GradualBlur({
             WebkitMaskImage: tintMask,
             opacity: 'calc(var(--gradual-blur-reveal, 1) * min(var(--gradual-blur-hover, 1), 1))',
             transition: `opacity ${fade}`,
-          } as React.CSSProperties)
+          } as React.CSSProperties
         : null;
     return { steps, wash };
   }, [
@@ -167,13 +164,11 @@ export default function GradualBlur({
   useIsomorphicLayoutEffect(() => {
     const root = rootRef.current;
     if (!root) return undefined;
-    const rootEl = root as HTMLElement;
-
     if (!autoHide) {
-      rootEl.style.removeProperty('--gradual-blur-reveal');
+      root.style.removeProperty('--gradual-blur-reveal');
       return undefined;
     }
-    const scroller = findScroller(container, rootEl, target, vertical);
+    const scroller = findScroller(container, root, target, vertical);
     if (!scroller) return undefined;
     const element = scroller instanceof Element ? scroller : null;
     if (!element && scroller !== window) return undefined;
@@ -195,10 +190,10 @@ export default function GradualBlur({
         : vertical
           ? page.scrollHeight - window.innerHeight
           : page.scrollWidth - window.innerWidth;
-      const box = rootEl.getBoundingClientRect();
+      const box = root.getBoundingClientRect();
       const reach = Math.max(vertical ? box.height : box.width, 1);
       const room = start ? offset : limit - offset;
-      rootEl.style.setProperty('--gradual-blur-reveal', clamp01(room / reach).toFixed(3));
+      root.style.setProperty('--gradual-blur-reveal', clamp01(room / reach).toFixed(3));
     };
 
     update();
@@ -258,22 +253,6 @@ export default function GradualBlur({
       root.style.removeProperty('--gradual-blur-hover');
     };
   }, [hoverIntensity]);
-
-  useEffect(() => {
-    const root = rootRef.current;
-    const selector = hideAtSelector;
-    if (!root || !selector) return;
-    const target = document.querySelector(selector);
-    if (!target) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        root.dataset.hidden = String(entry.isIntersecting);
-      },
-      { threshold: 0 }
-    );
-    observer.observe(target);
-    return () => observer.disconnect();
-  }, [hideAtSelector]);
 
   const depth = toLength(vertical ? height : width ?? height);
   const span = vertical && width != null ? toLength(width) : null;

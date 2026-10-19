@@ -12,6 +12,6 @@ export function LandingPageBlur() {
       zIndex={40} className="landing-header-blur" />
     <GradualBlur target="page" position="bottom" height="clamp(48px, 8vh, 84px)" strength={1.35}
       layers={7} curve="bezier" saturation={1.15} tint="var(--landing-edge-tint)" autoHide hoverIntensity={0.45}
-      hideAtSelector="footer" zIndex={30} className="landing-edge-blur" />
+      zIndex={30} className="landing-edge-blur" />
   </>;
 }
