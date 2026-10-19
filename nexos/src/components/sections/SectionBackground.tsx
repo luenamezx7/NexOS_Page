@@ -5,7 +5,6 @@ import dynamic from 'next/dynamic';
 import { motion, useInView } from 'motion/react';
 import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { useTheme } from '../ThemeProvider';
-import GradualBlur from '../ui/GradualBlur';
 import styles from './Sections.module.css';
 import { usePresentationActive } from '@/lib/use-presentation-active';
 import { TOPOGRAPHY_PALETTE } from '@/lib/brand-palette';
@@ -32,7 +31,6 @@ export function SectionBackground({
         {(scene === 'product' || scene === 'image') && <motion.div className={styles.fieldImage}
           animate={!reduce && visible && !entryOpen ? { x: [0, 18, 0], y: [0, -12, 0] } : { x: 0, y: 0 }}
           transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }} />}
-        {scene !== 'plain' && !entryOpen && <GradualBlur height="6rem" strength={1} layers={6} saturation={1.15} bloom={0.05} tint="var(--section-ground)" zIndex={1} />}
       </div>
       <motion.div className={styles.sceneContent} initial={reduce ? false : { opacity: 0, y: 44 }}
         whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.08 }}

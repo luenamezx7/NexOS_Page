@@ -40,34 +40,17 @@ test('a navegação do header e do indicador chega à seção sem disputa de scr
   await expect.poll(() => page.evaluate(() => scrollY), { timeout: 20000 }).toBeLessThan(4);
 });
 
-test('o gradiente de blur recortado preserva a aparência da composição original', async ({ page }) => {
+test('o gradual blur fica apenas nas bordas da tela, sem blur entre seções', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/#hero');
-  const blur = page.locator('.hero-ascii .gradual-blur');
-  await expect(blur).toBeVisible();
-  await page.evaluate(() => document.fonts.ready);
-  const optimized = await blur.screenshot();
-  await blur.evaluate(root => {
-    const layers = [...root.querySelectorAll<HTMLElement>('[data-gradual-blur-layer]')];
-    layers.forEach((layer, index) => {
-      Object.assign(layer.style, { inset: '0', width: 'auto', height: 'auto', maskImage: `linear-gradient(to bottom, transparent ${index / layers.length * 100}%, #000 ${(index + 1) / layers.length * 100}%)` });
-    });
-  });
-  const original = await blur.screenshot();
-  const difference = await page.evaluate(async ({ a, b }) => {
-    const pixels = async (data: number[]) => {
-      const image = await createImageBitmap(new Blob([new Uint8Array(data)], { type: 'image/png' }));
-      const canvas = new OffscreenCanvas(image.width, image.height);
-      const context = canvas.getContext('2d')!;
-      context.drawImage(image, 0, 0); image.close();
-      return context.getImageData(0, 0, canvas.width, canvas.height).data;
-    };
-    const left = await pixels(a), right = await pixels(b);
-    let delta = 0;
-    for (let i = 0; i < left.length; i++) delta += Math.abs(left[i] - right[i]);
-    return delta / left.length;
-  }, { a: [...optimized], b: [...original] });
-  expect(difference).toBeLessThan(1);
+  await expect(page.locator('.gradual-blur')).toHaveCount(2);
+  await expect(page.locator('.landing-header-blur')).toHaveCSS('position', 'fixed');
+  await expect(page.locator('.landing-edge-blur')).toHaveCSS('position', 'fixed');
+  await expect(page.locator('#hero .gradual-blur, [data-scene] .gradual-blur')).toHaveCount(0);
+  await page.locator('#showcase').scrollIntoViewIfNeeded();
+  await expect(page.locator('.gradual-blur')).toHaveCount(2);
+  const bottom = await page.locator('.landing-edge-blur').boundingBox();
+  expect(bottom!.y + bottom!.height).toBeCloseTo(page.viewportSize()!.height, 0);
 });
 
 for (const theme of ['light', 'dark']) {

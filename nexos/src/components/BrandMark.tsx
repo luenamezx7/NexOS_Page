@@ -1,16 +1,7 @@
 import Image from 'next/image';
-import localFont from 'next/font/local';
+import { raithonRealm } from '@/lib/brand-font';
 import purpleWolf from '../../design-/img-ref/mascote_lobo_roxo.svg';
 import styles from './BrandMark.module.css';
-
-const raithonRealm = localFont({
-  src: '../../design-/FONTES/raithon_realm/Raithon Realm Trial.otf',
-  variable: '--font-brand-logo',
-  weight: '400',
-  style: 'normal',
-  display: 'swap',
-  preload: false,
-});
 
 export function BrandMark() {
   return <span className={`${styles.mark} ${raithonRealm.variable}`}>

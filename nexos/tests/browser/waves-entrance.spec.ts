@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { enterPresentation } from './helpers/presentation';
 
 test.setTimeout(90000);
-const phrase = 'Nexos, a performance que seu business merece.';
+const phrase = 'nexos';
 async function darkTheme(page: Page) { await page.addInitScript(() => localStorage.setItem('nexos-theme', 'dark')); }
 async function monitorDraws(page: Page) {
   await darkTheme(page);

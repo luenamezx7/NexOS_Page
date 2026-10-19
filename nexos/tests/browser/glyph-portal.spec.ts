@@ -11,8 +11,11 @@ for (const width of [1366, 390]) {
     const dialog = page.getByRole('dialog', { name: 'Apresentação NexOS' });
     const portal = dialog.locator('[data-gp-transparent]');
     await expect(portal).toHaveAttribute('data-gp-motion', 'on', { timeout: 15000 });
-    await expect(portal).toHaveAttribute('data-gp-focus', 'N');
-    await expect(dialog.getByRole('heading')).toHaveText('Nexos, a performance que seu business merece.');
+    await expect(portal).toHaveAttribute('data-gp-focus', 'n');
+    await expect(dialog.getByRole('heading')).toHaveText('nexos');
+    const headerFamily = await page.locator('header [class*="wordmark"]').evaluate(element => getComputedStyle(element).fontFamily.split(',')[0]);
+    await expect(dialog.locator('[data-gp-glyph]')).toHaveCSS('font-family', new RegExp(headerFamily.replaceAll('"', '')));
+    await expect(dialog.locator('.waves-entry-title')).toHaveCSS('font-weight', '400');
     await page.screenshot({ path: testInfo.outputPath(`portal-${width}-start.png`) });
     const initialScale = Number(await portal.getAttribute('data-gp-scale'));
     const travel = await portal.evaluate(e => Number.parseFloat(e.style.getPropertyValue('--gp-height')) * 1.5);
@@ -25,6 +28,8 @@ for (const width of [1366, 390]) {
       if (progress >= 0.55) {
         const opacity = await portal.evaluate(e => Number(e.style.getPropertyValue('--gp-scene-opacity')));
         expect(opacity).toBeLessThan(0.3);
+        await expect(page.locator('#hero .gradient-ascii-canvas')).toHaveCount(1);
+        await expect.poll(() => page.locator('.hero-heading').evaluate(element => Number(getComputedStyle(element).opacity))).toBeGreaterThan(0.9);
       }
       expect(Number(await portal.getAttribute('data-gp-scale'))).toBeGreaterThan(initialScale);
       expect(await page.evaluate(() => window.scrollY)).toBe(0);

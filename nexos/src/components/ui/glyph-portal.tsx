@@ -33,6 +33,8 @@ export type GlyphPortalProps = {
   children?: ReactNode;
   /** Scroll travel in visible container heights, clamped to 1–8. */
   scrollLength?: number;
+  /** Fraction of the viewport width reserved for the opening word. */
+  wordWidth?: number;
   fontFamily?: string;
   fontWeight?: number;
   annotations?: boolean;
@@ -101,7 +103,7 @@ function characterList(text: string) {
 }
 
 export default function GlyphPortal({
-  word = "SUBLIME", focusChar, interactive = true, background, front, children, scrollLength = 2.4,
+  word = "SUBLIME", focusChar, interactive = true, background, front, children, scrollLength = 2.4, wordWidth = .84,
   fontFamily = DEFAULT_FONT, fontWeight = 900, annotations = false,
   enterLabel = "Enter section", className, style, onProgress, lines, enabled = true, transparentReveal = false, showEnterLink = true,
 }: GlyphPortalProps) {
@@ -118,6 +120,7 @@ export default function GlyphPortal({
   const characters = characterList(text);
   const length = Number.isFinite(scrollLength) ? clamp(scrollLength, 1, 8) : 2.4;
   const weight = Number.isFinite(fontWeight) ? clamp(fontWeight, 1, 1000) : 900;
+  const widthRatio = Number.isFinite(wordWidth) ? clamp(wordWidth, .25, .95) : .84;
   const hasFront = front != null;
   const q = `:where(#${uid})`;
 
@@ -321,7 +324,7 @@ export default function GlyphPortal({
       if (fontDirty) { ready = readInk(); fontDirty = false; }
       if (!ready) return;
       const wordHeight = linesKey ? H * (H < 480 ? .29 : .23) : hasFront && H < 480 ? Math.min(H * .38, Math.max(24, H - 264)) : H * .38;
-      startScale = Math.min(W * 0.84 / bounds.width, wordHeight / bounds.height);
+      startScale = Math.min(W * widthRatio / bounds.width, wordHeight / bounds.height);
       // The whole viewport fits inside measured ink, even with the small camera bank.
       select(target);
       for (const button of buttons) {
@@ -409,7 +412,7 @@ export default function GlyphPortal({
       choices.removeEventListener("keydown", navigate);
       picker.removeEventListener("change", pick);
     };
-  }, [text, focusChar, interactive, fontFamily, weight, length, clipId, hasFront, enabled, linesKey, transparentReveal, maskId]);
+  }, [text, focusChar, interactive, fontFamily, weight, widthRatio, length, clipId, hasFront, enabled, linesKey, transparentReveal, maskId]);
 
   return (
     <section ref={sectionRef} id={uid} className={className} aria-label={text} data-gp-transparent={transparentReveal ? "true" : undefined}

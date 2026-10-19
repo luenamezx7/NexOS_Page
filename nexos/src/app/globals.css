@@ -954,11 +954,10 @@ select.field-input option {
 .intro-copy h1 { font-size: clamp(32px, min(6.1vw, 8dvh), 84px); font-weight: 600; line-height: 1.1; letter-spacing: -0.055em; }
 .intro-copy p { margin-top: 28px; font: 12px var(--font-mono); color: var(--muted-foreground); }
 
-/* Waves entry: the wolf visor spectrum, with a readable glass text panel.
-   Design read: cinematic manifesto. Variance 4 / motion 6 / density 2.
+/* Waves entry: the header wordmark, with a scroll-driven portal reveal.
    Native dialog occupies the top layer; no additional z-index scale is needed. */
 .waves-entry {
-  --entry-ink: var(--visor-plum);
+  --entry-ink: #000;
   --entry-background: linear-gradient(155deg, #fdf6ec 0%, #faf3e4 40%, #f5e8d1 72%, #efe0c8 100%);
   --color-canvas: #fdf6ec;
   --color-ink: var(--entry-ink);
@@ -980,10 +979,10 @@ select.field-input option {
   color-scheme: light;
   background: var(--entry-background);
   opacity: 1;
-  transition: opacity 220ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 800ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .dark .waves-entry {
-  --entry-ink: #fff3fa;
+  --entry-ink: #f9f3fa;
   --entry-background: #000;
   --color-canvas: #000;
   --star-shadow: #fff3fa;
@@ -1045,16 +1044,16 @@ html:not(.dark) .waves-entry-stars { opacity: 0.28; }
   text-align: center;
 }
 .waves-entry-title {
-  max-width: 1280px;
+  max-width: 90vw;
   margin: 0;
-  font-family: var(--font-display);
-  font-size: clamp(40px, min(6.4vw, 10dvh), 100px);
-  font-weight: 900;
+  font-family: var(--font-brand-logo), sans-serif;
+  font-size: clamp(80px, 22vw, 288px);
+  font-weight: 400;
   font-synthesis: none;
-  line-height: 1.04;
-  letter-spacing: -0.065em;
+  line-height: 1;
+  letter-spacing: 0;
   color: var(--color-ink);
-  text-wrap: balance;
+  white-space: nowrap;
   text-shadow: none;
 }
 .waves-entry-title > span { display: block; }
@@ -1067,11 +1066,11 @@ html:not(.dark) .waves-entry-stars { opacity: 0.28; }
 @keyframes waves-entry-reveal { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes waves-entry-title-reveal { from { transform: translateY(18px); } to { transform: translateY(0); } }
 @media (max-width: 767px) {
-  .waves-entry-title { max-width: 560px; font-size: clamp(40px, 7.5vw, 58px); letter-spacing: -0.055em; line-height: 1.08; }
+  .waves-entry-title { font-size: 25.5vw; }
   .waves-entry-content { padding-inline: 24px; gap: 32px; }
 }
 @media (max-height: 480px) {
-  .waves-entry-title { font-size: clamp(32px, 8dvh, 48px); }
+  .waves-entry-title { font-size: min(22vw, 52dvh); }
   .waves-entry-content { gap: 24px; padding-block: 24px; }
 }
 @media (prefers-reduced-motion: reduce) {
