@@ -6,21 +6,22 @@
 :global(.dark) .scene[data-scene="product"] { --section-ground: #000; }
 .scenery { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
 .sceneContent { position: relative; }
-.contours { position: absolute; inset: 0; opacity: .7; mask-image: linear-gradient(90deg, #0005, #000 65%); }
+.contours { position: absolute; inset: 0; opacity: .42; mask-image: linear-gradient(90deg, #0009, transparent 38%, transparent 62%, #000b); }
 .scene[data-scene="waves"] .scenery { background: radial-gradient(ellipse at 85% 45%, color-mix(in srgb, var(--visor-cyan) 12%, transparent), transparent 65%), radial-gradient(ellipse at 15% 70%, color-mix(in srgb, var(--visor-orange) 10%, transparent), transparent 60%); }
 :global(.dark) .scene[data-scene="waves"] .scenery { background: radial-gradient(ellipse at 85% 30%, color-mix(in srgb, var(--visor-cyan) 20%, transparent), transparent 65%), radial-gradient(ellipse at 15% 70%, color-mix(in srgb, var(--visor-magenta) 14%, transparent), transparent 60%); }
-.fieldImage { position: absolute; inset: -24px; background: url('/nexos-field.svg') center / cover no-repeat; opacity: .4; mask-image: linear-gradient(90deg, transparent, #000 55%, #000); }
-:global(.dark) .fieldImage { opacity: .65; }
-.scene[data-scene="product"] .scenery { background: radial-gradient(ellipse at 25% 30%, rgba(var(--brand-accent-rgb), .2), transparent 60%); }
-:global(.dark) .scene[data-scene="product"] .scenery { background: radial-gradient(ellipse at 24% 30%, rgba(var(--brand-secondary-rgb), .28), transparent 65%); }
+.fieldImage { position: absolute; inset: -24px; background: url('/nexos-field.svg') center / cover no-repeat; opacity: .24; mask-image: linear-gradient(90deg, #0009, transparent 26%, transparent 72%, #000c); }
+:global(.dark) .fieldImage { opacity: .3; }
+.scene[data-scene="product"] .fieldImage { opacity: .32; mask-image: linear-gradient(90deg, transparent, #000 12%, #000 30%, transparent 49%); }
+.scene[data-scene="product"] .scenery { background: radial-gradient(ellipse at 12% 22%, rgba(var(--brand-accent-rgb), .16), transparent 45%), radial-gradient(ellipse at 95% 85%, rgba(var(--brand-secondary-rgb), .1), transparent 38%); }
+:global(.dark) .scene[data-scene="product"] .scenery { background: radial-gradient(ellipse at 12% 22%, rgba(var(--brand-secondary-rgb), .18), transparent 42%), radial-gradient(ellipse at 95% 85%, rgba(var(--brand-accent-rgb), .12), transparent 38%); }
 .section { scroll-margin-top: 100px; border-top: 1px solid var(--landing-line); }
 .container { width: min(100%, 1280px); margin-inline: auto; padding: 56px 40px 88px; }
-.eyebrow { display: flex; justify-content: space-between; gap: 16px; padding-bottom: 18px; margin-bottom: 54px; border-bottom: 1px solid var(--landing-line); color: var(--landing-muted); font: 10px var(--font-mono); letter-spacing: .1em; }
-.kicker, .monoLabel { font: 11px var(--font-mono); letter-spacing: .05em; color: var(--landing-muted); }
+.eyebrow { display: flex; justify-content: space-between; gap: 16px; padding-bottom: 18px; margin-bottom: 48px; border-bottom: 1px solid var(--landing-line); color: var(--text-tertiary); font: 500 var(--type-label)/1.6 var(--font-mono); letter-spacing: .04em; }
+.kicker, .monoLabel { font: 500 var(--type-label)/1.6 var(--font-mono); letter-spacing: .04em; color: var(--text-tertiary); }
 .kicker { margin-bottom: 18px; }
-.heading { font-size: clamp(32px, 3.7vw, 52px); font-weight: 700; letter-spacing: -.045em; line-height: 1.08; text-wrap: balance; }
+.heading { font-size: var(--type-section); font-weight: 800; font-stretch: 85%; letter-spacing: -.025em; line-height: 1.06; text-wrap: balance; }
 .heading > span { background: var(--visor-text-gradient); background-clip: text; -webkit-background-clip: text; color: transparent; }
-.lead { margin-top: 22px; max-width: 51ch; color: var(--landing-muted); font-size: 16px; line-height: 1.7; text-wrap: pretty; }
+.lead { margin-top: 24px; max-width: 51ch; color: var(--landing-muted); font-size: var(--type-lead); line-height: 1.7; text-wrap: pretty; }
 .textLink { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; font: 12px var(--font-mono); margin-top: 22px; }
 .textLink svg { transition: transform .25s var(--ease-fluid); }
 .textLink:hover { color: var(--landing-accent); }
@@ -42,8 +43,8 @@
 .featureGrid article:first-child { border-left: 0; padding-left: 0; }
 .featureGrid article:last-child { padding-right: 0; }
 .featureTop { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; color: var(--landing-accent); font: 10px var(--font-mono); }
-.featureGrid h3 { max-width: 22ch; font-size: 22px; line-height: 1.2; }
-.featureGrid p { font-size: 14px; margin-top: 12px; max-width: 37ch; color: var(--landing-muted); }
+.featureGrid h3 { max-width: 22ch; font-size: 24px; font-weight: 700; line-height: 1.2; }
+.featureGrid p { font-size: var(--type-body); line-height: 1.7; margin-top: 14px; max-width: 37ch; color: var(--landing-muted); }
 .demoNote { font: 10px/1.6 var(--font-mono); letter-spacing: .025em; color: var(--landing-muted); margin-top: 18px; }
 .metricsGrid { display: grid; grid-template-columns: 1.65fr 1fr; gap: 20px; }
 .chartPanel, .channelPanel { border: 1px solid var(--landing-line); border-radius: 14px; background: color-mix(in srgb, var(--color-canvas) 94%, var(--color-ink)); padding: 28px; min-width: 0; }
@@ -56,7 +57,7 @@
 .segmented label:has(:focus-visible) { outline: 2px solid var(--landing-accent); outline-offset: 3px; }
 .segmented input { position: absolute; width: 1px; height: 1px; opacity: 0; }
 .chartValue { display: flex; align-items: center; gap: 20px; margin-top: 24px; font-variant-numeric: tabular-nums; }
-.chartValue strong { font: 600 52px/1.1 var(--font-display); letter-spacing: -.05em; }
+.chartValue strong { font: 550 46px/1.15 var(--font-mono); font-stretch: 87.5%; letter-spacing: -.04em; }
 .chartValue > span { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; font: 13px var(--font-mono); color: var(--landing-accent); }
 .chartValue small { flex-basis: 100%; font-size: 10px; color: var(--landing-muted); }
 .lineChart { width: 100%; height: auto; display: block; color: var(--landing-accent); margin-top: 24px; overflow: visible; }
@@ -80,17 +81,17 @@
 .stepMarker { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--landing-accent); border-radius: 8px; background: var(--section-ground); color: var(--landing-accent); font: 12px var(--font-mono); margin-bottom: 32px; }
 .stepDetail { display: block; font: 9px var(--font-mono); color: var(--landing-muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 14px; }
 .timeline h3 { font-size: 25px; line-height: 1.2; }
-.timeline p { font-size: 14px; color: var(--landing-muted); margin-top: 14px; }
+.timeline p { font-size: var(--type-body); line-height: 1.7; color: var(--landing-muted); margin-top: 14px; }
 .stepEnd { display: block; color: var(--landing-accent); margin-top: 24px; }
 .processFoot { display: flex; justify-content: space-between; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 24px; font: 11px/1.6 var(--font-mono); color: var(--landing-muted); }
 .processFoot a { display: inline-flex; gap: 8px; align-items: center; min-height: 44px; color: var(--color-ink); }
 .finalCta { padding-bottom: 64px; }
 .ctaLayout { display: flex; align-items: center; justify-content: space-between; gap: 32px; }
-.ctaLayout h2 { font-size: clamp(36px, 5.4vw, 72px); line-height: 1.05; font-weight: 700; letter-spacing: -.05em; }
+.ctaLayout h2 { font-size: clamp(38px, 5.8vw, 80px); line-height: 1.03; font-stretch: 82%; font-weight: 800; letter-spacing: -.025em; }
 .ctaLayout h2 span { background: var(--visor-text-gradient); background-clip: text; -webkit-background-clip: text; color: transparent; }
 .ctaArrow { width: 110px; height: 110px; flex-shrink: 0; color: var(--landing-accent); }
 .ctaBottom { display: flex; justify-content: space-between; align-items: end; gap: 40px; border-top: 1px solid var(--landing-line); margin-top: 48px; padding-top: 32px; }
-.ctaBottom > p { max-width: 40ch; font-size: 15px; color: var(--landing-muted); }
+.ctaBottom > p { max-width: 40ch; font-size: var(--type-lead); line-height: 1.7; color: var(--landing-muted); }
 .ctaActions { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
 .ctaActions :global(.btn-primary-nex) { min-height: 52px; gap: 24px; padding-inline: 24px; border-radius: 8px; font-size: 13px; }
 .ctaActions .textLink { margin-top: 0; font-size: 11px; }
@@ -109,7 +110,8 @@
   .eyebrow > span:last-child { text-align: right; }
   .brandGrid, .splitHeader, .metricsGrid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
   .heading { font-size: clamp(30px, 7.4vw, 42px); }
-  .lead { font-size: 15px; margin-top: 18px; }
+  .lead { font-size: 17px; margin-top: 20px; }
+  .scene[data-scene="product"] .fieldImage { inset: 0 0 auto; height: 540px; mask-image: linear-gradient(to bottom, transparent, #0009 12%, transparent 95%); }
   .connection { min-height: 230px; padding: 22px; }
   .featureGrid { grid-template-columns: minmax(0, 1fr); margin-top: 36px; }
   .featureGrid article, .featureGrid article:first-child, .featureGrid article:last-child { padding: 24px 0; border-left: 0; border-bottom: 1px solid var(--landing-line); }
@@ -118,7 +120,7 @@
   .featureGrid h3, .featureGrid p { max-width: none; }
   .chartTop { align-items: flex-start; }
   .chartPanel, .channelPanel { padding: 20px; }
-  .chartValue strong { font-size: 44px; }
+  .chartValue strong { font-size: 36px; }
   .channelPanel h3 { margin-top: 20px; }
   .lineChart { min-height: 140px; }
   .timeline { grid-template-columns: minmax(0, 1fr); margin-top: 32px; }

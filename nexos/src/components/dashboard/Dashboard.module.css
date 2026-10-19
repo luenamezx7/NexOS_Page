@@ -3,7 +3,7 @@
   --dash-surface: color-mix(in srgb, var(--color-ink) 3%, var(--color-canvas));
   --dash-raised: color-mix(in srgb, var(--color-ink) 5%, var(--color-canvas));
   --dash-line: color-mix(in srgb, var(--color-ink) 14%, transparent);
-  --dash-muted: color-mix(in srgb, var(--color-ink) 62%, transparent);
+  --dash-muted: var(--text-secondary);
   --dash-accent: var(--primary);
   min-height: 100dvh;
    background: transparent;
@@ -48,8 +48,8 @@
 .titleBlock { min-width: 0; }
 .title {
   font-family: var(--font-display);
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 750;
   letter-spacing: -0.02em;
    line-height: 1.2;
    background: var(--visor-text-gradient);
@@ -99,17 +99,16 @@
   border-bottom: 1px solid var(--dash-line);
 }
 .sectionLabel h2 {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: var(--dash-muted);
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--color-ink);
 }
 .sectionLabel span {
   font-family: var(--font-mono);
   font-size: 11px;
-  color: color-mix(in srgb, var(--color-ink) 40%, transparent);
+  color: var(--text-tertiary);
 }
 
 .statusGrid {

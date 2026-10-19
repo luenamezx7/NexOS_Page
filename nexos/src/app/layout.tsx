@@ -1,8 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { headers } from 'next/headers';
 import './globals.css';
-import { Chakra_Petch, Geist, JetBrains_Mono, Space_Grotesk, Space_Mono } from "next/font/google";
-import { cn } from "@/lib/utils";
 import { SmoothScrollProvider } from '@/components/SmoothScrollProvider';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { CookieConsentProvider } from '@/components/cookie-consent';
@@ -11,12 +9,6 @@ import { JsonLd } from '@/components/JsonLd';
 import { config } from '@/config';
 import { PresentationVisitProvider } from '@/components/PresentationVisitProvider';
 import { organizationData, pageMetadata, SITE_URL } from '@/lib/seo';
-
-const geist = Geist({ subsets: ['latin'], variable: '--font-geist', display: 'swap' });
-const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-space', display: 'swap' });
-const terminal = Space_Mono({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-terminal', display: 'swap', preload: false });
-const tech = Chakra_Petch({ subsets: ['latin'], weight: ['500', '600', '700'], variable: '--font-tech', display: 'swap', preload: false });
-const code = JetBrains_Mono({ subsets: ['latin'], variable: '--font-code', display: 'swap', preload: false });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -71,8 +63,10 @@ export default async function RootLayout({
   const themeScriptContent = `(function(){var t;try{t=localStorage.getItem('nexos-theme');}catch(e){}var s=t==='light'||t==='dark'?t:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.classList.toggle('dark',s==='dark');document.documentElement.style.colorScheme='only '+s;var m=document.querySelector('meta[name=color-scheme]');if(m)m.content=s;var n=performance.getEntriesByType('navigation')[0];if(location.pathname==='/'&&n&&n.type==='reload')document.documentElement.dataset.nexosEntryReload='1';if(location.hash&&!document.documentElement.dataset.nexosEntryReload)document.documentElement.dataset.nexosEntrySkip='1';})()`;
 
   return (
-    <html lang="pt-BR" suppressHydrationWarning className={cn("font-sans dark", geist.variable, spaceGrotesk.variable, terminal.variable, tech.variable, code.variable)}>
+    <html lang="pt-BR" suppressHydrationWarning className="font-sans dark">
       <head>
+        <link rel="preload" href="/fonts/archivo-variable.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="/fonts/martian-mono-variable.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <meta name="color-scheme" content="dark" />
         {nonce ? (
           <script nonce={nonce} dangerouslySetInnerHTML={{ __html: themeScriptContent }} />

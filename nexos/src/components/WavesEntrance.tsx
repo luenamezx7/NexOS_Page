@@ -49,8 +49,8 @@ export default function WavesEntrance({ replay, onComplete }: WavesEntranceProps
     let disposed = false, settled = false;
     const choose = (family: string) => { if (!disposed && !settled) { settled = true; setFace(family); } };
     const timer = setTimeout(() => choose('"Arial Black", Arial, sans-serif'), 1600);
-    void document.fonts.load('900 100px "Satoshi"', PHRASE).then(
-      () => choose('"Satoshi", Arial, sans-serif'),
+    void document.fonts.load('900 100px "Archivo"', PHRASE).then(
+      () => choose('"Archivo", Arial, sans-serif'),
       () => choose('"Arial Black", Arial, sans-serif'),
     );
     return () => { disposed = true; clearTimeout(timer); };
@@ -196,7 +196,7 @@ export default function WavesEntrance({ replay, onComplete }: WavesEntranceProps
       }}>
       <GlyphPortal word={PHRASE} lines={mobile ? MOBILE_LINES : DESKTOP_LINES}
         focusChar="N" interactive={false} annotations={false} transparentReveal showEnterLink={false}
-        enabled={Boolean(face) && !reduce} fontFamily={face ?? '"Satoshi", Arial, sans-serif'} fontWeight={900}
+        enabled={Boolean(face) && !reduce} fontFamily={face ?? '"Archivo", Arial, sans-serif'} fontWeight={900}
         scrollLength={1.5} className="waves-entry-portal"
         style={{ '--gp-paper': 'transparent', '--gp-ink': 'var(--entry-ink)', '--gp-field': 'transparent', '--gp-foreground': 'var(--entry-ink)' }}
         onProgress={portalProgress}

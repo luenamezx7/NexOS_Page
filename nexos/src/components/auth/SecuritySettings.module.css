@@ -1,6 +1,6 @@
 .page { max-width: 1120px; margin-inline: auto; padding: 40px 24px 64px; }
 .header { composes: topography-glass topography-glass--copy from global; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: 36px; }
-.header p { max-width: 58ch; font-size: 15px; color: var(--muted-foreground); }
+.header p { max-width: 58ch; font-size: var(--type-body); line-height: 1.75; color: var(--text-secondary); }
 .grid { display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; gap: 24px; }
 .grid > :global([role="alert"]) { grid-column: 1 / -1; }
 .grid form { min-width: 0; }

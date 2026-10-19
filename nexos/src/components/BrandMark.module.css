@@ -1,5 +1,6 @@
 .mark { display: inline-flex; align-items: center; gap: 8px; color: var(--color-ink); white-space: nowrap; }
 .mascot { display: block; width: 46px; height: 46px; flex-shrink: 0; object-fit: contain; }
-.wordmark { display: block; font: 400 64px/46px var(--font-brand-logo), sans-serif; letter-spacing: 0; font-synthesis: none; transform: translateY(.1em); }
+.wordmark { display: block; color: #000; font: 400 64px/46px var(--font-brand-logo), sans-serif; letter-spacing: 0; font-synthesis: none; transform: translateY(.1em); }
+:global(.dark) .wordmark { color: var(--color-ink); }
 @media (max-width: 767px) { .mark { gap: 5px; } .mascot { width: 36px; height: 36px; } .wordmark { font-size: 50px; line-height: 36px; } }
 @media (max-width: 359px) { .mark { gap: 4px; } .mascot { width: 30px; height: 30px; } .wordmark { font-size: 42px; line-height: 30px; } }

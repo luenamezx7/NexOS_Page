@@ -16,7 +16,7 @@
   }
   
   .label {
-    font-family: var(--font-geist, monospace);
+    font-family: var(--font-sans);
     font-size: 0.625rem;
     text-transform: uppercase;
     letter-spacing: 0.15em;
