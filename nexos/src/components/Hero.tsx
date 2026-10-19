@@ -24,7 +24,7 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
       <div className="hero-ascii" aria-hidden="true">
         {!entryOpen && <GradientASCII colors={HERO_PALETTES[theme]} lightMode={theme === 'light'}
           shape="horizon" characters=" =+xX0S8#@" cellSize={18} density={0.75}
-          gradientOpacity={0.5} glyphOpacity={0.7} glow={0.15} grain={0.025}
+          gradientOpacity={theme === 'dark' ? 0 : 0.5} glyphOpacity={0.7} glow={0.15} grain={0.025}
           flicker={0.1} speed={0.45} flow={0.4} dpr={1} maxFPS={30} visibilityMargin="-96px 0px 0px" />}
         <div className="hero-readability" />
         {!entryOpen && <GradualBlur height="7rem" strength={1.1} layers={6} curve="bezier" saturation={1.15} tint="var(--color-canvas)" />}

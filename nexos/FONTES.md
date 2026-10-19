@@ -26,3 +26,5 @@ Os papéis e tamanhos compartilhados ficam em `src/app/globals.css`. Os módulos
 ## Background e leitura
 
 As linhas e campos de cor continuam nas áreas visuais e nas bordas. Na placa, a textura concentra-se à esquerda e o conteúdo comercial recebe uma proteção suave de leitura. Superfícies de conteúdo nas páginas internas são mais opacas nos dois temas, preservando o fundo ao redor delas.
+
+No tema escuro, a base é preto puro (`#000`), sem manchas radiais de cor. As linhas, estrelas, cards e animações coloridas permanecem; `public/nexos-field-dark.svg` mantém o desenho vetorial sem o halo preenchido da versão clara.

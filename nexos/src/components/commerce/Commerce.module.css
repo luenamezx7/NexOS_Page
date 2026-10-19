@@ -36,6 +36,7 @@
 .photoCaption { display: flex; justify-content: space-between; gap: 16px; padding: 16px 20px; color: var(--commerce-muted); font-size: 13px; }
 .photoCaption span { display: flex; align-items: center; gap: 8px; }
 .plateStage { position: relative; overflow: hidden; border: 1px solid var(--commerce-line); border-radius: 16px; background: radial-gradient(ellipse at 50% 35%, color-mix(in srgb, var(--landing-accent, var(--commerce-accent)) 14%, transparent), transparent 65%), color-mix(in srgb, var(--color-canvas) 92%, var(--color-ink)); }
+:global(.dark) .plateStage { background: #000; }
 .stageTop, .stageFoot { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 20px 24px; font: 10px/1.6 var(--font-mono); color: var(--commerce-muted); letter-spacing: .02em; }
 .stageTop { border-bottom: 1px solid var(--commerce-line); }
 .stageFoot { border-top: 1px solid var(--commerce-line); }

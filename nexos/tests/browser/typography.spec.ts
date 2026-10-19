@@ -40,6 +40,23 @@ for (const theme of ['light', 'dark']) {
     expect(roles.contrast).toBeGreaterThanOrEqual(4.5);
     expect(roles.archivoLoaded && roles.monoLoaded).toBe(true);
     await expect(page.locator('[data-scene="product"] [class*="fieldImage"]')).toBeVisible();
+    if (theme === 'dark') {
+      await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(0, 0, 0)');
+      await expect(page.locator('.hero-ascii')).toHaveCSS('background-color', 'rgb(0, 0, 0)');
+      await expect(page.locator('.hero-ascii')).toHaveCSS('background-image', 'none');
+      for (const scene of await page.locator('[data-tone]').all()) {
+        await expect(scene).toHaveCSS('background-color', 'rgb(0, 0, 0)');
+      }
+      for (const scenery of await page.locator('[data-scene="waves"] > [aria-hidden="true"], [data-scene="product"] > [aria-hidden="true"]').all()) {
+        await expect(scenery).toHaveCSS('background-image', 'none');
+      }
+      await expect(page.locator('[data-scene="product"] [class*="fieldImage"]')).toHaveCSS('background-image', /nexos-field-dark\.svg/);
+      const artwork = await page.request.get('/nexos-field-dark.svg');
+      expect(await artwork.text()).not.toContain('radialGradient');
+      await expect(page.locator('#showcase input[name="plate-study"]')).toHaveCount(3);
+      await page.locator('#hero').scrollIntoViewIfNeeded();
+      await expect(page.locator('#hero canvas')).toBeVisible();
+    }
 
     for (const width of [320, 390, 768, 1440]) {
       await page.setViewportSize({ width, height: 900 });

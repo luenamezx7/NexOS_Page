@@ -8,12 +8,12 @@
 .sceneContent { position: relative; }
 .contours { position: absolute; inset: 0; opacity: .42; mask-image: linear-gradient(90deg, #0009, transparent 38%, transparent 62%, #000b); }
 .scene[data-scene="waves"] .scenery { background: radial-gradient(ellipse at 85% 45%, color-mix(in srgb, var(--visor-cyan) 12%, transparent), transparent 65%), radial-gradient(ellipse at 15% 70%, color-mix(in srgb, var(--visor-orange) 10%, transparent), transparent 60%); }
-:global(.dark) .scene[data-scene="waves"] .scenery { background: radial-gradient(ellipse at 85% 30%, color-mix(in srgb, var(--visor-cyan) 20%, transparent), transparent 65%), radial-gradient(ellipse at 15% 70%, color-mix(in srgb, var(--visor-magenta) 14%, transparent), transparent 60%); }
+:global(.dark) .scene[data-scene="waves"] .scenery { background: none; }
 .fieldImage { position: absolute; inset: -24px; background: url('/nexos-field.svg') center / cover no-repeat; opacity: .24; mask-image: linear-gradient(90deg, #0009, transparent 26%, transparent 72%, #000c); }
-:global(.dark) .fieldImage { opacity: .3; }
+:global(.dark) .fieldImage { background-image: url('/nexos-field-dark.svg'); opacity: .3; }
 .scene[data-scene="product"] .fieldImage { opacity: .32; mask-image: linear-gradient(90deg, transparent, #000 12%, #000 30%, transparent 49%); }
 .scene[data-scene="product"] .scenery { background: radial-gradient(ellipse at 12% 22%, rgba(var(--brand-accent-rgb), .16), transparent 45%), radial-gradient(ellipse at 95% 85%, rgba(var(--brand-secondary-rgb), .1), transparent 38%); }
-:global(.dark) .scene[data-scene="product"] .scenery { background: radial-gradient(ellipse at 12% 22%, rgba(var(--brand-secondary-rgb), .18), transparent 42%), radial-gradient(ellipse at 95% 85%, rgba(var(--brand-accent-rgb), .12), transparent 38%); }
+:global(.dark) .scene[data-scene="product"] .scenery { background: none; }
 .section { scroll-margin-top: 100px; border-top: 1px solid var(--landing-line); }
 .container { width: min(100%, 1280px); margin-inline: auto; padding: 56px 40px 88px; }
 .eyebrow { display: flex; justify-content: space-between; gap: 16px; padding-bottom: 18px; margin-bottom: 48px; border-bottom: 1px solid var(--landing-line); color: var(--text-tertiary); font: 500 var(--type-label)/1.6 var(--font-mono); letter-spacing: .04em; }
