@@ -32,7 +32,7 @@ export function SectionBackground({
         {(scene === 'product' || scene === 'image') && <motion.div className={styles.fieldImage}
           animate={!reduce && visible && !entryOpen ? { x: [0, 18, 0], y: [0, -12, 0] } : { x: 0, y: 0 }}
           transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }} />}
-        {scene !== 'plain' && !entryOpen && <GradualBlur height="6rem" strength={1} layers={6} tint="var(--section-ground)" zIndex={1} />}
+        {scene !== 'plain' && !entryOpen && <GradualBlur height="6rem" strength={1} layers={6} saturation={1.15} bloom={0.05} tint="var(--section-ground)" zIndex={1} />}
       </div>
       <motion.div className={styles.sceneContent} initial={reduce ? false : { opacity: 0, y: 44 }}
         whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.08 }}

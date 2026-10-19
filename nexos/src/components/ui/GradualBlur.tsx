@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, type CSSProperties, type RefObject } from 'react';
 
 import './GradualBlur.css';
 
@@ -25,46 +25,52 @@ const toTime = (value: string | number) =>
   typeof value === 'number' ? `${value}s` : value;
 
 const findScroller = (
-  container: string | HTMLElement | { current: HTMLElement | null } | undefined,
-  root: HTMLElement | null,
+  container: GradualBlurProps['container'],
+  root: HTMLElement,
   target: string,
   vertical: boolean
-): HTMLElement | Window | null => {
+): Element | Window | null => {
   if (container) {
-    if (typeof container === 'string') return document.querySelector(container) as HTMLElement | Window | null;
+    if (typeof container === 'string') return document.querySelector(container);
     return 'current' in container ? container.current : container;
   }
   if (target === 'page') return window;
-  const parent = root!.parentElement;
+  const parent = root.parentElement;
   if (!parent) return null;
   const scrolls = (node: Element) => {
     const style = getComputedStyle(node);
     return /(auto|scroll|overlay)/.test(vertical ? style.overflowY : style.overflowX);
   };
-  const sibling = Array.from(parent.children).find((child) => child !== root && scrolls(child)) as HTMLElement | undefined;
+  const sibling = Array.from(parent.children).find((child) => child !== root && scrolls(child));
   return sibling || (scrolls(parent) ? parent : null);
 };
 
-interface GradualBlurProps {
-  position?: keyof typeof DIRECTIONS;
+export type GradualBlurPosition = keyof typeof DIRECTIONS;
+export type GradualBlurCurve = keyof typeof CURVES;
+
+export interface GradualBlurProps {
+  position?: GradualBlurPosition;
   target?: 'parent' | 'page';
   height?: string | number;
   width?: string | number;
   strength?: number;
   layers?: number;
-  curve?: keyof typeof CURVES;
+  curve?: GradualBlurCurve;
   exponential?: boolean;
   opacity?: number;
   saturation?: number;
   tint?: string;
+  /** Subtle luminance lift and a soft colored wash, from 0 (off) to 1. */
+  bloom?: number;
+  bloomColor?: string;
   autoHide?: boolean;
-  container?: string | HTMLElement | { current: HTMLElement | null };
+  container?: Element | string | RefObject<Element | null> | null;
   hoverIntensity?: number;
   duration?: number | string;
   easing?: string;
   zIndex?: number;
   className?: string;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
 }
 
 export default function GradualBlur({
@@ -79,6 +85,8 @@ export default function GradualBlur({
   opacity = 1,
   saturation = 1,
   tint = 'transparent',
+  bloom = 0,
+  bloomColor = 'var(--visor-lilac, #e873f8)',
   autoHide = false,
   container,
   hoverIntensity = 1,
@@ -101,9 +109,11 @@ export default function GradualBlur({
       return maxBlur * (exponential ? (Math.pow(2, 4 * t) - 1) / 15 : t);
     };
     const boost = Math.pow(Math.max(saturation, 0), 1 / count);
+    const bloomAmount = clamp01(bloom);
+    const brightness = Math.pow(1 + bloomAmount, 1 / count);
     const fade = `${toTime(duration)} ${easing}`;
     const direction = DIRECTIONS[edge];
-    const steps: React.CSSProperties[] = [];
+    const steps: CSSProperties[] = [];
     for (let i = 0; i < count; i++) {
       const from = level(i / count);
       const to = level((i + 1) / count);
@@ -111,12 +121,13 @@ export default function GradualBlur({
       const filter = [
         `blur(calc(${radius.toFixed(3)}px * var(--gradual-blur-reveal, 1) * var(--gradual-blur-hover, 1)))`,
         boost !== 1 ? `saturate(calc(1 + ${(boost - 1).toFixed(4)} * var(--gradual-blur-reveal, 1)))` : '',
+        bloomAmount > 0 ? `brightness(calc(1 + ${(brightness - 1).toFixed(4)} * var(--gradual-blur-reveal, 1)))` : '',
       ]
         .filter(Boolean)
         .join(' ');
       const mask = `linear-gradient(${direction}, transparent ${((i / count) * 100).toFixed(2)}%, #000 ${(((i + 1) / count) * 100).toFixed(2)}%)`;
       steps.push({
-        position: 'absolute' as React.CSSProperties['position'],
+        position: 'absolute',
         inset: 0,
         borderRadius: 'inherit',
         backdropFilter: filter,
@@ -134,10 +145,10 @@ export default function GradualBlur({
       return `rgba(0, 0, 0, ${alpha.toFixed(3)}) ${(u * 100).toFixed(1)}%`;
     }).join(', ');
     const tintMask = `linear-gradient(${direction}, ${stops})`;
-    const wash =
+    const wash: CSSProperties | null =
       tint && tint !== 'transparent'
         ? {
-            position: 'absolute' as React.CSSProperties['position'],
+            position: 'absolute',
             inset: 0,
             borderRadius: 'inherit',
             background: tint,
@@ -145,9 +156,20 @@ export default function GradualBlur({
             WebkitMaskImage: tintMask,
             opacity: 'calc(var(--gradual-blur-reveal, 1) * min(var(--gradual-blur-hover, 1), 1))',
             transition: `opacity ${fade}`,
-          } as React.CSSProperties
+          }
         : null;
-    return { steps, wash };
+    // A smooth gradient adds bloom without another large blur/filter pass.
+    const glow: CSSProperties | null = bloomAmount > 0 ? {
+      position: 'absolute',
+      inset: 0,
+      borderRadius: 'inherit',
+      background: `linear-gradient(${direction}, transparent 0%, color-mix(in srgb, ${bloomColor} 35%, transparent) 55%, ${bloomColor} 100%)`,
+      maskImage: tintMask,
+      WebkitMaskImage: tintMask,
+      opacity: `calc(${bloomAmount} * var(--gradual-blur-reveal, 1) * min(var(--gradual-blur-hover, 1), 1.35))`,
+      transition: `opacity ${fade}`,
+    } : null;
+    return { steps, wash, glow };
   }, [
     layers,
     curve,
@@ -159,6 +181,8 @@ export default function GradualBlur({
     edge,
     opacity,
     tint,
+    bloom,
+    bloomColor,
   ]);
 
   useIsomorphicLayoutEffect(() => {
@@ -200,15 +224,16 @@ export default function GradualBlur({
     const source = element ?? window;
     source.addEventListener('scroll', update, { passive: true });
     window.addEventListener('resize', update);
-    const observer = element && typeof ResizeObserver !== 'undefined' ? new ResizeObserver(update) : null;
-    if (observer && element) {
-      observer.observe(element);
-      if (element.firstElementChild) observer.observe(element.firstElementChild);
+    const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(update) : null;
+    if (observer) {
+      observer.observe(element ?? document.documentElement);
+      if (element?.firstElementChild) observer.observe(element.firstElementChild);
     }
     return () => {
       source.removeEventListener('scroll', update);
       window.removeEventListener('resize', update);
       observer?.disconnect();
+      root.style.removeProperty('--gradual-blur-reveal');
     };
   }, [autoHide, container, target, edge, vertical]);
 
@@ -261,7 +286,7 @@ export default function GradualBlur({
   const corner = (a: string, b: string) =>
     rounded && (edge === a || edge === b) ? 'inherit' : undefined;
 
-  const rootStyle: React.CSSProperties = {
+  const rootStyle: CSSProperties = {
     position: target === 'page' ? 'fixed' : 'absolute',
     zIndex,
     borderTopLeftRadius: corner('top', 'left'),
@@ -284,11 +309,13 @@ export default function GradualBlur({
       className={`gradual-blur ${className}`.trim()}
       style={rootStyle}
       aria-hidden="true"
+      data-position={edge}
     >
       {stack.steps.map((layer, index) => (
-        <div key={index} style={layer} />
+        <div key={index} data-gradual-blur-layer style={layer} />
       ))}
-      {stack.wash && <div style={stack.wash} />}
+      {stack.wash && <div className="gradual-blur-tint" style={stack.wash} />}
+      {stack.glow && <div className="gradual-blur-bloom" style={stack.glow} />}
     </div>
   );
 }

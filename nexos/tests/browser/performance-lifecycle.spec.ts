@@ -48,7 +48,7 @@ test('o gradiente de blur recortado preserva a aparência da composição origin
   await page.evaluate(() => document.fonts.ready);
   const optimized = await blur.screenshot();
   await blur.evaluate(root => {
-    const layers = [...root.children].filter(element => !(element as HTMLElement).classList.contains('gradual-blur-tint')) as HTMLElement[];
+    const layers = [...root.querySelectorAll<HTMLElement>('[data-gradual-blur-layer]')];
     layers.forEach((layer, index) => {
       Object.assign(layer.style, { inset: '0', width: 'auto', height: 'auto', maskImage: `linear-gradient(to bottom, transparent ${index / layers.length * 100}%, #000 ${(index + 1) / layers.length * 100}%)` });
     });
@@ -69,6 +69,37 @@ test('o gradiente de blur recortado preserva a aparência da composição origin
   }, { a: [...optimized], b: [...original] });
   expect(difference).toBeLessThan(1);
 });
+
+for (const theme of ['light', 'dark']) {
+  test(`blur com bloom ${theme} reage ao cursor e desaparece no fim da página`, async ({ page }, testInfo) => {
+    await page.addInitScript(theme => localStorage.setItem('nexos-theme', theme), theme);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/#hero');
+    const blur = page.locator('.landing-edge-blur');
+    const bloom = blur.locator('.gradual-blur-bloom');
+    await expect(blur).toBeVisible();
+    await expect(blur.locator('[data-gradual-blur-layer]')).toHaveCount(8);
+    await expect.poll(() => blur.evaluate(root => (root as HTMLElement).style.getPropertyValue('--gradual-blur-reveal'))).toBe('1.000');
+    await expect(bloom).toHaveCSS('opacity', '0.12');
+    await expect(bloom).toHaveCSS('transition-duration', '0s');
+    await expect(blur.locator('[data-gradual-blur-layer]').last()).toHaveCSS('backdrop-filter', /brightness\(1\.0/);
+
+    for (const width of [1366, 390]) {
+      await page.setViewportSize({ width, height: 844 });
+      await page.mouse.move(width / 2, 830);
+      await expect.poll(() => blur.evaluate(root => (root as HTMLElement).style.getPropertyValue('--gradual-blur-hover'))).toBe('1.2');
+      expect(await page.evaluate(() => document.elementFromPoint(innerWidth / 2, innerHeight - 14)?.closest('.gradual-blur') === null)).toBe(true);
+      await page.screenshot({ path: testInfo.outputPath(`bloom-${theme}-${width}.png`) });
+      await page.mouse.move(width / 2, 300);
+      await expect(bloom).toHaveCSS('opacity', '0.12');
+    }
+
+    await page.evaluate(() => scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }));
+    await expect.poll(() => blur.evaluate(root => (root as HTMLElement).style.getPropertyValue('--gradual-blur-reveal'))).toBe('0.000');
+    await expect(bloom).toHaveCSS('opacity', '0');
+    await expect(page.getByRole('contentinfo').getByRole('navigation', { name: 'Legal', exact: true })).toBeVisible();
+  });
+}
 
 test('o rodapé mantém a navegação e exibe apenas o CNPJ nos dados cadastrais', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
