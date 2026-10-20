@@ -23,8 +23,8 @@ test('tema claro usa Topography WebGL2 e roxo/lilás da viseira', async ({ page 
   [232 / 255, 115 / 255, 248 / 255].forEach((value, i) => expect(uniforms.mid[i]).toBeCloseTo(value, 5));
   await page.screenshot({ path: testInfo.outputPath('topography-intro-light.png') });
   await enterPresentation(page);
-  const mascot = page.getByRole('img', { name: 'Mascote lobo da NexOS com viseira roxa' });
-  await expect(mascot).toHaveAttribute('src', /\/_next\/static\/media\/mascote_lobo_roxo\.[\w-]+\.svg$/);
+  const mascot = page.getByRole('img', { name: 'Mascote tigre albino da NexOS com viseira roxa' });
+  await expect(mascot).toHaveAttribute('src', /\/_next\/static\/media\/tigre_albino_capuz_fino\.[\w-]+\.svg$/);
   await expect(mascot).toHaveCSS('filter', 'none');
   await expect(page.locator('#hero [data-topography]')).toHaveCount(0);
   await page.locator('#fisico-digital').scrollIntoViewIfNeeded();

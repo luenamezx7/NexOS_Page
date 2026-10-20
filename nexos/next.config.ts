@@ -38,6 +38,7 @@ const nextConfig: NextConfig = {
       },
       { source: '/entrar', destination: '/portal/acesso', permanent: true },
       { source: '/favicon.ico', destination: '/favicon.png', permanent: true },
+      { source: '/mascote-lobo-roxo.svg', destination: '/mascote-tigre-albino.svg', permanent: true },
       { source: '/login', destination: '/admin-dashboard-su/secure-entry', permanent: true },
     ];
   },

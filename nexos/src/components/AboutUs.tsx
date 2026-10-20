@@ -3,7 +3,7 @@
 import { ArrowUpRight } from 'lucide-react';
 import Image from 'next/image';
 import { raithonRealm } from '@/lib/brand-font';
-import purpleWolf from '../../design-/img-ref/mascote_lobo_roxo.svg';
+import albinoTiger from '../../design-/img-ref/tigre_albino_capuz_fino.svg';
 import { useSectionScroll } from './SmoothScrollProvider';
 import styles from './AboutUs.module.css';
 
@@ -27,7 +27,7 @@ export function AboutUs() {
             <p className={styles.companyName}>NexOS Lab</p>
             <p className={styles.signature}>Design, desenvolvimento<br />e conexões com propósito.</p>
             <div className={styles.brandVisual}>
-              <Image src={purpleWolf} alt="Mascote da NexOS com óculos roxos" width={380} height={380}
+              <Image src={albinoTiger} alt="Mascote tigre albino da NexOS com óculos roxos" width={380} height={380}
                 sizes="(max-width: 767px) 280px, 380px" className={styles.mascot} />
             </div>
           </div>

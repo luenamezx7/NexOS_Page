@@ -124,7 +124,7 @@ for (const theme of ['light', 'dark']) {
     await logo.hover();
     await expect(logo).toHaveCSS('color', logoColor);
     await expect(logo).toHaveCSS('scale', 'none');
-    const mascot = about.getByRole('img', { name: 'Mascote da NexOS com óculos roxos', exact: true });
+    const mascot = about.getByRole('img', { name: 'Mascote tigre albino da NexOS com óculos roxos', exact: true });
     await expect(mascot).toBeVisible();
     await expect(mascot).toHaveJSProperty('complete', true);
     expect(await mascot.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);

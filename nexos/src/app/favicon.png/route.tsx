@@ -5,9 +5,9 @@ import { ImageResponse } from 'next/og';
 export const dynamic = 'force-static';
 
 export async function GET() {
-  // Rasterize the wolf mascot at build time, without cropping or stretching.
+  // Rasterize the albino tiger mascot at build time, without cropping or stretching.
   // Google Search needs a square raster favicon at a stable, crawlable URL.
-  const svg = await readFile(join(process.cwd(), 'design-', 'img-ref', 'mascote_lobo_roxo.svg'));
+  const svg = await readFile(join(process.cwd(), 'design-', 'img-ref', 'tigre_albino_capuz_fino.svg'));
   const imageWidth = 176;
   const imageHeight = imageWidth;
 

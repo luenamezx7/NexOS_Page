@@ -119,7 +119,7 @@ test('favicon de busca usa o mascote em PNG quadrado e é servido aos crawlers s
       await page.goto(`http://localhost:3100${path}`);
       await expect(page.locator('head link[rel="icon"][type="image/png"]')).toHaveAttribute('href', '/favicon.png');
       await expect(page.locator('head link[rel="icon"][type="image/png"]')).toHaveAttribute('sizes', '192x192');
-      await expect(page.locator('head link[rel="icon"][type="image/svg+xml"]')).toHaveAttribute('href', '/mascote-lobo-roxo.svg');
+      await expect(page.locator('head link[rel="icon"][type="image/svg+xml"]')).toHaveAttribute('href', '/mascote-tigre-albino.svg');
     }
     const icon = await request.get('/favicon.png', { headers: { 'User-Agent': 'Googlebot-Image/1.0' } });
     expect(icon.status()).toBe(200);
@@ -132,11 +132,11 @@ test('favicon de busca usa o mascote em PNG quadrado e é servido aos crawlers s
     const legacy = await request.get('/favicon.ico', { maxRedirects: 0 });
     expect(legacy.status()).toBe(308);
     expect(legacy.headers().location).toBe('/favicon.png');
-    const svg = await request.get('/mascote-lobo-roxo.svg');
+    const svg = await request.get('/mascote-tigre-albino.svg');
     expect(svg.status()).toBe(200);
     const artwork = await svg.text();
-    expect(artwork).toContain('viewBox="0 0 1254 1254"');
-    expect(artwork).toContain('fill="#971EF4"');
+    expect(artwork).toContain('viewBox="144 82 1024 1024"');
+    expect(artwork).toContain('fill="#932EEF"');
     await page.goto('http://localhost:3100/favicon.png');
     const renderedIcon = page.locator('img');
     await expect(renderedIcon).toBeVisible();
@@ -155,8 +155,8 @@ test('favicon de busca usa o mascote em PNG quadrado e é servido aos crawlers s
         // The new mascot has ivory fur rather than pure white.
         if (pixels[i] > 225 && pixels[i + 1] > 225 && pixels[i + 2] > 225) white++;
         if (pixels[i] < 15 && pixels[i + 1] < 15 && pixels[i + 2] < 15) black++;
-        if (Math.abs(pixels[i] - 151) < 20 && Math.abs(pixels[i + 1] - 30) < 20 && Math.abs(pixels[i + 2] - 244) < 20) violet++;
-        if (Math.abs(pixels[i] - 232) < 20 && Math.abs(pixels[i + 1] - 115) < 20 && Math.abs(pixels[i + 2] - 248) < 20) lilac++;
+        if (Math.abs(pixels[i] - 147) < 20 && Math.abs(pixels[i + 1] - 46) < 20 && Math.abs(pixels[i + 2] - 239) < 20) violet++;
+        if (Math.abs(pixels[i] - 221) < 20 && Math.abs(pixels[i + 1] - 150) < 20 && Math.abs(pixels[i + 2] - 246) < 20) lilac++;
       }
       return { white, black, violet, lilac };
     });
