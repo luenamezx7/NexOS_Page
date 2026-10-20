@@ -11,7 +11,7 @@ import { usePresentationVisit } from '@/components/PresentationVisitProvider';
 import { LandingPageBlur } from '@/components/sections/LandingPageBlur';
 
 const Services = dynamic(() => import('@/components/Services').then(m => m.Services));
-const Testimonials = dynamic(() => import('@/components/Testimonials').then(m => m.Testimonials));
+const AboutUs = dynamic(() => import('@/components/AboutUs').then(m => m.AboutUs));
 const FAQ = dynamic(() => import('@/components/FAQ').then(m => m.FAQ));
 const MascotSolutions = dynamic(() => import('@/components/sections/MascotSolutions').then(m => m.MascotSolutions));
 const Footer = dynamic(() => import('@/components/Footer').then(m => m.Footer));
@@ -73,8 +73,8 @@ export default function HomeClient() {
             <SectionBackground index={4} scene="waves">
               <DeliveryProcess />
             </SectionBackground>
-            <SectionBackground index={5} scene="image">
-              <Testimonials />
+            <SectionBackground index={5}>
+              <AboutUs />
             </SectionBackground>
             <SectionBackground index={6}>
               <FAQ />

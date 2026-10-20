@@ -119,7 +119,7 @@ test('favicon de busca usa o mascote em PNG quadrado e é servido aos crawlers s
       await page.goto(`http://localhost:3100${path}`);
       await expect(page.locator('head link[rel="icon"][type="image/png"]')).toHaveAttribute('href', '/favicon.png');
       await expect(page.locator('head link[rel="icon"][type="image/png"]')).toHaveAttribute('sizes', '192x192');
-      await expect(page.locator('head link[rel="icon"][type="image/svg+xml"]')).toHaveAttribute('href', '/mascote-lobo-header.svg');
+      await expect(page.locator('head link[rel="icon"][type="image/svg+xml"]')).toHaveAttribute('href', '/mascote-lobo-roxo.svg');
     }
     const icon = await request.get('/favicon.png', { headers: { 'User-Agent': 'Googlebot-Image/1.0' } });
     expect(icon.status()).toBe(200);
@@ -132,9 +132,11 @@ test('favicon de busca usa o mascote em PNG quadrado e é servido aos crawlers s
     const legacy = await request.get('/favicon.ico', { maxRedirects: 0 });
     expect(legacy.status()).toBe(308);
     expect(legacy.headers().location).toBe('/favicon.png');
-    const svg = await request.get('/mascote-lobo-header.svg');
+    const svg = await request.get('/mascote-lobo-roxo.svg');
     expect(svg.status()).toBe(200);
-    expect(await svg.text()).toContain('viewBox="0 0 640 640"');
+    const artwork = await svg.text();
+    expect(artwork).toContain('viewBox="0 0 1254 1254"');
+    expect(artwork).toContain('fill="#971EF4"');
     await page.goto('http://localhost:3100/favicon.png');
     const renderedIcon = page.locator('img');
     await expect(renderedIcon).toBeVisible();
@@ -147,19 +149,22 @@ test('favicon de busca usa o mascote em PNG quadrado e é servido aos crawlers s
       const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
       let white = 0;
       let black = 0;
-      let spectrum = 0;
+      let violet = 0;
+      let lilac = 0;
       for (let i = 0; i < pixels.length; i += 4) {
-        if (pixels[i] > 240 && pixels[i + 1] > 240 && pixels[i + 2] > 240) white++;
+        // The new mascot has ivory fur rather than pure white.
+        if (pixels[i] > 225 && pixels[i + 1] > 225 && pixels[i + 2] > 225) white++;
         if (pixels[i] < 15 && pixels[i + 1] < 15 && pixels[i + 2] < 15) black++;
-        const channels = [pixels[i], pixels[i + 1], pixels[i + 2]];
-        if (Math.max(...channels) - Math.min(...channels) > 70 && Math.max(...channels) > 130) spectrum++;
+        if (Math.abs(pixels[i] - 151) < 20 && Math.abs(pixels[i + 1] - 30) < 20 && Math.abs(pixels[i + 2] - 244) < 20) violet++;
+        if (Math.abs(pixels[i] - 232) < 20 && Math.abs(pixels[i + 1] - 115) < 20 && Math.abs(pixels[i + 2] - 248) < 20) lilac++;
       }
-      return { white, black, spectrum };
+      return { white, black, violet, lilac };
     });
     // A valid PNG must contain the actual contrasting mark, not an empty render.
     expect(colors.white).toBeGreaterThan(1000);
     expect(colors.black).toBeGreaterThan(1000);
-    expect(colors.spectrum).toBeGreaterThan(500);
+    expect(colors.violet).toBeGreaterThan(150);
+    expect(colors.lilac).toBeGreaterThan(50);
     await renderedIcon.screenshot({ path: testInfo.outputPath('favicon.png') });
   } finally {
     await context.close();

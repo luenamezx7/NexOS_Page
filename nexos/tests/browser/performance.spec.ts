@@ -65,7 +65,7 @@ test('CTA principal funciona sem JavaScript e favicon SVG é servido corretament
     await action.click();
     await expect(page).toHaveURL(/#services$/);
     const icon = await page.locator('link[rel="icon"][type="image/svg+xml"]').getAttribute('href');
-    expect(icon).toContain('/mascote-lobo-header.svg');
+    expect(icon).toContain('/mascote-lobo-roxo.svg');
     const response = await request.get(icon!);
     expect(response.status()).toBe(200);
     expect(response.headers()['content-type']).toContain('image/svg+xml');

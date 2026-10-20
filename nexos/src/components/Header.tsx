@@ -20,7 +20,7 @@ import styles from './Header.module.css';
 import { MetallicSurface } from './ui/metallic-button';
 import { useSectionScroll } from './SmoothScrollProvider';
 
-const NAV_ITEMS = [{ label: 'Placa NFC', href: '#showcase' }, ...config.navigation.map(item => item.href === '#testimonials' ? { ...item, label: 'Ecossistema' } : item)];
+const NAV_ITEMS = [{ label: 'Placa NFC', href: '#showcase' }, ...config.navigation];
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);

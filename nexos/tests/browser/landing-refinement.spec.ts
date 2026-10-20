@@ -105,6 +105,43 @@ test('FAQ, mascot photo strip and final commercial CTA remain usable without a c
 });
 
 for (const theme of ['light', 'dark']) {
+  test(`${theme}: Sobre Nós apresenta a empresa e a logo com navegação responsiva`, async ({ page }, testInfo) => {
+    await openLanding(page, theme);
+    await page.getByRole('navigation', { name: 'Navegação principal', exact: true }).getByRole('link', { name: 'Sobre Nós', exact: true }).click();
+    const about = page.getByRole('region', { name: 'Design e tecnologia. Negócios mais próximos.' });
+    await expect(about).toBeVisible();
+    await expect(about.getByRole('heading', { level: 2 })).toHaveCount(1);
+    await expect(about.getByRole('heading', { level: 3 })).toHaveCount(2);
+    await expect(about).toContainText('Somos a NexOS Lab.');
+    await expect(about).toContainText('placas NFC e QR Code');
+    await expect(about).not.toContainText('Documentação');
+    await expect(about.locator('.gradual-blur')).toHaveCount(0);
+    await page.evaluate(() => document.fonts.ready);
+    const family = await page.locator('header [class*="wordmark"]').evaluate(element => getComputedStyle(element).fontFamily);
+    const logo = about.getByRole('img', { name: 'Logo NexOS', exact: true });
+    await expect(logo).toHaveCSS('font-family', family);
+    await expect(about.getByRole('link', { name: 'Ver soluções', exact: true })).toHaveAttribute('href', '#services');
+
+    for (const width of [320, 390, 1366]) {
+      await page.setViewportSize({ width, height: 900 });
+      await about.scrollIntoViewIfNeeded();
+      const box = await logo.boundingBox();
+      expect(box!.x).toBeGreaterThanOrEqual(0);
+      expect(box!.x + box!.width).toBeLessThanOrEqual(width);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await about.screenshot({ path: testInfo.outputPath(`about-${theme}-${width}.png`) });
+    }
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.getByRole('button', { name: 'Abrir menu', exact: true }).click();
+    await page.getByRole('navigation', { name: 'Navegação móvel', exact: true }).getByRole('link', { name: 'Sobre Nós', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Abrir menu', exact: true })).toHaveAttribute('aria-expanded', 'false');
+    await expect.poll(() => about.evaluate(element => Math.abs(element.getBoundingClientRect().top - parseFloat(getComputedStyle(element).scrollMarginTop)))).toBeLessThan(4);
+    await expect(page.getByRole('contentinfo').getByRole('link', { name: 'Sobre Nós', exact: true })).toHaveAttribute('href', '/#testimonials');
+  });
+}
+
+for (const theme of ['light', 'dark']) {
   test(`${theme}: responsive layout, fan and blur do not obstruct controls`, async ({ page }) => {
     test.setTimeout(90000);
     await openLanding(page, theme);

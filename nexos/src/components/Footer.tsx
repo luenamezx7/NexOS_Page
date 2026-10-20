@@ -110,7 +110,7 @@ export function Footer({ onViewPresentation }: { onViewPresentation?: () => void
             title="Empresa"
             links={[
               { label: 'Contato', href: '/#cta-final' },
-              { label: 'Ecossistema', href: '/#testimonials' },
+              { label: 'Sobre Nós', href: '/#testimonials' },
               { label: 'Serviços', href: '/#services' },
             ]}
           />
