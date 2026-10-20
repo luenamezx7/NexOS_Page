@@ -120,6 +120,14 @@ for (const theme of ['light', 'dark']) {
     const family = await page.locator('header [class*="wordmark"]').evaluate(element => getComputedStyle(element).fontFamily);
     const logo = about.getByRole('img', { name: 'Logo NexOS', exact: true });
     await expect(logo).toHaveCSS('font-family', family);
+    const logoColor = await logo.evaluate(element => getComputedStyle(element).color);
+    await logo.hover();
+    await expect(logo).toHaveCSS('color', logoColor);
+    await expect(logo).toHaveCSS('scale', 'none');
+    const mascot = about.getByRole('img', { name: 'Mascote da NexOS com óculos roxos', exact: true });
+    await expect(mascot).toBeVisible();
+    await expect(mascot).toHaveJSProperty('complete', true);
+    expect(await mascot.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
     await expect(about.getByRole('link', { name: 'Ver soluções', exact: true })).toHaveAttribute('href', '#services');
 
     for (const width of [320, 390, 1366]) {

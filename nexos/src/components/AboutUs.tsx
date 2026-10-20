@@ -1,7 +1,9 @@
 'use client';
 
 import { ArrowUpRight } from 'lucide-react';
+import Image from 'next/image';
 import { raithonRealm } from '@/lib/brand-font';
+import purpleWolf from '../../design-/img-ref/mascote_lobo_roxo.svg';
 import { useSectionScroll } from './SmoothScrollProvider';
 import styles from './AboutUs.module.css';
 
@@ -24,6 +26,10 @@ export function AboutUs() {
             <span role="img" aria-label="Logo NexOS" className={styles.wordmark}>nexos</span>
             <p className={styles.companyName}>NexOS Lab</p>
             <p className={styles.signature}>Design, desenvolvimento<br />e conexões com propósito.</p>
+            <div className={styles.brandVisual}>
+              <Image src={purpleWolf} alt="Mascote da NexOS com óculos roxos" width={380} height={380}
+                sizes="(max-width: 767px) 280px, 380px" className={styles.mascot} />
+            </div>
           </div>
 
           <div className={styles.story}>
