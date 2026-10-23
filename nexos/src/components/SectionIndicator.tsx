@@ -29,9 +29,21 @@ export function SectionIndicator() {
 
   useEffect(() => {
     const observed = new Set<Element>();
+    const visibleSections = new Set<Element>();
     const observer = new IntersectionObserver(entries => {
-      const visible = entries.find(entry => entry.isIntersecting);
-      if (visible) setActiveId(visible.target.id);
+      for (const entry of entries) {
+        if (entry.isIntersecting) visibleSections.add(entry.target);
+        else visibleSections.delete(entry.target);
+      }
+      const center = window.innerHeight * 0.5;
+      const visible = [...visibleSections].sort((a, b) => {
+        const distance = (element: Element) => {
+          const rect = element.getBoundingClientRect();
+          return center >= rect.top && center <= rect.bottom ? 0 : Math.min(Math.abs(rect.top - center), Math.abs(rect.bottom - center));
+        };
+        return distance(a) - distance(b);
+      })[0];
+      if (visible) setActiveId(visible.id);
     }, { rootMargin: '-40% 0px -40% 0px', threshold: 0 });
     const observeSections = () => {
       for (const section of SECTIONS) {

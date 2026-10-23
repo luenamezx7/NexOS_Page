@@ -76,7 +76,7 @@
 }
 .logout:global(.btn-secondary-nex):disabled { opacity: 0.55; }
 
-.main { max-width: 1120px; margin-inline: auto; padding: 28px 20px 56px; }
+.main { width: min(calc(100% - 48px), var(--page-width)); margin-inline: auto; padding-bottom: 56px; }
 .alert {
   margin-bottom: 16px;
   padding: 12px 14px;
@@ -249,3 +249,4 @@
   .dotOk { animation: none; }
   .card { transition: none; }
 }
+@media (max-width: 767px) { .main { width: calc(100% - 32px); } }

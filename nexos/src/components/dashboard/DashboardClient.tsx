@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import styles from './Dashboard.module.css';
 import { signOutAccount } from '@/lib/auth/client';
+import { PageFooter, PageHeader } from '../PageChrome';
 
 function StatusDot({ ok }: { ok: boolean | null }) {
   const cls = ok === true ? styles.dotOk : ok === false ? styles.dotFail : '';
@@ -98,20 +99,7 @@ export function DashboardClient({
 
   return (
     <div className={styles.page}>
-      <header className={styles.header} role="banner">
-        <div className={styles.headerInner}>
-          <div className={styles.brandRow}>
-            <span className={styles.mark} aria-hidden="true">
-              NX
-            </span>
-            <div className={styles.titleBlock}>
-              <h1 className={styles.title}>NexOS — Dashboard Técnica</h1>
-              <p className={styles.meta}>
-                {user.email} · {checkedAt} UTC
-              </p>
-            </div>
-          </div>
-          <div className={styles.headerActions}>
+      <PageHeader>
             <button
               type="button"
               disabled={loading}
@@ -120,11 +108,10 @@ export function DashboardClient({
             >
               {loading ? 'Saindo…' : 'Sair'}
             </button>
-          </div>
-        </div>
-      </header>
+      </PageHeader>
 
-      <main className={styles.main}>
+      <main className={styles.main} id="main-content">
+        <div className="page-intro"><p className="page-kicker">NexOS / Operações</p><h1 className="page-title">Dashboard técnica</h1><p className={styles.meta}>{user.email} · {checkedAt} UTC</p></div>
         {msg && (
           <p role="alert" className={styles.alert}>
             {msg}
@@ -234,6 +221,7 @@ export function DashboardClient({
           </p>
         </aside>
       </main>
+      <PageFooter />
     </div>
   );
 }

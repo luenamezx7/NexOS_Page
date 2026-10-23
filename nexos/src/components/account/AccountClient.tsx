@@ -15,11 +15,10 @@
  * Dark/light mode automático via variáveis CSS.
  */
 
-import { useState, useEffect, useTransition } from 'react';
+import { useState, useEffect, useTransition, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
-  ArrowLeft,
   ShieldCheck,
   KeyRound,
   Mail,
@@ -43,6 +42,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui';
 import { LogoutButton } from '@/components/LogoutButton';
+import { PageFooter, PageHeader } from '@/components/PageChrome';
 import { updateProfileAction, addAddressAction, deleteAddressAction } from '@/lib/account/actions';
 
 interface Profile {
@@ -123,6 +123,17 @@ function formatCep(cep: string) {
   return cep.replace(/(\d{5})(\d{3})/, '$1-$2');
 }
 
+function AccountShell({ children, email }: { children: ReactNode; email?: string }) {
+  return <div className="interior-page">
+    <PageHeader>{email && <><span className="page-session-email">{email}</span><LogoutButton /></>}</PageHeader>
+    <main className="page-container account-content" id="main-content">
+      <div className="page-intro"><p className="page-kicker">NexOS / Área do cliente</p><h1 className="page-title">Minha conta</h1><p>Seus dados, pedidos e preferências de acesso em um só lugar.</p></div>
+      {children}
+    </main>
+    <PageFooter />
+  </div>;
+}
+
 export default function ContaPage() {
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -201,18 +212,13 @@ export default function ContaPage() {
 
   if (loading) {
     return (
-      <div className="page-surface min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-2 border-ink/20 border-t-ink rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-ink/60 font-sans">Carregando sua conta...</p>
-        </div>
-      </div>
+      <AccountShell><div className="page-panel flex flex-col gap-4 p-6" role="status" aria-label="Carregando sua conta"><div className="h-5 w-40 rounded bg-muted" /><div className="h-4 w-3/4 rounded bg-muted" /><div className="h-4 w-1/2 rounded bg-muted" /><p className="text-muted-foreground">Carregando sua conta…</p></div></AccountShell>
     );
   }
 
   if (!profile) {
     return (
-      <div className="page-surface min-h-screen flex items-center justify-center p-4">
+      <AccountShell>
         <Card className="max-w-md w-full">
           <CardContent className="pt-6 text-center">
             <AlertTriangle className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
@@ -223,35 +229,19 @@ export default function ContaPage() {
             </Button>
           </CardContent>
         </Card>
-      </div>
+      </AccountShell>
     );
   }
 
   return (
-    <div className="page-surface min-h-screen">
-      <header className="sticky top-0 z-10 border-b border-ink/10 bg-glass backdrop-blur-xl">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-2 text-ink/60 hover:text-ink transition-colors">
-              <ArrowLeft className="w-5 h-5" />
-            </Link>
-            <h1 className="account-heading brand-heading font-display font-bold">Minha Conta</h1>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-mono text-ink/40 hidden sm:block">{profile.email}</span>
-            <LogoutButton />
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+    <AccountShell email={profile.email}>
         <section>
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--brand-choice)] to-[var(--brand-secondary)] flex items-center justify-center shadow-lg">
-                    <User className="w-5 h-5 text-white" />
+                   <div className="size-10 rounded-lg border border-border bg-accent flex items-center justify-center">
+                     <User className="size-5 text-primary" />
                   </div>
                   <div>
                     <CardTitle className="font-display text-xl text-ink">{profile.fullName || 'Usuário'}</CardTitle>
@@ -560,11 +550,7 @@ export default function ContaPage() {
                 <div className="text-center py-12">
                   <Package className="w-12 h-12 text-ink/20 mx-auto mb-3" />
                   <p className="text-ink/50 mb-4">Nenhum pedido realizado</p>
-                  <Link href="/">
-                    <Button variant="primary" size="sm">
-                      Ver produtos
-                    </Button>
-                  </Link>
+                   <Link href="/#showcase" className="btn-primary-nex">Ver produtos</Link>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -682,7 +668,6 @@ export default function ContaPage() {
             </CardContent>
           </Card>
         </section>
-      </main>
-    </div>
+    </AccountShell>
   );
 }

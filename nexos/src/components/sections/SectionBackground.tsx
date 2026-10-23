@@ -32,9 +32,7 @@ export function SectionBackground({
           animate={!reduce && visible && !entryOpen ? { x: [0, 18, 0], y: [0, -12, 0] } : { x: 0, y: 0 }}
           transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }} />}
       </div>
-      <motion.div className={styles.sceneContent} initial={reduce ? false : { opacity: 0, y: 44 }}
-        whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.08 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}>{children}</motion.div>
+      <div className={styles.sceneContent}>{children}</div>
     </div>
   );
 }

@@ -1,18 +1,14 @@
 import Link from 'next/link';
-import { ArrowLeft, ArrowUpRight, KeyRound, Package, UserRound } from 'lucide-react';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import { ArrowUpRight, KeyRound, Package, UserRound } from 'lucide-react';
 import styles from './LoginForm.module.css';
-import { BrandMark } from '../BrandMark';
+import { PageHeader } from '../PageChrome';
 
 export function AuthHeader() {
-  return <header className={styles.header}>
-    <Link href="/" aria-label="NexOS — página inicial"><BrandMark /></Link>
-    <div className={styles.headerActions}><Link href="/" className={styles.backLink}><ArrowLeft size={16} aria-hidden="true" /> Voltar ao site</Link><ThemeToggle /></div>
-  </header>;
+  return <PageHeader />;
 }
 
 export function AuthStory({ recovery = false }: { recovery?: boolean }) {
-  return <aside className={`${styles.story} topography-glass topography-glass--copy`} aria-label={recovery ? 'Recuperação de acesso NexOS' : 'Sua conta NexOS'}>
+  return <aside className={styles.story} aria-label={recovery ? 'Recuperação de acesso NexOS' : 'Sua conta NexOS'}>
     <p className={styles.storyLabel}>NexOS / {recovery ? 'recuperação' : 'seu espaço digital'}</p>
     <h2 className={styles.storyHeading}>{recovery ? 'Recupere o acesso.' : 'Seus pedidos.'}<br /><span className="brand-heading">{recovery ? 'Siga em frente.' : 'Seu controle.'}</span></h2>
     <p className={styles.storyDescription}>{recovery ? 'Defina uma nova senha e volte à sua conta. Seus pedidos e dados continuam no mesmo lugar.' : 'Acompanhe pedidos, atualize seus dados e cuide do seu acesso em um só lugar.'}</p>

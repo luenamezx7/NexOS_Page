@@ -8,6 +8,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
@@ -143,6 +144,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
   const [consent, setConsent] = useState<CookieConsent>(storedInitial ?? DEFAULT_CONSENT);
   const [hasDecided, setHasDecided] = useState<boolean>(storedInitial !== null);
   const [bannerVisible, setBannerVisible] = useState<boolean>(false);
+  const bannerRef = useRef<HTMLDivElement>(null);
   const [prefsOpen, setPrefsOpen] = useState<boolean>(false);
   const [draft, setDraft] = useState({
     functional: storedInitial?.functional ?? false,
@@ -220,6 +222,18 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener('keydown', onKey);
   }, [prefsOpen]);
 
+  // Reserve the actual banner height so bottom-page controls can scroll clear of it.
+  useEffect(() => {
+    const banner = bannerRef.current;
+    if (!banner || hasDecided || !bannerVisible || prefsOpen) return;
+    const root = document.documentElement;
+    const measure = () => root.style.setProperty('--cookie-banner-space', `${banner.offsetHeight + 16}px`);
+    const observer = new ResizeObserver(measure);
+    observer.observe(banner);
+    measure();
+    return () => { observer.disconnect(); root.style.removeProperty('--cookie-banner-space'); };
+  }, [hasDecided, bannerVisible, prefsOpen]);
+
   // Trava real SÓ na central (modal). O banner nunca trava o scroll.
   useScrollLock(prefsOpen);
 
@@ -240,6 +254,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
         {!hasDecided && bannerVisible && !prefsOpen && (
           <motion.div
             key="cookie-banner"
+            ref={bannerRef}
             role="dialog"
             aria-live="polite"
             aria-label="Aviso de cookies"
@@ -247,10 +262,10 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
             animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
             exit={reduce ? { opacity: 0 } : { opacity: 0, y: 16 }}
             transition={{ duration: 0.45, ease: FLUID_EASE }}
-            className="fixed inset-x-0 bottom-0 z-[65] px-4 pb-4 md:px-6 md:pb-6"
+            className="pointer-events-none fixed inset-x-0 bottom-0 z-[65] px-4 pb-4 md:px-6 md:pb-6"
           >
             <div
-              className={`mx-auto flex w-full max-w-3xl flex-col gap-4 rounded-2xl border p-5 shadow-[0_12px_40px_rgba(0,0,0,0.12)] md:flex-row md:items-center md:gap-5 md:p-6 ${
+              className={`pointer-events-auto mx-auto flex w-full max-w-3xl flex-col gap-4 rounded-2xl border p-5 shadow-[0_12px_40px_rgba(0,0,0,0.12)] md:flex-row md:items-center md:gap-5 md:p-6 ${
                 isDark ? 'border-white/15 bg-black/95' : 'border-ink/15 bg-canvas/95'
               }`}
             >

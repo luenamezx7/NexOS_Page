@@ -4,6 +4,7 @@ import { ResetPasswordForm } from '@/components/auth/ResetPasswordForm';
 import { MetallicSurface } from '@/components/ui/metallic-button';
 import { AuthHeader, AuthStory } from '@/components/auth/AuthFrame';
 import styles from '@/components/auth/LoginForm.module.css';
+import { PageFooter } from '@/components/PageChrome';
 
 /**
  * Página de redefinição de senha.
@@ -29,7 +30,7 @@ export default async function ResetPasswordPage({ searchParams }: { searchParams
   return (
     <main className={styles.customer}>
       <AuthHeader />
-      <div className={styles.content}>
+      <div className={styles.content} id="main-content">
       <AuthStory recovery />
       <section className={`${styles.panel} flex flex-col gap-6`} aria-labelledby="reset-link-title">
         <p className="font-mono text-xs uppercase tracking-widest text-[var(--nex-pink)]">Recuperação</p>
@@ -49,6 +50,7 @@ export default async function ResetPasswordPage({ searchParams }: { searchParams
         </p>
       </section>
       </div>
+      <PageFooter />
     </main>
   );
 }

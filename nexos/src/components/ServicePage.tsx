@@ -6,9 +6,8 @@ import { commercialHref, plateCommercialHref } from '@/lib/commercial';
 import { siteUrl } from '@/lib/seo';
 import { servicePages, type ServicePageContent } from '@/lib/service-pages';
 import { JsonLd } from './JsonLd';
-import { ThemeToggle } from './ThemeToggle';
 import { Footer } from './Footer';
-import { BrandMark } from './BrandMark';
+import { PageHeader } from './PageChrome';
 
 export function ServicePage({ service }: { service: ServicePageContent }) {
   const product = config.services.find(item => item.id === service.productId)!;
@@ -45,20 +44,18 @@ export function ServicePage({ service }: { service: ServicePageContent }) {
   };
 
   return (
-    <div className="service-page text-ink">
+    <div className="service-page interior-page">
       <JsonLd data={structuredData} />
       <a href="#main-content" className="skip-link">Pular para o conteúdo</a>
-      <header className="topography-glass mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-5 md:px-8">
-        <Link href="/" aria-label="NexOS, página inicial"><BrandMark /></Link>
-        <div className="flex items-center gap-4"><Link href="/#services" className="text-sm hover:underline">Ver soluções</Link><ThemeToggle /></div>
-      </header>
-      <main id="main-content" tabIndex={-1} className="mx-auto max-w-6xl px-5 md:px-8">
+      <PageHeader />
+      <main id="main-content" tabIndex={-1} className="page-container">
         <nav aria-label="Caminho da página" className="topography-glass topography-glass--compact mt-6 text-sm text-ink/70">
           <ol className="flex flex-wrap items-center gap-3"><li><Link href="/" className="inline-flex items-center gap-2 hover:underline"><ArrowLeft size={14} aria-hidden="true" /> Início</Link></li><li aria-hidden="true">/</li><li aria-current="page">{service.label}</li></ol>
         </nav>
         <section className={`topography-glass topography-glass--copy grid items-center gap-10 pb-14 pt-10 md:pb-20 md:pt-14 ${isPlate ? 'md:grid-cols-2' : ''}`} aria-labelledby="service-heading">
           <div className="max-w-3xl">
-            <h1 id="service-heading" className="text-balance text-4xl font-semibold leading-[1.1] tracking-tight md:text-6xl">{service.headline}</h1>
+            <p className="page-kicker mb-4">NexOS / {service.label}</p>
+            <h1 id="service-heading" className="page-title">{service.headline}</h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink/80">{service.intro}</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <a href={contact} target="_blank" rel="noopener noreferrer" className="btn-primary-nex inline-flex items-center gap-2 whitespace-nowrap">{isPlate ? 'Adquirir Placa' : 'Falar com o comercial'} <ArrowUpRight size={16} aria-hidden="true" /></a>
@@ -72,7 +69,7 @@ export function ServicePage({ service }: { service: ServicePageContent }) {
           <p className="mt-5 max-w-3xl leading-relaxed text-ink/80">{service.overview}</p>
           <div className="mt-10 grid gap-8 md:grid-cols-3">{service.applications.map(application => <article key={application.title}><h3 className="text-lg font-semibold">{application.title}</h3><p className="mt-3 leading-relaxed text-ink/80">{application.body}</p></article>)}</div>
         </section>
-        <section id="como-funciona" className="topography-glass topography-glass--copy scroll-mt-8 py-14 md:py-20" aria-labelledby="process-heading">
+        <section id="como-funciona" className="topography-glass topography-glass--copy scroll-mt-28 py-14 md:py-20" aria-labelledby="process-heading">
           <h2 id="process-heading" className="text-3xl font-semibold tracking-tight">Como funciona</h2>
           <ol className="mt-8 grid gap-8 md:grid-cols-3">{service.steps.map((step, index) => <li key={step.title}><span className="font-mono text-sm text-ink/70">0{index + 1}</span><h3 className="mt-3 text-xl font-semibold">{step.title}</h3><p className="mt-3 leading-relaxed text-ink/80">{step.body}</p></li>)}</ol>
         </section>

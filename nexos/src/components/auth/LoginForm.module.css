@@ -1,14 +1,14 @@
-.customer { min-height: 100dvh; padding: 16px 20px 40px; color: var(--color-ink); background: transparent; }
+.customer { min-height: 100dvh; padding-bottom: 24px; color: var(--color-ink); background: transparent; }
 .header { max-width: 1216px; margin-inline: auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; padding: 8px 16px; border: 1px solid var(--border); border-radius: 16px; background: var(--color-glass); backdrop-filter: blur(12px); box-shadow: inset 0 1px 0 rgba(var(--ui-highlight), 0.094); }
 .headerActions { display: flex; align-items: center; gap: 16px; }
 .backLink { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 12px; color: var(--muted-foreground); }
 .backLink:hover { color: var(--display-rose); }
-.content { width: 100%; max-width: 480px; margin: 32px auto 0; }
+.content { width: calc(100% - 32px); max-width: 480px; margin: 36px auto 0; }
 .panel { width: 100%; min-width: 0; max-width: 480px; padding: 28px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface-glass); backdrop-filter: blur(12px); box-shadow: inset 0 1px 0 rgba(var(--ui-highlight), 0.078); }
 .overline { margin-bottom: 14px; font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.04em; color: var(--display-rose); }
 .title { display: flex; align-items: center; gap: 10px; }
 .title > svg { flex-shrink: 0; color: var(--display-rose); }
-.heading, .title h2 { font-size: clamp(28px, 3vw, 36px); font-weight: 750; font-stretch: 85%; line-height: 1.12; letter-spacing: -0.025em; color: var(--color-ink); }
+.heading, .title :is(h1, h2) { font-size: clamp(28px, 3vw, 36px); font-weight: 750; font-stretch: 85%; line-height: 1.12; letter-spacing: -0.025em; color: var(--color-ink); }
 .description { margin: 16px 0 28px; font-size: var(--type-body); line-height: 1.7; color: var(--text-secondary); text-wrap: pretty; }
 .formStack { display: flex; flex-direction: column; gap: 14px; }
 .formGroup { gap: 18px; }
@@ -28,9 +28,9 @@
 .customer .passwordControl :global(.field-input) { padding-right: 52px; }
 .customer :global(.field-input):focus { border-color: var(--nex-pink); outline: 2px solid color-mix(in srgb, var(--nex-pink) 30%, transparent); outline-offset: 2px; }
 .customer form label { font-size: 14px; font-weight: 600; color: var(--color-ink); }
-.customer nav { display: flex; gap: 0 20px; padding-top: 16px; border-top: 1px solid var(--border); }
-.customer nav a { display: inline-flex; align-items: center; min-height: 40px; color: var(--muted-foreground); font-size: 11px; }
-.customer nav a:hover { color: var(--display-rose); }
+.panel > nav { display: flex; gap: 0 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+.panel > nav a { display: inline-flex; align-items: center; min-height: 40px; color: var(--muted-foreground); font-size: 11px; }
+.panel > nav a:hover { color: var(--display-rose); }
 .story { display: none; }
 .storyLabel { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.05em; color: var(--muted-foreground); }
 .storyHeading { margin-top: 28px; font-size: clamp(44px, 4.7vw, 66px); font-weight: 800; font-stretch: 82%; line-height: 1.05; letter-spacing: -0.025em; text-wrap: balance; }
@@ -42,11 +42,10 @@
 .storyLink svg { color: var(--display-purple); }
 .adminHeading { font-size: clamp(36px, 4vw, 52px); font-weight: 800; font-stretch: 85%; line-height: 1.1; letter-spacing: -0.025em; overflow-wrap: anywhere; }
 .legalNote { font-size: 12px; line-height: 1.6; }
-@media (min-width: 768px) { .customer { padding: 24px 32px 48px; } .content { margin-top: 48px; } .panel { padding: 32px; } }
+@media (min-width: 768px) { .content { width: calc(100% - 48px); margin-top: 56px; } .panel { padding: 32px; } }
 @media (min-width: 1024px) {
-  .content { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(48px, 6vw, 96px); align-items: start; max-width: 1120px; }
+  .content { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(48px, 6vw, 96px); align-items: start; max-width: var(--page-width); }
   .story { display: block; position: sticky; isolation: isolate; top: 120px; padding-top: 64px; min-width: 0; }
-  .story::before { content: ''; position: absolute; z-index: -1; inset: 24px -24px -24px; background: linear-gradient(90deg, transparent, var(--reading-glass) 10%, var(--reading-glass) 90%, transparent); mask-image: linear-gradient(to bottom, transparent, #000 36px, #000 85%, transparent); pointer-events: none; }
   .panel { justify-self: end; }
 }
 @media (max-width: 479px) { .header { padding-inline: 10px; } .headerActions { gap: 8px; } .backLink { font-size: 11px; } .panel { padding: 24px 18px; } .forgotLink { min-height: 40px; } .passkeyButton { font-size: 11px; } }

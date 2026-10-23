@@ -85,6 +85,8 @@
 .footerGrid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; }
 .brandBlock { min-width: 0; }
 .brandLink { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; color: inherit; text-decoration: none; }
+.brandSignature { display: block; width: 160px; height: 72px; flex-shrink: 0; }
+.brandMascot { display: block; width: 48px; height: 48px; flex-shrink: 0; object-fit: contain; }
 .brandMark { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 8px; background: var(--color-ink); color: var(--color-canvas); font-family: var(--font-display); font-size: 13px; font-weight: 700; letter-spacing: -0.02em; flex-shrink: 0; }
 .brandTag { margin-top: 8px; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--mid-muted); }
 .brandDesc { margin-top: 10px; max-width: 36ch; font-size: 14px; line-height: 1.5; color: var(--mid-muted); }

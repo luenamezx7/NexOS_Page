@@ -5,10 +5,12 @@
  * Redes sociais, links legais, copyright.
  */
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowUpRight, GitBranch, MessageSquare } from 'lucide-react';
 import { config } from '@/config';
 import type { FooterLink } from '@/types';
 import { Signature } from './signature';
+import albinoTiger from '../../design-/img-ref/tigre_albino_capuz_fino.svg';
 import { BrandVeil } from './ui/brand-veil';
 import { cn } from '@/lib/utils';
 import { openCookiePreferences } from './cookie-consent';
@@ -69,17 +71,10 @@ export function Footer({ onViewPresentation }: { onViewPresentation?: () => void
             className={styles.brandBlock}
           >
             <Link href="/" className={styles.brandLink} aria-label={`${config.brand.name} — Página inicial`}>
-              <span className={styles.brandMark} aria-hidden="true">{config.brand.logo}</span>
-              <span aria-hidden="true" className="inline-flex items-center overflow-visible shrink-0">
-                <Signature
-                  text={config.brand.name}
-                  fontSize={36}
-                  duration={1.2}
-                  inView={true}
-                  color="#f9f3fa"
-                  className="h-9 w-auto overflow-visible shrink-0"
-                />
+              <span aria-hidden="true">
+                <Signature text={config.brand.name} fontSize={72} duration={1.2} inView color="currentColor" className={styles.brandSignature} />
               </span>
+              <Image src={albinoTiger} alt="Mascote tigre albino da NexOS com viseira roxa" width={48} height={48} className={styles.brandMascot} />
             </Link>
             <p className={styles.brandTag}>{config.brand.tagline}</p>
             <p className={styles.brandDesc}>

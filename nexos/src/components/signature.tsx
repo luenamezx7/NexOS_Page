@@ -6,6 +6,7 @@
  */
 import { useEffect, useId, useRef, useState } from "react";
 import { motion, useInView } from "motion/react";
+import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
 
 type SignatureGlyph = {
   advanceWidth?: number;
@@ -174,6 +175,7 @@ export function Signature({
   inView = false,
   once = true,
 }: SignatureProps) {
+  const reduce = usePrefersReducedMotion();
   const ref = useRef<SVGSVGElement>(null);
   const visible = useInView(ref, { once, margin: '200px' });
   const active = !inView || visible;
@@ -231,9 +233,9 @@ export function Signature({
       className={className}
       style={{ overflow: 'visible' }}
       preserveAspectRatio="xMidYMid meet"
-      initial="hidden"
-      whileInView={inView ? "visible" : undefined}
-      animate={inView ? undefined : "visible"}
+      initial={reduce ? false : "hidden"}
+      whileInView={inView && !reduce ? "visible" : undefined}
+      animate={!inView || reduce ? "visible" : undefined}
       viewport={{ once }}
     >
       <defs>

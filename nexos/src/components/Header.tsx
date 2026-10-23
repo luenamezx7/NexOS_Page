@@ -79,6 +79,7 @@ export function Header() {
   return (
     <motion.header
       role="banner"
+      data-managed-section-links
       className={cn(styles.header, assembled && styles.scrolled)}
       data-header-state={assembled ? 'assembled' : 'transparent'}
       style={{ '--header-progress': assembly } as MotionStyle}

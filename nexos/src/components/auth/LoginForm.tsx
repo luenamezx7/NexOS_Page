@@ -17,6 +17,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import styles from './LoginForm.module.css';
 import { MetallicButton } from '@/components/ui/metallic-button';
 import { AuthHeader, AuthStory } from './AuthFrame';
+import { PageFooter } from '../PageChrome';
 
 type Mode = 'login' | 'signup' | 'forgot' | 'magic' | 'verify-email';
 const MODE_DESCRIPTION: Record<Mode, string> = {
@@ -140,18 +141,18 @@ export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, 
   return (
     <main className={styles.customer}>
       <AuthHeader />
-      <div className={styles.content}>
+      <div className={styles.content} id="main-content">
         {userFlow && <AuthStory recovery={mode === 'forgot'} />}
         {!userFlow && <aside className={styles.story}>
           <p className={styles.storyLabel}>NexOS Ops / Controlled Access</p>
-          <h1 className={`${styles.adminHeading} brand-heading mt-4`}>Ambiente administrativo restrito.</h1>
+          <h2 className={`${styles.adminHeading} mt-4`}>Ambiente administrativo restrito.</h2>
           <p className={styles.storyDescription}>Acesso por papel, sessão revogável e autenticação em duas etapas obrigatória para operadores.</p>
         </aside>}
         <motion.section initial={reduce ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className={styles.panel} aria-labelledby="login-title">
           <p className={styles.overline}>{userFlow ? 'Sua conta NexOS' : 'Acesso administrativo'}</p>
           <div className={styles.title}>
             {!userFlow && <LockKeyhole size={20} />}
-            <h2 id="login-title" className={`${styles.heading} brand-heading`}>{step === 'totp' ? 'Verificação em duas etapas' : mode === 'signup' ? 'Criar sua conta' : mode === 'forgot' ? 'Recuperar senha' : mode === 'magic' ? 'Entrar por link de e-mail' : mode === 'verify-email' ? 'Confirme seu e-mail' : userFlow ? 'Entrar na sua conta' : 'Entrada do operador'}</h2>
+            <h1 id="login-title" className={styles.heading}>{step === 'totp' ? 'Verificação em duas etapas' : mode === 'signup' ? 'Criar sua conta' : mode === 'forgot' ? 'Recuperar senha' : mode === 'magic' ? 'Entrar por link de e-mail' : mode === 'verify-email' ? 'Confirme seu e-mail' : userFlow ? 'Entrar na sua conta' : 'Entrada do operador'}</h1>
           </div>
           <p className={styles.description}>{step === 'totp' ? 'Confirme sua identidade para concluir o acesso.' : !userFlow && mode === 'login' ? 'Área restrita a operadores autorizados.' : MODE_DESCRIPTION[mode]}</p>
           <div className={styles.formStack}>
@@ -210,6 +211,7 @@ export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, 
           <nav aria-label="Links legais" className="mt-8 flex flex-wrap gap-4 text-xs text-muted-foreground">{[['/privacidade', 'Privacidade'], ['/termos', 'Termos'], ['/lgpd', 'LGPD'], ['/cookies', 'Cookies']].map(([url, label]) => <Link key={url} href={url} className="underline underline-offset-2">{label}</Link>)}</nav>
         </motion.section>
       </div>
+      <PageFooter />
     </main>
   );
 }

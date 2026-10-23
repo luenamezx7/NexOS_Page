@@ -21,6 +21,7 @@ import { evaluatePassword } from '@/lib/auth/password-strength';
 import { authClient, authErrorMessage } from '@/lib/auth/client';
 import styles from '@/components/auth/LoginForm.module.css';
 import { AuthHeader, AuthStory } from './AuthFrame';
+import { PageFooter } from '../PageChrome';
 
 export function ResetPasswordForm({ token }: { token: string }) {
   const reduce = useReducedMotion();
@@ -73,7 +74,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
     <main className={styles.customer}>
       <AuthHeader />
 
-      <div className={styles.content}>
+      <div className={styles.content} id="main-content">
         <AuthStory recovery />
         <motion.section
           initial={reduce ? false : { opacity: 0, y: 12 }}
@@ -177,6 +178,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
           </p>
         </motion.section>
       </div>
+      <PageFooter />
     </main>
   );
 }
