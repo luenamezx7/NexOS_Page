@@ -54,32 +54,47 @@ test('o gradual blur fica apenas nas bordas da tela, sem blur entre seções', a
 });
 
 for (const theme of ['light', 'dark']) {
-  test(`blur com bloom ${theme} reage ao cursor e desaparece no fim da página`, async ({ page }, testInfo) => {
+  test(`degradê de blur ${theme} intensifica as bordas e desaparece no fim da página`, async ({ page }, testInfo) => {
     await page.addInitScript(theme => localStorage.setItem('nexos-theme', theme), theme);
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/#hero');
     const blur = page.locator('.landing-edge-blur');
-    const bloom = blur.locator('.gradual-blur-bloom');
     await expect(blur).toBeVisible();
     await expect(blur.locator('[data-gradual-blur-layer]')).toHaveCount(8);
     await expect.poll(() => blur.evaluate(root => (root as HTMLElement).style.getPropertyValue('--gradual-blur-reveal'))).toBe('1.000');
-    await expect(bloom).toHaveCSS('opacity', '0.12');
-    await expect(bloom).toHaveCSS('transition-duration', '0s');
-    await expect(blur.locator('[data-gradual-blur-layer]').last()).toHaveCSS('backdrop-filter', /brightness\(1\.0/);
+    await expect(blur.locator('.gradual-blur-bloom, .gradual-blur-tint')).toHaveCount(0);
+    const layers = blur.locator('[data-gradual-blur-layer]');
+    const radii = await layers.evaluateAll(elements => elements.map(element =>
+      Number(getComputedStyle(element).backdropFilter.match(/blur\(([\d.]+)px\)/)?.[1])
+    ));
+    expect(radii[0]).toBeLessThan(1);
+    expect(radii.at(-1)).toBeGreaterThanOrEqual(32);
+    expect(radii.every((radius, index) => index === 0 || radius > radii[index - 1])).toBe(true);
+    await expect(layers.first()).toHaveCSS('mask-image', /transparent|rgba\(0, 0, 0, 0\)/);
+    await expect(layers.last()).toHaveCSS('opacity', '1');
+    await expect(layers.last()).toHaveCSS('transition-duration', '0s');
 
     for (const width of [1366, 390]) {
       await page.setViewportSize({ width, height: 844 });
+      await page.locator('#manifesto').scrollIntoViewIfNeeded();
+      await page.locator('#manifesto img').evaluate((image: HTMLImageElement) => image.decode());
       await page.mouse.move(width / 2, 830);
-      await expect.poll(() => blur.evaluate(root => (root as HTMLElement).style.getPropertyValue('--gradual-blur-hover'))).toBe('1.2');
+      await expect(layers.last()).toHaveCSS('backdrop-filter', 'blur(48px)');
+      const box = await blur.boundingBox();
+      expect(box!.height).toBeGreaterThanOrEqual(120);
+      expect(box!.height).toBeLessThanOrEqual(240);
+      const topBox = await page.locator('.landing-header-blur').boundingBox();
+      expect(topBox!.y + topBox!.height).toBeLessThan(422);
+      expect(box!.y).toBeGreaterThan(422);
       expect(await page.evaluate(() => document.elementFromPoint(innerWidth / 2, innerHeight - 14)?.closest('.gradual-blur') === null)).toBe(true);
-      await page.screenshot({ path: testInfo.outputPath(`bloom-${theme}-${width}.png`) });
+      await page.screenshot({ path: testInfo.outputPath(`edge-blur-${theme}-${width}.png`) });
       await page.mouse.move(width / 2, 300);
-      await expect(bloom).toHaveCSS('opacity', '0.12');
+      await expect(layers.last()).toHaveCSS('backdrop-filter', 'blur(48px)');
     }
 
     await page.evaluate(() => scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }));
     await expect.poll(() => blur.evaluate(root => (root as HTMLElement).style.getPropertyValue('--gradual-blur-reveal'))).toBe('0.000');
-    await expect(bloom).toHaveCSS('opacity', '0');
+    await expect(layers.last()).toHaveCSS('backdrop-filter', 'blur(0px)');
     await expect(page.getByRole('contentinfo').getByRole('navigation', { name: 'Legal', exact: true })).toBeVisible();
   });
 }

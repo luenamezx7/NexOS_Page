@@ -9,7 +9,8 @@ import { ArrowUpRight, GitBranch, MessageSquare } from 'lucide-react';
 import { config } from '@/config';
 import type { FooterLink } from '@/types';
 import { Signature } from './signature';
-import { useTheme } from './ThemeProvider';
+import { BrandVeil } from './ui/brand-veil';
+import { cn } from '@/lib/utils';
 import { openCookiePreferences } from './cookie-consent';
 import styles from './MidPage.module.css';
 
@@ -55,11 +56,11 @@ function FooterColumn({ title, links }: FooterColumnProps) {
 }
 
 export function Footer({ onViewPresentation }: { onViewPresentation?: () => void } = {}) {
-  const { theme } = useTheme();
   const currentYear: number = new Date().getFullYear();
 
   return (
-    <footer role="contentinfo" className={styles.footerSection}>
+    <footer role="contentinfo" className={cn(styles.footerSection, 'oceanic-surface')}>
+      <BrandVeil />
       <div className={styles.footerInner}>
         <div
           className={styles.footerGrid}
@@ -75,7 +76,7 @@ export function Footer({ onViewPresentation }: { onViewPresentation?: () => void
                   fontSize={36}
                   duration={1.2}
                   inView={true}
-                  color={theme === 'dark' ? '#FFFFFF' : '#131316'}
+                  color="#f9f3fa"
                   className="h-9 w-auto overflow-visible shrink-0"
                 />
               </span>

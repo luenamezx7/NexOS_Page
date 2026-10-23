@@ -104,10 +104,6 @@ export default function GradualBlur({
     const count = Math.min(Math.max(Math.round(layers) || 1, 1), 16);
     const shape = CURVES[curve] || CURVES.linear;
     const maxBlur = Math.max(strength, 0) * 12;
-    const level = (u: number) => {
-      const t = shape(clamp01(u));
-      return maxBlur * (exponential ? (Math.pow(2, 4 * t) - 1) / 15 : t);
-    };
     const boost = Math.pow(Math.max(saturation, 0), 1 / count);
     const bloomAmount = clamp01(bloom);
     const brightness = Math.pow(1 + bloomAmount, 1 / count);
@@ -115,9 +111,8 @@ export default function GradualBlur({
     const direction = DIRECTIONS[edge];
     const steps: CSSProperties[] = [];
     for (let i = 0; i < count; i++) {
-      const from = level(i / count);
-      const to = level((i + 1) / count);
-      const radius = Math.sqrt(Math.max(to * to - from * from, 0));
+      const t = shape((i + 1) / count);
+      const radius = maxBlur * (exponential ? Math.pow(2, count * (t - 1)) : t);
       const filter = [
         `blur(calc(${radius.toFixed(3)}px * var(--gradual-blur-reveal, 1) * var(--gradual-blur-hover, 1)))`,
         boost !== 1 ? `saturate(calc(1 + ${(boost - 1).toFixed(4)} * var(--gradual-blur-reveal, 1)))` : '',
@@ -125,7 +120,16 @@ export default function GradualBlur({
       ]
         .filter(Boolean)
         .join(' ');
-      const mask = `linear-gradient(${direction}, transparent ${((i / count) * 100).toFixed(2)}%, #000 ${(((i + 1) / count) * 100).toFixed(2)}%)`;
+      // Overlapping bands crossfade between radii, rather than leaving each
+      // weaker layer active all the way to the edge. The last bands stay opaque
+      // at the outer edge so sharp details cannot leak through the strongest blur.
+      const stops = [
+        `transparent ${((i / count) * 100).toFixed(2)}%`,
+        `#000 ${(((i + 1) / count) * 100).toFixed(2)}%`,
+      ];
+      if (i + 2 <= count) stops.push(`#000 ${(((i + 2) / count) * 100).toFixed(2)}%`);
+      if (i + 3 <= count) stops.push(`transparent ${(((i + 3) / count) * 100).toFixed(2)}%`);
+      const mask = `linear-gradient(${direction}, ${stops.join(', ')})`;
       steps.push({
         position: 'absolute',
         inset: 0,

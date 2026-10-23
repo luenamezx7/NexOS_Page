@@ -924,12 +924,35 @@ select.field-input option {
 .landing-page footer { background: var(--color-canvas); }
 .landing-page .btn-primary-nex, .landing-page .btn-primary-glow { font-family: var(--font-sans); letter-spacing: 0; font-weight: 600; }
 .landing-page:has(input:focus-visible, textarea:focus-visible, select:focus-visible) :is(.landing-edge-blur, .landing-header-blur) { opacity: 0; }
+/* The two Oceanic Shimmer surfaces have local contrast tokens in either theme. */
+.oceanic-surface {
+  --color-canvas: #fdf6ec;
+  --color-ink: #000000;
+  --text-secondary: #3a3a3a;
+  --text-tertiary: #6b6b6b;
+  --display-rose: var(--visor-violet);
+  --landing-muted: var(--text-secondary);
+  --landing-line: rgb(0 0 0 / 12%);
+  --landing-accent: var(--visor-violet);
+  --visor-text-gradient: linear-gradient(105deg, #7c3aed 0%, #971ef4 55%, #a54aff 100%);
+  --ring: #7c3aed;
+  color: var(--color-ink);
+}
+.dark .oceanic-surface {
+  --color-canvas: #000000;
+  --color-ink: #f9f3fa;
+  --text-secondary: #e2d4ef;
+  --text-tertiary: #c8b5d9;
+  --display-rose: var(--visor-lilac);
+  --landing-muted: var(--text-secondary);
+  --landing-line: rgb(249 243 250 / 16%);
+  --landing-accent: var(--visor-lilac);
+  --visor-text-gradient: linear-gradient(105deg, #efb0ff 0%, #d391ff 55%, #a54aff 100%);
+  --ring: #d391ff;
+  color: var(--color-ink);
+}
+.brand-veil { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
 .landing-hero { position: relative; isolation: isolate; display: flex; align-items: center; min-height: min(900px, 100svh); overflow: hidden; background: var(--color-canvas); }
-.hero-ascii { position: absolute; inset: 0; z-index: -1; background: radial-gradient(ellipse at 50% 10%, rgba(var(--brand-secondary-rgb), 0.3), transparent 70%); }
-.dark .hero-ascii { background: radial-gradient(ellipse at 50% 15%, rgba(var(--brand-secondary-rgb), .36), transparent 70%), #000; }
-.dark .hero-ascii .gradient-ascii-canvas { filter: brightness(1.6) saturate(1.1); }
-.hero-readability { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 48%, color-mix(in srgb, var(--color-canvas) 96%, transparent) 8%, color-mix(in srgb, var(--color-canvas) 88%, transparent) 30%, transparent 78%); pointer-events: none; }
-.dark .hero-readability { background: radial-gradient(ellipse at 50% 44%, #000e6 0%, #000bf 22%, #00059 45%, transparent 70%); }
 .hero-container { position: relative; width: 100%; max-width: 1280px; margin-inline: auto; padding: 160px 40px 104px; z-index: 1; }
 .hero-copy { max-width: 1000px; margin-inline: auto; text-align: center; }
 .hero-eyebrow { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 28px; color: var(--landing-muted); font: 11px var(--font-mono); letter-spacing: .12em; }

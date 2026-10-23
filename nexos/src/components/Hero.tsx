@@ -1,34 +1,24 @@
 'use client';
 
 import { forwardRef } from 'react';
-import dynamic from 'next/dynamic';
 import { ArrowDown, ArrowUpRight } from 'lucide-react';
 import { config } from '@/config';
 import { HoverLink } from './ui/hover-button';
-import { useTheme } from './ThemeProvider';
+import { BrandVeil } from './ui/brand-veil';
+import { cn } from '@/lib/utils';
 import { motion } from 'motion/react';
 import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { usePresentationActive, usePresentationRevealing } from '@/lib/use-presentation-active';
-import { HERO_PALETTES } from '@/lib/brand-palette';
-
-const GradientASCII = dynamic(() => import('./ui/GradientASCII'), { ssr: false });
 
 export const Hero = forwardRef<HTMLElement, { className?: string }>(function Hero({ className = '' }, ref) {
-  const { theme } = useTheme();
   const reduce = useReducedMotion();
   const entryOpen = usePresentationActive();
   const revealing = usePresentationRevealing();
   const showHero = !entryOpen || revealing;
 
   return (
-    <section ref={ref} id="hero" tabIndex={-1} aria-labelledby="hero-title" className={`landing-hero ${className}`}>
-      <div className="hero-ascii" aria-hidden="true">
-        {showHero && <GradientASCII colors={HERO_PALETTES[theme]} lightMode={theme === 'light'}
-          shape="horizon" characters=" =+xX0S8#@" cellSize={18} density={0.88}
-          gradientOpacity={0.5} glyphOpacity={1} glow={theme === 'dark' ? 1.1 : 0.4} grain={0.025}
-          flicker={0.16} speed={0.65} flow={0.55} dpr={1} maxFPS={30} visibilityMargin="-96px 0px 0px" />}
-        <div className="hero-readability" />
-      </div>
+    <section ref={ref} id="hero" tabIndex={-1} aria-labelledby="hero-title" className={cn('landing-hero oceanic-surface', className)}>
+      <BrandVeil />
       <div className="hero-container">
         <motion.div className="hero-copy" initial={reduce ? false : 'hidden'} animate={showHero ? 'show' : 'hidden'}
           variants={{ hidden: {}, show: { transition: { staggerChildren: 0.13, delayChildren: 0.1 } } }}>

@@ -28,7 +28,7 @@ for (const width of [1366, 390]) {
       if (progress >= 0.55) {
         const opacity = await portal.evaluate(e => Number(e.style.getPropertyValue('--gp-scene-opacity')));
         expect(opacity).toBeLessThan(0.3);
-        await expect(page.locator('#hero .gradient-ascii-canvas')).toHaveCount(1);
+        await expect(page.locator('#hero [data-gradient-background="oceanic-shimmer"]')).toHaveCount(1);
         await expect.poll(() => page.locator('.hero-heading').evaluate(element => Number(getComputedStyle(element).opacity))).toBeGreaterThan(0.9);
       }
       expect(Number(await portal.getAttribute('data-gp-scale'))).toBeGreaterThan(initialScale);

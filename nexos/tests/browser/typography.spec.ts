@@ -42,8 +42,8 @@ for (const theme of ['light', 'dark']) {
     await expect(page.locator('[data-scene="product"] [class*="fieldImage"]')).toBeVisible();
     if (theme === 'dark') {
       await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(0, 0, 0)');
-      await expect(page.locator('.hero-ascii')).toHaveCSS('background-color', 'rgb(0, 0, 0)');
-      await expect(page.locator('.hero-ascii')).toHaveCSS('background-image', /radial-gradient/);
+      await expect(page.locator('#hero [data-gradient-colors]')).toHaveCSS('background-color', 'rgb(0, 0, 0)');
+      await expect(page.locator('#hero [data-gradient-colors]')).toHaveCSS('background-image', /radial-gradient/);
       const scenes = await page.locator('[data-tone]').all();
       for (const scene of scenes) {
         await expect(scene).toHaveCSS('background-image', 'none');
@@ -57,10 +57,10 @@ for (const theme of ['light', 'dark']) {
       expect(await artwork.text()).not.toContain('radialGradient');
       await expect(page.locator('#showcase input[name="plate-study"]')).toHaveCount(3);
       await page.locator('#hero').scrollIntoViewIfNeeded();
-      await expect(page.locator('#hero canvas')).toBeVisible();
+      await expect(page.locator('#hero [data-gradient-background="oceanic-shimmer"]')).toBeVisible();
     }
     await page.locator('#hero').scrollIntoViewIfNeeded();
-    await expect(page.locator('#hero .gradient-ascii-canvas')).toHaveAttribute('data-motion', 'static');
+    await expect(page.locator('#hero .gradient-ascii-canvas')).toHaveCount(0);
     await page.locator('#hero').screenshot({ path: `test-results/type-hero-${theme}.png` });
 
     for (const width of [320, 390, 768, 1440]) {

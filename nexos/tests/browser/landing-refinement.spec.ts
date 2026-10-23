@@ -29,10 +29,16 @@ test('presentation hands off without hydration errors; every landing section rem
   expect(errors).toEqual([]);
 });
 
-test('hero owns ASCII, light waves alternate, and dark surfaces follow the theme', async ({ page }) => {
+test('hero e footer usam Oceanic Shimmer, enquanto as demais seções mantêm seus temas', async ({ page }) => {
   await openLanding(page, 'light');
-  await expect(page.locator('#hero .gradient-ascii-canvas')).toHaveAttribute('data-motion', 'static');
-  expect(await page.locator('#hero .gradient-ascii-canvas').evaluate(el => (el as HTMLCanvasElement).getContext('webgl2')?.isContextLost())).toBe(false);
+  await expect(page.locator('[data-gradient-background="oceanic-shimmer"]')).toHaveCount(2);
+  await expect(page.locator('#hero [data-gradient-background]')).toHaveCSS('position', 'absolute');
+  await expect(page.locator('footer [data-gradient-background]')).toHaveCSS('position', 'absolute');
+  await expect(page.locator('#hero .gradient-ascii-canvas')).toHaveCount(0);
+  await expect(page.locator('#hero h1, footer h3').first()).toHaveCSS('color', 'rgb(249, 243, 250)');
+  await expect(page.locator('[data-scene] [data-gradient-background]')).toHaveCount(0);
+  const grains = await page.locator('[data-gradient-background] filter').evaluateAll(elements => elements.map(element => element.id));
+  expect(new Set(grains).size).toBe(2);
   await expect(page.locator('#hero .topography-container')).toHaveCount(0);
   await expect(page.locator('.site-atmosphere')).toHaveCount(0);
   await page.locator('#fisico-digital').scrollIntoViewIfNeeded();
@@ -42,6 +48,8 @@ test('hero owns ASCII, light waves alternate, and dark surfaces follow the theme
   expect(light[0]).not.toBe(light[1]);
   await page.getByRole('button', { name: 'Ativar modo escuro' }).click();
   await expect(page.locator('html')).toHaveClass(/dark/);
+  await expect(page.locator('#hero h1')).toHaveCSS('color', 'rgb(249, 243, 250)');
+  await expect(page.locator('footer h3').first()).toHaveCSS('color', 'rgb(249, 243, 250)');
   await expect.poll(async () => (await backgrounds())[1]).toBe('rgb(0, 0, 0)');
   const dark = await backgrounds();
   expect(dark.every(color => color === 'rgb(0, 0, 0)')).toBe(true);

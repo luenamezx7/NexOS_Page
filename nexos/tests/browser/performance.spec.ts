@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { enterPresentation } from './helpers/presentation';
 
-test('mobile usa ASCII limitado e não carrega a fonte do rodapé no início', async ({ browser }) => {
+test('mobile usa gradiente CSS e não carrega a fonte do rodapé no início', async ({ browser }) => {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, colorScheme: 'dark' });
   const page = await context.newPage();
   const requests: string[] = [];
@@ -9,7 +9,8 @@ test('mobile usa ASCII limitado e não carrega a fonte do rodapé no início', a
   try {
     await page.goto('http://localhost:3100/');
     await enterPresentation(page);
-    await expect(page.locator('#hero .gradient-ascii-canvas')).toHaveCount(1);
+    await expect(page.locator('#hero [data-gradient-background="oceanic-shimmer"]')).toHaveCount(1);
+    await expect(page.locator('#hero .gradient-ascii-canvas')).toHaveCount(0);
     await expect(page.locator('.site-atmosphere')).toHaveCount(0);
     await expect(page.locator('.hero-veil canvas')).toHaveCount(0);
     await expect(page.locator('[data-dither-wave]')).toHaveCount(0);
@@ -30,7 +31,8 @@ test('prefers-reduced-motion mantém os efeitos opcionais desativados no desktop
   try {
     await page.goto('http://localhost:3100/');
     await enterPresentation(page);
-    await expect(page.locator('#hero .gradient-ascii-canvas')).toHaveAttribute('data-motion', 'static');
+    await expect(page.locator('#hero [data-gradient-background="oceanic-shimmer"]')).toBeVisible();
+    await expect(page.locator('#hero .gradient-ascii-canvas')).toHaveCount(0);
     await expect(page.locator('.hero-veil canvas')).toHaveCount(0);
     await expect(page.locator('h1')).toBeVisible();
   } finally {
