@@ -1,5 +1,4 @@
-.button { position: relative; isolation: isolate; display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 52px; max-width: 100%; padding: 12px 24px; overflow: hidden; border: 1px solid color-mix(in srgb, var(--brand-choice) 38%, transparent); border-radius: 10px; color: #fff; background: var(--action-gradient); font-family: var(--font-mono); font-size: 13px; font-weight: 700; letter-spacing: -0.025em; cursor: pointer; box-shadow: inset 0 1px 0 #ffffff45, 0 6px 20px -12px rgba(var(--brand-accent-rgb), 0.44); transition: transform 200ms var(--ease-fluid), box-shadow 200ms; }
-.button:hover { box-shadow: inset 0 1px 0 #ffffff60, 0 8px 24px -12px rgba(var(--brand-accent-rgb), 0.56); }
+.button { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 52px; max-width: 100%; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
 .button:active { transform: translateY(1px) scale(0.985); }
 .button:focus-visible { outline: 2px solid var(--display-rose); outline-offset: 4px; }
 .button:disabled { opacity: 0.45; cursor: not-allowed; }

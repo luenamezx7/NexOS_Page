@@ -5,53 +5,83 @@
  * - Nav desktop + drawer mobile
  * - Link "Minha conta" → /portal/acesso
  * - ThemeToggle
- * - Scroll → glass-header--scrolled
+ * - Transparent over the hero; the glass surface assembles on scroll.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'motion/react';
+import { motion, AnimatePresence, useScroll, useMotionValue, useMotionValueEvent, useSpring, type MotionStyle } from 'motion/react';
 import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { ArrowUpRight, Menu, UserRound, X } from 'lucide-react';
 import { config } from '@/config';
 import { BrandMark } from './BrandMark';
-import { VisorSpectrum } from './VisorSpectrum';
 import { ThemeToggle } from './ThemeToggle';
 import styles from './Header.module.css';
-import { MetallicSurface } from './ui/metallic-button';
 import { useSectionScroll } from './SmoothScrollProvider';
+import { cn } from '@/lib/utils';
 
 const NAV_ITEMS = [{ label: 'Placa NFC', href: '#showcase' }, ...config.navigation];
+const ASSEMBLE_SCROLL = 32;
+const assemblyAt = (scroll: number) => Math.min(1, Math.max(0, (scroll - 8) / 104));
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileExiting, setMobileExiting] = useState(false);
   const menuRef = useRef<HTMLButtonElement>(null);
   const reduce = useReducedMotion();
   const scrollToSection = useSectionScroll();
   const { scrollY } = useScroll();
-  useMotionValueEvent(scrollY, 'change', latest => setScrolled(latest > 10));
+  const assemblyTarget = useMotionValue(0);
+  const assembly = useSpring(assemblyTarget, { stiffness: 180, damping: 28, mass: 0.8, restDelta: 0.001, restSpeed: 0.01 });
+  useMotionValueEvent(scrollY, 'change', latest => {
+    setScrolled(latest > ASSEMBLE_SCROLL);
+    if (!mobileOpen && !mobileExiting) assemblyTarget.set(assemblyAt(latest));
+  });
+
+  useEffect(() => {
+    const syncScroll = () => {
+      setScrolled(window.scrollY > ASSEMBLE_SCROLL);
+      assemblyTarget.set(mobileOpen || mobileExiting ? 1 : assemblyAt(window.scrollY));
+    };
+    const frame = requestAnimationFrame(syncScroll);
+    window.addEventListener('pageshow', syncScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('pageshow', syncScroll);
+    };
+  }, [assemblyTarget, mobileOpen, mobileExiting]);
+
+  const closeMenu = useCallback(() => {
+    if (!mobileOpen) return;
+    setMobileExiting(true);
+    setMobileOpen(false);
+  }, [mobileOpen]);
 
   const handleNav = useCallback((hash: string) => {
-    setMobileOpen(false);
+    closeMenu();
     requestAnimationFrame(() => scrollToSection(hash));
-  }, [scrollToSection]);
+  }, [closeMenu, scrollToSection]);
 
   useEffect(() => {
     if (!mobileOpen) return;
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') { setMobileOpen(false); menuRef.current?.focus(); }
+      if (event.key === 'Escape') { closeMenu(); menuRef.current?.focus(); }
     };
     const desktop = matchMedia('(min-width: 1200px)');
-    const onResize = () => { if (desktop.matches) setMobileOpen(false); };
+    const onResize = () => { if (desktop.matches) closeMenu(); };
     window.addEventListener('keydown', onKey);
     desktop.addEventListener('change', onResize);
     return () => { window.removeEventListener('keydown', onKey); desktop.removeEventListener('change', onResize); };
-  }, [mobileOpen]);
+  }, [closeMenu, mobileOpen]);
+
+  const assembled = scrolled || mobileOpen || mobileExiting;
 
   return (
-    <header
+    <motion.header
       role="banner"
-      className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}
+      className={cn(styles.header, assembled && styles.scrolled)}
+      data-header-state={assembled ? 'assembled' : 'transparent'}
+      style={{ '--header-progress': assembly } as MotionStyle}
     >
       <div className={styles.bar}>
         <a href="#hero" aria-label="NexOS, início" onClick={event => { event.preventDefault(); handleNav('#hero'); }} className={styles.brand}>
@@ -72,16 +102,19 @@ export function Header() {
           <Link href="/portal/acesso" prefetch={false} className={styles.account}>
             <UserRound size={16} strokeWidth={1.75} aria-hidden="true" /><span>Minha conta</span>
           </Link>
-          <ThemeToggle />
-          <button type="button" className={styles.start} onClick={() => handleNav('#services')}><MetallicSurface /><span className="metallic-content inline-flex items-center gap-2">Ver soluções <ArrowUpRight size={16} aria-hidden="true" /></span><VisorSpectrum className={styles.spectrum} /></button>
-          <button ref={menuRef} type="button" aria-label={mobileOpen ? 'Fechar menu' : 'Abrir menu'} aria-expanded={mobileOpen} aria-controls="mobile-navigation" onClick={() => setMobileOpen(value => !value)} className={styles.menuButton}>
+          <ThemeToggle className={styles.themeToggle} />
+          <button type="button" className={cn('primary-action', styles.start)} onClick={() => handleNav('#services')}><span className="inline-flex items-center gap-2">Ver soluções <ArrowUpRight size={16} aria-hidden="true" /></span></button>
+          <button ref={menuRef} type="button" aria-label={mobileOpen ? 'Fechar menu' : 'Abrir menu'} aria-expanded={mobileOpen} aria-controls="mobile-navigation" onClick={() => {
+            if (mobileOpen) closeMenu();
+            else { setMobileExiting(false); setMobileOpen(true); }
+          }} className={styles.menuButton}>
             {mobileOpen ? <X size={20} aria-hidden="true" /> : <Menu size={20} aria-hidden="true" />}
           </button>
         </div>
       </div>
-      <AnimatePresence>
+      <AnimatePresence onExitComplete={() => setMobileExiting(false)}>
         {mobileOpen && (
-          <motion.nav id="mobile-navigation" aria-label="Navegação móvel" initial={reduce ? false : { opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: reduce ? 0 : -8 }} transition={{ duration: 0.2 }} className={styles.mobileNav}>
+          <motion.nav id="mobile-navigation" aria-label="Navegação móvel" initial={reduce ? false : { opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: reduce ? 0 : -8 }} transition={{ duration: reduce ? 0 : 0.2 }} className={styles.mobileNav}>
             <ul role="list" className="flex flex-col gap-4">
               {NAV_ITEMS.map(item => (
                 <li key={item.href}>
@@ -89,11 +122,11 @@ export function Header() {
                 </li>
               ))}
             </ul>
-            <button type="button" className={styles.mobileStart} onClick={() => handleNav('#services')}><MetallicSurface /><span className="metallic-content inline-flex w-full items-center justify-between gap-2">Ver soluções <ArrowUpRight size={16} aria-hidden="true" /></span></button>
+            <button type="button" className={cn('primary-action', styles.mobileStart)} onClick={() => handleNav('#services')}><span className="inline-flex w-full items-center justify-between gap-2">Ver soluções <ArrowUpRight size={16} aria-hidden="true" /></span></button>
           </motion.nav>
         )}
       </AnimatePresence>
-    </header>
+    </motion.header>
   );
 }
 

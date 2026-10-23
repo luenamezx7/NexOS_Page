@@ -3,4 +3,22 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
+  background: var(--grainient-fallback, var(--color-canvas));
+}
+
+.grainient-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.grainient-container:is([data-render-state='pending'], [data-render-state='unavailable'], [data-render-state='context-lost']) .grainient-canvas {
+  visibility: hidden;
+}
+
+@media (forced-colors: active) {
+  .grainient-container { background: Canvas; }
+  .grainient-canvas { display: none; }
 }

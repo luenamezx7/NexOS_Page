@@ -508,6 +508,70 @@ button {
 
 /* ---------- Buttons ---------- */
 
+:is(.btn-primary-nex, .btn-primary-glow, .primary-action) {
+  --action-reveal: 0;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid var(--action-outline, var(--primary));
+  background: transparent;
+  color: var(--action-label, var(--primary));
+  box-shadow: none;
+  font-family: var(--font-sans);
+  transition: color 220ms ease, border-color 220ms ease, box-shadow 300ms ease;
+}
+
+:is(.btn-primary-nex, .btn-primary-glow, .primary-action)::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: inherit;
+  background: var(--visor-violet);
+  transform: scaleX(var(--action-reveal));
+  transform-origin: left center;
+  transition: transform 420ms var(--ease-fluid);
+}
+
+:is(.btn-primary-nex, .btn-primary-glow, .primary-action) :is([data-metallic-surface], .shimmer-sweep) { display: none; }
+
+:is(.btn-primary-nex, .btn-primary-glow, .primary-action):is(:focus-visible, :active):not(:disabled):not([aria-disabled='true']) {
+  --action-reveal: 1;
+  color: #fff;
+  border-color: var(--visor-violet);
+  box-shadow: 0 0 18px -6px #971ef466, 0 6px 18px -12px #971ef480;
+}
+
+@media (hover: hover) {
+  :is(.btn-primary-nex, .btn-primary-glow, .primary-action):hover:not(:disabled):not([aria-disabled='true']) {
+    --action-reveal: 1;
+    color: #fff;
+    border-color: var(--visor-violet);
+    box-shadow: 0 0 18px -6px #971ef466, 0 6px 18px -12px #971ef480;
+  }
+}
+
+:is(.btn-primary-nex, .btn-primary-glow, .primary-action):focus-visible {
+  outline: 2px solid var(--action-outline, var(--primary));
+  outline-offset: 4px;
+}
+
+:is(.btn-primary-nex, .btn-primary-glow, .primary-action):is(:disabled, [aria-disabled='true']) {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(.btn-primary-nex, .btn-primary-glow, .primary-action),
+  :is(.btn-primary-nex, .btn-primary-glow, .primary-action)::before { transition: none; }
+}
+
+@media (forced-colors: active) {
+  :is(.btn-primary-nex, .btn-primary-glow, .primary-action) { border-color: ButtonText; background: ButtonFace; color: ButtonText; box-shadow: none; }
+  :is(.btn-primary-nex, .btn-primary-glow, .primary-action)::before { display: none; }
+}
+
 .btn-primary-nex,
 .btn-primary-glow {
   position: relative;
@@ -522,27 +586,8 @@ button {
   font-weight: 700;
   letter-spacing: 0.03em;
   border-radius: 0.625rem;
-  color: rgb(var(--ui-highlight));
-  background: var(--action-gradient);
-  border: 1px solid rgba(var(--ui-highlight), 0.14);
-  box-shadow:
-    inset 0 1px 0 rgba(var(--ui-highlight), 0.25),
-    0 0 0 1px rgba(var(--brand-choice-rgb), 0.28),
-    0 10px 28px -10px rgba(var(--brand-choice-rgb), 0.55),
-    0 0 20px rgba(var(--brand-choice-rgb), 0.28);
-  transition: box-shadow 0.3s var(--ease-fluid), filter 0.3s var(--ease-fluid);
   max-width: 100%;
   white-space: nowrap;
-}
-
-.btn-primary-nex:hover,
-.btn-primary-glow:hover {
-  filter: brightness(1.07);
-  box-shadow:
-    inset 0 1px 0 rgba(var(--ui-highlight), 0.28),
-    0 0 0 1px rgba(var(--brand-choice-rgb), 0.4),
-    0 12px 32px -10px rgba(var(--brand-choice-rgb), 0.6),
-    0 0 26px rgba(var(--brand-choice-rgb), 0.35);
 }
 
 @media (max-width: 639px) {
@@ -553,37 +598,12 @@ button {
   }
 }
 
-.btn-primary-nex:hover {
-  filter: brightness(1.07);
-  box-shadow:
-    inset 0 1px 0 rgba(var(--ui-highlight), 0.28),
-    0 0 0 1px rgba(var(--brand-choice-rgb), 0.4),
-    0 12px 32px -10px rgba(var(--brand-choice-rgb), 0.6),
-    0 0 26px rgba(var(--brand-choice-rgb), 0.35);
-}
-
-/* Featured presence (hero CTA): machined gradient + leve brilho roxo.
-   Sem zoom, sem shimmer — só scramble da escrita no hover. */
+/* Featured actions retain their larger touch target and shared outline finish. */
 .btn-primary-nex--featured {
   padding: 1rem 2.25rem;
   font-size: 0.9375rem;
   font-weight: 700;
   letter-spacing: 0.04em;
-  background: var(--action-gradient);
-  box-shadow:
-    inset 0 1px 0 rgba(var(--ui-highlight), 0.22),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.22),
-    0 0 18px rgba(var(--brand-choice-rgb), 0.3),
-    0 8px 24px -12px rgba(var(--brand-choice-rgb), 0.3);
-}
-
-.btn-primary-nex--featured:hover {
-  background: var(--action-gradient);
-  box-shadow:
-    inset 0 1px 0 rgba(var(--ui-highlight), 0.22),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.22),
-    0 0 22px rgba(var(--brand-choice-rgb), 0.38),
-    0 10px 28px -12px rgba(var(--brand-choice-rgb), 0.35);
 }
 
 .btn-primary-nex--featured .hold-bar {
@@ -951,7 +971,29 @@ select.field-input option {
   --ring: #d391ff;
   color: var(--color-ink);
 }
-.brand-veil { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.brand-veil {
+  --grainient-angle: 55deg;
+  --grainient-fallback: linear-gradient(var(--grainient-angle), #fdf6ec 0%, #eddbfa 25%, #cd9af4 50%, var(--visor-violet) 75%, #7410c4 100%);
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.dark .brand-veil {
+  --grainient-fallback: linear-gradient(var(--grainient-angle), #000 0%, #26073e 25%, #57118c 50%, var(--visor-violet) 75%, #a331f7 100%);
+}
+/* A lighter scrim leaves the saturated purple field visible around the copy. */
+.brand-veil::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 42%, color-mix(in srgb, var(--color-canvas) 80%, transparent) 0%, color-mix(in srgb, var(--color-canvas) 55%, transparent) 35%, color-mix(in srgb, var(--color-canvas) 12%, transparent) 100%), linear-gradient(to top, var(--color-canvas), transparent 24%);
+}
+.brand-veil[data-variant='hero'] { --grainient-angle: 0deg; }
+/* Expose the top of the field behind the floating header; soften only the copy. */
+.brand-veil[data-variant='hero']::after {
+  background: radial-gradient(ellipse 62% 48% at 50% 62%, color-mix(in srgb, var(--color-canvas) 94%, transparent) 0%, color-mix(in srgb, var(--color-canvas) 78%, transparent) 38%, transparent 100%), linear-gradient(to top, var(--color-canvas), transparent 38%);
+}
 .landing-hero { position: relative; isolation: isolate; display: flex; align-items: center; min-height: min(900px, 100svh); overflow: hidden; background: var(--color-canvas); }
 .hero-container { position: relative; width: 100%; max-width: 1280px; margin-inline: auto; padding: 160px 40px 104px; z-index: 1; }
 .hero-copy { max-width: 1000px; margin-inline: auto; text-align: center; }
@@ -1193,8 +1235,7 @@ html:not(.dark) .waves-entry-instruction { width: fit-content; margin-inline: au
 .dark .intro-flow { display: block; }
 .site-shell .btn-primary-nex > .metallic-content { font-family: var(--font-sans); }
 .site-shell :where(label, [data-slot="field-label"]) { font-family: var(--font-sans); }
-.site-shell .btn-primary-nex, .site-shell .btn-primary-glow { background: var(--action-gradient); font-family: var(--font-sans); font-weight: 650; letter-spacing: 0; box-shadow: inset 0 1px 0 rgba(var(--ui-highlight), 0.208), 0 6px 24px -14px rgba(var(--brand-accent-rgb), 0.56); }
-.site-shell .btn-primary-nex:hover, .site-shell .btn-primary-glow:hover { background: var(--action-gradient); filter: brightness(1.1); box-shadow: inset 0 1px 0 rgba(var(--ui-highlight), 0.271), 0 8px 28px -14px rgba(var(--brand-accent-rgb), 0.63); }
+.site-shell .btn-primary-nex, .site-shell .btn-primary-glow { font-family: var(--font-sans); font-weight: 650; letter-spacing: 0; }
 .site-shell :where(button, [role="button"]) { -webkit-tap-highlight-color: transparent; }
 .site-shell :where(button, [role="button"], nav a) { font-family: var(--font-sans); }
 .site-shell :where(input, textarea, select) { color-scheme: inherit; }

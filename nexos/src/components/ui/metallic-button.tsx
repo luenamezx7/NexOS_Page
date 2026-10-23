@@ -124,6 +124,8 @@ export function MetallicSurface({ baseColor, sheenColor, bandCount = 4, edgeBlur
     const surface = ref.current;
     const button = surface?.closest('button, a');
     if (!surface || !button) return;
+    // Primary actions use the shared CSS outline finish instead of a GPU surface.
+    if (button.matches('.primary-action, .btn-primary-nex, .btn-primary-glow')) return;
     const query = matchMedia('(prefers-reduced-motion: reduce)');
     const desktop = matchMedia('(min-width: 768px) and (pointer: fine)');
     let mount: MetallicShaderMount | null = null, visible = false, hovered = false, pressed = false;
@@ -163,7 +165,7 @@ export interface MetallicButtonProps extends ButtonHTMLAttributes<HTMLButtonElem
 }
 
 export const MetallicButton = forwardRef<HTMLButtonElement, MetallicButtonProps>(function MetallicButton({ label = 'Continuar', viewMode = 'text', children, className, baseColor, sheenColor, bandCount, edgeBlur, flowAngle, zoom, warp, redFringe, blueFringe, idleSpeed, hoverSpeed, clickSpeed, disabled, type = 'button', ...props }, ref) {
-  return <button ref={ref} type={type} disabled={disabled} aria-label={viewMode === 'icon' ? label : undefined} className={cn(styles.button, viewMode === 'icon' && styles.iconButton, className)} {...props}>
+  return <button ref={ref} type={type} disabled={disabled} aria-label={viewMode === 'icon' ? label : undefined} className={cn('primary-action', styles.button, viewMode === 'icon' && styles.iconButton, className)} {...props}>
     <MetallicSurface {...{ baseColor, sheenColor, bandCount, edgeBlur, flowAngle, zoom, warp, redFringe, blueFringe, idleSpeed, hoverSpeed, clickSpeed, disabled }} />
     <span className={styles.content}>{viewMode === 'icon' ? <Sparkles size={16} aria-hidden="true" /> : children ?? label}</span>
   </button>;

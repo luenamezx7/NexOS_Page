@@ -2,7 +2,7 @@
 
 /**
  * Botão reutilizável com variants primary/secondary/ghost.
- * - primary: gradiente pink + glow
+ * - primary: contorno roxo, preenchimento e brilho ao interagir
  * - secondary: borda hairline, transparente
  * - ghost: sem borda, hover sutil
  * - loading: spinner + disabled
@@ -10,7 +10,6 @@
 import * as React from 'react';
 import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
-import { MetallicSurface } from './metallic-button';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'ghost' | 'inverse';
@@ -23,7 +22,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 const baseStyles = 'relative inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-canvas disabled:pointer-events-none disabled:opacity-40 select-none';
 
 const buttonVariants = {
-  primary: 'btn-primary-nex isolate overflow-hidden rounded-[0.625rem] text-white',
+  primary: 'btn-primary-nex isolate overflow-hidden rounded-[0.625rem]',
   secondary: 'rounded-lg border border-ink/20 bg-ink/5 px-6 py-3 text-sm font-medium text-ink/90 hover:bg-ink/10 hover:border-ink/40',
   ghost: 'rounded-lg bg-transparent text-ink/80 hover:bg-ink/5 hover:text-ink',
   inverse: 'rounded-full bg-ink text-canvas hover:bg-ink/90',
@@ -107,7 +106,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...motionProps}
         {...restProps}
       >
-        {variant === 'primary' && <MetallicSurface disabled={disabled || loading} />}
         <span className="metallic-content inline-flex items-center justify-center gap-2">{content}</span>
         {shimmer && variant === 'primary' && !loading && (
           <span className="shimmer-sweep" aria-hidden="true" />

@@ -71,8 +71,7 @@
 .quantity button:hover:not(:disabled) { background: var(--commerce-raised); }
 .quantity button:disabled { cursor: not-allowed; opacity: 0.35; }
 .quantity output { min-width: 24px; text-align: center; font-family: var(--font-mono); font-size: 16px; font-variant-numeric: tabular-nums; }
-.buyButton:global(.btn-primary-nex) { width: 100%; min-height: 48px; border-radius: 8px; background: var(--commerce-buy); box-shadow: inset 0 1px 0 #fdf6ec25; font-size: 14px; letter-spacing: 0; transition: background-color 180ms; }
-.buyButton:global(.btn-primary-nex):hover { background: var(--commerce-buy-hover); filter: none; box-shadow: inset 0 1px 0 #fdf6ec25; }
+.buyButton:global(.btn-primary-nex) { width: 100%; min-height: 48px; border-radius: 8px; font-size: 14px; letter-spacing: 0; }
 .hint { margin: 12px 0 16px; font-size: var(--type-small); line-height: 1.65; color: var(--text-tertiary); text-align: center; }
 .textLink { display: inline-flex; align-items: center; justify-content: flex-start; gap: 8px; min-height: 44px; font-size: 14px; font-weight: 500; }
 .textLink:hover { color: var(--commerce-accent); }

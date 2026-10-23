@@ -1,7 +1,7 @@
 .mark { display: inline-flex; align-items: center; gap: 8px; color: var(--color-ink); white-space: nowrap; }
 .mascot { display: block; width: 46px; height: 46px; flex-shrink: 0; object-fit: contain; }
-.wordmark { display: block; color: #000; font: 400 64px/46px var(--font-brand-logo), sans-serif; letter-spacing: 0; font-synthesis: none; transform: translateY(-.1em); }
-.wordmark, .mascot { transform-origin: center; transition: scale 280ms var(--ease-fluid), color 700ms ease; }
+.wordmark { display: block; color: var(--brand-wordmark-ink, #000); font: 400 64px/46px var(--font-brand-logo), sans-serif; letter-spacing: 0; font-synthesis: none; transform: translateY(-.1em); }
+.wordmark, .mascot { transform-origin: center; transition: scale 280ms var(--ease-fluid), color var(--brand-color-duration, 700ms) ease; }
 :global(.dark) .wordmark { color: var(--color-ink); }
 @media (hover: hover) and (pointer: fine) {
   .mark .wordmark:hover { scale: 1.04; color: var(--header-brand); }

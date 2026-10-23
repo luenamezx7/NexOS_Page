@@ -18,7 +18,7 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
 
   return (
     <section ref={ref} id="hero" tabIndex={-1} aria-labelledby="hero-title" className={cn('landing-hero oceanic-surface', className)}>
-      <BrandVeil />
+      <BrandVeil variant="hero" />
       <div className="hero-container">
         <motion.div className="hero-copy" initial={reduce ? false : 'hidden'} animate={showHero ? 'show' : 'hidden'}
           variants={{ hidden: {}, show: { transition: { staggerChildren: 0.13, delayChildren: 0.1 } } }}>
