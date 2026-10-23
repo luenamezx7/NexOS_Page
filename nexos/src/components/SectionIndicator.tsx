@@ -14,9 +14,10 @@ const SECTIONS = [
   { id: 'services', label: 'Serviços', number: '05' },
   { id: 'delivery-process', label: 'Processo', number: '06' },
   { id: 'testimonials', label: 'Sobre Nós', number: '07' },
-  { id: 'faq', label: 'FAQ', number: '08' },
-  { id: 'mascot-solutions', label: 'Soluções no dia a dia', number: '09' },
-  { id: 'cta-final', label: 'Fale com a NexOS', number: '10' },
+  { id: 'manifesto', label: 'Nossa visão', number: '08' },
+  { id: 'faq', label: 'FAQ', number: '09' },
+  { id: 'mascot-solutions', label: 'Soluções no dia a dia', number: '10' },
+  { id: 'cta-final', label: 'Fale com a NexOS', number: '11' },
 ];
 
 export function SectionIndicator() {

@@ -12,6 +12,7 @@ import { LandingPageBlur } from '@/components/sections/LandingPageBlur';
 
 const Services = dynamic(() => import('@/components/Services').then(m => m.Services));
 const AboutUs = dynamic(() => import('@/components/AboutUs').then(m => m.AboutUs));
+const TigerManifesto = dynamic(() => import('@/components/sections/TigerManifesto').then(m => m.TigerManifesto));
 const FAQ = dynamic(() => import('@/components/FAQ').then(m => m.FAQ));
 const MascotSolutions = dynamic(() => import('@/components/sections/MascotSolutions').then(m => m.MascotSolutions));
 const Footer = dynamic(() => import('@/components/Footer').then(m => m.Footer));
@@ -76,6 +77,7 @@ export default function HomeClient() {
             <SectionBackground index={5}>
               <AboutUs />
             </SectionBackground>
+            <TigerManifesto />
             <SectionBackground index={6}>
               <FAQ />
             </SectionBackground>
