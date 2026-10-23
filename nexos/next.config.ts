@@ -24,7 +24,7 @@ const STATIC_CSP = [
 
 const nextConfig: NextConfig = {
   turbopack: { root: process.cwd() },
-  images: { formats: ['image/avif', 'image/webp'] },
+  images: { formats: ['image/avif', 'image/webp'], qualities: [75, 90] },
   poweredByHeader: false,
   typescript: { ignoreBuildErrors: false },
   experimental: { optimizePackageImports: ['lucide-react', 'motion/react'] },
