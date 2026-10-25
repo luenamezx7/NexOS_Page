@@ -1,8 +1,10 @@
 import type { NextConfig } from 'next';
 
+const isDevelopment = process.env.NODE_ENV === 'development';
+
 const SECURITY_HEADERS = [
   { key: 'X-Content-Type-Options', value: 'nosniff' },
-  { key: 'X-Frame-Options', value: 'DENY' },
+  ...(isDevelopment ? [] : [{ key: 'X-Frame-Options', value: 'DENY' }]),
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
   { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(), fullscreen=()' },
   { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains; preload' },
@@ -19,7 +21,7 @@ const STATIC_CSP = [
   "font-src 'self' data:",
   "base-uri 'none'",
   "form-action 'none'",
-  "frame-ancestors 'none'",
+  ...(isDevelopment ? [] : ["frame-ancestors 'none'"]),
 ].join('; ');
 
 const nextConfig: NextConfig = {

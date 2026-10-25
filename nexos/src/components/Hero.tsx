@@ -23,10 +23,10 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
         <motion.div className="hero-copy" initial={reduce ? false : 'hidden'} animate={showHero ? 'show' : 'hidden'}
           variants={{ hidden: {}, show: { transition: { staggerChildren: 0.13, delayChildren: 0.1 } } }}>
           <p className="hero-eyebrow"><span aria-hidden="true" /> NEXOS LAB / DESIGN + CÓDIGO</p>
-          <motion.h1 id="hero-title" className="hero-heading" variants={{ hidden: reduce ? {} : { opacity: 0, y: 38 }, show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } } }}>Sites para<br /><span className="hero-accent">seu negócio.</span></motion.h1>
-          <motion.p className="hero-description" variants={{ hidden: reduce ? {} : { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.7 } } }}>A {config.brand.fullName} cria sites, landing pages e cardápios digitais. Conecte seu atendimento presencial com placas NFC e QR Code.</motion.p>
+          <motion.h1 id="hero-title" className="hero-heading" variants={{ hidden: reduce ? {} : { opacity: 0, y: 38 }, show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } } }}>Soluções com <span className="hero-accent hero-ia">IA</span> que impulsionam{' '}<span className="hero-accent">seu negócio</span></motion.h1>
+          <motion.p className="hero-description" variants={{ hidden: reduce ? {} : { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.7 } } }}>A Nexos LAB cria páginas diversas, otimiza sua operação, e aproxima seus clientes com a Placa Inteligente NFC, conectando o físico ao digital.</motion.p>
           <motion.div className="hero-actions" variants={{ hidden: reduce ? {} : { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.65 } } }}>
-            <HoverLink href={config.hero.ctaPrimary.href}>{config.hero.ctaPrimary.label}</HoverLink>
+            <HoverLink href={config.hero.ctaPrimary.href} target="_blank" rel="noopener noreferrer">{config.hero.ctaPrimary.label}</HoverLink>
             <a href="#showcase" className="hero-secondary">Conhecer a placa <ArrowUpRight size={17} aria-hidden="true" /></a>
           </motion.div>
         </motion.div>

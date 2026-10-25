@@ -1,5 +1,10 @@
 import type { SiteConfig } from './types';
 
+const whatsapp = {
+  number: '5564993289250',
+  message: 'Olá, vim pelo site da NexOS e gostaria de conversar sobre meu projeto.',
+};
+
 export const config: SiteConfig = {
   brand: {
     name: 'NexOS',
@@ -13,7 +18,7 @@ export const config: SiteConfig = {
   hero: {
     headline: 'Construímos soluções digitais para seu negócio.',
     subheadline: 'Da ideia ao mercado. Desenvolvimento, design e estratégia para startups e empresas que precisam de velocidade sem abrir mão da qualidade.',
-    ctaPrimary: { label: 'Iniciar Projeto', href: '#services' },
+    ctaPrimary: { label: 'Entrar em contato', href: `https://wa.me/${whatsapp.number}?text=${encodeURIComponent(whatsapp.message)}` },
     ctaSecondary: { label: 'Sobre Nós', href: '#testimonials' },
   },
   services: [
@@ -81,10 +86,7 @@ export const config: SiteConfig = {
       { label: 'Instagram', href: 'https://www.instagram.com/_nexoslab?stkn=ODZob2M2azAwYTFz&utm_source=qr', icon: 'Instagram' },
     ],
   },
-  whatsapp: {
-    number: '5564993289250',
-    message: 'Olá, vim pelo site da NexOS e gostaria de conversar sobre meu projeto.',
-  },
+  whatsapp,
   meta: {
     title: 'Criação de Sites, Landing Pages e Placas NFC',
     description: 'NexOS Lab, também conhecida como NexOS Performance: sites, landing pages e cardápios digitais para empresas. Placas NFC com QR Code para seu atendimento.',
