@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { enterPresentation } from './helpers/presentation';
 
-test('mobile usa gradiente CSS e não carrega a fonte do rodapé no início', async ({ browser }) => {
+test('mobile não carrega apresentação nem fonte do rodapé no início', async ({ browser }) => {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, colorScheme: 'dark' });
   const page = await context.newPage();
   const requests: string[] = [];
@@ -9,7 +9,8 @@ test('mobile usa gradiente CSS e não carrega a fonte do rodapé no início', as
   try {
     await page.goto('http://localhost:3100/');
     await enterPresentation(page);
-    await expect(page.locator('#hero [data-gradient-background="oceanic-shimmer"]')).toHaveCount(1);
+    await expect(page.locator('#hero [data-brand-veil]')).toHaveCount(1);
+    await expect(page.locator('.waves-entry, [data-waves-background]')).toHaveCount(0);
     await expect(page.locator('#hero .gradient-ascii-canvas')).toHaveCount(0);
     await expect(page.locator('.site-atmosphere')).toHaveCount(0);
     await expect(page.locator('.hero-veil canvas')).toHaveCount(0);
@@ -31,7 +32,7 @@ test('prefers-reduced-motion mantém os efeitos opcionais desativados no desktop
   try {
     await page.goto('http://localhost:3100/');
     await enterPresentation(page);
-    await expect(page.locator('#hero [data-gradient-background="oceanic-shimmer"]')).toBeVisible();
+    await expect(page.locator('#hero [data-brand-veil]')).toBeVisible();
     await expect(page.locator('#hero .gradient-ascii-canvas')).toHaveCount(0);
     await expect(page.locator('.hero-veil canvas')).toHaveCount(0);
     await expect(page.locator('h1')).toBeVisible();
@@ -62,10 +63,10 @@ test('CTA principal funciona sem JavaScript e favicon SVG é servido corretament
   const page = await context.newPage();
   try {
     await page.goto('http://localhost:3100/');
-    const action = page.getByRole('link', { name: 'Iniciar Projeto', exact: true });
-    await expect(action).toHaveAttribute('href', '#services');
+    const action = page.getByRole('link', { name: 'Conhecer a placa', exact: true });
+    await expect(action).toHaveAttribute('href', '#showcase');
     await action.click();
-    await expect(page).toHaveURL(/#services$/);
+    await expect(page).toHaveURL(/#showcase$/);
     const icon = await page.locator('link[rel="icon"][type="image/svg+xml"]').getAttribute('href');
     expect(icon).toContain('/mascote-tigre-albino.svg');
     const response = await request.get(icon!);

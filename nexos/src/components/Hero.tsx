@@ -20,7 +20,7 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
     <section ref={ref} id="hero" tabIndex={-1} aria-labelledby="hero-title" className={cn('landing-hero oceanic-surface', className)}>
       <BrandVeil variant="hero" />
       <div className="hero-container">
-        <motion.div className="hero-copy" initial={reduce ? false : 'hidden'} animate={showHero ? 'show' : 'hidden'}
+        <motion.div className="hero-copy" initial={false} animate={showHero ? 'show' : 'hidden'}
           variants={{ hidden: {}, show: { transition: { staggerChildren: 0.13, delayChildren: 0.1 } } }}>
           <p className="hero-eyebrow"><span aria-hidden="true" /> NEXOS LAB / DESIGN + CÓDIGO</p>
           <motion.h1 id="hero-title" className="hero-heading" variants={{ hidden: reduce ? {} : { opacity: 0, y: 38 }, show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } } }}>Soluções com <span className="hero-accent hero-ia">IA</span> que impulsionam{' '}<span className="hero-accent">seu negócio</span></motion.h1>

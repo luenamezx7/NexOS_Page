@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { enterPresentation } from './helpers/presentation';
+import { enterPresentation, openPresentation } from './helpers/presentation';
 
 test.use({ contextOptions: { reducedMotion: 'reduce' } });
 
@@ -9,7 +9,7 @@ async function openLanding(page: Page, theme = 'dark', presentation = false) {
     localStorage.setItem('nexos-cookie-consent-v1', JSON.stringify({ necessary: true, functional: false, analytics: false, marketing: false, updatedAt: new Date().toISOString() }));
   }, theme);
   await page.goto(presentation ? '/' : '/#hero');
-  if (presentation) await enterPresentation(page);
+  if (presentation) { await openPresentation(page); await enterPresentation(page); }
   await expect(page.locator('#hero-title')).toBeVisible();
 }
 
@@ -29,16 +29,17 @@ test('presentation hands off without hydration errors; every landing section rem
   expect(errors).toEqual([]);
 });
 
-test('hero e footer usam Oceanic Shimmer, enquanto as demais seções mantêm seus temas', async ({ page }) => {
+test('hero e footer usam BrandVeil, enquanto as demais seções mantêm seus temas', async ({ page }) => {
   await openLanding(page, 'light');
-  await expect(page.locator('[data-gradient-background="oceanic-shimmer"]')).toHaveCount(2);
-  await expect(page.locator('#hero [data-gradient-background]')).toHaveCSS('position', 'absolute');
-  await expect(page.locator('footer [data-gradient-background]')).toHaveCSS('position', 'absolute');
+  await expect(page.locator('[data-brand-veil]')).toHaveCount(2);
+  await expect(page.locator('#hero [data-brand-veil]')).toHaveCSS('position', 'absolute');
+  await expect(page.locator('footer [data-brand-veil]')).toHaveCSS('position', 'absolute');
   await expect(page.locator('#hero .gradient-ascii-canvas')).toHaveCount(0);
-  await expect(page.locator('#hero h1, footer h3').first()).toHaveCSS('color', 'rgb(249, 243, 250)');
+  await expect(page.locator('#hero h1')).toHaveCSS('color', 'rgb(0, 0, 0)');
+  await expect(page.locator('footer h3').first()).toHaveCSS('color', 'rgb(0, 0, 0)');
   await expect(page.locator('[data-scene] [data-gradient-background]')).toHaveCount(0);
-  const grains = await page.locator('[data-gradient-background] filter').evaluateAll(elements => elements.map(element => element.id));
-  expect(new Set(grains).size).toBe(2);
+  await page.locator('footer').scrollIntoViewIfNeeded();
+  await expect(page.locator('footer [data-brand-veil] .grainient-container')).toHaveCount(1);
   await expect(page.locator('#hero .topography-container')).toHaveCount(0);
   await expect(page.locator('.site-atmosphere')).toHaveCount(0);
   await page.locator('#fisico-digital').scrollIntoViewIfNeeded();
@@ -187,6 +188,7 @@ for (const theme of ['light', 'dark']) {
     await expect(topBlur).toHaveCSS('pointer-events', 'none');
     expect(Number(await topBlur.evaluate(el => getComputedStyle(el).zIndex))).toBeLessThan(Number(await page.getByRole('banner').evaluate(el => getComputedStyle(el).zIndex)));
     await page.locator('footer').scrollIntoViewIfNeeded();
-    await expect(blur).toHaveAttribute('data-hidden', 'true');
+    await page.evaluate(() => scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }));
+    await expect.poll(() => blur.evaluate(el => (el as HTMLElement).style.getPropertyValue('--gradual-blur-reveal'))).toBe('0.000');
   });
 }

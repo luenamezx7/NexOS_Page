@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { enterPresentation } from './helpers/presentation';
+import { enterPresentation, openPresentation } from './helpers/presentation';
 
 async function aligned(page: Page, id: string) {
   await expect.poll(() => page.locator(`#${id}`).evaluate(element => {
@@ -88,6 +88,7 @@ test('rapid navigation and wheel interruption do not leave a stale correction ru
 test('opening presentation releases scroll and the first section remains visible', async ({ page }) => {
   test.setTimeout(60000);
   await page.goto('/');
+  await openPresentation(page);
   await enterPresentation(page);
   await expect(page.locator('#hero')).toBeFocused();
   await expect(page.locator('body')).not.toHaveCSS('overflow', 'hidden');

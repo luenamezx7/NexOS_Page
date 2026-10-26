@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { enterPresentation } from './helpers/presentation';
+import { enterPresentation, openPresentation } from './helpers/presentation';
 
 test.setTimeout(90000);
 const phrase = 'nexos';
@@ -19,7 +19,7 @@ async function monitorDraws(page: Page) {
 const draws = (page: Page) => page.evaluate(() => (window as unknown as { __wavesDraws: number }).__wavesDraws);
 
 test('abertura escura mantém a receita Waves e as estrelas, sem CTA de entrada', async ({ page }) => {
-  await monitorDraws(page); await page.goto('/');
+  await monitorDraws(page); await page.goto('/'); await openPresentation(page);
   const dialog = page.getByRole('dialog', { name: 'Apresentação NexOS' });
   await expect(dialog).toBeFocused(); await expect(dialog.getByRole('heading')).toHaveText(phrase);
   await expect(dialog.getByRole('button')).toHaveCount(0); await expect(dialog.getByRole('link')).toHaveCount(0);
@@ -47,7 +47,7 @@ test('abertura escura mantém a receita Waves e as estrelas, sem CTA de entrada'
 });
 
 test('Waves pausa em aba oculta e em movimento reduzido', async ({ page }) => {
-  await monitorDraws(page); await page.goto('/');
+  await monitorDraws(page); await page.goto('/'); await openPresentation(page);
   const canvas = page.locator('[data-waves-background]');
   await expect(canvas).toHaveAttribute('data-state', 'animated', { timeout: 20000 });
   await page.evaluate(() => { Object.defineProperty(document, 'hidden', { configurable: true, value: true }); document.dispatchEvent(new Event('visibilitychange')); });
@@ -67,7 +67,7 @@ for (const theme of ['light', 'dark'] as const) {
     const page = await context.newPage();
     try {
       for (const viewport of [{ width: 1366, height: 768 }, { width: 360, height: 740 }, { width: 844, height: 390 }]) {
-        await page.setViewportSize(viewport); await page.goto('/');
+        await page.setViewportSize(viewport); await page.goto('/'); await openPresentation(page);
         const dialog = page.getByRole('dialog', { name: 'Apresentação NexOS' });
         await expect(dialog).toBeFocused(); await expect(dialog.getByRole('heading')).toHaveText(phrase);
         await expect(dialog.getByRole('button')).toHaveCount(0);
@@ -94,32 +94,42 @@ test('sem WebGL ainda é possível entrar rolando', async ({ page }) => {
       return type === 'webgl' ? null : original.call(this, type, options);
     } as typeof original;
   });
-  await page.goto('/'); await expect(page.locator('[data-waves-background]')).toHaveAttribute('data-state', 'fallback');
-  await enterPresentation(page); await expect(page.getByRole('heading', { name: /Sites para/ })).toBeVisible();
+  await page.goto('/'); await openPresentation(page);
+  await expect(page.locator('[data-waves-background]')).toHaveAttribute('data-state', 'fallback');
+  await enterPresentation(page); await expect(page.locator('#hero h1')).toBeVisible();
 });
 
-test('F5 reabre, mesmo com a marca de sessão antiga; rotas internas não reiniciam', async ({ page }) => {
+test('home e F5 mostram o conteúdo sem apresentação, inclusive após um replay', async ({ page }) => {
   await page.addInitScript(() => sessionStorage.setItem('nexos-boot-seen', '1'));
-  await page.goto('/'); await enterPresentation(page);
-  await page.reload(); await expect(page.getByRole('dialog', { name: 'Apresentação NexOS' })).toBeFocused();
+  await page.goto('/');
+  await expect(page.locator('.waves-entry')).toHaveCount(0);
+  await expect(page.locator('#hero h1')).toBeVisible();
+  await openPresentation(page);
   await enterPresentation(page);
+  await page.reload();
+  await expect(page.locator('.waves-entry')).toHaveCount(0);
+  await expect(page.locator('#hero h1')).toBeVisible();
+  await expect(page.locator('body')).not.toHaveCSS('overflow', 'hidden');
   await page.getByRole('link', { name: 'Criação de sites', exact: true }).click();
   await expect(page).toHaveURL(/\/criacao-de-sites$/);
-  await page.getByRole('link', { name: 'NexOS, página inicial', exact: true }).click();
+  await page.getByRole('link', { name: 'NexOS — página inicial', exact: true }).click();
   await expect(page).toHaveURL(/\/$/); await expect(page.locator('.waves-entry')).toHaveCount(0);
-  await page.reload(); await expect(page.getByRole('dialog', { name: 'Apresentação NexOS' })).toBeFocused();
+  await openPresentation(page);
+  await page.reload(); await expect(page.locator('.waves-entry')).toHaveCount(0);
 });
 
 test('abrir documento em rota interna e voltar à home não mostra apresentação', async ({ page }) => {
   await page.goto('/criacao-de-sites');
-  await page.getByRole('link', { name: 'NexOS, página inicial', exact: true }).click();
+  await page.getByRole('link', { name: 'NexOS — página inicial', exact: true }).click();
   await expect(page).toHaveURL(/\/$/); await expect(page.locator('.waves-entry')).toHaveCount(0);
-  await page.reload(); await expect(page.getByRole('dialog', { name: 'Apresentação NexOS' })).toBeFocused();
+  await page.reload(); await expect(page.locator('.waves-entry')).toHaveCount(0);
 });
 
-test('seções por âncora não reiniciam, mas recarregar com hash reabre', async ({ page }) => {
+test('links de seção e recarga com hash mantêm acesso direto ao conteúdo', async ({ page }) => {
   await page.goto('/#services'); await expect(page.locator('.waves-entry')).toHaveCount(0);
   await expect(page).toHaveURL(/#services$/);
-  await page.reload(); await expect(page.getByRole('dialog', { name: 'Apresentação NexOS' })).toBeFocused();
-  await enterPresentation(page); await expect(page.locator('#hero')).toBeFocused();
+  await page.reload(); await expect(page.locator('.waves-entry')).toHaveCount(0);
+  await expect(page).toHaveURL(/#services$/);
+  await expect(page.locator('#services')).toBeInViewport();
+  await expect(page.locator('body')).not.toHaveCSS('overflow', 'hidden');
 });

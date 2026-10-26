@@ -6,6 +6,7 @@
  */
 import Link from 'next/link';
 import Image from 'next/image';
+import { useSyncExternalStore } from 'react';
 import { ArrowUpRight, GitBranch, MessageSquare } from 'lucide-react';
 import { config } from '@/config';
 import type { FooterLink } from '@/types';
@@ -31,6 +32,10 @@ const SOCIAL_ICONS = {
   Instagram: InstagramIcon,
   MessageSquare,
 } as const;
+
+const subscribeHydration = () => () => {};
+const clientHydrated = () => true;
+const serverHydrated = () => false;
 
 interface FooterColumnProps {
   title: string;
@@ -59,6 +64,7 @@ function FooterColumn({ title, links }: FooterColumnProps) {
 
 export function Footer({ onViewPresentation }: { onViewPresentation?: () => void } = {}) {
   const currentYear: number = new Date().getFullYear();
+  const hydrated = useSyncExternalStore(subscribeHydration, clientHydrated, serverHydrated);
 
   return (
     <footer role="contentinfo" className={cn(styles.footerSection, 'oceanic-surface')}>
@@ -118,7 +124,7 @@ export function Footer({ onViewPresentation }: { onViewPresentation?: () => void
             © {currentYear} {config.brand.name}. Todos os direitos reservados.
           </p>
           <div className={styles.footerMeta}>
-            {onViewPresentation && <button type="button" onClick={onViewPresentation} className={`${styles.cookieBtn} presentation-replay`}>Ver apresentação</button>}
+            {onViewPresentation && <button type="button" disabled={!hydrated} aria-haspopup="dialog" onClick={onViewPresentation} className={`${styles.cookieBtn} presentation-replay`}>Ver apresentação</button>}
             <button type="button" onClick={openCookiePreferences} className={styles.cookieBtn}>
               Gerenciar cookies
             </button>

@@ -23,10 +23,10 @@ function subscribeReduced(callback: () => void) {
   return () => query.removeEventListener('change', callback);
 }
 
-interface WavesEntranceProps { replay: boolean; onComplete: (entered: boolean) => void }
+interface WavesEntranceProps { onComplete: (entered: boolean) => void }
 
-/** Scroll-only presentation. The real, server-rendered hero is underneath it. */
-export default function WavesEntrance({ replay, onComplete }: WavesEntranceProps) {
+/** Optional, user-requested presentation over the server-rendered home. */
+export default function WavesEntrance({ onComplete }: WavesEntranceProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const completedRef = useRef(false);
   const presentationActiveRef = useRef(false);
@@ -57,16 +57,6 @@ export default function WavesEntrance({ replay, onComplete }: WavesEntranceProps
   useLayoutEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
-    const reload = document.documentElement.dataset.nexosEntryReload === '1';
-    delete document.documentElement.dataset.nexosEntryReload;
-    // Direct section links still work, but a full reload always opens the presentation.
-    if (!replay && window.location.hash && !reload) {
-      dialog.close();
-      document.dispatchEvent(new Event('nexos-entry-change'));
-      const raf = requestAnimationFrame(() => onComplete(false));
-      return () => cancelAnimationFrame(raf);
-    }
-    delete document.documentElement.dataset.nexosEntrySkip;
     dialog.close();
     dialog.showModal();
     presentationActiveRef.current = true;
@@ -88,7 +78,7 @@ export default function WavesEntrance({ replay, onComplete }: WavesEntranceProps
       document.body.style.overflow = bodyOverflow;
       document.dispatchEvent(new Event('nexos-entry-change'));
     };
-  }, [onComplete, replay]);
+  }, [onComplete]);
 
   useEffect(() => {
     if (!active || !lenis) return;
@@ -146,6 +136,11 @@ export default function WavesEntrance({ replay, onComplete }: WavesEntranceProps
     if (!dialog) return;
     if (reduce) { if (delta > 0 || end) finishWithoutZoom(); return; }
     const portal = dialog.querySelector<HTMLElement>('[data-gp-transparent]');
+    // End must work even before fonts and the scroll geometry are ready.
+    if (end && (portal?.dataset.gpMotion !== 'on' || dialog.scrollHeight <= dialog.clientHeight)) {
+      finishWithoutZoom();
+      return;
+    }
     if (portal?.dataset.gpMotion === 'on') {
       const amount = delta + pendingScrollRef.current;
       const atEnd = end || pendingEndRef.current;
@@ -181,7 +176,7 @@ export default function WavesEntrance({ replay, onComplete }: WavesEntranceProps
   return <>
     <noscript><style>{`.waves-entry { display: none !important; }`}</style></noscript>
     <dialog ref={dialogRef} open tabIndex={-1} className={`waves-entry ${raithonRealm.variable}`} data-portal="true"
-      data-leaving={leaving ? 'true' : undefined} data-replay={replay ? 'true' : undefined}
+      data-leaving={leaving ? 'true' : undefined}
       data-lenis-prevent aria-label="Apresentação NexOS" aria-describedby="waves-entry-title waves-entry-scroll-hint"
       onCancel={event => event.preventDefault()}
       onWheel={event => {

@@ -11,10 +11,10 @@ test('home entrega serviços e links no HTML, antes de qualquer interação', as
   // Verify actual rendered sections, rather than strings inside client hydration scripts.
   expect(html).toContain('id="services"');
   expect(html).toContain('id="showcase"');
-  expect(html).toContain('id="contact"');
+  expect(html).toContain('id="cta-final"');
   for (const path of servicePaths) expect(html).toContain(`href="${path}"`);
   expect(html).not.toContain('google-site-verification-code');
-  expect(html).toContain('class="waves-entry"');
+  expect(html).not.toMatch(/<dialog\b[^>]*class="waves-entry/);
   expect(html).not.toContain('<div inert=');
   expect(html).toContain('<title>NexOS Lab | Criação de Sites, Landing Pages e Placas NFC</title>');
   expect(html).not.toMatch(/lovable/i);
@@ -39,8 +39,9 @@ test('home e páginas comerciais são legíveis e navegáveis sem JavaScript', a
     await page.goto('http://localhost:3100/');
     await expect(page.locator('h1')).toHaveCount(1);
     await expect(page.locator('.waves-entry')).toBeHidden();
-    await expect(page.locator('h1')).toContainText('Sites para');
-    await expect(page.locator('#hero .hero-description')).toContainText('NexOS Lab');
+    await expect(page.locator('h1')).toContainText('Soluções com IA');
+    await expect(page.locator('#hero h1')).toHaveCSS('opacity', '1');
+    await expect(page.locator('#hero .hero-description')).toContainText(/Nexos LAB/i);
     await expect(page.locator('footer')).toContainText('NexOS Performance');
     await expect(page.locator('#faq summary').first()).toHaveText(/NexOS, NexOS Lab e NexOS Performance são a mesma empresa\?/);
     await expect(page.locator('#faq details').first().locator('p')).toBeVisible();
@@ -52,7 +53,7 @@ test('home e páginas comerciais são legíveis e navegáveis sem JavaScript', a
     const question = page.locator('details').first();
     await question.locator('summary').click();
     await expect(question.locator('p')).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Conversar sobre o projeto' })).toHaveAttribute('href', /^https:\/\/wa\.me\//);
+    await expect(page.getByRole('link', { name: 'Falar com o comercial', exact: true })).toHaveAttribute('href', /^https:\/\/wa\.me\//);
   } finally {
     await context.close();
   }
@@ -184,12 +185,13 @@ test('dados estruturados descrevem o produto sem publicar oferta ou preço', asy
   expect(product.aggregateRating).toBeUndefined();
 });
 
-test('mobile após a apresentação abre no conteúdo e páginas comerciais não geram overflow', async ({ page }) => {
+test('mobile abre diretamente no conteúdo e páginas comerciais não geram overflow', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
-  await enterPresentation(page);
   await expect(page.locator('.waves-entry')).toHaveCount(0);
-  await expect(page.locator('h1')).toContainText('Sites para');
+  await expect(page.locator('h1')).toContainText('Soluções com IA');
+  await expect(page.locator('#hero h1')).toHaveCSS('opacity', '1');
+  await expect(page.locator('body')).not.toHaveCSS('overflow', 'hidden');
   await expect(page.getByRole('button', { name: 'Continuar para o site' })).toHaveCount(0);
   await page.getByRole('button', { name: 'Abrir menu' }).click();
   await expect(page.getByRole('navigation', { name: 'Navegação móvel' })).toBeVisible();
@@ -198,7 +200,7 @@ test('mobile após a apresentação abre no conteúdo e páginas comerciais não
     await page.goto(path);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await expect(page.locator('h1')).toBeVisible();
-    await expect(page.getByRole('link', { name: /Conversar sobre/ })).toBeVisible();
+    await expect(page.getByRole('link', { name: /^(Falar com o comercial|Adquirir Placa)$/ }).first()).toBeVisible();
   }
 });
 

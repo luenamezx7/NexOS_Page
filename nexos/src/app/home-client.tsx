@@ -5,11 +5,11 @@ import dynamic from 'next/dynamic';
 import { Header } from '@/components/Header';
 import { Hero } from '@/components/Hero';
 import { SectionIndicator } from '@/components/SectionIndicator';
-import WavesEntrance from '@/components/WavesEntrance';
 import { SectionBackground } from '@/components/sections/SectionBackground';
-import { usePresentationVisit } from '@/components/PresentationVisitProvider';
 import { LandingPageBlur } from '@/components/sections/LandingPageBlur';
 
+// The presentation is optional: load its renderers only after a footer request.
+const WavesEntrance = dynamic(() => import('@/components/WavesEntrance'), { ssr: false });
 const Services = dynamic(() => import('@/components/Services').then(m => m.Services));
 const AboutUs = dynamic(() => import('@/components/AboutUs').then(m => m.AboutUs));
 const TigerManifesto = dynamic(() => import('@/components/sections/TigerManifesto').then(m => m.TigerManifesto));
@@ -25,8 +25,7 @@ const CTAFinal = dynamic(() => import('@/components/sections/CTAFinal').then(m =
 const FisicoDigitalSection = dynamic(() => import('@/components/sections/FisicoDigitalSection').then(m => m.FisicoDigitalSection));
 
 export default function HomeClient() {
-  const { eligible, consume } = usePresentationVisit();
-  const [entrance, setEntrance] = useState({ visible: eligible, replay: false, key: 0 });
+  const [entrance, setEntrance] = useState({ visible: false, key: 0 });
   const entranceGeneration = useRef(0);
   const heroRef = useRef<HTMLElement>(null);
   const focusRaf = useRef(0);
@@ -34,12 +33,12 @@ export default function HomeClient() {
   const replayPresentation = useCallback(() => {
     cancelAnimationFrame(focusRaf.current);
     entranceGeneration.current += 1;
-    setEntrance({ visible: true, replay: true, key: entranceGeneration.current });
+    setEntrance({ visible: true, key: entranceGeneration.current });
   }, []);
 
   const handleEntranceComplete = useCallback((entered: boolean) => {
     if (entrance.key !== entranceGeneration.current) return;
-    setEntrance({ visible: false, replay: false, key: entrance.key });
+    setEntrance({ visible: false, key: entrance.key });
     if (!entered) return;
     focusRaf.current = requestAnimationFrame(() => {
       heroRef.current?.focus({ preventScroll: true });
@@ -47,11 +46,10 @@ export default function HomeClient() {
   }, [entrance.key]);
 
   useEffect(() => () => cancelAnimationFrame(focusRaf.current), []);
-  useEffect(() => { consume(); }, [consume]);
 
   return (
     <main className="landing-page w-full max-w-full overflow-x-clip bg-canvas text-ink">
-      {entrance.visible && <WavesEntrance key={entrance.key} replay={entrance.replay} onComplete={handleEntranceComplete} />}
+      {entrance.visible && <WavesEntrance key={entrance.key} onComplete={handleEntranceComplete} />}
       <div>
         <a href="#main-content" className="skip-link">Pular para o conteúdo</a>
         <Header />

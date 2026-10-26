@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { enterPresentation } from './helpers/presentation';
+import { enterPresentation, openPresentation } from './helpers/presentation';
 
 test.setTimeout(60000);
 
@@ -7,6 +7,7 @@ test('tema claro usa Topography WebGL2 e roxo/lilás da viseira', async ({ page 
   await page.addInitScript(() => localStorage.setItem('nexos-theme', 'light'));
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
   await page.goto('/');
+  await openPresentation(page);
   const dialog = page.getByRole('dialog', { name: 'Apresentação NexOS' });
   const topology = dialog.locator('[data-topography]');
   await expect(topology).toHaveAttribute('data-motion', 'animated', { timeout: 15000 });
@@ -23,7 +24,7 @@ test('tema claro usa Topography WebGL2 e roxo/lilás da viseira', async ({ page 
   [232 / 255, 115 / 255, 248 / 255].forEach((value, i) => expect(uniforms.mid[i]).toBeCloseTo(value, 5));
   await page.screenshot({ path: testInfo.outputPath('topography-intro-light.png') });
   await enterPresentation(page);
-  const mascot = page.getByRole('img', { name: 'Mascote tigre albino da NexOS com viseira roxa' });
+  const mascot = page.getByRole('banner').getByRole('img', { name: 'Mascote tigre albino da NexOS com viseira roxa' });
   await expect(mascot).toHaveAttribute('src', /\/_next\/static\/media\/tigre_albino_capuz_fino\.[\w-]+\.svg$/);
   await expect(mascot).toHaveCSS('filter', 'none');
   await expect(page.locator('#hero [data-topography]')).toHaveCount(0);

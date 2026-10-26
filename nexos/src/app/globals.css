@@ -1060,7 +1060,6 @@ select.field-input option {
 /* The canvas already covers the viewport. A transparent backdrop lets the home
    appear continuously through the fade instead of flashing a solid colour. */
 .waves-entry::backdrop { background: transparent; }
-html[data-nexos-entry-skip="1"] .waves-entry:not([data-replay="true"]) { display: none; }
 .waves-entry[data-leaving="true"] { opacity: 0; }
 .waves-entry[data-portal="true"] { background: transparent; scrollbar-width: none; }
 .waves-entry[data-portal="true"]::-webkit-scrollbar { display: none; }

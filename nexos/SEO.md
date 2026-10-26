@@ -3,7 +3,7 @@
 ## P1 — Conteúdo e rastreamento
 
 - [x] Home com conteúdo comercial no HTML inicial, sem clique ou rolagem para desbloquear.
-- [x] Abertura Waves na primeira visita da aba, com entrada direta, sem repetição na sessão e com replay pelo botão “Ver apresentação” no rodapé. Links diretos para seções e navegação sem JavaScript seguem para o conteúdo.
+- [x] Home abre diretamente no conteúdo, inclusive no F5 e em links de seção. A apresentação Waves é opcional, carregada somente pelo botão “Ver apresentação” no rodapé.
 - [x] Seções de serviços, contato, FAQ e rodapé renderizadas no servidor.
 - [x] Conteúdo legível mesmo com JavaScript desativado.
 - [x] JavaScript e CSS de `/_next/` liberados no robots da aplicação.
@@ -329,3 +329,86 @@ Solicitado pelo proprietário: remover o botão da apresentação, eliminar o in
 Validação: build/TypeScript e ESLint aprovados; **34 testes** de portal, apresentação, tema, SEO e desempenho aprovados. Casos incluem toque real, scroll/teclado, ausência de CTA, opacidade da cena durante a revelação, F5, marca de sessão antiga ignorada, rotas internas/retorno, documento inicialmente aberto em rota interna, âncoras, parâmetros reais WebGL2 do Topography, alternância de tema e revisão visual desktop/mobile/paisagem. Testes de tema foram repetidos após o acabamento final dos botões para confirmar que as camadas CSS também são azuis no claro.
 
 Publicação final: **`dpl_GihtDE6JfBuvqtbPvWQ6ucTkgtEY`**, confirmado **Ready** e associado a `https://nexoslab.online`. Em produção, claro/escuro verificados sem botão/link de entrada, com opacidade da cena de aproximadamente .216 em progresso .56, hero imediato ao concluir, apresentação reaberta no F5 e sem reapresentação após ida/volta de rota interna. Nenhum erro de execução nas verificações. Lighthouse mobile: **performance 69/100, acessibilidade 100/100, SEO 100/100 e boas práticas 81/100**; relatório `C:\Users\User\AppData\Local\Temp\opencode\nexos-topography-scroll-only-lighthouse.json`. São dados sintéticos, sujeitos a variação, sem garantia de posição na busca.
+
+### Cobertura do Search Console e apresentação opcional — 26/10/2026
+
+Fonte: quatro CSVs em `-/nexoslab.online-Coverage-2026-10-26/`. A exportação está filtrada por **Todas as páginas conhecidas**, não apenas pelo sitemap. O gráfico termina em **22/10/2026**, com **5 URLs indexadas e 13 não indexadas**.
+
+| Motivo | URLs |
+| --- | ---: |
+| Página com redirecionamento | 4 |
+| Não encontrado (404) | 1 |
+| Página alternativa com tag canônica adequada | 1 |
+| Detectada, mas não indexada no momento | 5 |
+| Rastreada, mas não indexada no momento | 2 |
+| Cópia, Google e usuário selecionaram canônicas diferentes | 0 |
+
+Entre 12 e 22/10, o total indexado permaneceu em cinco e o não indexado aumentou de oito para treze. Esses totais não identificam quais URLs entraram ou saíram do índice. Os arquivos não incluem os endereços de cada grupo; não é possível atribuir os motivos às páginas comerciais ou legais somente pelas quantidades. Redirecionamentos e alternativas canônicas intencionais são exclusões esperadas.
+
+Auditoria pública anterior à alteração:
+
+- As dez páginas do sitemap responderam HTTP 200, com títulos próprios, canônicas para os respectivos endereços oficiais, `index, follow`, sem cabeçalho `X-Robots-Tag: noindex`, conteúdo e links internos no HTML.
+- Sitemap com dez URLs e robots sem bloqueio das páginas públicas ou de `/_next/`. As regras para `Google-Extended` não bloqueiam o Googlebot da pesquisa.
+- HTTP e www redirecionaram com 308; o teste de www em página interna preservou caminho e parâmetros.
+- Em navegador mobile com JavaScript, após 12 segundos sem interação, a apresentação continuava modal, cobria o hero e mantinha o corpo com `overflow: hidden`. Sem JavaScript, o fallback exibia o conteúdo. A observação é um risco de experiência/renderização, não prova da causa das exclusões do Google.
+
+Correção implementada no projeto:
+
+- Home inicia diretamente no conteúdo, em documentos novos, recargas, retorno de páginas internas e links com hash, para todos os visitantes.
+- Apresentação preservada como experiência opcional no rodapé. Seu componente e renderizadores são importados sob demanda, após solicitação do visitante.
+- Removidos o provider de elegibilidade por visita e os sinalizadores de recarga/âncora que abriam a apresentação automaticamente.
+- Hero entregue em estado visível no servidor; o snapshot de apresentação ativa agora corresponde à home sem modal. As animações de revelação continuam disponíveis no replay.
+- Botão de replay habilitado somente após sua hidratação, evitando perder cliques antes de o handler estar disponível. End conclui a experiência também durante o carregamento de fontes/geometria.
+- Testes de apresentação usam o botão real do rodapé. Verificações obsoletas de textos, seletores de background e blur foram alinhadas ao layout atual, preservando os testes de contraste, efeitos, scroll e navegação.
+
+Validação local: build de produção, TypeScript e ESLint dos arquivos envolvidos aprovados. **58 cenários de navegador aprovados** nas suítes SEO, desempenho, apresentação, Glyph Portal, temas, navegação, refinamento e ciclo de vida dos efeitos (57 na última rodada ampla e o cenário visual restante em execução direcionada após atualizar sua expectativa de contraste do tema claro). Nenhuma nova medição Lighthouse foi feita nesta etapa.
+
+Verificação adicional do build: o h1 veio no HTML com `opacity:1;transform:none`, sem markup da apresentação. Com JavaScript habilitado no navegador, mas os bundles da aplicação bloqueados para simular falha/carregamento incompleto, o título permaneceu descoberto e opaco e a rolagem livre em 390 e 1366 px.
+
+**Publicação concluída em 26/10/2026:** deployment `dpl_6wZ1Tk6wbfQCEGnK4NLMR1N7pAgk`, estado **READY**, associado a `https://nexoslab.online`. As verificações públicas anteriores à correção e os testes locais estão distinguidos acima; a validação após publicação está registrada no fechamento abaixo.
+
+Próximos dados necessários no Search Console:
+
+1. Abrir **Indexação → Páginas → Detectada, mas não indexada no momento** e exportar a tabela de exemplos.
+2. Repetir para **Rastreada, mas não indexada no momento** e **Não encontrado (404)**.
+3. Exportar **Ver dados sobre as páginas indexadas** para identificar as cinco URLs presentes no índice.
+4. Salvar cada exportação em uma subpasta própria de `-/`, preservando a categoria, pois os arquivos de detalhes podem ter nomes iguais.
+5. Inspecionar a home e as páginas comerciais afetadas: estado no índice, última data de rastreamento, canônica escolhida pelo Google e HTML/captura renderizados. Após publicação, testar a URL publicada e solicitar indexação da home quando cabível.
+
+O 404 deve ser tratado após identificar o endereço e sua eventual substituta. A correção da apresentação não confirma a indexação das sete URLs pendentes, nem garante prazo ou posição de busca.
+
+### Desempenho orgânico: páginas comerciais com impressões — 26/10/2026
+
+Novas fontes: sete CSVs em `-/nexoslab.online-Performance-on-Search-2026-10-26/` e `-/Captura de tela 2026-10-26 190324.png`. Filtro informado: pesquisa Web, últimos três meses; o gráfico fornecido contém linhas entre **28/09 e 24/10/2026**.
+
+Totais do período disponíveis no gráfico, países e dispositivos: **17 cliques, 39 impressões, CTR de 43,59% e posição média de 3,64**. Todo o volume por país é do Brasil. Computador: 16 cliques/37 impressões; celular: 1 clique/2 impressões. Amostra pequena, insuficiente para concluir boa posição para termos específicos ou dificuldade de acesso mobile.
+
+| Página | Cliques | Impressões | Posição média |
+| --- | ---: | ---: | ---: |
+| `https://nexoslab.online/` | 14 | 28 | 3,89 |
+| `https://www.nexoslab.online/` | 2 | 9 | 2,33 |
+| `/placa-nfc` | 1 | 4 | 6,00 |
+| `/cardapio-digital` | 0 | 4 | 5,25 |
+| `/criacao-de-sites` | 0 | 2 | 4,00 |
+| `/landing-pages` | 0 | 2 | 5,00 |
+
+A soma de impressões por página é 49, diferente das 39 no total da propriedade; as agregações por propriedade e por página não devem ser somadas como se fossem a mesma medida. A tabela demonstra que home e quatro páginas comerciais receberam impressões no período, não que todas estejam indexadas hoje ou que apareçam nessas posições para “NexOS”, “NexOS Lab”, “NexOS Performance” ou buscas genéricas de serviços.
+
+`Consultas.csv` e `Aspecto da pesquisa.csv` contêm somente os cabeçalhos. Não há dados para atribuir os cliques a buscas de marca versus buscas comerciais. Baixo volume/limitações de privacidade podem explicar ausência de consultas, mas a exportação não confirma o motivo.
+
+O print lista exatamente as seis URLs da tabela **Páginas principais** de desempenho. Não é uma inspeção de indexação nem a lista das URLs com 404, detectadas ou rastreadas sem indexação. A presença de www no desempenho histórico não comprova conflito atual de canônicas; o redirecionamento permanente atual deve ser mantido e a canônica selecionada precisa ser conferida na Inspeção de URL.
+
+Diagnóstico atualizado: existe presença orgânica comprovada, porém com alcance pequeno. Prioridades: publicar a correção já validada da home, inspecionar as cinco URLs comerciais canônicas no Search Console, identificar os endereços das exclusões e acompanhar consultas/páginas após novo rastreamento. Aumentar relevância com exemplos reais de projetos/produtos e referências públicas consistentes é uma frente editorial posterior; não presumir que o problema seja somente técnico ou prometer posições.
+
+### Fechamento da publicação e validação no domínio — 26/10/2026
+
+- Acesso da conexão Vercel à equipe autorizado pelo proprietário. Projeto confirmado: `prj_HuEB41QNsOmunUVqGs09ximPX3PM`, equipe `team_OLq2pPhGeBQBWgk4IsWdE2L3`, root directory `nexos/`.
+- Envio pela CLI do código local corrigido. Primeira tentativa (`dpl_DBAXHh7fnF8aauaEWXopYsvA7jqw`) falhou no build porque as exclusões de `design-/**` não reincluíam os arquivos importados. A versão anterior continuou ativa.
+- `.vercelignore` corrigido com exclusões por nível e reinclusão explícita dos diretórios necessários. O modo `--dry --json` confirmou a presença da fonte Raithon e das duas imagens importadas antes da nova publicação. Relatórios/prints em `nexos/-/` e arquivos `.env` não integram o envio.
+- Segunda tentativa: `dpl_6wZ1Tk6wbfQCEGnK4NLMR1N7pAgk`, URL `https://nexos-hqzjcgul9-nex-os2.vercel.app`, build/TypeScript aprovados na Vercel; API confirmou **READY**, alvo produção e aliases `nexoslab.online`/`www.nexoslab.online`.
+- No domínio oficial, as dez URLs do sitemap responderam HTTP 200, com canônicas próprias, `index, follow`, sem `X-Robots-Tag: noindex` e sem markup de apresentação automática. Home com `<h1 ... style="opacity:1;transform:none">`.
+- Sitemap: HTTP 200, dez URLs. Robots: HTTP 200, sem bloqueio de Googlebot ou `/_next/`. HTTP e www: 308 permanente, preservando caminho e query no teste de página interna.
+- Navegador real no domínio em 390 e 1366 px, com e sem JavaScript: h1 visível e descoberto, ausência de modal de apresentação, rolagem livre e sem overflow horizontal. Com JavaScript: replay pelo rodapé e conclusão por End funcionaram; F5 voltou diretamente ao conteúdo. Nenhum erro de execução nessas quatro verificações.
+- TypeScript e verificação de whitespace aprovados antes da publicação. As 58 verificações locais descritas acima continuam sendo da etapa de implementação; não foram apresentadas como uma nova rodada completa em produção.
+
+**Publicação técnica concluída; acompanhamento Google pendente.** Na conta Search Console, inspecionar `https://nexoslab.online/`, executar **Testar URL publicada**, conferir HTML/captura e solicitar indexação uma vez para a alteração publicada. Inspecionar também `/criacao-de-sites`, `/landing-pages`, `/cardapio-digital` e `/placa-nfc` para conferir o estado atual e as canônicas. Essas ações na conta Google não foram executadas por esta conexão. A exportação de desempenho não fornece as consultas nem os endereços das exclusões; o 404 e as sete URLs detectadas/rastreadas sem indexação ainda precisam das listas de exemplos de seus respectivos motivos.

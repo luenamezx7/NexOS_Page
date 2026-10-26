@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { openPresentation } from './helpers/presentation';
 
 test.setTimeout(60000);
 
@@ -11,6 +12,7 @@ test.beforeEach(async ({ page }) => {
 
 test('a abertura não mantém efeitos WebGL e blurs da home trabalhando por baixo', async ({ page }) => {
   await page.goto('/');
+  await openPresentation(page);
   const dialog = page.getByRole('dialog', { name: 'Apresentação NexOS' });
   await expect(dialog.locator('[data-topography]')).toHaveAttribute('data-motion', 'animated');
   await expect(page.locator('[data-scene="waves"] [data-topography]')).toHaveCount(0);

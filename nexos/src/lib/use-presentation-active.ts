@@ -8,7 +8,7 @@ function subscribe(callback: () => void) {
 }
 
 export function usePresentationActive() {
-  return useSyncExternalStore(subscribe, () => Boolean(document.querySelector('.waves-entry[open]')), () => true);
+  return useSyncExternalStore(subscribe, () => Boolean(document.querySelector('.waves-entry[open]')), () => false);
 }
 
 /** Let the real hero paint while the opening scene is still crossfading. */

@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { openPresentation } from './helpers/presentation';
 
 test.setTimeout(60000);
 
@@ -8,6 +9,7 @@ for (const width of [1366, 390]) {
     page.on('pageerror', error => errors.push(error.message));
     await page.setViewportSize({ width, height: width === 390 ? 844 : 768 });
     await page.goto('/');
+    await openPresentation(page);
     const dialog = page.getByRole('dialog', { name: 'Apresentação NexOS' });
     const portal = dialog.locator('[data-gp-transparent]');
     await expect(portal).toHaveAttribute('data-gp-motion', 'on', { timeout: 15000 });
@@ -28,7 +30,7 @@ for (const width of [1366, 390]) {
       if (progress >= 0.55) {
         const opacity = await portal.evaluate(e => Number(e.style.getPropertyValue('--gp-scene-opacity')));
         expect(opacity).toBeLessThan(0.3);
-        await expect(page.locator('#hero [data-gradient-background="oceanic-shimmer"]')).toHaveCount(1);
+        await expect(page.locator('#hero [data-brand-veil]')).toHaveCount(1);
         await expect.poll(() => page.locator('.hero-heading').evaluate(element => Number(getComputedStyle(element).opacity))).toBeGreaterThan(0.9);
       }
       expect(Number(await portal.getAttribute('data-gp-scale'))).toBeGreaterThan(initialScale);
@@ -40,7 +42,7 @@ for (const width of [1366, 390]) {
     await dialog.evaluate((e, top) => e.scrollTo({ top, behavior: 'instant' }), travel * 0.71);
     await expect(dialog).toHaveCount(0);
     await expect(page.locator('#hero')).toBeFocused();
-    await expect(page.getByRole('heading', { name: /Sites para/ })).toBeVisible();
+    await expect(page.locator('#hero h1')).toBeVisible();
     await expect(page.locator('h1')).toHaveCount(1);
     await expect(page.locator('body')).not.toHaveCSS('overflow', 'hidden');
     expect(errors).toEqual([]);
@@ -49,6 +51,7 @@ for (const width of [1366, 390]) {
 
 test('apresentação não oferece botão ou link de entrada', async ({ page }) => {
   await page.goto('/');
+  await openPresentation(page);
   const dialog = page.getByRole('dialog', { name: 'Apresentação NexOS' });
   const portal = dialog.locator('[data-gp-transparent]');
   await expect(portal).toHaveAttribute('data-gp-motion', 'on', { timeout: 15000 });
@@ -68,6 +71,7 @@ test('toque percorre o portal no celular', async ({ browser }) => {
   const page = await context.newPage();
   try {
     await page.goto('/');
+    await openPresentation(page);
     const dialog = page.getByRole('dialog', { name: 'Apresentação NexOS' });
     const portal = dialog.locator('[data-gp-transparent]');
     await expect(portal).toHaveAttribute('data-gp-motion', 'on', { timeout: 15000 });
@@ -88,16 +92,18 @@ test('toque percorre o portal no celular', async ({ browser }) => {
 test('movimento reduzido mantém a leitura e entrada direta', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
+  await openPresentation(page);
   const dialog = page.getByRole('dialog', { name: 'Apresentação NexOS' });
   await expect(dialog.getByRole('heading')).toBeVisible();
   await expect(dialog).toBeFocused();
   await page.keyboard.press('PageDown');
   await expect(dialog).toHaveCount(0);
-  await expect(page.getByRole('heading', { name: /Sites para/ })).toBeVisible();
+  await expect(page.locator('#hero h1')).toBeVisible();
 });
 
 test('teclado aproxima o texto e conclui a entrada no hero', async ({ page }) => {
   await page.goto('/');
+  await openPresentation(page);
   const dialog = page.getByRole('dialog', { name: 'Apresentação NexOS' });
   const portal = dialog.locator('[data-gp-transparent]');
   await expect(portal).toHaveAttribute('data-gp-motion', 'on', { timeout: 15000 });
