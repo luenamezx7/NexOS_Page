@@ -27,12 +27,12 @@
   inset: -1px;
   z-index: -1;
   pointer-events: none;
-  border: 1px solid color-mix(in srgb, var(--color-ink) 22%, transparent);
+  border: 1px solid var(--header-glass-border);
   border-radius: inherit;
-  background: var(--color-glass-strong);
-  -webkit-backdrop-filter: blur(16px) saturate(120%);
-  backdrop-filter: blur(16px) saturate(120%);
-  box-shadow: inset 0 1px 0 #fdf6ec18, 0 8px 24px -18px rgba(var(--brand-accent-rgb), 0.2);
+  background: var(--header-glass-background);
+  -webkit-backdrop-filter: var(--header-glass-filter);
+  backdrop-filter: var(--header-glass-filter);
+  box-shadow: var(--header-glass-shadow);
   opacity: clamp(0, calc((var(--header-assembly) - 0.06) / 0.65), 1);
   transform: translateY(calc(-10px * var(--header-expand))) scale(calc(0.94 + var(--header-assembly) * 0.06), calc(0.62 + var(--header-assembly) * 0.38));
   transform-origin: center;
@@ -117,5 +117,5 @@
 }
 @media (forced-colors: active) {
   .header { --color-ink: CanvasText; --header-brand: CanvasText; }
-  .header::before { background: Canvas; border-color: CanvasText; }
+  .header::before { background: Canvas; border-color: CanvasText; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
 }

@@ -93,11 +93,6 @@ test('illustrative plate cards stay visible while quantity and commercial messag
   await expect(showcase).toContainText('Violeta digital: prévia ilustrativa');
   await expect(quantity).toHaveText('2');
   await expect(commercial).toHaveAttribute('href', href!);
-  await showcase.getByRole('button', { name: 'Explorar placa em preview 3D' }).click();
-  const dialog = page.getByRole('dialog', { name: 'Explore a placa.' });
-  await expect(dialog).toBeVisible();
-  await page.keyboard.press('Escape');
-  await expect(dialog).toHaveCount(0);
 });
 
 test('FAQ, mascot photo strip and final commercial CTA remain usable without a contact form', async ({ page }) => {

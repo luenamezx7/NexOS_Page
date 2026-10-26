@@ -34,27 +34,6 @@ test('plate quiz preserves answers on back, produces a contextual result and res
   await expect(quiz.getByRole('button', { name: 'Continuar' })).toBeDisabled();
 });
 
-test('spatial preview traps focus, responds to controls and returns focus on Escape', async ({ page }) => {
-  await openLanding(page, 'light');
-  const trigger = page.getByRole('button', { name: 'Explorar placa em preview 3D' });
-  await trigger.click();
-  const dialog = page.getByRole('dialog', { name: 'Explore a placa.' });
-  await expect(dialog).toBeVisible();
-  await expect(dialog.getByRole('button', { name: 'Fechar preview' })).toBeFocused();
-  await page.keyboard.press('Shift+Tab');
-  await expect(dialog.getByRole('button', { name: 'Restaurar vista' })).toBeFocused();
-  const rotation = dialog.getByRole('slider', { name: 'Rotação horizontal' });
-  await rotation.focus();
-  await page.keyboard.press('ArrowRight');
-  await expect(rotation).toHaveValue('-11');
-  await dialog.getByRole('button', { name: 'Restaurar vista' }).click();
-  await expect(rotation).toHaveValue('-12');
-  await page.keyboard.press('Escape');
-  await expect(dialog).toHaveCount(0);
-  await expect(trigger).toBeFocused();
-  await expect(page.locator('body')).not.toHaveCSS('overflow', 'hidden');
-});
-
 test('service objectives explain development and lead to the commercial team', async ({ page }) => {
   await openLanding(page);
   const services = page.locator('#services');
@@ -70,30 +49,23 @@ test('service objectives explain development and lead to the commercial team', a
 });
 
 for (const theme of ['light', 'dark'] as const) {
-  test(`${theme} mobile: hero CTAs fit, modal fits and page has no horizontal overflow`, async ({ page }) => {
+  test(`${theme} mobile: hero CTAs fit and page has no horizontal overflow`, async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 740 });
     await openLanding(page, theme);
-    const cta = page.getByRole('link', { name: 'Iniciar Projeto', exact: true });
+    const cta = page.getByRole('link', { name: 'Entrar em contato', exact: true });
     const box = await cta.boundingBox();
     expect(box!.y + box!.height).toBeLessThan(740);
     await expect(page.getByRole('button', { name: theme === 'dark' ? 'Ativar modo claro' : 'Ativar modo escuro' })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    await page.getByRole('button', { name: 'Explorar placa em preview 3D' }).click();
-    const dialog = page.getByRole('dialog');
-    const bounds = await dialog.boundingBox();
-    expect(bounds!.x).toBeGreaterThanOrEqual(0);
-    expect(bounds!.width).toBeLessThanOrEqual(360);
-    expect(bounds!.height).toBeLessThanOrEqual(740);
-    await dialog.getByRole('button', { name: 'Fechar preview' }).click();
     await page.getByRole('radio', { name: 'Apresentar marca' }).check();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   });
 }
 
-test('system preference, manual theme persistence and reduced-motion intro', async ({ page }) => {
+test('system preference, manual theme persistence and reduced-motion home', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'reduce' });
   await openLanding(page, 'system', false);
-  await expect(page.getByRole('heading', { name: 'A performance que seu business merece.' })).toBeVisible();
+  await expect(page.locator('#hero-title')).toBeVisible();
   await enterPresentation(page);
   await expect(page.getByRole('button', { name: 'Ativar modo escuro' })).toBeVisible();
   await page.getByRole('button', { name: 'Ativar modo escuro' }).click();

@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useRef } from 'react';
 import { motion, useInView, useScroll, useSpring, useTransform, type MotionValue } from 'motion/react';
 import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
-import tigerPortrait from '../../../design-/VIDEOS-IA/Tigre_Upscale_2x_4096x3058.png';
+import tigerPortrait from '../../../design-/VIDEOS-IA/tiger-pic-2k-purp.jpg';
 import styles from './TigerManifesto.module.css';
 
 const still = { opacity: 1, y: 0 };
@@ -46,11 +46,10 @@ export function TigerManifesto() {
         <motion.div className={styles.portrait} style={{ opacity: reduce ? 1 : imageOpacity, scale: reduce ? 1 : imageScale }}>
           <Image
             src={tigerPortrait}
-            alt="Tigre branco da NexOS com capuz escuro e visor roxo, com um reflexo laranja sobre uma paisagem de montanhas."
+            alt="Tigre branco da NexOS com capuz e visor roxos sob a neve, com montanhas refletidas na lente."
             fill
-            // Account for the full image width behind the portrait crop, also on high-DPI phones.
-            sizes="(max-width: 767px) max(100vw, 102svh), max(76vw, 134svh)"
-            quality={90}
+            // Serve the original 2400 × 1792 artwork without another lossy encode.
+            unoptimized
             loading={near ? 'eager' : 'lazy'}
             className={styles.image}
           />

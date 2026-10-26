@@ -2,10 +2,9 @@
 
 import { useState, useSyncExternalStore } from 'react';
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
 import { motion } from 'motion/react';
 import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
-import { ArrowUpRight, Box, Minus, Nfc, Palette, Plus, QrCode } from 'lucide-react';
+import { ArrowUpRight, Minus, Nfc, Palette, Plus, QrCode } from 'lucide-react';
 import { config } from '@/config';
 import { BULK_MAX_QTY } from '@/lib/bulk-pricing';
 import { MetallicSurface } from './ui/metallic-button';
@@ -15,7 +14,6 @@ import { PlateQuiz } from './PlateQuiz';
 import { PlateFan } from './commerce/PlateFan';
 import styles from './commerce/Commerce.module.css';
 
-const PlatePreview = dynamic(() => import('./PlatePreview').then(m => m.PlatePreview), { ssr: false });
 const EASE = [0.16, 1, 0.3, 1] as const;
 const subscribeHydration = () => () => {};
 const personalizeUrl = `https://wa.me/${config.whatsapp.number}?text=${encodeURIComponent('Olá! Quero personalizar a Placa Inteligente NexOS com a marca do meu negócio.')}`;
@@ -29,13 +27,11 @@ const DETAILS: DetailTab[] = [
 export function ProductShowcase({ className = '' }: { className?: string }) {
   const reduce = useReducedMotion();
   const hydrated = useSyncExternalStore(subscribeHydration, () => true, () => false);
-  const [previewOpen, setPreviewOpen] = useState(false);
   const [qty, setQty] = useState(1);
   const placa = config.services.find(service => service.id === 'placa');
   if (!placa) return null;
 
   return (
-    <>
       <section id="showcase" aria-labelledby="showcase-title" className={`${styles.section} ${className}`}>
         <div className={styles.container}>
           <div className={styles.sectionNav} aria-label="Explore as soluções">
@@ -54,7 +50,6 @@ export function ProductShowcase({ className = '' }: { className?: string }) {
             <motion.figure className={styles.productVisual} initial={reduce ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.7, ease: EASE }}>
               <PlateFan />
               <figcaption className={styles.photoCaption}><span><Nfc size={16} aria-hidden="true" /> Aproxime</span><span><QrCode size={16} aria-hidden="true" /> Ou escaneie</span></figcaption>
-              <button type="button" className={styles.preview3d} onClick={() => setPreviewOpen(true)} aria-label="Explorar placa em preview 3D" aria-haspopup="dialog"><Box size={16} aria-hidden="true" /> Abrir preview espacial <ArrowUpRight size={16} aria-hidden="true" /></button>
             </motion.figure>
             <div className={styles.purchase}>
               <div className={styles.selectionRow}>
@@ -80,8 +75,6 @@ export function ProductShowcase({ className = '' }: { className?: string }) {
           <DetailTabs id="plate-details" tabs={DETAILS} />
         </div>
       </section>
-      {previewOpen && <PlatePreview onClose={() => setPreviewOpen(false)} />}
-    </>
   );
 }
 
