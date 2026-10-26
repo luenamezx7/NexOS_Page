@@ -1,8 +1,7 @@
 'use client';
 
-import Image from 'next/image';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useRef, useState, useCallback, useEffect } from 'react';
+import { useState } from 'react';
+import FlexCarousel from '../FlexCarousel/FlexCarousel';
 import styles from './MascotSolutions.module.css';
 
 const SOLUTIONS: { id: string; title: string; description: string; image: string; alt: string }[] = [
@@ -36,85 +35,14 @@ const SOLUTIONS: { id: string; title: string; description: string; image: string
   },
 ];
 
+const CAROUSEL_ITEMS = SOLUTIONS.map(solution => ({
+  src: solution.image,
+  alt: solution.alt,
+  title: solution.title,
+}));
+
 export function MascotSolutions() {
-  const stripRef = useRef<HTMLUListElement>(null);
-  const [showPrev, setShowPrev] = useState(false);
-  const [showNext, setShowNext] = useState(true);
-  const [isDragging, setIsDragging] = useState(false);
-  const dragStartRef = useRef<{ x: number; scrollLeft: number } | null>(null);
-  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const updateArrowVisibility = useCallback(() => {
-    const strip = stripRef.current;
-    if (!strip) return;
-    const { scrollLeft, scrollWidth, clientWidth } = strip;
-    setShowPrev(scrollLeft > 8);
-    setShowNext(scrollLeft + clientWidth < scrollWidth - 8);
-  }, []);
-
-  const handleScroll = useCallback(() => {
-    updateArrowVisibility();
-    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
-    scrollTimeoutRef.current = setTimeout(() => { /* noop */ }, 150);
-  }, [updateArrowVisibility]);
-
-  const scrollTo = (direction: 'prev' | 'next') => {
-    const strip = stripRef.current;
-    if (!strip) return;
-    const itemWidth = 360; // item width + gap
-    const scrollAmount = direction === 'prev' ? -itemWidth : itemWidth;
-    strip.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-  };
-
-  const handlePointerDown = useCallback((e: React.PointerEvent<HTMLUListElement>) => {
-    const strip = stripRef.current;
-    if (!strip) return;
-    // Only enable drag on the track itself, not on buttons/links inside
-    const target = e.target as HTMLElement;
-    if (target.closest('button, a')) return;
-    
-    setIsDragging(true);
-    dragStartRef.current = { x: e.clientX, scrollLeft: strip.scrollLeft };
-    strip.style.scrollBehavior = 'auto';
-    strip.setPointerCapture(e.pointerId);
-    e.preventDefault();
-  }, []);
-
-  const handlePointerMove = useCallback((e: React.PointerEvent<HTMLUListElement>) => {
-    if (!isDragging || !dragStartRef.current) return;
-    const strip = stripRef.current;
-    if (!strip) return;
-    const dx = e.clientX - dragStartRef.current.x;
-    strip.scrollLeft = dragStartRef.current.scrollLeft - dx;
-  }, [isDragging]);
-
-  const handlePointerUp = useCallback((e: React.PointerEvent<HTMLUListElement>) => {
-    if (!isDragging) return;
-    const strip = stripRef.current;
-    if (strip) {
-      strip.style.scrollBehavior = 'smooth';
-      strip.releasePointerCapture(e.pointerId);
-    }
-    setIsDragging(false);
-    dragStartRef.current = null;
-  }, [isDragging]);
-
-  useEffect(() => {
-    const strip = stripRef.current;
-    if (!strip) return;
-    strip.addEventListener('scroll', handleScroll, { passive: true });
-    updateArrowVisibility();
-    return () => {
-      strip.removeEventListener('scroll', handleScroll);
-      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
-    };
-  }, [handleScroll, updateArrowVisibility]);
-
-  useEffect(() => {
-    const handleResize = () => updateArrowVisibility();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [updateArrowVisibility]);
+  const [active, setActive] = useState(0);
 
   return (
     <section id="mascot-solutions" aria-labelledby="mascot-solutions-title" className={styles.section}>
@@ -125,58 +53,33 @@ export function MascotSolutions() {
           <p>Do primeiro contato à presença digital, veja onde podemos ajudar seu negócio.</p>
         </header>
         <div className={styles.carouselWrapper}>
-          <button
-            type="button"
-            className={`${styles.navButton} ${styles.navPrev} ${showPrev ? styles.visible : ''}`}
-            onClick={() => scrollTo('prev')}
-            aria-label="Solução anterior"
-            disabled={!showPrev}
-          >
-            <ChevronLeft size={24} strokeWidth={2.5} aria-hidden="true" />
-          </button>
-          <ul
-            ref={stripRef}
-            className={styles.strip}
-            aria-label="Suportes e soluções NexOS"
-            tabIndex={0}
-            onScroll={handleScroll}
-            onPointerDown={handlePointerDown}
-            onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
-            onPointerLeave={handlePointerUp}
-            style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
-          >
-            {SOLUTIONS.map(solution => (
-              <li key={solution.id} className={styles.item}>
-                <figure>
-                  <div className={styles.photo}>
-                    <Image
-                      src={solution.image}
-                      alt={solution.alt}
-                      fill
-                      sizes="(max-width: 767px) 75vw, 340px"
-                      className={styles.photoImg}
-                    />
-                    <span className={styles.index} aria-hidden="true">{solution.id}</span>
-                  </div>
-                  <figcaption>
-                    <h3>{solution.title}</h3>
-                    <p>{solution.description}</p>
-                  </figcaption>
-                </figure>
-              </li>
-            ))}
-          </ul>
-          <button
-            type="button"
-            className={`${styles.navButton} ${styles.navNext} ${showNext ? styles.visible : ''}`}
-            onClick={() => scrollTo('next')}
-            aria-label="Próxima solução"
-            disabled={!showNext}
-          >
-            <ChevronRight size={24} strokeWidth={2.5} aria-hidden="true" />
-          </button>
+          <FlexCarousel
+            items={CAROUSEL_ITEMS}
+            preset="liquid"
+            intro="rise"
+            cardHeight={0.5}
+            gap={12}
+            radius={12}
+            squeeze={0.2}
+            focusOnClick
+            captions
+            captureWheel={false}
+            onChange={setActive}
+            ariaLabel="Suportes e soluções NexOS"
+          />
         </div>
+        <div className={styles.details}>
+          <p className={styles.description}>{SOLUTIONS[active].description}</p>
+          <p className={styles.hint}>Arraste para explorar · Clique para ampliar · Use as setas do teclado</p>
+        </div>
+        <ul className={styles.accessibleSolutions}>
+          {SOLUTIONS.map(solution => (
+            <li key={solution.id}>
+              <h3>{solution.title}</h3>
+              <p>{solution.description}</p>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );
