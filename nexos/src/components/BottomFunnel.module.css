@@ -1,8 +1,8 @@
 /* Layout: design-/design-system.md. Cores e fontes: identidade NexOS. */
 .section {
-  --bottom-surface: color-mix(in srgb, var(--color-ink) 3%, var(--color-canvas));
-  --bottom-raised: color-mix(in srgb, var(--color-ink) 5%, var(--color-canvas));
-  --bottom-line: color-mix(in srgb, var(--color-ink) 14%, transparent);
+  --bottom-surface: var(--surface-base);
+  --bottom-raised: var(--surface-raised);
+  --bottom-line: var(--surface-line);
   --bottom-muted: var(--text-secondary);
   --bottom-accent: var(--landing-accent, var(--display-rose));
   position: relative;
@@ -11,7 +11,7 @@
   scroll-margin-top: 100px;
 }
 :global(.dark) .section { --bottom-accent: var(--landing-accent, var(--display-rose)); }
-.container { width: 100%; max-width: 1280px; margin-inline: auto; padding: 48px 24px 64px; }
+.container { width: 100%; max-width: 1280px; margin-inline: auto; padding: 56px 24px; }
 .sectionNav { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; margin-bottom: 32px; border-bottom: 1px solid var(--bottom-line); padding-bottom: 16px; font-size: 13px; }
 .sectionNav a, .currentSection { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; }
 .sectionNav a { color: var(--bottom-muted); }
@@ -19,15 +19,15 @@
 .currentSection { font-weight: 600; }
 .currentSection svg { color: var(--bottom-accent); }
 .kicker { margin-bottom: 16px; color: var(--text-tertiary); font: 500 var(--type-label)/1.6 var(--font-mono); letter-spacing: .04em; }
-.heading { font-size: var(--type-section); font-weight: 800; font-stretch: 85%; letter-spacing: -0.025em; line-height: 1.06; text-wrap: balance; }
+.heading { font-size: var(--type-section); font-weight: 730; font-stretch: 95%; letter-spacing: -0.04em; line-height: 1.1; text-wrap: balance; }
 .accent { color: var(--bottom-accent); }
 .lead { max-width: 52ch; margin-top: 24px; font-size: var(--type-lead); line-height: 1.7; color: var(--bottom-muted); text-wrap: pretty; }
 .header { margin-bottom: 32px; }
 
 /* FAQ */
 .faqList { display: grid; gap: 12px; min-width: 0; }
-.faqItem { border: 1px solid var(--bottom-line); border-radius: 12px; background: var(--bottom-surface); overflow: hidden; transition: border-color 200ms; }
-.faqItem[open] { border-color: color-mix(in srgb, var(--bottom-accent) 45%, transparent); background: var(--bottom-raised); }
+.faqItem { border: 1px solid var(--bottom-line); border-radius: 20px; background: var(--bottom-surface); overflow: hidden; box-shadow: inset 0 1px 0 var(--surface-edge); transition: border-color 200ms; }
+.faqItem[open] { border-color: color-mix(in srgb, var(--bottom-accent) 45%, var(--bottom-line)); background: radial-gradient(ellipse at 100% 0%, var(--ambient-violet), transparent 80%), var(--bottom-raised); }
 .faqTrigger { display: flex; width: 100%; min-height: 56px; align-items: center; justify-content: space-between; gap: 12px 16px; padding: 16px 20px; text-align: left; list-style: none; cursor: pointer; }
 .faqTrigger::-webkit-details-marker { display: none; }
 .faqTrigger:hover { color: var(--bottom-accent); }
@@ -95,7 +95,7 @@
   .successActions :global(.btn-primary-nex) { width: auto; flex: 1; }
 }
 @media (min-width: 768px) {
-  .container { padding: 56px 40px 80px; }
+  .container { padding: var(--section-space) 40px; }
   .faqIndex { display: inline; }
   .faqTrigger { padding: 18px 24px; }
   .faqQuestion { font-size: 16px; }
@@ -103,7 +103,7 @@
   .header { margin-bottom: 48px; }
 }
 @media (min-width: 1024px) {
-  .container { padding-top: 56px; }
+  .container { padding-top: var(--section-space); }
   .sectionNav { margin-bottom: 48px; }
   .contactGrid { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 24px; align-items: start; }
   .panel { padding: 32px; }

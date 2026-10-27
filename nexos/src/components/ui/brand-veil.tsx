@@ -13,6 +13,7 @@ const Grainient = dynamic(() => import('../Grainient'), { ssr: false });
 export function BrandVeil({ variant = 'default' }: { variant?: 'default' | 'hero' | 'interior' } = {}) {
   const ref = useRef<HTMLDivElement>(null);
   const near = useInView(ref, { margin: '200px', once: true });
+  const visible = useInView(ref, { amount: 0.01 });
   const entryOpen = usePresentationActive();
   const revealing = usePresentationRevealing();
   const { theme } = useTheme();
@@ -31,6 +32,7 @@ export function BrandVeil({ variant = 'default' }: { variant?: 'default' | 'hero
         grainSize={variant === 'hero' ? 1.5 : 1.2}
         grainAnimated={false}
         maxFPS={30}
+        paused={!visible}
         dpr={1}
         speed={variant === 'interior' ? 0.3 : 0.55}
         interactive={false}

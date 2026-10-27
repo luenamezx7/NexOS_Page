@@ -8,6 +8,7 @@ import { servicePages, type ServicePageContent } from '@/lib/service-pages';
 import { JsonLd } from './JsonLd';
 import { Footer } from './Footer';
 import { PageHeader } from './PageChrome';
+import styles from './ServicePage.module.css';
 
 export function ServicePage({ service }: { service: ServicePageContent }) {
   const product = config.services.find(item => item.id === service.productId)!;
@@ -44,15 +45,15 @@ export function ServicePage({ service }: { service: ServicePageContent }) {
   };
 
   return (
-    <div className="service-page interior-page">
+    <div className={`service-page interior-page ${styles.page}`}>
       <JsonLd data={structuredData} />
       <a href="#main-content" className="skip-link">Pular para o conteúdo</a>
       <PageHeader />
-      <main id="main-content" tabIndex={-1} className="page-container">
+      <main id="main-content" tabIndex={-1} className={`page-container ${styles.content}`}>
         <nav aria-label="Caminho da página" className="topography-glass topography-glass--compact mt-6 text-sm text-ink/70">
           <ol className="flex flex-wrap items-center gap-3"><li><Link href="/" className="inline-flex items-center gap-2 hover:underline"><ArrowLeft size={14} aria-hidden="true" /> Início</Link></li><li aria-hidden="true">/</li><li aria-current="page">{service.label}</li></ol>
         </nav>
-        <section className={`topography-glass topography-glass--copy grid items-center gap-10 pb-14 pt-10 md:pb-20 md:pt-14 ${isPlate ? 'md:grid-cols-2' : ''}`} aria-labelledby="service-heading">
+        <section className={`topography-glass topography-glass--copy grid items-center gap-10 pb-14 pt-10 md:pb-20 md:pt-14 ${styles.hero} ${isPlate ? 'md:grid-cols-2' : ''}`} aria-labelledby="service-heading">
           <div className="max-w-3xl">
             <p className="page-kicker mb-4">NexOS / {service.label}</p>
             <h1 id="service-heading" className="page-title">{service.headline}</h1>
@@ -67,13 +68,13 @@ export function ServicePage({ service }: { service: ServicePageContent }) {
         <section className="topography-glass topography-glass--copy border-y border-ink/15 py-10 md:py-14" aria-labelledby="overview-heading">
           <h2 id="overview-heading" className="text-3xl font-semibold tracking-tight">{service.overviewTitle}</h2>
           <p className="mt-5 max-w-3xl leading-relaxed text-ink/80">{service.overview}</p>
-          <div className="mt-10 grid gap-8 md:grid-cols-3">{service.applications.map(application => <article key={application.title}><h3 className="text-lg font-semibold">{application.title}</h3><p className="mt-3 leading-relaxed text-ink/80">{application.body}</p></article>)}</div>
+          <div className={`mt-10 grid gap-8 md:grid-cols-3 ${styles.applications}`}>{service.applications.map(application => <article key={application.title}><h3 className="text-lg font-semibold">{application.title}</h3><p className="mt-3 leading-relaxed text-ink/80">{application.body}</p></article>)}</div>
         </section>
         <section id="como-funciona" className="topography-glass topography-glass--copy scroll-mt-28 py-14 md:py-20" aria-labelledby="process-heading">
           <h2 id="process-heading" className="text-3xl font-semibold tracking-tight">Como funciona</h2>
-          <ol className="mt-8 grid gap-8 md:grid-cols-3">{service.steps.map((step, index) => <li key={step.title}><span className="font-mono text-sm text-ink/70">0{index + 1}</span><h3 className="mt-3 text-xl font-semibold">{step.title}</h3><p className="mt-3 leading-relaxed text-ink/80">{step.body}</p></li>)}</ol>
+          <ol className={`mt-8 grid gap-8 md:grid-cols-3 ${styles.steps}`}>{service.steps.map((step, index) => <li key={step.title}><span className="font-mono text-sm text-ink/70">0{index + 1}</span><h3 className="mt-3 text-xl font-semibold">{step.title}</h3><p className="mt-3 leading-relaxed text-ink/80">{step.body}</p></li>)}</ol>
         </section>
-        <section className="topography-glass grid gap-10 rounded-2xl border border-ink/15 bg-ink/[0.03] p-6 md:grid-cols-2 md:p-10" aria-labelledby="preparation-heading">
+        <section className={`topography-glass grid gap-10 rounded-2xl border border-ink/15 bg-ink/[0.03] p-6 md:grid-cols-2 md:p-10 ${styles.proposal}`} aria-labelledby="preparation-heading">
           <div><h2 id="preparation-heading" className="text-2xl font-semibold">O que preparar</h2><ul className="mt-6 flex flex-col gap-4">{service.preparation.map(item => <li key={item} className="flex items-start gap-3 text-ink/80"><Check size={18} className="mt-1 shrink-0" aria-hidden="true" /><span>{item}</span></li>)}</ul></div>
           <div>
             <h2 className="text-2xl font-semibold">Uma proposta para o seu negócio</h2>
@@ -81,11 +82,11 @@ export function ServicePage({ service }: { service: ServicePageContent }) {
             <a href={contact} target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex min-h-11 items-center gap-2 font-medium hover:underline">{isPlate ? 'Adquirir Placa' : 'Conversar sobre o Desenvolvimento NexOS'} <ArrowUpRight size={16} aria-hidden="true" /></a>
           </div>
         </section>
-        <section className="topography-glass topography-glass--copy py-14 md:py-20" aria-labelledby="questions-heading">
+        <section className={`topography-glass topography-glass--copy py-14 md:py-20 ${styles.questions}`} aria-labelledby="questions-heading">
           <h2 id="questions-heading" className="text-3xl font-semibold tracking-tight">Dúvidas sobre {service.label.toLowerCase()}</h2>
           <div className="mt-8 divide-y divide-ink/15">{service.questions.map(item => <details key={item.question} className="group py-5"><summary className="flex cursor-pointer items-center justify-between gap-5 text-lg font-medium"><span>{item.question}</span><Plus size={18} className="shrink-0 transition-transform group-open:rotate-45" aria-hidden="true" /></summary><p className="mt-4 max-w-3xl leading-relaxed text-ink/80">{item.answer}</p></details>)}</div>
         </section>
-        <nav aria-label="Outras soluções NexOS" className="topography-glass topography-glass--copy border-t border-ink/15 py-10"><h2 className="text-xl font-semibold">Outras soluções para seu negócio</h2><ul className="mt-5 flex flex-wrap gap-x-8 gap-y-4">{Object.values(servicePages).filter(item => item.path !== service.path).map(item => <li key={item.path}><Link href={item.path} className="inline-flex min-h-11 items-center gap-2 hover:underline">{item.label}<ArrowUpRight size={14} aria-hidden="true" /></Link></li>)}</ul></nav>
+        <nav aria-label="Outras soluções NexOS" className={`topography-glass topography-glass--copy border-t border-ink/15 py-10 ${styles.related}`}><h2 className="text-xl font-semibold">Outras soluções para seu negócio</h2><ul className="mt-5 flex flex-wrap gap-x-8 gap-y-4">{Object.values(servicePages).filter(item => item.path !== service.path).map(item => <li key={item.path}><Link href={item.path} className="inline-flex min-h-11 items-center gap-2 hover:underline">{item.label}<ArrowUpRight size={14} aria-hidden="true" /></Link></li>)}</ul></nav>
       </main>
       <Footer />
     </div>

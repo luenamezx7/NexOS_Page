@@ -77,7 +77,13 @@
   --action-outline: color-mix(in srgb, #edc4ff calc(var(--header-expand) * 100%), var(--primary));
   --action-label: color-mix(in srgb, #f9f3fa calc(var(--header-expand) * 100%), var(--primary));
   font-weight: 600;
+  background: transparent;
+  color: var(--color-ink);
+  border-color: color-mix(in srgb, var(--color-ink) 35%, transparent);
+  box-shadow: none;
 }
+.mobileStart::before, .start::before { opacity: 0; }
+.mobileStart:is(:hover, :focus-visible)::before, .start:is(:hover, :focus-visible)::before { background: var(--action-gradient); opacity: 1; }
 @media (max-width: 767px) {
   .header { --header-logo-growth: 0.06; --header-action-growth: 0.04; }
   .bar { padding-inline: 8px; }

@@ -1,4 +1,4 @@
-.button { display: inline-flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 54px; max-width: 100%; padding: 8px 8px 8px 24px; border-radius: 8px; font-size: 15px; font-weight: 600; white-space: nowrap; }
+.button { display: inline-flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 54px; max-width: 100%; padding: 8px 8px 8px 24px; border-radius: var(--radius-control); font-size: 15px; font-weight: 600; white-space: nowrap; }
 .label { position: relative; z-index: 1; font: inherit; }
 .icon { position: relative; z-index: 1; display: grid; place-items: center; width: 36px; height: 36px; border-left: 1px solid currentColor; transition: transform 300ms var(--ease-fluid); }
 @media (hover: hover) { .button:hover:not(:disabled) .icon { transform: translate(2px, -2px); } }

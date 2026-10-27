@@ -7,7 +7,7 @@
 .container {
   width: min(100%, 1280px);
   margin-inline: auto;
-  padding: 56px 40px 88px;
+  padding: var(--section-space) 40px;
 }
 
 .sectionNav {
@@ -59,17 +59,19 @@
   margin-top: 36px;
   padding: 24px;
   border: 1px solid var(--landing-line);
-  border-radius: 16px;
-  background: color-mix(in srgb, var(--visor-lilac) 5%, var(--color-canvas));
+  border-radius: var(--radius-feature);
+  background: radial-gradient(ellipse at 65% 100%, var(--ambient-blue), transparent 65%), radial-gradient(ellipse at 20% 15%, var(--ambient-violet), transparent 65%), var(--surface-base);
+  box-shadow: var(--surface-shadow);
+  transform: rotate(-3deg);
 }
 
-.mascot { display: block; width: 100%; height: auto; object-fit: contain; }
+.mascot { display: block; width: 100%; height: auto; object-fit: contain; transform: rotate(3deg); }
 
 .heading {
   max-width: 18ch;
   font-size: clamp(34px, 4vw, 56px);
-  font-weight: 800;
-  font-stretch: 85%;
+  font-weight: 730;
+  font-stretch: 95%;
   line-height: 1.08;
   letter-spacing: -.03em;
   text-wrap: balance;
@@ -97,14 +99,14 @@
 .servicesLink:focus-visible, .sectionNav a:focus-visible { outline: 2px solid var(--ring); outline-offset: 5px; border-radius: 4px; }
 
 @media (max-width: 767px) {
-  .container { padding: 40px 24px 64px; }
+  .container { padding: 56px 24px; }
   .sectionNav { margin-bottom: 36px; }
   .layout { grid-template-columns: minmax(0, 1fr); gap: 40px; }
   .identity { padding-top: 0; }
   .wordmark { font-size: clamp(80px, 24vw, 128px); }
   .companyName { margin-top: 0; }
   .signature { margin-top: 12px; font-size: 16px; }
-  .brandVisual { width: min(100%, 280px); margin-top: 24px; padding: 20px; }
+  .brandVisual { width: min(100%, 260px); margin-top: 24px; padding: 20px; }
   .heading { max-width: 20ch; font-size: clamp(32px, 7.4vw, 40px); }
   .lead { margin-top: 24px; }
   .principles { grid-template-columns: minmax(0, 1fr); gap: 24px; margin-top: 28px; padding-top: 24px; }

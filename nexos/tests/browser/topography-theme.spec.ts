@@ -47,7 +47,9 @@ for (const theme of ['light', 'dark']) {
         return { primary: style.getPropertyValue('--primary').trim(), gradient: style.getPropertyValue('--action-gradient') };
       });
       expect(palette.primary).toBe(theme === 'light' ? '#971ef4' : '#e873f8');
-      expect(palette.gradient).toContain('#971ef4'); expect(palette.gradient).toContain('#34064e');
+      expect(palette.gradient).toBe(theme === 'light'
+        ? 'linear-gradient(115deg, #7b2bd2 0%, #6824b7 50%, #4b238d 100%)'
+        : 'linear-gradient(115deg, #8136dc 0%, #692cbd 50%, #51238e 100%)');
       const surface = page.locator('[data-metallic-surface]').first();
       if (await surface.count()) {
         const finish = await surface.evaluate(e => getComputedStyle(e, '::after').backgroundImage);

@@ -79,9 +79,9 @@
 
 /* Footer */
 .footerSection { --mid-surface: color-mix(in srgb, var(--color-ink) 3%, var(--color-canvas)); --mid-line: color-mix(in srgb, var(--color-ink) 14%, transparent); --mid-muted: var(--text-secondary); --mid-accent: var(--display-rose); position: relative; isolation: isolate; overflow: hidden; background: var(--color-canvas); color: var(--color-ink); border-top: 1px solid var(--mid-line); }
-.footerSection > :global([data-gradient-background]) { opacity: .65; }
+.footerSection > :global([data-brand-veil]) { opacity: .45; }
 :global(.dark) .footerSection { --mid-accent: var(--display-rose); }
-.footerInner { position: relative; z-index: 1; width: 100%; max-width: 1280px; margin-inline: auto; padding: 48px 20px 40px; }
+.footerInner { position: relative; z-index: 1; width: 100%; max-width: 1280px; margin-inline: auto; padding: 56px 24px 32px; }
 .footerGrid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; }
 .brandBlock { min-width: 0; }
 .brandLink { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; color: inherit; text-decoration: none; }
@@ -92,7 +92,7 @@
 .brandDesc { margin-top: 10px; max-width: 36ch; font-size: 14px; line-height: 1.5; color: var(--mid-muted); }
 .brandAddress { margin-top: 10px; max-width: 42ch; font-size: 13px; line-height: 1.5; font-style: normal; color: color-mix(in srgb, var(--color-ink) 85%, transparent); }
 .socials { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
-.socialLink { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--mid-line); border-radius: 8px; background: color-mix(in srgb, var(--color-ink) 3%, transparent); color: var(--mid-muted); transition: border-color 200ms, color 200ms; text-decoration: none; }
+.socialLink { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--mid-line); border-radius: var(--radius-control); background: var(--surface-base); color: var(--mid-muted); transition: border-color 200ms, color 200ms; text-decoration: none; }
 .socialLink:hover { border-color: color-mix(in srgb, var(--mid-accent) 40%, transparent); color: var(--color-ink); }
 .colTitle { margin-bottom: 16px; font-family: var(--font-mono); font-size: var(--type-label); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-ink); }
 .colList { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
