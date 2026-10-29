@@ -26,6 +26,9 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     try { id = decodeURIComponent(hash.replace(/^#/, '')); } catch { return false; }
     const target = document.getElementById(id);
     if (!target || document.querySelector('dialog[open]') || lenis?.isStopped) return false;
+    // A replayed hydration click may arrive before the document capture listener mounts.
+    // Mark it here so the initial hash-restoration effect cannot cancel this navigation.
+    if (options.history !== 'none') userInteractedRef.current = true;
     cancelNavigationRef.current?.();
     let cancelled = false;
     let raf = 0;
@@ -150,6 +153,10 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     };
     const restoreHash = () => {
       cancelAnimationFrame(restoreRaf);
+      // Back/forward can happen before Lenis calls the previous trip's onComplete.
+      // Stop that trip before measuring or restoring the new history destination.
+      cancelNavigationRef.current?.();
+      cancelNavigationRef.current = null;
       if (!location.hash || document.querySelector('.waves-entry[open]')) return;
       const started = performance.now();
       let stable = 0, previous = -1;

@@ -22,7 +22,8 @@ for (const theme of ['light', 'dark'] as const) {
         await expect(page.locator('h1'), route).toBeVisible();
         await expect(page.getByRole('button', { name: theme === 'light' ? 'Ativar modo escuro' : 'Ativar modo claro' }), route).toBeVisible();
         await expect(page.locator('.interior-atmosphere'), route).toHaveCount(1);
-        await expect(page.locator('.interior-atmosphere .grainient-container'), route).toHaveAttribute('data-render-state', /ready|unavailable/);
+        await expect(page.locator('.interior-atmosphere .brand-veil-light'), route).toHaveCSS('background-image', /radial-gradient/);
+        await expect(page.locator('.interior-atmosphere canvas'), route).toHaveCount(0);
         await page.evaluate(() => document.fonts.ready);
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), route).toBe(true);
         const headerBounds = await page.locator('[data-page-header]').boundingBox();

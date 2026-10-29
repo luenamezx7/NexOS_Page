@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { PageFooter, PageHeader } from './PageChrome';
+import { ScrollReveal } from './ScrollReveal';
 
 /** Branded status layout, also used when a protected page cannot load its session. */
 export function PageStatus({ label, title, description, alert = false }: {
@@ -10,7 +11,7 @@ export function PageStatus({ label, title, description, alert = false }: {
     <div className="interior-page">
       <PageHeader />
       <main className="page-narrow page-status" id="main-content">
-        <div className="page-panel page-status-panel">
+        <ScrollReveal preset="card" className="page-panel page-status-panel">
           <p className="page-kicker">NexOS / {label}</p>
           <h1 className="page-title">{title}</h1>
           <p role={alert ? 'alert' : undefined}>{description}</p>
@@ -18,7 +19,7 @@ export function PageStatus({ label, title, description, alert = false }: {
             <Link href="/" className="btn-primary-nex"><ArrowLeft size={16} aria-hidden="true" /> Voltar ao site</Link>
             <a href="mailto:nexosperformance@gmail.com" className="page-text-link">Falar com a NexOS <ArrowUpRight size={16} aria-hidden="true" /></a>
           </div>
-        </div>
+        </ScrollReveal>
       </main>
       <PageFooter />
     </div>

@@ -34,13 +34,13 @@
 }
 
 .identity, .story { min-width: 0; }
-.identity { padding-top: 12px; }
+.identity { padding-top: 12px; container-type: inline-size; }
 
 .wordmark {
   display: block;
   width: fit-content;
   color: #000;
-  font: 400 clamp(80px, 9.2vw, 128px)/1 var(--font-brand-logo), sans-serif;
+  font: 400 clamp(32px, 13.5cqi, 96px)/1 var(--font-brand-logo), sans-serif;
   letter-spacing: 0;
   font-synthesis: none;
   white-space: nowrap;
@@ -103,7 +103,6 @@
   .sectionNav { margin-bottom: 36px; }
   .layout { grid-template-columns: minmax(0, 1fr); gap: 40px; }
   .identity { padding-top: 0; }
-  .wordmark { font-size: clamp(80px, 24vw, 128px); }
   .companyName { margin-top: 0; }
   .signature { margin-top: 12px; font-size: 16px; }
   .brandVisual { width: min(100%, 260px); margin-top: 24px; padding: 20px; }

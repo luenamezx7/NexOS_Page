@@ -98,9 +98,11 @@
 .resultCount { margin-bottom: 20px; font: 11px var(--font-mono); color: var(--commerce-muted); }
 .servicesGrid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
 .servicesGrid[data-single='true'] { grid-template-columns: minmax(0, 1fr); }
-.serviceCard { display: flex; flex-direction: column; min-width: 0; padding: 32px; border: 1px solid var(--commerce-line); border-radius: var(--radius-feature); background: var(--commerce-surface); box-shadow: var(--surface-shadow); transition: border-color 220ms ease, box-shadow 220ms ease; }
+.serviceCard { display: flex; flex-direction: column; min-width: 0; padding: 32px; border: 1px solid var(--commerce-line); border-radius: var(--radius-feature); background: var(--commerce-surface); box-shadow: var(--surface-shadow); transition: border-color 250ms ease, box-shadow 250ms ease, translate 350ms var(--ease-fluid); }
 .serviceCard:hover { border-color: color-mix(in srgb, var(--commerce-accent) 40%, var(--commerce-line)); box-shadow: var(--surface-shadow), 0 8px 40px -30px #971ef488; }
 .featured { background: radial-gradient(ellipse at 90% 0%, var(--ambient-violet), transparent 52%), var(--commerce-surface); }
+.featured { border-top-color: color-mix(in srgb, var(--commerce-accent) 28%, var(--commerce-line)); }
+@media (hover: hover) { .serviceCard:hover { translate: 0 -3px; } }
 .cardTop { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 32px; }
 .cardTop > .meta { border: 1px solid var(--commerce-line); border-radius: 0 14px 0 14px; padding: 8px 12px; background: var(--surface-inset); color: var(--commerce-accent); }
 .serviceIcon { display: grid; place-items: center; width: 52px; height: 52px; border: 1px solid var(--commerce-line); border-radius: 16px; background: color-mix(in srgb, var(--commerce-accent) 8%, var(--surface-inset)); color: var(--commerce-accent); flex-shrink: 0; }
@@ -163,5 +165,5 @@
   .guideArrow { display: none; }
 }
 @media (max-width: 479px) { .fanCard { padding: 12px; } .studyCode svg { width: 14px; height: 14px; } .studyQr { width: 36px; height: 36px; } .studyName { font-size: 8px; } .stageTop, .stageFoot { padding-inline: 16px; font-size: 8px; } .studyDisclaimer { padding-inline: 16px; } }
-@media (prefers-reduced-motion: reduce) { .serviceCard { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .serviceCard { transition: none; translate: none; } }
 @media (forced-colors: active) { .accent { background: none; color: CanvasText; } }

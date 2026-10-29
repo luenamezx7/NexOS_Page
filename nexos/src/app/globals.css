@@ -10,7 +10,7 @@
 
 /* ============================================================
    NexOS — Digital / OLED identity
-   Base: creme #fdf6ec · OLED #000000 · purple visor in both themes
+   Base: creme mineral #eee5d8 · violeta profundo #09080f
    Layers: stars 0, content 1, navigation 40–50, dialogs top layer.
    Perf rule: animate ONLY transform + opacity. No giant blurs.
    ============================================================ */
@@ -26,13 +26,13 @@
   /* Neutral surfaces shared across both themes. */
   --color-canvas: #fdf6ec;
   --color-ink: #24172f;
-  --color-glass: rgba(253, 246, 236, 0.72);
+  --color-glass: rgba(238, 229, 216, 0.72);
   --color-glass-strong: rgba(253, 246, 236, 0.9);
   --color-card: #faf3e4;
 }
 
 .dark {
-  --color-canvas: #000000;
+  --color-canvas: #09080f;
   --color-ink: #f9f3fa;
   --color-glass: rgba(0, 0, 0, 0.72);
   --color-glass-strong: rgba(0, 0, 0, 0.9);
@@ -53,6 +53,17 @@
   --surface-shadow: inset 0 1px 0 var(--surface-edge), 0 20px 60px -40px #34064e45;
   --ambient-violet: rgb(151 30 244 / 9%);
   --ambient-blue: rgb(55 102 236 / 7%);
+  --panel-ground: #fffaf5;
+  --panel-alternate: #f7f1fa;
+  --panel-border: rgb(69 35 92 / 10%);
+  --panel-rim: rgb(255 255 255 / 88%);
+  --panel-halo: rgb(151 30 244 / 9%);
+  --panel-radius: clamp(28px, 3.5vw, 52px);
+  --atmosphere-violet: rgb(151 30 244 / 13%);
+  --atmosphere-lilac: rgb(207 151 235 / 20%);
+  --atmosphere-rim: rgb(151 30 244 / 16%);
+  --hero-light-source: rgb(255 255 255 / 95%);
+  --hero-light-glow: rgb(182 121 234 / 30%);
   --electric-blue: #416ee8;
   --type-section: clamp(34px, 4.4vw, 60px);
   --type-subheading: clamp(23px, 2.6vw, 32px);
@@ -145,14 +156,24 @@
 }
 
 .dark {
-  --surface-base: #10101b;
-  --surface-raised: #191826;
-  --surface-inset: #0b0b14;
-  --surface-line: rgb(204 193 241 / 15%);
-  --surface-edge: rgb(236 227 255 / 9%);
+  --surface-base: #15131e;
+  --surface-raised: #1c1927;
+  --surface-inset: #100e18;
+  --surface-line: rgb(204 193 241 / 12%);
+  --surface-edge: rgb(236 227 255 / 10%);
   --surface-shadow: inset 0 1px 0 var(--surface-edge), 0 24px 64px -36px #000000b3;
-  --ambient-violet: rgb(134 67 237 / 14%);
-  --ambient-blue: rgb(43 91 221 / 11%);
+  --ambient-violet: rgb(134 67 237 / 11%);
+  --ambient-blue: rgb(104 90 168 / 7%);
+  --panel-ground: #100e18;
+  --panel-alternate: #13101c;
+  --panel-border: rgb(216 199 244 / 10%);
+  --panel-rim: rgb(235 217 255 / 12%);
+  --panel-halo: rgb(151 30 244 / 12%);
+  --atmosphere-violet: rgb(135 55 213 / 19%);
+  --atmosphere-lilac: rgb(171 104 216 / 12%);
+  --atmosphere-rim: rgb(202 153 255 / 17%);
+  --hero-light-source: rgb(238 218 255 / 52%);
+  --hero-light-glow: rgb(161 92 232 / 28%);
   --electric-blue: #92b2ff;
   --nex-pink: var(--visor-lilac);
   --nex-pink-hot: var(--visor-lilac);
@@ -201,7 +222,7 @@
   --section-indicator: var(--nex-pink-hot);
   --section-indicator-glow: rgba(var(--brand-accent-rgb), 0.32);
   --section-indicator-glow-soft: rgba(var(--brand-accent-rgb), 0.12);
-  --background: #000000;
+  --background: #09080f;
   --foreground: oklch(0.985 0 0);
   --card: #10101b;
   --card-foreground: oklch(0.985 0 0);
@@ -987,6 +1008,7 @@ select.field-input option {
   --landing-muted: var(--text-secondary);
   --landing-accent: var(--display-rose);
   --landing-edge-tint: #fdf6ec25;
+  background-image: radial-gradient(ellipse 75% 550px at 50% 900px, var(--panel-halo), transparent 80%);
 }
 .dark .landing-page { --landing-accent: #c1a2fa; --landing-edge-tint: #00000025; }
 .landing-page :where(h1, h2, h3) { font-family: var(--font-display); }
@@ -1008,7 +1030,7 @@ select.field-input option {
   color: var(--color-ink);
 }
 .dark .oceanic-surface {
-  --color-canvas: #000000;
+  --color-canvas: #09080f;
   --color-ink: #f9f3fa;
   --text-secondary: #e2d4ef;
   --text-tertiary: #c8b5d9;
@@ -1021,29 +1043,77 @@ select.field-input option {
   color: var(--color-ink);
 }
 .brand-veil {
-  --grainient-angle: 55deg;
-  --grainient-fallback: linear-gradient(var(--grainient-angle), #fdf6ec 0%, #eddbfa 25%, #cd9af4 50%, var(--visor-violet) 75%, #7410c4 100%);
   position: absolute;
   inset: 0;
   overflow: hidden;
   pointer-events: none;
+  background: var(--color-canvas);
+}
+.brand-veil-light {
+  position: absolute;
+  inset: -40px;
+  background:
+    radial-gradient(ellipse 48% 65% at 8% 15%, var(--atmosphere-violet), transparent 76%),
+    radial-gradient(ellipse 40% 60% at 91% 40%, var(--atmosphere-lilac), transparent 78%),
+    radial-gradient(ellipse 45% 38% at 58% 0%, var(--ambient-violet), transparent 85%);
+}
+.hero-grain-field {
+  --grainient-fallback: linear-gradient(0deg, var(--color-canvas), #d7b7e8 45%, #a878cf 80%, #8b53b6);
+  position: absolute;
+  inset: 0;
+  opacity: .24;
   background: var(--grainient-fallback);
+  mask-image: linear-gradient(#000, #000 55%, transparent 100%);
 }
-.dark .brand-veil {
-  --grainient-fallback: linear-gradient(var(--grainient-angle), #000 0%, #26073e 25%, #57118c 50%, var(--visor-violet) 75%, #a331f7 100%);
+.dark .hero-grain-field { --grainient-fallback: linear-gradient(0deg, #09080f, #26073e 40%, #57118c 72%, #971ef4); opacity: .32; }
+.brand-veil[data-variant='hero']::before { opacity: .075; }
+.hero-overhead-light {
+  position: absolute;
+  inset: 0 0 auto;
+  height: min(680px, 80svh);
+  background:
+    radial-gradient(ellipse 16% 12% at 50% -2%, var(--hero-light-source), transparent 84%),
+    radial-gradient(ellipse 56% 92% at 50% -28%, var(--hero-light-glow), transparent 82%);
+  pointer-events: none;
+  z-index: 1;
 }
-/* A lighter scrim leaves the saturated purple field visible around the copy. */
+.hero-overhead-light::after {
+  content: '';
+  position: absolute;
+  inset: -8% 4% 0;
+  background: conic-gradient(from 148deg at 50% 0%, transparent 0deg, var(--ambient-violet) 20deg, var(--hero-light-glow) 32deg, var(--ambient-violet) 44deg, transparent 64deg);
+  mask-image: linear-gradient(#0009, transparent 88%);
+  opacity: .65;
+}
+.brand-veil-orbit {
+  position: absolute;
+  width: min(78vw, 1060px);
+  aspect-ratio: 1.8;
+  top: -32%;
+  right: -10%;
+  border: 1px solid var(--atmosphere-rim);
+  border-radius: 50%;
+  box-shadow: 0 0 60px -24px var(--atmosphere-violet), inset 0 0 55px -24px var(--atmosphere-lilac);
+  transform: rotate(-24deg);
+  mask-image: linear-gradient(140deg, transparent 24%, #000 65%, transparent 92%);
+}
+.brand-veil::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: url('/ambient-grain.svg') repeat;
+  opacity: .035;
+  mask-image: linear-gradient(#000, transparent 90%);
+}
 .brand-veil::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 50% 42%, color-mix(in srgb, var(--color-canvas) 80%, transparent) 0%, color-mix(in srgb, var(--color-canvas) 55%, transparent) 35%, color-mix(in srgb, var(--color-canvas) 12%, transparent) 100%), linear-gradient(to top, var(--color-canvas), transparent 24%);
+  background: radial-gradient(ellipse 45% 62% at 50% 60%, color-mix(in srgb, var(--color-canvas) 78%, transparent), transparent 100%), linear-gradient(to top, var(--color-canvas), transparent 35%);
 }
-.brand-veil[data-variant='hero'] { --grainient-angle: 0deg; }
-/* Keep the original gradient field, with a reading scrim behind the copy. */
-.brand-veil[data-variant='hero']::after {
-  background: radial-gradient(ellipse 62% 48% at 50% 62%, color-mix(in srgb, var(--color-canvas) 94%, transparent) 0%, color-mix(in srgb, var(--color-canvas) 78%, transparent) 38%, transparent 100%), linear-gradient(to top, var(--color-canvas), transparent 38%);
-}
+.brand-veil[data-variant='default'] .brand-veil-orbit { top: 12%; right: 8%; opacity: .5; }
+.brand-veil[data-variant='interior'] .brand-veil-orbit { top: -12%; opacity: .55; }
 .landing-hero { position: relative; isolation: isolate; display: flex; align-items: center; min-height: min(900px, 100svh); overflow: hidden; background: var(--color-canvas); }
 .hero-container { position: relative; width: 100%; max-width: 1280px; margin-inline: auto; padding: 120px 40px 128px; z-index: 1; }
 .hero-copy { max-width: 1080px; margin-inline: auto; text-align: center; }
@@ -1213,9 +1283,8 @@ html:not(.dark) .waves-entry-stars { opacity: 0.28; }
 
 /* Shared atmosphere and material. Route roots let the single star layer show through. */
 .site-atmosphere { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-.interior-atmosphere { bottom: auto; height: min(900px, 100svh); opacity: 0.4; }
-.dark .interior-atmosphere { opacity: 0.5; }
-.interior-atmosphere .brand-veil { --grainient-angle: 0deg; }
+.interior-atmosphere { bottom: auto; height: min(1000px, 100svh); opacity: .8; }
+.dark .interior-atmosphere { opacity: .9; }
 .interior-atmosphere .brand-veil::after { background: linear-gradient(to bottom, transparent, var(--color-canvas) 92%); }
 .night-sky { position: absolute; inset: 0; display: none; opacity: 0.38; }
 .dark .night-sky { display: block; }
@@ -1264,7 +1333,7 @@ html:not(.dark) .waves-entry-stars { opacity: 0.28; }
 .page-intro { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding-block: 48px 32px; }
 .page-intro > p:not(.page-kicker) { max-width: 62ch; font-size: var(--type-lead); line-height: 1.7; }
 .page-kicker { color: var(--primary); font: 500 11px/1.6 var(--font-mono); letter-spacing: .08em; }
-.page-panel { border: 1px solid var(--surface-line); border-radius: var(--radius-card); background: var(--surface-base); box-shadow: var(--surface-shadow); }
+.page-panel { border: 1px solid var(--panel-border); border-radius: var(--radius-feature); background: var(--panel-ground); box-shadow: var(--surface-shadow); }
 .page-tabs { display: flex; flex-wrap: wrap; gap: 8px; padding-block: 0 24px; }
 .page-tab { display: inline-flex; align-items: center; min-height: 44px; padding: 10px 16px; border: 1px solid var(--border); border-radius: 8px; color: var(--text-secondary); background: var(--color-glass); font-size: 13px; font-weight: 500; transition: border-color 200ms ease, color 200ms ease, background-color 200ms ease; }
 .page-tab:is(:hover, [aria-current='page']) { color: var(--primary); border-color: var(--primary); background: color-mix(in srgb, var(--primary) 7%, var(--color-canvas)); }
@@ -1283,6 +1352,7 @@ html:not(.dark) .waves-entry-stars { opacity: 0.28; }
 .page-status-panel > p { max-width: 55ch; }
 .page-status-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
 .account-content { display: flex; flex-direction: column; gap: 24px; padding-bottom: 48px; }
+.account-content { --card: var(--panel-ground); --border: var(--panel-border); }
 .account-content > .page-intro { padding-bottom: 8px; }
 .account-content :where(input, p, h3, label) { overflow-wrap: anywhere; }
 @media (max-width: 1099px) { .page-header-nav { display: none; } }
@@ -1375,3 +1445,51 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
 @keyframes visor-spectrum-drift { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
 @media (prefers-reduced-motion: reduce) { .visor-spectrum::before { animation: none; transform: none; } }
 @media (forced-colors: active) { .visor-spectrum { display: none; } }
+
+/* Surface hierarchy remains visible even when decorative animation is disabled. */
+[data-reveal-state='pending'], [data-reveal-state='entering'] { pointer-events: none; }
+.landing-hero[data-nav-ready='false'] a[href^='#'] { pointer-events: none; }
+.landing-page [data-section-panel] > div > section { border-top: 0; border-bottom: 0; }
+.landing-page [data-section-panel] :where(p) { text-wrap: pretty; }
+@media (max-width: 767px) {
+  .brand-veil-light { inset: -24px; }
+  .brand-veil-orbit { width: 140vw; right: -65%; top: -10%; }
+  [data-scroll-float] { transform: none !important; }
+  [data-hero-scroll] { transform: none !important; opacity: 1 !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] { opacity: 1 !important; transform: none !important; filter: none !important; }
+  .brand-veil-light { transform: none !important; }
+  [data-scroll-float] { transform: none !important; }
+  [data-hero-scroll] { transform: none !important; opacity: 1 !important; }
+}
+@media (forced-colors: active) { .brand-veil { display: none; } }
+
+/* Mineral light palette: a quieter cream and a soft overhead source. */
+:root:not(.dark) {
+  --color-canvas: #eee5d8;
+  --background: #eee5d8;
+  --popover: #eee5d8;
+  --color-glass: rgb(238 229 216 / 72%);
+  --color-glass-strong: rgb(238 229 216 / 90%);
+  --color-card: #e8dfd1;
+  --card: #e8dfd1;
+  --surface-base: #f2eade;
+  --surface-raised: #f7f0e6;
+  --surface-inset: #e5dce8;
+  --surface-edge: rgb(255 255 255 / 55%);
+  --surface-glass: rgb(242 234 222 / 96%);
+  --reading-glass: rgb(242 234 222 / 97%);
+  --reading-glass-border: rgb(255 255 255 / 55%);
+  --field-surface: #e7ded2;
+  --panel-ground: #f2eade;
+  --panel-alternate: #e8dfeb;
+  --panel-rim: rgb(255 255 255 / 55%);
+  --atmosphere-violet: rgb(151 30 244 / 11%);
+  --atmosphere-lilac: rgb(207 151 235 / 14%);
+  --hero-light-source: rgb(245 230 244 / 45%);
+  --hero-light-glow: rgb(165 110 212 / 16%);
+  --header-glass-background: linear-gradient(125deg, #ffffff40, #ffffff12 36%, transparent 62%, #e873f812), rgb(238 229 216 / 72%);
+  --header-glass-border: rgb(255 255 255 / 55%);
+}
+html:not(.dark) .oceanic-surface { --color-canvas: #eee5d8; }

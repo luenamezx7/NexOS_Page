@@ -16,6 +16,8 @@ const TigerManifesto = dynamic(() => import('@/components/sections/TigerManifest
 const FAQ = dynamic(() => import('@/components/FAQ').then(m => m.FAQ));
 const MascotSolutions = dynamic(() => import('@/components/sections/MascotSolutions').then(m => m.MascotSolutions));
 const Footer = dynamic(() => import('@/components/Footer').then(m => m.Footer));
+const SocialInvite = dynamic(() => import('@/components/sections/SocialInvite').then(m => m.SocialInvite));
+const BrandClosing = dynamic(() => import('@/components/sections/BrandClosing').then(m => m.BrandClosing));
 
 // Split bundles without removing the commercial content from the server HTML.
 const MetricsSection = dynamic(() => import('@/components/sections/MetricsSection').then(m => m.MetricsSection));
@@ -63,10 +65,10 @@ export default function HomeClient() {
             <SectionBackground index={1}>
               <MetricsSection />
             </SectionBackground>
-            <SectionBackground index={2} scene="product">
+            <SectionBackground index={2} scene="product" panel>
               <PlacaNFCSection />
             </SectionBackground>
-            <SectionBackground index={3}>
+            <SectionBackground index={3} panel>
               <Services />
             </SectionBackground>
             <SectionBackground index={4} scene="waves">
@@ -81,12 +83,14 @@ export default function HomeClient() {
             </SectionBackground>
             <SectionBackground index={7}>
               <MascotSolutions />
+              <SocialInvite />
             </SectionBackground>
             <SectionBackground index={8} scene="image">
               <CTAFinal />
             </SectionBackground>
           </div>
           <Footer onViewPresentation={replayPresentation} />
+          <BrandClosing />
         </div>
       </div>
       <LandingPageBlur />

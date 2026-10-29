@@ -3,8 +3,7 @@
 /** Service discovery and direct commercial consultation. */
 import { useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'motion/react';
-import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
+import { ScrollReveal } from './ScrollReveal';
 import { ArrowUpRight, Check, Code2, MessageSquare, Headphones, Layers } from 'lucide-react';
 import { config } from '@/config';
 import type { Service } from '@/types';
@@ -13,13 +12,10 @@ import { MetallicSurface } from './ui/metallic-button';
 import { ServiceExplorer, type ServiceGoal } from './ServiceExplorer';
 import styles from './commerce/Commerce.module.css';
 
-const EASE = [0.16, 1, 0.3, 1] as const;
-
 function ServiceCard({ service }: { service: Service }) {
-  const reduce = useReducedMotion();
   const featured = service.id === 'dev';
   return (
-    <motion.article initial={reduce ? false : { opacity: 0, y: 32 }} whileInView={{ opacity: 1, y: 0 }} whileHover={reduce ? undefined : { y: -5 }} viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.7, ease: EASE }} className={`${styles.serviceCard} ${featured ? styles.featured : ''}`} aria-labelledby={`service-title-${service.id}`}>
+    <ScrollReveal as="article" preset="card" className={`${styles.serviceCard} ${featured ? styles.featured : ''}`} aria-labelledby={`service-title-${service.id}`}>
       <div className={styles.cardTop}>
         <span className={styles.serviceIcon}><Code2 size={22} strokeWidth={1.75} aria-hidden="true" /></span>
         <span className={styles.meta}>Feito para o seu negócio</span>
@@ -40,7 +36,7 @@ function ServiceCard({ service }: { service: Service }) {
           <p className={styles.hint}>Conte sua ideia ao comercial. Alinhamos escopo, prazo e condições antes de fechar.</p>
         </div>
       </div>
-    </motion.article>
+    </ScrollReveal>
   );
 }
 
@@ -57,20 +53,20 @@ export function Services({ className = '' }: { className?: string }) {
     <>
       <section id="services" aria-labelledby="services-title" className={`${styles.section} ${styles.servicesSection} ${className}`}>
         <div className={styles.container}>
-          <div className={styles.sectionNav}>
+          <ScrollReveal preset="label" className={styles.sectionNav}>
             <span className={styles.currentSection}><Code2 size={16} aria-hidden="true" /> Serviços digitais</span>
             <a href="#showcase">Conhecer a Placa NFC <ArrowUpRight size={16} aria-hidden="true" /></a>
-          </div>
+          </ScrollReveal>
           <header className={styles.servicesHeader}>
-            <h2 id="services-title" className={styles.heading}>Ideias boas merecem<br /><span className={styles.accent}>sair do papel.</span></h2>
-            <p className={styles.lead}>Apresente seu trabalho, organize seu atendimento ou dê um destino às suas campanhas. A NexOS reúne conteúdo, design e desenvolvimento em uma solução feita para o seu negócio.</p>
+            <ScrollReveal as="h2" preset="title" id="services-title" className={styles.heading}>Ideias boas merecem<br /><span className={styles.accent}>sair do papel.</span></ScrollReveal>
+            <ScrollReveal as="p" delay={.08} className={styles.lead}>Apresente seu trabalho, organize seu atendimento ou dê um destino às suas campanhas. A NexOS reúne conteúdo, design e desenvolvimento em uma solução feita para o seu negócio.</ScrollReveal>
           </header>
-          <ServiceExplorer value={goal} onChange={setGoal} />
+          <ScrollReveal><ServiceExplorer value={goal} onChange={setGoal} /></ScrollReveal>
           <p className={styles.resultCount} aria-live="polite">{visibleServices.length} {visibleServices.length === 1 ? 'solução disponível' : 'soluções disponíveis'}{goal !== 'all' ? ' para seu objetivo' : ''}</p>
           <div className={styles.servicesGrid} data-single={visibleServices.length === 1}>
             {visibleServices.map(service => <ServiceCard key={service.id} service={service} />)}
           </div>
-          <div className={styles.differentials}>{DIFFERENTIALS.map(({ icon: Icon, title, description }) => <div key={title}><Icon size={20} strokeWidth={1.75} aria-hidden="true" /><h3>{title}</h3><p>{description}</p></div>)}</div>
+          <div className={styles.differentials}>{DIFFERENTIALS.map(({ icon: Icon, title, description }, index) => <ScrollReveal key={title} delay={index * .08}><Icon size={20} strokeWidth={1.75} aria-hidden="true" /><h3>{title}</h3><p>{description}</p></ScrollReveal>)}</div>
         </div>
       </section>
     </>

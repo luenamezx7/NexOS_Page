@@ -1,16 +1,17 @@
 .page { padding-bottom: 0; }
 .content { padding-top: 12px; padding-bottom: 56px; }
+.content > section:global(.topography-glass) { position: relative; border: 0; border-bottom: 1px solid var(--surface-line); border-radius: 0; background: transparent; box-shadow: none; padding: clamp(32px, 5vw, 64px) 0; margin-block: 0; }
 .hero { position: relative; overflow: hidden; }
 .hero::before { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 100% 0%, var(--ambient-violet), transparent 60%); }
 .hero > * { position: relative; }
 .hero h1 { font-size: clamp(38px, 4.8vw, 64px); line-height: 1.08; font-stretch: 95%; font-weight: 730; letter-spacing: -.04em; max-width: 20ch; text-wrap: balance; }
 .applications { gap: 16px; }
-.applications > article { padding: 24px; border: 1px solid var(--surface-line); border-radius: 20px; background: var(--surface-inset); }
+.applications > article { padding: 24px 0; border-top: 1px solid var(--surface-line); background: transparent; }
 .applications h3 { font-weight: 650; letter-spacing: -.02em; }
 .steps { gap: 24px; }
 .steps > li { border-top: 1px solid var(--surface-line); padding-top: 20px; }
 .steps > li > span { display: inline-grid; place-items: center; width: 40px; height: 40px; color: var(--primary); border-radius: 12px; background: var(--surface-inset); border: 1px solid var(--surface-line); }
-.proposal { background: radial-gradient(ellipse at 100% 100%, var(--ambient-blue), transparent 75%), var(--surface-base) !important; }
+.content > .proposal:global(.topography-glass) { background: transparent; }
 .questions details > summary { min-height: 56px; border-radius: 8px; }
 .questions details > summary:focus-visible { outline: 2px solid var(--ring); outline-offset: 4px; }
 .questions details[open] > summary { color: var(--primary); }

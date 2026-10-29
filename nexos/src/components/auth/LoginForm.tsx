@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Eye, EyeOff, Fingerprint, LockKeyhole } from 'lucide-react';
-import { motion, useReducedMotion } from 'motion/react';
+import { ScrollReveal } from '../ScrollReveal';
 import { Turnstile } from '@/components/Turnstile';
 import { PasswordStrengthMeter } from './PasswordStrengthMeter';
 import { evaluatePassword } from '@/lib/auth/password-strength';
@@ -42,7 +42,6 @@ function needsTwoFactor(data: unknown): boolean {
 
 export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, socialProviders = [], socialAuthMode = 'direct', initialStep = 'credentials', verified }: LoginFormProps) {
   const userFlow = audience === 'user';
-  const reduce = useReducedMotion();
   const busyRef = useRef(false);
   const destination = sanitizeCallbackPath(callbackUrl) ?? (userFlow ? '/conta' : '/dashboard');
   const loginPath = userFlow ? '/portal/acesso' : '/admin-dashboard-su/secure-entry';
@@ -148,7 +147,7 @@ export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, 
           <h2 className={`${styles.adminHeading} mt-4`}>Ambiente administrativo restrito.</h2>
           <p className={styles.storyDescription}>Acesso por papel, sessão revogável e autenticação em duas etapas obrigatória para operadores.</p>
         </aside>}
-        <motion.section initial={reduce ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className={styles.panel} aria-labelledby="login-title">
+        <ScrollReveal as="section" preset="card" className={styles.panel} aria-labelledby="login-title">
           <p className={styles.overline}>{userFlow ? 'Sua conta NexOS' : 'Acesso administrativo'}</p>
           <div className={styles.title}>
             {!userFlow && <LockKeyhole size={20} />}
@@ -209,7 +208,7 @@ export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, 
             {message && <p role="status" aria-live="polite" className="text-sm leading-relaxed">{message}</p>}
           </div>
           <nav aria-label="Links legais" className="mt-8 flex flex-wrap gap-4 text-xs text-muted-foreground">{[['/privacidade', 'Privacidade'], ['/termos', 'Termos'], ['/lgpd', 'LGPD'], ['/cookies', 'Cookies']].map(([url, label]) => <Link key={url} href={url} className="underline underline-offset-2">{label}</Link>)}</nav>
-        </motion.section>
+        </ScrollReveal>
       </div>
       <PageFooter />
     </main>

@@ -5,55 +5,31 @@
  * - Nav desktop + drawer mobile
  * - Link "Minha conta" → /portal/acesso
  * - ThemeToggle
- * - Transparent over the hero; the glass surface assembles on scroll.
+ * - Superfície de vidro sempre visível, desde o carregamento.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence, useScroll, useMotionValue, useMotionValueEvent, useSpring, type MotionStyle } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
-import { ArrowUpRight, Menu, UserRound, X } from 'lucide-react';
+import { ArrowUpRight, Menu, X } from 'lucide-react';
 import { config } from '@/config';
 import { BrandMark } from './BrandMark';
 import { ThemeToggle } from './ThemeToggle';
 import styles from './Header.module.css';
 import { useSectionScroll } from './SmoothScrollProvider';
 import { cn } from '@/lib/utils';
+import { ProfileOrb } from './ProfileOrb';
 
 const NAV_ITEMS = [{ label: 'Placa NFC', href: '#showcase' }, ...config.navigation];
-const ASSEMBLE_SCROLL = 32;
-const assemblyAt = (scroll: number) => Math.min(1, Math.max(0, (scroll - 8) / 104));
 
 export function Header() {
-  const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [mobileExiting, setMobileExiting] = useState(false);
   const menuRef = useRef<HTMLButtonElement>(null);
   const reduce = useReducedMotion();
   const scrollToSection = useSectionScroll();
-  const { scrollY } = useScroll();
-  const assemblyTarget = useMotionValue(0);
-  const assembly = useSpring(assemblyTarget, { stiffness: 180, damping: 28, mass: 0.8, restDelta: 0.001, restSpeed: 0.01 });
-  useMotionValueEvent(scrollY, 'change', latest => {
-    setScrolled(latest > ASSEMBLE_SCROLL);
-    if (!mobileOpen && !mobileExiting) assemblyTarget.set(assemblyAt(latest));
-  });
-
-  useEffect(() => {
-    const syncScroll = () => {
-      setScrolled(window.scrollY > ASSEMBLE_SCROLL);
-      assemblyTarget.set(mobileOpen || mobileExiting ? 1 : assemblyAt(window.scrollY));
-    };
-    const frame = requestAnimationFrame(syncScroll);
-    window.addEventListener('pageshow', syncScroll);
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener('pageshow', syncScroll);
-    };
-  }, [assemblyTarget, mobileOpen, mobileExiting]);
 
   const closeMenu = useCallback(() => {
     if (!mobileOpen) return;
-    setMobileExiting(true);
     setMobileOpen(false);
   }, [mobileOpen]);
 
@@ -74,15 +50,12 @@ export function Header() {
     return () => { window.removeEventListener('keydown', onKey); desktop.removeEventListener('change', onResize); };
   }, [closeMenu, mobileOpen]);
 
-  const assembled = scrolled || mobileOpen || mobileExiting;
-
   return (
-    <motion.header
+    <header
       role="banner"
       data-managed-section-links
-      className={cn(styles.header, assembled && styles.scrolled)}
-      data-header-state={assembled ? 'assembled' : 'transparent'}
-      style={{ '--header-progress': assembly } as MotionStyle}
+      className={styles.header}
+      data-header-state="assembled"
     >
       <div className={styles.bar}>
         <a href="#hero" aria-label="NexOS, início" onClick={event => { event.preventDefault(); handleNav('#hero'); }} className={styles.brand}>
@@ -101,19 +74,19 @@ export function Header() {
         </nav>
         <div className={styles.actions}>
           <Link href="/portal/acesso" prefetch={false} className={styles.account}>
-            <UserRound size={16} strokeWidth={1.75} aria-hidden="true" /><span>Minha conta</span>
+            <ProfileOrb /><span className={styles.accountLabel}>Minha conta</span>
           </Link>
           <ThemeToggle className={styles.themeToggle} />
           <button type="button" className={cn('primary-action', styles.start)} onClick={() => handleNav('#services')}><span className="inline-flex items-center gap-2">Ver soluções <ArrowUpRight size={16} aria-hidden="true" /></span></button>
           <button ref={menuRef} type="button" aria-label={mobileOpen ? 'Fechar menu' : 'Abrir menu'} aria-expanded={mobileOpen} aria-controls="mobile-navigation" onClick={() => {
             if (mobileOpen) closeMenu();
-            else { setMobileExiting(false); setMobileOpen(true); }
+            else setMobileOpen(true);
           }} className={styles.menuButton}>
             {mobileOpen ? <X size={20} aria-hidden="true" /> : <Menu size={20} aria-hidden="true" />}
           </button>
         </div>
       </div>
-      <AnimatePresence onExitComplete={() => setMobileExiting(false)}>
+      <AnimatePresence>
         {mobileOpen && (
           <motion.nav id="mobile-navigation" aria-label="Navegação móvel" initial={reduce ? false : { opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: reduce ? 0 : -8 }} transition={{ duration: reduce ? 0 : 0.2 }} className={styles.mobileNav}>
             <ul role="list" className="flex flex-col gap-4">
@@ -127,7 +100,7 @@ export function Header() {
           </motion.nav>
         )}
       </AnimatePresence>
-    </motion.header>
+    </header>
   );
 }
 

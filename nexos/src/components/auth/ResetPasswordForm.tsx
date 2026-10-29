@@ -15,7 +15,7 @@ import { MetallicButton } from '@/components/ui/metallic-button';
 import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Eye, EyeOff } from 'lucide-react';
-import { motion, useReducedMotion } from 'motion/react';
+import { ScrollReveal } from '../ScrollReveal';
 import { PasswordStrengthMeter } from '@/components/auth/PasswordStrengthMeter';
 import { evaluatePassword } from '@/lib/auth/password-strength';
 import { authClient, authErrorMessage } from '@/lib/auth/client';
@@ -24,7 +24,6 @@ import { AuthHeader, AuthStory } from './AuthFrame';
 import { PageFooter } from '../PageChrome';
 
 export function ResetPasswordForm({ token }: { token: string }) {
-  const reduce = useReducedMotion();
   const busyRef = useRef(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -76,10 +75,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
 
       <div className={styles.content} id="main-content">
         <AuthStory recovery />
-        <motion.section
-          initial={reduce ? false : { opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
+        <ScrollReveal as="section" preset="card"
           className={styles.panel}
           aria-labelledby="reset-title"
         >
@@ -176,7 +172,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
               Fale com a NexOS
             </a>
           </p>
-        </motion.section>
+        </ScrollReveal>
       </div>
       <PageFooter />
     </main>

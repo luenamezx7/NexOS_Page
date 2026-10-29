@@ -12,24 +12,25 @@ import { TOPOGRAPHY_PALETTE } from '@/lib/brand-palette';
 const Topography = dynamic(() => import('../ui/Topography'), { ssr: false });
 
 export function SectionBackground({
-  children, index = 0, scene = 'plain',
-}: { children: ReactNode; index?: number; scene?: 'plain' | 'waves' | 'product' | 'image' }) {
+  children, index = 0, scene = 'plain', panel = false,
+}: { children: ReactNode; index?: number; scene?: 'plain' | 'waves' | 'product' | 'image'; panel?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const near = useInView(ref, { margin: '160px', once: true });
   const visible = useInView(ref, { amount: 0.01 });
+  const entered = useInView(ref, { once: true, margin: '0px 0px -40px 0px' });
   const reduce = useReducedMotion();
   const { theme } = useTheme();
   const entryOpen = usePresentationActive();
 
   return (
-    <div ref={ref} className={styles.scene} data-tone={index % 2 ? 'alternate' : 'base'} data-scene={scene}>
+    <div ref={ref} className={styles.scene} data-section-panel={panel || undefined} data-entered={entered || reduce} data-tone={index % 2 ? 'alternate' : 'base'} data-scene={scene}>
       <div className={styles.scenery} aria-hidden="true">
         {scene === 'waves' && theme === 'light' && near && !entryOpen && (
           <Topography {...TOPOGRAPHY_PALETTE} lightMode
-            paused={!visible} mouseInteraction={false} maxFPS={24} dprLimit={1} opacity={0.75} thickness={0.018} glow={0.65} className={styles.contours} />
+            paused={!visible} mouseInteraction={false} maxFPS={20} dprLimit={1} opacity={0.5} thickness={0.012} glow={0.25} className={styles.contours} />
         )}
         {(scene === 'product' || scene === 'image') && <motion.div className={styles.fieldImage}
-          animate={!reduce && visible && !entryOpen ? { x: [0, 18, 0], y: [0, -12, 0] } : { x: 0, y: 0 }}
+          animate={!reduce && visible && !entryOpen ? { x: [0, 10, 0], y: [0, -6, 0] } : { x: 0, y: 0 }}
           transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }} />}
       </div>
       <div className={styles.sceneContent}>{children}</div>

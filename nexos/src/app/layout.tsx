@@ -45,7 +45,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [{ media: '(prefers-color-scheme: light)', color: '#fdf6ec' }, { media: '(prefers-color-scheme: dark)', color: '#000000' }],
+  themeColor: [{ media: '(prefers-color-scheme: light)', color: '#eee5d8' }, { media: '(prefers-color-scheme: dark)', color: '#09080f' }],
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
@@ -76,7 +76,7 @@ export default async function RootLayout({
       <body className="min-h-screen min-h-dvh w-full max-w-full overflow-x-clip antialiased">
         <JsonLd data={organizationData} />
         <noscript>
-          <style>{`.landing-page [style*="opacity"], .service-page [style*="opacity"] { opacity: 1 !important; transform: none !important; } .presentation-replay { display: none !important; }`}</style>
+          <style>{`[data-reveal], .landing-page [style*="opacity"], .service-page [style*="opacity"] { opacity: 1 !important; transform: none !important; filter: none !important; } .landing-hero a[href^="#"] { pointer-events: auto !important; } .presentation-replay { display: none !important; }`}</style>
         </noscript>
         <ThemeProvider>
           <SmoothScrollProvider>

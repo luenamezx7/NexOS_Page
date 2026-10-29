@@ -16,6 +16,7 @@ test('a abertura não mantém efeitos WebGL e blurs da home trabalhando por baix
   const dialog = page.getByRole('dialog', { name: 'Apresentação NexOS' });
   await expect(dialog.locator('[data-topography]')).toHaveAttribute('data-motion', 'animated');
   await expect(page.locator('[data-scene="waves"] [data-topography]')).toHaveCount(0);
+  await expect(page.locator('#hero .grainient-container')).toHaveCount(0);
   await expect(page.locator('.landing-header-blur, .landing-edge-blur, .hero-ascii .gradual-blur')).toHaveCount(0);
   await expect(page.locator('[data-metallic-surface] canvas')).toHaveCount(0);
 });

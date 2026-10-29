@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { BrandMark } from './BrandMark';
 import { ThemeToggle } from './ThemeToggle';
+import { ProfileOrb } from './ProfileOrb';
 
 const PAGE_LINKS = [
   { href: '/placa-nfc', label: 'Placa NFC' },
@@ -21,7 +22,7 @@ export function PageHeader({ children }: { children?: ReactNode }) {
       <a href="#main-content" className="page-skip-link">Pular para o conteúdo</a>
       <Link href="/" className="page-header-brand" aria-label="NexOS — página inicial"><BrandMark /></Link>
       <nav className="page-header-nav" aria-label="Navegação de páginas">
-        {PAGE_LINKS.map(({ href, label }) => <Link key={href} href={href} aria-current={pathname === href ? 'page' : undefined}>{label}</Link>)}
+        {PAGE_LINKS.map(({ href, label }) => <Link key={href} href={href} aria-current={pathname === href ? 'page' : undefined}>{href === '/portal/acesso' && <ProfileOrb />}{label}</Link>)}
       </nav>
       <div className="page-header-actions">
         {children}

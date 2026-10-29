@@ -7,6 +7,7 @@ import { ArrowUpRight, Activity } from 'lucide-react';
 import { FieldGroup, FieldLegend, FieldSet } from '../ui/field';
 import { DEMO_METRICS } from './landing-content';
 import styles from './Sections.module.css';
+import { ScrollFloat, ScrollReveal } from '../ScrollReveal';
 
 export function MetricsSection() {
   const [period, setPeriod] = useState<keyof typeof DEMO_METRICS>('month');
@@ -18,13 +19,13 @@ export function MetricsSection() {
 
   return <section id="metrics" aria-labelledby="metrics-title" className={styles.section}>
     <div className={styles.container}>
-      <div className={styles.eyebrow}><span>02 / DADOS & SINAIS</span><span>PRÉVIA DEMONSTRATIVA</span></div>
+      <ScrollReveal preset="label" className={styles.eyebrow}><span>02 / DADOS & SINAIS</span><span>PRÉVIA DEMONSTRATIVA</span></ScrollReveal>
       <header className={styles.splitHeader}>
-        <h2 id="metrics-title" className={styles.heading}>Cada interação.<br /><span>Um novo sinal.</span></h2>
-        <div><p className={styles.lead}>Uma visão do que pode ser acompanhado no digital. Esta composição usa dados fictícios para demonstrar os gráficos.</p><p className={styles.demoNote}>DADOS ILUSTRATIVOS · NÃO REPRESENTAM RESULTADOS DA NEXOS</p></div>
+        <ScrollReveal as="h2" preset="title" id="metrics-title" className={styles.heading}>Cada interação.<br /><span>Um novo sinal.</span></ScrollReveal>
+        <ScrollReveal delay={.08}><p className={styles.lead}>Uma visão do que pode ser acompanhado no digital. Esta composição usa dados fictícios para demonstrar os gráficos.</p><p className={styles.demoNote}>DADOS ILUSTRATIVOS · NÃO REPRESENTAM RESULTADOS DA NEXOS</p></ScrollReveal>
       </header>
       <div className={styles.metricsGrid}>
-        <article className={styles.chartPanel}>
+        <ScrollFloat className={styles.floatingPanel} distance={14}><ScrollReveal as="article" preset="card" className={styles.chartPanel}>
           <div className={styles.chartTop}><span><Activity size={16} aria-hidden="true" /> Interações no período</span>
             <FieldSet><FieldLegend className="sr-only">Período do gráfico demonstrativo</FieldLegend><FieldGroup className={styles.segmented}>
               {(Object.keys(DEMO_METRICS) as (keyof typeof DEMO_METRICS)[]).map(key => <label key={key} data-selected={period === key}><input type="radio" name="metric-period" checked={period === key} onChange={() => setPeriod(key)} />{DEMO_METRICS[key].label}</label>)}
@@ -40,16 +41,16 @@ export function MetricsSection() {
             <text x="20" y="218">INÍCIO</text><text x="570" y="218" textAnchor="end">{data.label.toUpperCase()}</text>
           </svg>
           <span className={styles.chartFoot}>01 / EVOLUÇÃO DAS INTERAÇÕES</span>
-        </article>
-        <article className={styles.channelPanel}>
+        </ScrollReveal></ScrollFloat>
+        <ScrollFloat className={styles.floatingPanel} distance={10} direction="down"><ScrollReveal as="article" preset="card" delay={.1} className={styles.channelPanel}>
           <span className={styles.monoLabel}>02 / ORIGEM DOS ACESSOS</span>
           <h3>Mais de um caminho.<br />O mesmo destino.</h3>
-          <div className={styles.channels}>{[{ label: 'NFC', value: 62 }, { label: 'QR Code', value: 28 }, { label: 'Link direto', value: 10 }].map(item => <div key={item.label}>
+          <div className={styles.channels}>{[{ label: 'NFC', value: 62 }, { label: 'QR Code', value: 28 }, { label: 'Link direto', value: 10 }].map((item, index) => <div key={item.label}>
             <div className={styles.channelLabel}><span>{item.label}</span><span>{item.value}%</span></div>
-            <div className={styles.barTrack}><motion.div initial={reduce ? false : { scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.8 }} style={{ width: `${item.value}%` }} /></div>
+            <div className={styles.barTrack}><motion.div initial={reduce ? false : { scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: .8, delay: reduce ? 0 : index * .08, ease: [.22, 1, .36, 1] }} style={{ width: `${item.value}%` }} /></div>
           </div>)}</div>
           <p className={styles.demoNote}>Distribuição fictícia para visualização.</p>
-        </article>
+        </ScrollReveal></ScrollFloat>
       </div>
     </div>
   </section>;

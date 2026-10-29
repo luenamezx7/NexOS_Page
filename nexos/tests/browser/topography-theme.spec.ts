@@ -41,7 +41,7 @@ for (const theme of ['light', 'dark']) {
     for (const route of ['/', '/criacao-de-sites', '/portal/acesso', '/termos']) {
       await page.goto(route);
       if (route === '/') await enterPresentation(page);
-      await expect(page.locator('body')).toHaveCSS('background-color', theme === 'light' ? 'rgb(253, 246, 236)' : 'rgb(0, 0, 0)');
+      await expect(page.locator('body')).toHaveCSS('background-color', theme === 'light' ? 'rgb(238, 229, 216)' : 'rgb(9, 8, 15)');
       const palette = await page.evaluate(() => {
         const style = getComputedStyle(document.documentElement);
         return { primary: style.getPropertyValue('--primary').trim(), gradient: style.getPropertyValue('--action-gradient') };
@@ -53,8 +53,8 @@ for (const theme of ['light', 'dark']) {
       const surface = page.locator('[data-metallic-surface]').first();
       if (await surface.count()) {
         const finish = await surface.evaluate(e => getComputedStyle(e, '::after').backgroundImage);
-        expect(finish).toContain('151, 30, 244');
-        expect(finish).toContain('52, 6, 78');
+        expect(finish).toContain(theme === 'light' ? '123, 43, 210' : '129, 54, 220');
+        expect(finish).toContain(theme === 'light' ? '75, 35, 141' : '81, 35, 142');
       }
       for (const width of [360, 1366]) {
         await page.setViewportSize({ width, height: 844 });

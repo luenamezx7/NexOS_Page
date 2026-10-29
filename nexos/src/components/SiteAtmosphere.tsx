@@ -7,7 +7,7 @@ export function CloudSky() {
   return <div className="day-clouds" aria-hidden="true"><span className="sky-cloud sky-cloud-one" /><span className="sky-cloud sky-cloud-two" /><span className="sky-cloud sky-cloud-three" /></div>;
 }
 
-/** The same purple grain field as the landing, softened for internal page reading. */
+/** A quiet continuation of the landing's violet light on internal routes. */
 export function SiteAtmosphere() {
   const pathname = usePathname();
   // The landing owns its individual scenes.

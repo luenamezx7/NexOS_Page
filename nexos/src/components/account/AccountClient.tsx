@@ -43,6 +43,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui';
 import { LogoutButton } from '@/components/LogoutButton';
 import { PageFooter, PageHeader } from '@/components/PageChrome';
+import { ScrollReveal } from '@/components/ScrollReveal';
 import { updateProfileAction, addAddressAction, deleteAddressAction } from '@/lib/account/actions';
 
 interface Profile {
@@ -127,7 +128,7 @@ function AccountShell({ children, email }: { children: ReactNode; email?: string
   return <div className="interior-page">
     <PageHeader>{email && <><span className="page-session-email">{email}</span><LogoutButton /></>}</PageHeader>
     <main className="page-container account-content" id="main-content">
-      <div className="page-intro"><p className="page-kicker">NexOS / Área do cliente</p><h1 className="page-title">Minha conta</h1><p>Seus dados, pedidos e preferências de acesso em um só lugar.</p></div>
+      <div className="page-intro"><p className="page-kicker">NexOS / Área do cliente</p><ScrollReveal as="h1" preset="title" className="page-title">Minha conta</ScrollReveal><ScrollReveal as="p">Seus dados, pedidos e preferências de acesso em um só lugar.</ScrollReveal></div>
       {children}
     </main>
     <PageFooter />
@@ -235,7 +236,7 @@ export default function ContaPage() {
 
   return (
     <AccountShell email={profile.email}>
-        <section>
+        <ScrollReveal as="section" preset="card">
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -329,9 +330,9 @@ export default function ContaPage() {
               )}
             </CardContent>
           </Card>
-        </section>
+        </ScrollReveal>
 
-        <section>
+        <ScrollReveal as="section" preset="card">
           <Card>
             <CardHeader>
               <div className="flex items-center gap-3">
@@ -376,9 +377,9 @@ export default function ContaPage() {
               </div>
             </CardContent>
           </Card>
-        </section>
+        </ScrollReveal>
 
-        <section>
+        <ScrollReveal as="section" preset="card">
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -535,9 +536,9 @@ export default function ContaPage() {
               )}
             </CardContent>
           </Card>
-        </section>
+        </ScrollReveal>
 
-        <section>
+        <ScrollReveal as="section" preset="card">
           <Card>
             <CardHeader>
               <div className="flex items-center gap-3">
@@ -606,9 +607,9 @@ export default function ContaPage() {
               )}
             </CardContent>
           </Card>
-        </section>
+        </ScrollReveal>
 
-        <section>
+        <ScrollReveal as="section" preset="card">
           <Card>
             <CardHeader>
               <div className="flex items-center gap-3">
@@ -667,7 +668,7 @@ export default function ContaPage() {
               </div>
             </CardContent>
           </Card>
-        </section>
+        </ScrollReveal>
     </AccountShell>
   );
 }

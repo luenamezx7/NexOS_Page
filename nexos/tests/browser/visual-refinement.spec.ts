@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 for (const theme of ['light', 'dark'] as const) {
   for (const width of [390, 1366]) {
-    test(`${theme} / ${width}px: original grain, floating header and readable actions`, async ({ page }, testInfo) => {
+    test(`${theme} / ${width}px: quiet atmosphere, floating header and readable actions`, async ({ page }, testInfo) => {
       await page.setViewportSize({ width, height: 844 });
       await page.emulateMedia({ reducedMotion: 'reduce' });
       await page.addInitScript(theme => {
@@ -14,23 +14,31 @@ for (const theme of ['light', 'dark'] as const) {
       await page.goto('/');
       await page.evaluate(() => document.fonts.ready);
       const header = page.getByRole('banner');
-      await expect(header).toHaveAttribute('data-header-state', 'transparent');
-      expect(await header.evaluate(el => getComputedStyle(el, '::before').opacity)).toBe('0');
+      await expect(header).toHaveAttribute('data-header-state', 'assembled');
+      expect(await header.evaluate(el => getComputedStyle(el, '::before').opacity)).toBe('1');
       await expect(page.locator('#hero h1')).toHaveCSS('opacity', '1');
       await expect(page.locator('.waves-entry')).toHaveCount(0);
 
-      const grain = page.locator('#hero .grainient-container');
+      const atmosphere = page.locator('#hero [data-brand-veil]');
+      await expect(atmosphere.locator('.brand-veil-light')).toHaveCSS('background-image', /radial-gradient/);
+      const grain = atmosphere.locator('.grainient-container');
       await expect(grain).toHaveAttribute('data-render-state', /ready|unavailable/);
+      const intensity = await atmosphere.locator('.hero-grain-field').evaluate(el => Number(getComputedStyle(el).opacity));
+      expect(intensity).toBeGreaterThan(.1);
+      expect(intensity).toBeLessThan(.4);
       if (await grain.getAttribute('data-render-state') === 'ready') {
         const amount = await grain.locator('canvas').evaluate((canvas: HTMLCanvasElement) => {
           const gl = canvas.getContext('webgl2')!;
           const program = gl.getParameter(gl.CURRENT_PROGRAM) as WebGLProgram;
           const location = gl.getUniformLocation(program, 'uGrain');
-          if (!location) throw new Error('The original grain uniform is missing');
+          if (!location) throw new Error('The hero grain uniform is missing');
           return gl.getUniform(program, location) as number;
         });
-        expect(amount).toBeCloseTo(theme === 'dark' ? 0.12 : 0.09, 5);
+        expect(amount).toBeCloseTo(theme === 'dark' ? .24 : .2, 5);
       }
+      const texture = await atmosphere.evaluate(el => Number(getComputedStyle(el, '::before').opacity));
+      expect(texture).toBeGreaterThan(.06);
+      expect(texture).toBeLessThan(.1);
       const primary = page.locator('.hero-actions').getByRole('link', { name: 'Entrar em contato', exact: true });
       await expect(primary).toHaveCSS('color', 'rgb(255, 255, 255)');
       await expect(primary).toHaveCSS('background-image', /linear-gradient/);
@@ -43,6 +51,7 @@ for (const theme of ['light', 'dark'] as const) {
 
       await page.mouse.wheel(0, 700);
       await expect(header).toHaveAttribute('data-header-state', 'assembled');
+      expect(await header.evaluate(el => getComputedStyle(el, '::before').opacity)).toBe('1');
       expect(await header.evaluate(el => getComputedStyle(el, '::before').backdropFilter)).toContain('blur(36px)');
       if (width < 1200) {
         await page.getByRole('button', { name: 'Abrir menu', exact: true }).click();

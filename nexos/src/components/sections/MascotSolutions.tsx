@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import FlexCarousel from '../FlexCarousel/FlexCarousel';
 import styles from './MascotSolutions.module.css';
+import { ScrollReveal } from '../ScrollReveal';
 
 const SOLUTIONS: { id: string; title: string; description: string; image: string; alt: string }[] = [
   {
@@ -48,15 +49,15 @@ export function MascotSolutions() {
     <section id="mascot-solutions" aria-labelledby="mascot-solutions-title" className={styles.section}>
       <div className={styles.container}>
         <header className={styles.header}>
-          <p className={styles.kicker}>NexOS no seu dia a dia</p>
-          <h2 id="mascot-solutions-title">Pequenas conexões.<br />Soluções de verdade.</h2>
-          <p>Do primeiro contato à presença digital, veja onde podemos ajudar seu negócio.</p>
+          <ScrollReveal as="p" preset="label" className={styles.kicker}>NexOS no seu dia a dia</ScrollReveal>
+          <ScrollReveal as="h2" preset="title" id="mascot-solutions-title">Pequenas conexões.<br />Soluções de verdade.</ScrollReveal>
+          <ScrollReveal as="p" delay={.08}>Do primeiro contato à presença digital, veja onde podemos ajudar seu negócio.</ScrollReveal>
         </header>
-        <div className={styles.carouselWrapper}>
+        <ScrollReveal preset="card" className={styles.carouselWrapper}>
           <FlexCarousel
             items={CAROUSEL_ITEMS}
             preset="liquid"
-            intro="rise"
+            intro="none"
             cardHeight={0.5}
             gap={12}
             radius={12}
@@ -67,11 +68,11 @@ export function MascotSolutions() {
             onChange={setActive}
             ariaLabel="Suportes e soluções NexOS"
           />
-        </div>
-        <div className={styles.details}>
+        </ScrollReveal>
+        <ScrollReveal className={styles.details}>
           <p className={styles.description}>{SOLUTIONS[active].description}</p>
           <p className={styles.hint}>Arraste para explorar · Clique para ampliar · Use as setas do teclado</p>
-        </div>
+        </ScrollReveal>
         <ul className={styles.accessibleSolutions}>
           {SOLUTIONS.map(solution => (
             <li key={solution.id}>

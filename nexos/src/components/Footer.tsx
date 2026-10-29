@@ -16,6 +16,7 @@ import { BrandVeil } from './ui/brand-veil';
 import { cn } from '@/lib/utils';
 import { openCookiePreferences } from './cookie-consent';
 import styles from './MidPage.module.css';
+import { ScrollReveal } from './ScrollReveal';
 
 function InstagramIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -44,7 +45,7 @@ interface FooterColumnProps {
 
 function FooterColumn({ title, links }: FooterColumnProps) {
   return (
-    <nav
+    <ScrollReveal as="nav"
       aria-label={title}
     >
       <h3 className={styles.colTitle}>{title}</h3>
@@ -58,7 +59,7 @@ function FooterColumn({ title, links }: FooterColumnProps) {
           </li>
         ))}
       </ul>
-    </nav>
+    </ScrollReveal>
   );
 }
 
@@ -73,7 +74,7 @@ export function Footer({ onViewPresentation }: { onViewPresentation?: () => void
         <div
           className={styles.footerGrid}
         >
-          <div
+          <ScrollReveal
             className={styles.brandBlock}
           >
             <Link href="/" className={styles.brandLink} aria-label={`${config.brand.name} — Página inicial`}>
@@ -105,7 +106,7 @@ export function Footer({ onViewPresentation }: { onViewPresentation?: () => void
                 );
               })}
             </div>
-          </div>
+          </ScrollReveal>
 
           <FooterColumn title="Serviços" links={config.footer.links} />
           <FooterColumn

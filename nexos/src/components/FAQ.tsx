@@ -2,6 +2,7 @@ import { ArrowUpRight, ChevronDown, CircleHelp, MessageSquare } from 'lucide-rea
 import { config } from '@/config';
 import { commercialHref } from '@/lib/commercial';
 import styles from './BottomFunnel.module.css';
+import { ScrollReveal } from './ScrollReveal';
 
 interface FAQItem {
   id: string;
@@ -91,20 +92,20 @@ export function FAQ({ className = '' }: FAQProps) {
         </div>
 
         <header className={styles.header}>
-          <p className={styles.kicker}>FAQ</p>
-          <h2 id="faq-title" className={styles.heading}>
+          <ScrollReveal as="p" preset="label" className={styles.kicker}>FAQ</ScrollReveal>
+          <ScrollReveal as="h2" preset="title" id="faq-title" className={styles.heading}>
             Perguntas frequentes.<br /><span className={styles.accent}>Respostas diretas.</span>
-          </h2>
-          <p className={styles.lead}>
+          </ScrollReveal>
+          <ScrollReveal as="p" className={styles.lead} delay={.08}>
             Sobre o projeto, a placa e o pedido. Se precisar de mais detalhes, fale com a gente.
-          </p>
+          </ScrollReveal>
         </header>
 
         <ul className={`${styles.faqList} list-none`} role="list" aria-label="Perguntas frequentes">
-          {FAQ_ITEMS.map((item) => (
-            <li key={item.id}>
+          {FAQ_ITEMS.map((item, index) => (
+            <ScrollReveal as="li" key={item.id} delay={Math.min(index * .04, .12)}>
               <FAQAccordionItem item={item} initiallyOpen={item.id === FAQ_ITEMS[0].id} />
-            </li>
+            </ScrollReveal>
           ))}
         </ul>
 
