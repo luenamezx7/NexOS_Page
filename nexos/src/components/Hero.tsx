@@ -11,6 +11,7 @@ import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-r
 import { usePresentationActive, usePresentationRevealing } from '@/lib/use-presentation-active';
 import { ScrollReveal } from './ScrollReveal';
 import { useSectionScroll } from './SmoothScrollProvider';
+import { HeroBrandStrip } from './HeroBrandStrip';
 
 const subscribeHydration = () => () => {};
 
@@ -39,7 +40,7 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
           <ScrollReveal as="p" delay={.12} className="hero-description">A Nexos LAB cria páginas diversas, otimiza sua operação, e aproxima seus clientes com a Placa Inteligente NFC, conectando o físico ao digital.</ScrollReveal>
           <ScrollReveal className="hero-actions" delay={.2}>
             <HoverLink href={config.hero.ctaPrimary.href} target="_blank" rel="noopener noreferrer">{config.hero.ctaPrimary.label}</HoverLink>
-            <a href="#showcase" onClick={event => { event.preventDefault(); scrollToSection('#showcase'); }} className="hero-secondary">Conhecer a placa <ArrowUpRight size={17} aria-hidden="true" /></a>
+            <a href="#showcase" onClick={event => { event.preventDefault(); scrollToSection('#showcase'); }} className="hero-text-link">Conhecer a placa <ArrowUpRight size={17} aria-hidden="true" /></a>
           </ScrollReveal>
         </motion.div>
         <div className="hero-bottom">
@@ -48,6 +49,7 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
           <span aria-hidden="true">[ SCROLL TO EXPLORE ]</span>
         </div>
       </motion.div>
+      <HeroBrandStrip active={showHero} />
     </section>
   );
 });

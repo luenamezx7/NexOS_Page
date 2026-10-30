@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useLayoutEffect, useRef } from 'react';
+import { PRESENTATION_SELECTOR } from '@/lib/use-presentation-active';
 
 export interface SlipstreamProps {
   cellSize?: number; className?: string; density?: number; seed?: number;
@@ -32,7 +33,7 @@ export function Slipstream({ cellSize = 14, className = '', density = 1.4, seed 
     if (!canvas || !ctx) return;
     const query = matchMedia('(prefers-reduced-motion: reduce)');
     const desktop = matchMedia('(min-width: 768px) and (pointer: fine)');
-    let entryOpen = Boolean(document.querySelector('.waves-entry[open]'));
+    let entryOpen = Boolean(document.querySelector(PRESENTATION_SELECTOR));
     const animated = () => (presentation || desktop.matches) && !query.matches && !pausedRef.current && (presentation || !entryOpen);
     let stars: Star[] = [], width = 0, height = 0, raf = 0, last = 0, time = 0;
     let visible = false, disposed = false, shadow = '#ffffff', color = '#ffffff';
@@ -132,7 +133,7 @@ export function Slipstream({ cellSize = 14, className = '', density = 1.4, seed 
     function sync() {
       cancelAnimationFrame(raf); raf = 0; last = 0;
       if (disposed) return;
-      entryOpen = Boolean(document.querySelector('.waves-entry[open]'));
+      entryOpen = Boolean(document.querySelector(PRESENTATION_SELECTOR));
       if (pausedRef.current) { canvas!.dataset.motion = 'paused'; return; }
       canvas!.dataset.motion = animated() ? 'animated' : 'static';
       if (!animated()) { pointer.active = false; draw(); }

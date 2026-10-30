@@ -21,6 +21,6 @@ export const WAVES_PALETTE = [VISOR_PALETTE.plum, VISOR_PALETTE.violet, VISOR_PA
 
 /** Explicit theme ramps keep the cream canvas instead of lightMode's pure white. */
 export const GRAINIENT_PALETTES = {
-  light: ['#eee5d8', '#e4d5e9', '#c8a4e0', VISOR_PALETTE.violet, '#7410c4'],
+  light: ['#fdf6ec', '#eddbfa', '#cd9af4', VISOR_PALETTE.violet, '#7410c4'],
   dark: ['#000000', '#26073e', '#57118c', VISOR_PALETTE.violet, '#a331f7'],
 };

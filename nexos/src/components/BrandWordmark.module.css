@@ -1,0 +1,33 @@
+.wordmark {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+  font: 400 22cqi/.95 var(--font-brand-logo), sans-serif;
+  font-synthesis: none;
+  letter-spacing: -.015em;
+  text-align: center;
+  white-space: nowrap;
+  color: transparent;
+  background-image:
+    url('/ambient-grain.svg'),
+    radial-gradient(ellipse 17% 100% at 15% 35%, #d5a8ef 5%, transparent 80%),
+    radial-gradient(ellipse 13% 120% at 73% 80%, #d6a5f6, transparent 78%),
+    repeating-linear-gradient(118deg, #34064e 0%, #7520ba 13%, #b762e9 20%, #58128a 30%, #34064e 40%);
+  background-blend-mode: soft-light, normal, normal, normal;
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+:global(.dark) .wordmark {
+  background-image: url('/ambient-grain.svg'), radial-gradient(ellipse 17% 100% at 15% 35%, #edbfff 5%, transparent 80%), radial-gradient(ellipse 13% 120% at 73% 80%, #c78afa, transparent 78%), repeating-linear-gradient(118deg, #291035 0%, #8438bb 13%, #d696f8 20%, #64288a 30%, #291035 40%);
+}
+.animated {
+  background-size: 100px 100px, 180% 140%, 180% 140%, 240% 100%;
+  animation: wordmark-light-drift 4s ease-in-out infinite alternate;
+}
+@keyframes wordmark-light-drift {
+  from { background-position: 0 0, 0% 50%, 100% 50%, 0% 50%; }
+  to { background-position: 0 0, 100% 50%, 0% 50%, 100% 50%; }
+}
+@media (prefers-reduced-motion: reduce) { .animated { animation: none; } }
+@media (forced-colors: active) { .wordmark { background: none; color: CanvasText; } }

@@ -1,6 +1,5 @@
 .section {
   position: relative;
-  border-top: 1px solid var(--landing-line);
   scroll-margin-top: 100px;
 }
 

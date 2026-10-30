@@ -2,52 +2,43 @@
 
 import { useRef } from 'react';
 import dynamic from 'next/dynamic';
-import { motion, useInView, useScroll, useTransform } from 'motion/react';
-import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
-import { GRAINIENT_PALETTES } from '@/lib/brand-palette';
+import { useInView } from 'motion/react';
 import { usePresentationActive, usePresentationRevealing } from '@/lib/use-presentation-active';
 import { useTheme } from '../ThemeProvider';
+import { GRAINIENT_PALETTES } from '@/lib/brand-palette';
 
 const Grainient = dynamic(() => import('../Grainient'), { ssr: false });
 
-/** A pronounced grain field under quiet CSS lighting. */
+/** Shared hero/footer recipe. Mount the GPU effect only as its surface approaches. */
 export function BrandVeil({ variant = 'default' }: { variant?: 'default' | 'hero' | 'interior' } = {}) {
   const ref = useRef<HTMLDivElement>(null);
-  const reduce = usePrefersReducedMotion();
-  const { theme } = useTheme();
-  const near = useInView(ref, { margin: '160px', once: true });
-  const visible = useInView(ref, { amount: .01 });
+  const near = useInView(ref, { margin: '200px', once: true });
+  const visible = useInView(ref, { amount: 0.01 });
   const entryOpen = usePresentationActive();
   const revealing = usePresentationRevealing();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
-  const y = useTransform(scrollYProgress, [0, 1], [24, -24]);
+  const { theme } = useTheme();
+  const grainAmount = variant === 'hero'
+    ? (theme === 'dark' ? 0.12 : 0.09)
+    : (theme === 'dark' ? 0.055 : 0.035);
 
   return (
     <div ref={ref} data-brand-veil data-variant={variant} aria-hidden="true" className="brand-veil">
-      {variant === 'hero' && <div className="hero-grain-field">
-        {near && (!entryOpen || revealing) && <Grainient
-          colors={GRAINIENT_PALETTES[theme]}
-          angle={0}
-          flow={.35}
-          silk={.5}
-          speed={.24}
-          contrast={.9}
-          saturation={.8}
-          grainAmount={theme === 'dark' ? .24 : .2}
-          grainSize={1.65}
-          grainAnimated={false}
-          maxFPS={24}
-          dpr={1}
-          paused={!visible}
-          interactive={false}
-          clickSwirl={false}
-          intro={false}
-        />}
-      </div>}
-      {variant === 'hero' && <span className="hero-overhead-light" />}
-      <motion.div className="brand-veil-light" style={{ y: reduce || variant === 'interior' ? 0 : y }}>
-        <span className="brand-veil-orbit" />
-      </motion.div>
+      {near && (!entryOpen || revealing) && <Grainient
+        colors={GRAINIENT_PALETTES[theme]}
+        angle={variant === 'default' ? 55 : 0}
+        flow={0.65}
+        silk={0.45}
+        grainAmount={grainAmount}
+        grainSize={variant === 'hero' ? 1.5 : 1.2}
+        grainAnimated={false}
+        maxFPS={30}
+        paused={!visible}
+        dpr={1}
+        speed={variant === 'interior' ? 0.3 : 0.55}
+        interactive={false}
+        clickSwirl={false}
+        intro={false}
+      />}
     </div>
   );
 }

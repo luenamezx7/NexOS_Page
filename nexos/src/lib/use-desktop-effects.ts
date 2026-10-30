@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useSyncExternalStore } from 'react';
+import { PRESENTATION_SELECTOR } from './use-presentation-active';
 
 const DESKTOP_EFFECTS = '(min-width: 768px) and (pointer: fine) and (prefers-reduced-motion: no-preference)';
 
@@ -15,7 +16,7 @@ function subscribe(callback: () => void) {
 }
 
 function snapshot() {
-  return window.matchMedia(DESKTOP_EFFECTS).matches && !document.querySelector('.waves-entry[open]');
+  return window.matchMedia(DESKTOP_EFFECTS).matches && !document.querySelector(PRESENTATION_SELECTOR);
 }
 
 /** Keep optional GPU effects out of the first paint and off touch/reduced-motion devices. */

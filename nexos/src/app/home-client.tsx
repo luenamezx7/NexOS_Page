@@ -7,9 +7,8 @@ import { Hero } from '@/components/Hero';
 import { SectionIndicator } from '@/components/SectionIndicator';
 import { SectionBackground } from '@/components/sections/SectionBackground';
 import { LandingPageBlur } from '@/components/sections/LandingPageBlur';
+import BrandEntrance from '@/components/BrandEntrance';
 
-// The presentation is optional: load its renderers only after a footer request.
-const WavesEntrance = dynamic(() => import('@/components/WavesEntrance'), { ssr: false });
 const Services = dynamic(() => import('@/components/Services').then(m => m.Services));
 const AboutUs = dynamic(() => import('@/components/AboutUs').then(m => m.AboutUs));
 const TigerManifesto = dynamic(() => import('@/components/sections/TigerManifesto').then(m => m.TigerManifesto));
@@ -27,7 +26,7 @@ const CTAFinal = dynamic(() => import('@/components/sections/CTAFinal').then(m =
 const FisicoDigitalSection = dynamic(() => import('@/components/sections/FisicoDigitalSection').then(m => m.FisicoDigitalSection));
 
 export default function HomeClient() {
-  const [entrance, setEntrance] = useState({ visible: false, key: 0 });
+  const [entrance, setEntrance] = useState({ visible: true, key: 0 });
   const entranceGeneration = useRef(0);
   const heroRef = useRef<HTMLElement>(null);
   const focusRaf = useRef(0);
@@ -43,7 +42,12 @@ export default function HomeClient() {
     setEntrance({ visible: false, key: entrance.key });
     if (!entered) return;
     focusRaf.current = requestAnimationFrame(() => {
-      heroRef.current?.focus({ preventScroll: true });
+      if (entrance.key === 0 && location.hash && location.hash !== '#hero') {
+        // The intro also runs on deep links; restore their destination after it closes.
+        window.dispatchEvent(new HashChangeEvent('hashchange'));
+      } else {
+        heroRef.current?.focus({ preventScroll: true });
+      }
     });
   }, [entrance.key]);
 
@@ -51,7 +55,7 @@ export default function HomeClient() {
 
   return (
     <main className="landing-page w-full max-w-full overflow-x-clip bg-canvas text-ink">
-      {entrance.visible && <WavesEntrance key={entrance.key} onComplete={handleEntranceComplete} />}
+      {entrance.visible && <BrandEntrance key={entrance.key} onComplete={handleEntranceComplete} />}
       <div>
         <a href="#main-content" className="skip-link">Pular para o conteúdo</a>
         <Header />

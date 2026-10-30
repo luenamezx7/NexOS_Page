@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState, ty
 import { usePathname } from 'next/navigation';
 import type Lenis from 'lenis';
 import { sectionScrollPosition } from '@/lib/section-position';
+import { PRESENTATION_SELECTOR } from '@/lib/use-presentation-active';
 
 type SectionScrollOptions = { immediate?: boolean; history?: 'push' | 'none'; focus?: boolean };
 type SectionScroll = (hash: string, options?: SectionScrollOptions) => boolean;
@@ -157,12 +158,12 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
       // Stop that trip before measuring or restoring the new history destination.
       cancelNavigationRef.current?.();
       cancelNavigationRef.current = null;
-      if (!location.hash || document.querySelector('.waves-entry[open]')) return;
+      if (!location.hash || document.querySelector(PRESENTATION_SELECTOR)) return;
       const started = performance.now();
       let stable = 0, previous = -1;
       const waitForLayout = () => {
         if (disposed) return;
-        if (document.querySelector('.waves-entry[open]')) return;
+        if (document.querySelector(PRESENTATION_SELECTOR)) return;
         let target: HTMLElement | null = null;
         try { target = document.getElementById(decodeURIComponent(location.hash.slice(1))); } catch { return; }
         const top = target ? sectionScrollPosition(target) : -1;

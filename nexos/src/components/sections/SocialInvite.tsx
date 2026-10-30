@@ -17,7 +17,7 @@ export function SocialInvite() {
         <div><p className={styles.socialLabel}>NOSSO LADO MAIS PRÓXIMO / @{handle}</p><h2 id="instagram-title">Visite nosso Instagram.</h2><p>Ideias, bastidores e novas conexões da NexOS.</p></div>
       </ScrollReveal>
       <ScrollReveal delay={.08}>
-        <a href={instagram.href} target="_blank" rel="noopener noreferrer" className={styles.socialButton}>Visitar Instagram <ArrowUpRight size={18} aria-hidden="true" /></a>
+        <a href={instagram.href} target="_blank" rel="noopener noreferrer" className={`${styles.socialButton} action-glass`}>Visitar Instagram <ArrowUpRight size={18} aria-hidden="true" /></a>
       </ScrollReveal>
     </div>
   </section>;

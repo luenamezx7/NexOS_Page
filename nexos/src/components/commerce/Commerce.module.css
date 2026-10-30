@@ -7,7 +7,6 @@
   --commerce-accent: var(--landing-accent, var(--display-rose));
   position: relative;
   background: transparent;
-  border-top: 1px solid var(--commerce-line);
   scroll-margin-top: 100px;
 }
 

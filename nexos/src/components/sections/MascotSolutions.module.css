@@ -1,4 +1,4 @@
-.section { border-block: 1px solid color-mix(in srgb, var(--color-ink) 14%, transparent); scroll-margin-top: 100px; }
+.section { scroll-margin-top: 100px; }
 .container { max-width: 1280px; margin-inline: auto; padding: 56px 24px; }
 .header { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 12px; }
 .kicker { color: var(--landing-accent, var(--display-rose)); font: 11px var(--font-mono); }
