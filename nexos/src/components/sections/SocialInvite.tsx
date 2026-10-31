@@ -14,7 +14,7 @@ export function SocialInvite() {
         <span className={styles.socialIcon} aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" /></svg>
         </span>
-        <div><p className={styles.socialLabel}>NOSSO LADO MAIS PRÓXIMO / @{handle}</p><h2 id="instagram-title">Visite nosso Instagram.</h2><p>Ideias, bastidores e novas conexões da NexOS.</p></div>
+        <div><p className={styles.socialLabel}>@{handle}</p><h2 id="instagram-title">Visite nosso Instagram.</h2><p>Projetos e bastidores da NexOS.</p></div>
       </ScrollReveal>
       <ScrollReveal delay={.08}>
         <a href={instagram.href} target="_blank" rel="noopener noreferrer" className={`${styles.socialButton} action-glass`}>Visitar Instagram <ArrowUpRight size={18} aria-hidden="true" /></a>

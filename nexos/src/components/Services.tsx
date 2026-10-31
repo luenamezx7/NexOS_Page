@@ -1,74 +1,53 @@
 'use client';
 
-/** Service discovery and direct commercial consultation. */
 import { useState } from 'react';
 import Link from 'next/link';
-import { ScrollReveal } from './ScrollReveal';
-import { ArrowUpRight, Check, Code2, MessageSquare, Headphones, Layers } from 'lucide-react';
+import Image from 'next/image';
+import { ArrowUpRight, ArrowRight, Code2 } from 'lucide-react';
 import { config } from '@/config';
-import type { Service } from '@/types';
 import { commercialHref } from '@/lib/commercial';
-import { MetallicSurface } from './ui/metallic-button';
+import { ScrollReveal } from './ScrollReveal';
 import { ServiceExplorer, type ServiceGoal } from './ServiceExplorer';
-import styles from './commerce/Commerce.module.css';
+import tiger from '../../design-/VIDEOS-IA/tiger-pic-2k-purp.jpg';
+import styles from './DigitalSolutions.module.css';
 
-function ServiceCard({ service }: { service: Service }) {
-  const featured = service.id === 'dev';
-  return (
-    <ScrollReveal as="article" preset="card" className={`${styles.serviceCard} ${featured ? styles.featured : ''}`} aria-labelledby={`service-title-${service.id}`}>
-      <div className={styles.cardTop}>
-        <span className={styles.serviceIcon}><Code2 size={22} strokeWidth={1.75} aria-hidden="true" /></span>
-        <span className={styles.meta}>Feito para o seu negócio</span>
-      </div>
-      <div className={styles.serviceBody}>
-        <div>
-          <h3 id={`service-title-${service.id}`}>{service.title}</h3>
-          <p>{service.description}</p>
-          <p>Da organização do conteúdo à publicação, pensamos em como seu cliente encontra informações, conhece sua oferta e entra em contato. Você conversa diretamente com a equipe que vai construir a solução.</p>
-          {featured && <div className={styles.useCases} aria-label="Conheça cada solução"><Link href="/landing-pages" className="hover:underline">Landing pages</Link><Link href="/cardapio-digital" className="hover:underline">Cardápios</Link><Link href="/criacao-de-sites" className="hover:underline">Sites e portfólios</Link></div>}
-        </div>
-        <ul className={styles.features}>{service.features.map(feature => <li key={feature}><Check size={16} strokeWidth={2} aria-hidden="true" /><span>{feature}</span></li>)}</ul>
-      </div>
-      <div className={styles.serviceFooter}>
-        <div><h4 className={styles.commercialHeading}>Uma proposta para o seu projeto.</h4><p className={styles.commercialNote}>Valores e condições são definidos com o comercial, conforme o escopo.</p></div>
-        <div className={styles.serviceAction}>
-          <a href={commercialHref('Olá! Tenho interesse no Desenvolvimento NexOS. Quero conversar sobre o objetivo do meu projeto, escopo, prazos e condições de contratação.')} target="_blank" rel="noopener noreferrer" className={`${styles.buyButton} btn-primary-nex`}><MetallicSurface /><span className="metallic-content inline-flex items-center gap-2">{service.ctaText}<ArrowUpRight size={16} aria-hidden="true" /></span></a>
-          <p className={styles.hint}>Conte sua ideia ao comercial. Alinhamos escopo, prazo e condições antes de fechar.</p>
-        </div>
-      </div>
-    </ScrollReveal>
-  );
-}
-
-const DIFFERENTIALS = [
-  { icon: Layers, title: 'Do primeiro esboço à entrega', description: 'Estrutura, design e desenvolvimento pensados juntos.' },
-  { icon: Headphones, title: 'Conversa direta', description: 'Fale com quem está construindo o seu projeto.' },
-  { icon: MessageSquare, title: 'Uma proposta com contexto', description: 'Objetivos, funcionalidades e condições alinhados com seu momento.' },
-];
+const MENU = {
+  'Cafés': ['Espresso', 'Cappuccino', 'Café coado'],
+  'Pratos': ['Salada da casa', 'Massa artesanal', 'Prato do dia'],
+};
 
 export function Services({ className = '' }: { className?: string }) {
   const [goal, setGoal] = useState<ServiceGoal>('all');
-  const visibleServices = config.services.filter(service => service.id === 'dev');
-  return (
-    <>
-      <section id="services" aria-labelledby="services-title" className={`${styles.section} ${styles.servicesSection} ${className}`}>
-        <div className={styles.container}>
-          <ScrollReveal preset="label" className={styles.sectionNav}>
-            <span className={styles.currentSection}><Code2 size={16} aria-hidden="true" /> Serviços digitais</span>
-            <a href="#showcase">Conhecer a Placa NFC <ArrowUpRight size={16} aria-hidden="true" /></a>
-          </ScrollReveal>
-          <header className={styles.servicesHeader}>
-            <ScrollReveal as="h2" preset="title" id="services-title" className={styles.heading}>Ideias boas merecem<br /><span className={styles.accent}>sair do papel.</span></ScrollReveal>
-            <ScrollReveal as="p" delay={.08} className={styles.lead}>Apresente seu trabalho, organize seu atendimento ou dê um destino às suas campanhas. A NexOS reúne conteúdo, design e desenvolvimento em uma solução feita para o seu negócio.</ScrollReveal>
-          </header>
-          <ScrollReveal><ServiceExplorer value={goal} onChange={setGoal} /></ScrollReveal>
-          <p className={styles.resultCount} aria-live="polite">{visibleServices.length} {visibleServices.length === 1 ? 'solução disponível' : 'soluções disponíveis'}{goal !== 'all' ? ' para seu objetivo' : ''}</p>
-          <div className={styles.servicesGrid} data-single={visibleServices.length === 1}>
-            {visibleServices.map(service => <ServiceCard key={service.id} service={service} />)}
+  const [category, setCategory] = useState<keyof typeof MENU>('Cafés');
+  const service = config.services.find(item => item.id === 'dev');
+  return <section id="services" aria-labelledby="services-title" className={`${styles.section} ${className}`}>
+    <div className={styles.container}>
+      <header className={styles.header}><ScrollReveal as="h2" preset="title" id="services-title">Uma boa ideia.<br /><span>Seu próximo endereço.</span></ScrollReveal><ScrollReveal as="p">Sites, landing pages e cardápios digitais. Design e código trabalhando juntos para apresentar o que torna sua marca única.</ScrollReveal></header>
+      <ServiceExplorer value={goal} onChange={setGoal} />
+      <p className={styles.count} aria-live="polite">{goal === 'all' ? '3 soluções disponíveis' : goal === 'sell' ? '2 soluções para vender' : '1 solução para apresentar sua marca'}</p>
+      <div className={styles.previews} data-filter={goal}>
+        {goal !== 'sell' && <ScrollReveal as="article" className={styles.website}>
+          <div className={styles.demoLabel}><Code2 size={14} aria-hidden="true" /> Exemplo de site</div>
+          <div className={styles.sitePreview}>
+            <div className={styles.previewNav}><span>NexOS</span><span>Site demonstrativo</span></div>
+            <Image src={tiger} alt="Arte original da NexOS em uma composição demonstrativa de site" width={640} height={460} sizes="(max-width: 767px) 90vw, 50vw" className={styles.siteImage} />
+            <p>Uma presença<br />que é só sua.</p>
           </div>
-          <div className={styles.differentials}>{DIFFERENTIALS.map(({ icon: Icon, title, description }, index) => <ScrollReveal key={title} delay={index * .08}><Icon size={20} strokeWidth={1.75} aria-hidden="true" /><h3>{title}</h3><p>{description}</p></ScrollReveal>)}</div>
-        </div>
-      </section>
-    </>
-  );
+          <div className={styles.serviceCaption}><div><h3>Sites e Portfólios</h3><p>Sua história, seus projetos e o próximo contato em um só lugar.</p></div><Link href="/criacao-de-sites" aria-label="Conhecer Sites e Portfólios"><ArrowUpRight /></Link></div>
+        </ScrollReveal>}
+        {goal !== 'present' && <>
+          <ScrollReveal as="article" className={styles.landing}>
+            <div className={styles.demoLabel}>Exemplo de landing page</div>
+            <div className={styles.landingPreview}><span>Para sua campanha</span><p>Do interesse<br />à próxima ação.</p><Link href="/landing-pages">Conheça o formato <ArrowRight size={16} aria-hidden="true" /></Link></div>
+            <div className={styles.serviceCaption}><div><h3>Landing Pages</h3><p>Conteúdo e navegação orientados ao objetivo da sua campanha.</p></div><Link href="/landing-pages" aria-label="Conhecer Landing Pages"><ArrowUpRight /></Link></div>
+          </ScrollReveal>
+          <ScrollReveal as="article" className={styles.menu}>
+            <div className={styles.menuCopy}><h3>Cardápios Digitais</h3><p>Uma escolha mais simples, na tela que seu cliente já tem.</p><Link href="/cardapio-digital">Conhecer o formato <ArrowUpRight size={16} aria-hidden="true" /></Link><small>Exemplo interativo.<br />Itens ilustrativos.</small></div>
+            <div className={styles.menuPreview}><span>À mesa</span><p>O que vai<br />bem hoje?</p><div className={styles.categories} role="group" aria-label="Categoria do cardápio demonstrativo">{(Object.keys(MENU) as Array<keyof typeof MENU>).map(item => <button key={item} type="button" aria-pressed={item === category} onClick={() => setCategory(item)}>{item}</button>)}</div><ul aria-live="polite">{MENU[category].map((item, i) => <li key={item}><span>{String(i + 1).padStart(2, '0')}</span>{item}</li>)}</ul></div>
+          </ScrollReveal>
+        </>}
+      </div>
+      <div className={styles.commercial}><div><h3>{service?.title || 'Desenvolvimento NexOS'}</h3><p>Valores e condições são definidos com o comercial, conforme o escopo. Conversa direta, da primeira ideia à publicação.</p></div><a className="btn-primary-nex" href={commercialHref('Olá! Tenho interesse no Desenvolvimento NexOS. Quero conversar sobre o objetivo do meu projeto, escopo, prazos e condições de contratação.')} target="_blank" rel="noopener noreferrer">Falar com o comercial <ArrowUpRight size={17} aria-hidden="true" /></a></div>
+    </div>
+  </section>;
 }

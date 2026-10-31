@@ -2,14 +2,14 @@ import { ArrowDownRight, ArrowUpRight } from 'lucide-react';
 import { config } from '@/config';
 import styles from './Sections.module.css';
 import { ScrollReveal } from '../ScrollReveal';
+import { BlurReveal } from '../blur-reveal';
 
 export function CTAFinal() {
   const whatsapp = `https://wa.me/${config.whatsapp.number}?text=${encodeURIComponent(config.whatsapp.message)}`;
   return <section id="cta-final" aria-labelledby="cta-title" className={styles.section}>
     <div className={`${styles.container} ${styles.finalCta}`}>
-      <ScrollReveal preset="label" className={styles.eyebrow}><span>08 / SEU PRÓXIMO PASSO</span><span>NEXOS LAB</span></ScrollReveal>
       <div className={styles.ctaLayout}>
-        <ScrollReveal as="h2" preset="title" id="cta-title">Sua próxima ideia.<br /><span>Vamos colocar no ar?</span></ScrollReveal>
+        <BlurReveal as="h2" id="cta-title" inView speedReveal={3}>Sua próxima ideia. Vamos colocar no ar?</BlurReveal>
         <ArrowDownRight className={styles.ctaArrow} strokeWidth={1} aria-hidden="true" />
       </div>
       <div className={styles.ctaBottom}><ScrollReveal as="p">Um projeto digital, uma placa conectada ou uma ideia que ainda está tomando forma.</ScrollReveal><ScrollReveal className={styles.ctaActions} delay={.1}>

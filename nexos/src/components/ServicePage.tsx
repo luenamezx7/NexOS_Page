@@ -56,7 +56,6 @@ export function ServicePage({ service }: { service: ServicePageContent }) {
         </nav>
         <section className={`topography-glass topography-glass--copy grid items-center gap-10 pb-14 pt-10 md:pb-20 md:pt-14 ${styles.hero} ${isPlate ? 'md:grid-cols-2' : ''}`} aria-labelledby="service-heading">
           <div className="max-w-3xl">
-            <ScrollReveal as="p" preset="label" className="page-kicker mb-4">NexOS / {service.label}</ScrollReveal>
             <ScrollReveal as="h1" preset="title" id="service-heading" className="page-title">{service.headline}</ScrollReveal>
             <ScrollReveal as="p" delay={.08} className="mt-6 max-w-xl text-lg leading-relaxed text-ink/80">{service.intro}</ScrollReveal>
             <ScrollReveal delay={.16} className="mt-8 flex flex-wrap gap-3">

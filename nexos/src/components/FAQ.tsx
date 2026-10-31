@@ -92,7 +92,6 @@ export function FAQ({ className = '' }: FAQProps) {
         </div>
 
         <header className={styles.header}>
-          <ScrollReveal as="p" preset="label" className={styles.kicker}>FAQ</ScrollReveal>
           <ScrollReveal as="h2" preset="title" id="faq-title" className={styles.heading}>
             Perguntas frequentes.<br /><span className={styles.accent}>Respostas diretas.</span>
           </ScrollReveal>

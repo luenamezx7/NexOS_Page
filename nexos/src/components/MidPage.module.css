@@ -16,8 +16,8 @@
 .sectionNav a { color: var(--mid-muted); }
 .sectionNav a:hover { color: var(--mid-accent); }
 .currentSection { font-weight: 600; }
-.currentSection svg { color: var(--mid-accent); }
-.kicker { margin-bottom: 16px; color: var(--text-tertiary); font: 500 var(--type-label)/1.6 var(--font-mono); letter-spacing: .04em; }
+.currentSection svg { color: var(--detail-text); }
+.kicker { margin-bottom: 16px; color: var(--text-tertiary); font: 500 13px/1.6 var(--font-sans); }
 .heading { font-size: var(--type-section); font-weight: 800; font-stretch: 85%; letter-spacing: -0.025em; line-height: 1.06; text-wrap: balance; }
 .accent { color: var(--mid-accent); }
 .lead { max-width: 52ch; margin-top: 24px; font-size: var(--type-lead); line-height: 1.7; color: var(--mid-muted); text-wrap: pretty; }
@@ -87,25 +87,25 @@
 .brandSignature { display: block; width: 160px; height: 72px; flex-shrink: 0; }
 .brandMascot { display: block; width: 48px; height: 48px; flex-shrink: 0; object-fit: contain; }
 .brandMark { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 8px; background: var(--color-ink); color: var(--color-canvas); font-family: var(--font-display); font-size: 13px; font-weight: 700; letter-spacing: -0.02em; flex-shrink: 0; }
-.brandTag { margin-top: 8px; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--mid-muted); }
+.brandTag { margin-top: 8px; font-family: var(--font-sans); font-size: 14px; color: var(--mid-muted); }
 .brandDesc { margin-top: 10px; max-width: 36ch; font-size: 14px; line-height: 1.5; color: var(--mid-muted); }
 .brandAddress { margin-top: 10px; max-width: 42ch; font-size: 13px; line-height: 1.5; font-style: normal; color: color-mix(in srgb, var(--color-ink) 85%, transparent); }
 .socials { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
 .socialLink { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--mid-line); border-radius: var(--radius-control); background: var(--surface-base); color: var(--mid-muted); transition: border-color 200ms, color 200ms; text-decoration: none; }
-.socialLink:hover { border-color: color-mix(in srgb, var(--mid-accent) 40%, transparent); color: var(--color-ink); }
-.colTitle { margin-bottom: 16px; font-family: var(--font-mono); font-size: var(--type-label); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-ink); }
+.socialLink:is(:hover, :focus-visible) { border-color: var(--detail-accent); background: var(--detail-accent); color: var(--detail-ink); }
+.colTitle { margin-bottom: 16px; font-family: var(--font-sans); font-size: 14px; font-weight: 600; color: var(--color-ink); }
 .colList { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
 .colLink { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; font-size: 14px; color: var(--mid-muted); text-decoration: none; transition: color 200ms; }
 .colLink:hover { color: var(--color-ink); }
-.colLinkArrow { color: var(--mid-accent); opacity: 0; transition: opacity 200ms, transform 200ms; }
+.colLinkArrow { color: var(--detail-text); opacity: 0; transition: opacity 200ms, transform 200ms; }
 .colLink:hover .colLinkArrow { opacity: 1; transform: translate(1px, -1px); }
 .footerBottom { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--mid-line); }
 .copyright { font-size: var(--type-small); color: var(--text-tertiary); }
 .footerMeta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
 .cookieBtn { display: inline-flex; align-items: center; min-height: 44px; border: 0; background: transparent; padding: 0; font-family: var(--font-sans); font-size: var(--type-small); letter-spacing: 0; color: var(--text-tertiary); text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
 .cookieBtn:hover { color: var(--color-ink); }
-.statusLine { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0; color: var(--text-tertiary); }
-.statusDot { width: 8px; height: 8px; border-radius: 2px; background: var(--mid-accent); box-shadow: 0 0 8px color-mix(in srgb, var(--mid-accent) 70%, transparent); flex-shrink: 0; }
+.statusLine { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-sans); font-size: 13px; color: var(--text-tertiary); }
+.statusDot { width: 6px; height: 6px; border-radius: 50%; background: var(--detail-accent); flex-shrink: 0; }
 
 @media (max-width: 359px) {
   .container, .footerInner { padding-inline: 16px; }

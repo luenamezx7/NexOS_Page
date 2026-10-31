@@ -4,6 +4,7 @@ import { useState } from 'react';
 import FlexCarousel from '../FlexCarousel/FlexCarousel';
 import styles from './MascotSolutions.module.css';
 import { ScrollReveal } from '../ScrollReveal';
+import { BlurReveal } from '../blur-reveal';
 
 const SOLUTIONS: { id: string; title: string; description: string; image: string; alt: string }[] = [
   {
@@ -50,7 +51,7 @@ export function MascotSolutions() {
       <div className={styles.container}>
         <header className={styles.header}>
           <ScrollReveal as="p" preset="label" className={styles.kicker}>NexOS no seu dia a dia</ScrollReveal>
-          <ScrollReveal as="h2" preset="title" id="mascot-solutions-title">Pequenas conexões.<br />Soluções de verdade.</ScrollReveal>
+           <BlurReveal as="h2" id="mascot-solutions-title" inView speedReveal={3}>Pequenas conexões. Soluções de verdade.</BlurReveal>
           <ScrollReveal as="p" delay={.08}>Do primeiro contato à presença digital, veja onde podemos ajudar seu negócio.</ScrollReveal>
         </header>
         <ScrollReveal preset="card" className={styles.carouselWrapper}>

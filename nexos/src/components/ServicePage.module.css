@@ -10,14 +10,16 @@
 .applications h3 { font-weight: 650; letter-spacing: -.02em; }
 .steps { gap: 24px; }
 .steps > li { border-top: 1px solid var(--surface-line); padding-top: 20px; }
-.steps > li > span { display: inline-grid; place-items: center; width: 40px; height: 40px; color: var(--primary); border-radius: 12px; background: var(--surface-inset); border: 1px solid var(--surface-line); }
+.steps > li > span { display: inline-grid; place-items: center; width: 40px; height: 40px; color: var(--detail-ink); border-radius: 12px; background: var(--detail-accent); border: 1px solid var(--detail-accent); }
 .content > .proposal:global(.topography-glass) { background: transparent; }
 .questions details > summary { min-height: 56px; border-radius: 8px; }
 .questions details > summary:focus-visible { outline: 2px solid var(--ring); outline-offset: 4px; }
-.questions details[open] > summary { color: var(--primary); }
+.questions details[open] > summary { color: var(--detail-text); }
+.proposal li > svg, .proposal a > svg, .related a > svg { color: var(--detail-text); }
 .questions details p { line-height: 1.8; }
 .related ul a { padding: 10px 16px; border-radius: var(--radius-control); border: 1px solid var(--surface-line); background: var(--surface-inset); }
-.related ul a:hover { border-color: var(--primary); color: var(--primary); }
+.related ul a:is(:hover, :focus-visible) { border-color: var(--detail-accent); background: var(--detail-accent); color: var(--detail-ink); }
+.related ul a:is(:hover, :focus-visible) > svg { color: inherit; }
 @media (max-width: 767px) {
   .hero h1 { font-size: clamp(34px, 9vw, 44px); }
   .applications > article { padding: 20px; }

@@ -1,125 +1,52 @@
-.header {
-  --header-assembly: 1;
-  --header-expand: calc(1 - var(--header-assembly));
-  --header-logo-growth: 0.09;
-  --header-action-growth: 0.065;
-  --header-ink-blend: clamp(0, calc((var(--header-assembly) - 0.2) / 0.16), 1);
-  --brand-color-duration: 0ms;
-  --color-ink: color-mix(in srgb, var(--foreground) calc(var(--header-ink-blend) * 100%), #f9f3fa);
-  --header-brand: color-mix(in srgb, var(--primary) calc(var(--header-ink-blend) * 100%), #f9f3fa);
-  --brand-wordmark-ink: var(--color-ink);
-  isolation: isolate;
-  position: fixed;
-  top: max(12px, env(safe-area-inset-top));
-  left: 16px;
-  right: 16px;
-  z-index: 50;
-  max-width: 1216px;
-  margin-inline: auto;
-  border: 1px solid transparent;
-  border-radius: 16px;
-  background: transparent;
-  color: var(--color-ink);
+.header { position: fixed; top: max(12px, env(safe-area-inset-top)); inset-inline: 20px; z-index: 50; max-width: 1280px; margin-inline: auto; border: 1px solid transparent; border-radius: 14px; color: var(--color-ink); transition: background 300ms var(--ease-fluid), border-color 300ms, box-shadow 300ms; }
+.header[data-scrolled='true'] { background: var(--header-glass-background); border-color: var(--header-glass-border); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 12px 36px -24px #34064e66, inset 0 1px 0 #ffffff08; }
+.bar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 20px; min-height: 64px; padding: 8px 20px; }
+.brand { display: flex; align-items: center; width: fit-content; }
+.desktopNav { display: flex; align-items: center; gap: 12px; }
+.navLink { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 8px 10px; font: 500 13px/1 var(--font-sans); color: var(--text-secondary); white-space: nowrap; transition: color 200ms; }
+.navLink:hover, .navLink[data-popup-open] { color: var(--detail-text); }
+.actions { display: flex; justify-content: flex-end; align-items: center; gap: 12px; min-width: 0; }
+.accountSlot { display: flex; min-width: 104px; min-height: 44px; justify-content: flex-end; align-items: center; }
+.accountLink { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 4px 0; font: 500 13px/1.4 var(--font-sans); color: var(--text-secondary); text-decoration-color: transparent; text-underline-offset: 6px; transition: color 200ms, text-decoration-color 200ms; white-space: nowrap; }
+.accountLabel { display: inline; }
+.accountLink:hover { color: var(--color-ink); text-decoration: underline; text-decoration-color: currentColor; }
+.accountSkeleton { width: 86px; height: 16px; background: color-mix(in srgb, var(--color-ink) 9%, transparent); }
+.avatarButton { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; }
+.avatar { width: 34px; height: 34px; }
+.header :is(button, a):focus-visible, .popup :is(button, a):focus-visible, .mobileDialog :is(button, a):focus-visible { outline: 2px solid var(--ring); outline-offset: 4px; border-radius: 6px; }
+.themeToggle { width: 36px; height: 36px; background: transparent; border: 0; color: var(--text-secondary); }
+.menuButton { display: none; width: 44px; height: 44px; place-items: center; border-radius: 8px; }
+.popup { width: 244px; padding: 8px; border: 1px solid var(--border); background: var(--popover); color: var(--popover-foreground); font-family: var(--font-sans); box-shadow: 0 20px 60px -24px #0009; }
+.menuItem { display: flex; justify-content: flex-start; gap: 10px; min-height: 44px; padding: 10px 12px; cursor: pointer; }
+.menuItem[data-highlighted] { background: var(--detail-accent); color: var(--detail-ink); }
+.menuItem > svg:last-child:not(:first-child) { margin-left: auto; }
+.userName { padding: 10px 12px 14px; color: var(--muted-foreground); font-size: 12px; overflow-wrap: anywhere; }
+.accountError { padding: 10px 12px; font-size: 12px; color: var(--foreground); }
+.mobileDialog { position: fixed; inset: 0; width: 100%; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 12px; border: 0; background: transparent; color: var(--foreground); }
+.mobileDialog::backdrop { background: #000a; backdrop-filter: blur(8px); }
+.mobilePanel { width: min(100%, 520px); max-height: calc(100dvh - 24px); overflow-y: auto; margin-left: auto; padding: 12px 24px 24px; border-radius: 16px; border: 1px solid var(--border); background: var(--popover); box-shadow: 0 24px 80px #0005; animation: menu-enter 240ms var(--ease-fluid); }
+.mobileHeading { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 8px 20px; font-size: 13px; color: var(--muted-foreground); }
+.closeButton { display: grid; place-items: center; width: 44px; height: 44px; color: var(--foreground); }
+.mobileNav { display: flex; flex-direction: column; }
+.mobileNav > a { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; font: 500 22px/1.2 var(--font-sans); }
+.mobileSolutions { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; padding-block: 8px 24px; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
+.mobileSolutions a { display: flex; align-items: center; min-height: 44px; color: var(--muted-foreground); font-size: 13px; }
+.expandedAccount { display: flex; flex-direction: column; gap: 4px; padding-top: 20px; margin-top: 16px; border-top: 1px solid var(--border); font-size: 14px; }
+.expandedAccount > :is(a, button) { min-height: 44px; display: flex; align-items: center; text-align: left; }
+.userRow { display: flex; align-items: center; gap: 12px; padding-bottom: 12px; }
+.mobileSignature { margin-top: 24px; font: 13px/1.5 var(--font-sans); color: var(--muted-foreground); }
+@keyframes menu-enter { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+@media (max-width: 1023px) {
+  .header { inset-inline: 12px; }
+  .bar { grid-template-columns: 1fr auto; padding-inline: 12px; gap: 12px; }
+  .desktopNav { display: none; }
+  .menuButton { display: grid; }
+  .accountSlot { min-width: 44px; }
+  .accountSlot .accountLink { width: 44px; justify-content: center; padding: 0; }
+  .accountSlot .accountLabel { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .accountSkeleton { width: 28px; }
+  .actions { gap: 4px; }
 }
-.header::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  z-index: -1;
-  pointer-events: none;
-  border: 1px solid var(--header-glass-border);
-  border-radius: inherit;
-  background: var(--header-glass-background);
-  -webkit-backdrop-filter: var(--header-glass-filter);
-  backdrop-filter: var(--header-glass-filter);
-  box-shadow: var(--header-glass-shadow);
-  opacity: clamp(0, calc((var(--header-assembly) - 0.06) / 0.65), 1);
-  transform: translateY(calc(-10px * var(--header-expand))) scale(calc(0.94 + var(--header-assembly) * 0.06), calc(0.62 + var(--header-assembly) * 0.38));
-  transform-origin: center;
-}
-.header .themeToggle { border-color: color-mix(in srgb, var(--color-ink) calc(var(--header-assembly) * 10%), transparent); color: var(--color-ink); }
-.header :is(a, button):focus-visible { outline-color: var(--color-ink); }
-.bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 64px; padding: 8px 12px; transform: translateY(calc(6px * var(--header-expand))); }
-.brand {
-  display: flex; align-items: center; flex-shrink: 0;
-  transform: scale(calc(1 + var(--header-logo-growth) * var(--header-expand)));
-  transform-origin: left center;
-  text-shadow: 0 2px 14px rgb(30 0 48 / calc(var(--header-expand) * 0.3));
-}
-.actions { display: flex; align-items: center; gap: 8px; transform: scale(calc(1 + var(--header-action-growth) * var(--header-expand))); transform-origin: right center; }
-.account {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 44px;
-  padding: 0 12px;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  background: linear-gradient(125deg, #ffffff12, transparent 70%), color-mix(in srgb, var(--primary) 8%, transparent);
-  color: var(--color-ink);
-  border-color: color-mix(in srgb, var(--primary) 22%, transparent);
-  font-size: 14px;
-  font-weight: 600;
-  white-space: nowrap;
-  transition: box-shadow 200ms, transform 200ms;
-}
-.account:hover { box-shadow: 0 0 0 3px color-mix(in srgb, var(--header-brand) 12%, transparent); }
-.account:active { transform: translateY(1px); }
-.account svg { color: var(--header-brand); }
-.menuButton { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 8px; color: var(--color-ink); }
-.menuButton:hover, .navLink:hover { background: color-mix(in srgb, var(--color-ink) 5%, transparent); }
-.desktopNav, .start { display: none; }
-.mobileNav { display: grid; gap: 4px; border-top: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent); padding: 12px; max-height: calc(100dvh - 100px); overflow-y: auto; }
-.mobileNav a, .mobileStart { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 48px; padding: 12px 16px; font-size: 16px; border-radius: 8px; }
-.mobileNav a:hover { background: color-mix(in srgb, var(--color-ink) 5%, transparent); }
-.mobileStart, .start {
-  --action-outline: color-mix(in srgb, #edc4ff calc(var(--header-expand) * 100%), var(--primary));
-  --action-label: color-mix(in srgb, #f9f3fa calc(var(--header-expand) * 100%), var(--primary));
-  font-weight: 600;
-  background: var(--action-glass-background);
-  color: var(--color-ink);
-  border-color: var(--action-glass-border);
-  box-shadow: inset 0 1px 0 #ffffff30;
-}
-.mobileStart::before, .start::before { opacity: 0; }
-.mobileStart:is(:hover, :focus-visible)::before, .start:is(:hover, :focus-visible)::before { background: var(--action-lit-background); opacity: 1; }
-@media (max-width: 767px) {
-  .header { --header-logo-growth: 0.06; --header-action-growth: 0.04; }
-  .bar { padding-inline: 8px; }
-  .account { width: 44px; padding-inline: 0; }
-  .account .accountLabel { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-}
-@media (max-width: 389px) {
-  .header { left: 8px; right: 8px; --header-logo-growth: 0.025; --header-action-growth: 0.025; }
-  .bar { gap: 4px; padding-inline: 6px; }
-  .actions { gap: 3px; }
-  .account { font-size: 13px; }
-}
-@media (min-width: 1200px) {
-  .bar { gap: 24px; padding-inline: 24px; }
-  .brand { width: auto; }
-  .desktopNav { display: flex; align-items: center; gap: 4px; transform: translateY(calc(-2px * var(--header-expand))); }
-  .brand { transform: translateX(calc(-12px * var(--header-expand))) scale(calc(1 + var(--header-logo-growth) * var(--header-expand))); }
-  .actions { transform: translateX(calc(12px * var(--header-expand))) scale(calc(1 + var(--header-action-growth) * var(--header-expand))); }
-  .navLink {
-    display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 8px;
-    font-size: 14px; font-weight: 600; white-space: nowrap;
-    transform: scale(calc(1 + 0.075 * var(--header-expand)));
-    text-shadow: 0 2px 12px rgb(30 0 48 / calc(var(--header-expand) * 0.35));
-  }
-  .start { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 8px; font-size: 14px; white-space: nowrap; }
-  .menuButton, .mobileNav { display: none; }
-}
-@media (prefers-reduced-transparency: reduce) {
-  .header::before { background: var(--color-canvas); -webkit-backdrop-filter: none; backdrop-filter: none; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .account { transition: none; }
-  .bar, .desktopNav { transform: none; }
-  .header::before { transform: none; }
-}
-@media (forced-colors: active) {
-  .header { --color-ink: CanvasText; --header-brand: CanvasText; }
-  .header::before { background: Canvas; border-color: CanvasText; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
-}
+@supports not (backdrop-filter: blur(16px)) { .header[data-scrolled='true'] { background: var(--popover); } }
+@media (prefers-reduced-transparency: reduce) { .header[data-scrolled='true'], .mobileDialog::backdrop { backdrop-filter: none; background: var(--popover); } }
+@media (prefers-reduced-motion: reduce) { .header, .avatar { transition: none; } .mobilePanel { animation: none; } }

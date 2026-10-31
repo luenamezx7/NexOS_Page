@@ -1,9 +1,15 @@
 .section {
   position: relative;
+  isolation: isolate;
   scroll-margin-top: 100px;
 }
 
+.matrix { position: absolute; inset: 0; overflow: hidden; pointer-events: none; opacity: .16; mask-image: radial-gradient(ellipse at 88% 42%, #000 8%, #0008 48%, transparent 78%); }
+:global(.dark) .matrix { opacity: .2; }
+
 .container {
+  position: relative;
+  z-index: 1;
   width: min(100%, 1280px);
   margin-inline: auto;
   padding: var(--section-space) 40px;
@@ -27,9 +33,9 @@
 
 .layout {
   display: grid;
-  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
   gap: clamp(32px, 6vw, 80px);
-  align-items: start;
+  align-items: center;
 }
 
 .identity, .story { min-width: 0; }
@@ -39,7 +45,7 @@
   display: block;
   width: fit-content;
   color: #000;
-  font: 400 clamp(32px, 13.5cqi, 96px)/1 var(--font-brand-logo), sans-serif;
+  font: 400 clamp(32px, 8cqi, 56px)/1 var(--font-brand-logo), sans-serif;
   letter-spacing: 0;
   font-synthesis: none;
   white-space: nowrap;

@@ -7,15 +7,13 @@ import { useSectionScroll } from './SmoothScrollProvider';
 const SECTIONS = [
   { id: 'hero', label: 'Início', number: '01' },
   { id: 'fisico-digital', label: 'O estúdio', number: '02' },
-  { id: 'metrics', label: 'Dados', number: '03' },
-  { id: 'showcase', label: 'Placa Inteligente', number: '04' },
-  { id: 'services', label: 'Serviços', number: '05' },
-  { id: 'delivery-process', label: 'Processo', number: '06' },
-  { id: 'testimonials', label: 'Sobre Nós', number: '07' },
-  { id: 'manifesto', label: 'Nossa visão', number: '08' },
-  { id: 'faq', label: 'FAQ', number: '09' },
-  { id: 'mascot-solutions', label: 'Soluções no dia a dia', number: '10' },
-  { id: 'cta-final', label: 'Fale com a NexOS', number: '11' },
+  { id: 'services', label: 'Soluções digitais', number: '03' },
+  { id: 'easyway', label: 'EasyWay', number: '04' },
+  { id: 'showcase', label: 'Placa Inteligente', number: '05' },
+  { id: 'mascot-solutions', label: 'Soluções no dia a dia', number: '06' },
+  { id: 'delivery-process', label: 'Processo', number: '07' },
+  { id: 'testimonials', label: 'Sobre Nós e nossa visão', number: '08' },
+  { id: 'faq', label: 'FAQ e contato', number: '09' },
 ];
 
 export function SectionIndicator() {

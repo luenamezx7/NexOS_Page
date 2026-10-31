@@ -1,7 +1,7 @@
 .section { scroll-margin-top: 100px; }
 .container { max-width: 1280px; margin-inline: auto; padding: 56px 24px; }
 .header { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 12px; }
-.kicker { color: var(--landing-accent, var(--display-rose)); font: 11px var(--font-mono); }
+.kicker { color: var(--text-tertiary); font: 500 14px/1.6 var(--font-sans); }
 .header h2 { font-size: clamp(32px, 3.8vw, 52px); line-height: 1.1; font-stretch: 95%; letter-spacing: -.04em; font-weight: 730; text-wrap: balance; }
 .header > p:last-child { max-width: 38ch; font-size: var(--type-body); line-height: 1.7; color: var(--text-secondary); }
 

@@ -1,0 +1,7 @@
+.device { display: block; max-width: 100%; }
+.frame { fill: color-mix(in srgb, var(--color-ink) 28%, var(--color-canvas)); }
+.body { fill: var(--surface-raised); }
+.screen { fill: var(--color-canvas); }
+.lens { fill: color-mix(in srgb, var(--color-ink) 45%, var(--surface-inset)); }
+.video { display: block; width: 100%; height: 100%; object-fit: cover; }
+@media (forced-colors: active) { .frame, .lens { fill: CanvasText; } .body, .screen { fill: Canvas; } }

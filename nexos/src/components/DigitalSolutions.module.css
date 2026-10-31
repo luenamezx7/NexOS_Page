@@ -1,0 +1,53 @@
+.section { scroll-margin-top: 100px; }
+.container { width: min(100%, 1280px); margin: auto; padding: var(--section-space) 40px; }
+.header { margin-bottom: 40px; }
+.header h2 { font-size: var(--type-section); font-weight: 600; line-height: 1.1; letter-spacing: -.045em; }
+.header h2 > span { color: var(--display-rose); }
+.header > p { max-width: 56ch; color: var(--text-secondary); font-size: var(--type-lead); line-height: 1.7; margin-top: 24px; }
+.count { font-size: 12px; color: var(--text-tertiary); margin-bottom: 20px; }
+.previews { display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; }
+.website { grid-row: span 2; display: flex; flex-direction: column; min-width: 0; border-radius: 16px; overflow: hidden; background: var(--surface-base); border: 1px solid var(--border); }
+.demoLabel { display: flex; align-items: center; gap: 8px; padding: 20px 24px; font: 13px/1.5 var(--font-sans); color: var(--text-tertiary); }
+.demoLabel svg { color: var(--detail-text); }
+.sitePreview { position: relative; min-height: 380px; flex: 1; margin: 0 24px; overflow: hidden; background: #000; color: #f9f3fa; border-radius: 10px; }
+.previewNav { position: relative; z-index: 1; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px 12px; padding: 24px; font-size: 13px; }
+.previewNav > span:last-child { color: #bcb0c8; }
+.siteImage { width: 100%; height: 100%; position: absolute; inset: 0; object-fit: cover; opacity: .65; }
+.sitePreview::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, #000, transparent 85%); }
+.sitePreview > p { position: relative; z-index: 1; padding: 200px 24px 40px; font: 600 clamp(32px, 3.4vw, 48px)/1.08 var(--font-display); letter-spacing: -.04em; color: #f4f8ff; }
+.serviceCaption { display: flex; justify-content: space-between; gap: 20px; padding: 24px; align-items: center; }
+.serviceCaption h3, .menuCopy h3 { font-size: 21px; font-weight: 600; letter-spacing: -.025em; }
+.serviceCaption p, .menuCopy p { margin-top: 8px; font-size: 14px; color: var(--text-secondary); line-height: 1.7; max-width: 36ch; }
+.serviceCaption > a { flex-shrink: 0; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--border); color: var(--detail-text); transition: background 200ms, color 200ms, border-color 200ms; }
+.serviceCaption > a:is(:hover, :focus-visible) { background: var(--detail-accent); border-color: var(--detail-accent); color: var(--detail-ink); }
+.landing { min-width: 0; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; background: var(--surface-inset); }
+.landingPreview { padding: 12px 28px 28px; }
+.landingPreview > span { font-size: 13px; color: var(--text-tertiary); }
+.landingPreview > p { font: 500 clamp(28px, 3vw, 42px)/1.12 var(--font-display); letter-spacing: -.04em; margin-block: 18px; color: var(--color-ink); }
+.landingPreview > a { display: inline-flex; align-items: center; gap: 16px; min-height: 44px; padding-inline: 16px; border-radius: 6px; background: var(--detail-accent); color: var(--detail-ink); font-size: 12px; }
+.landing .serviceCaption { border-top: 1px solid var(--border); }
+.menu { display: grid; grid-template-columns: 1fr 1fr; min-width: 0; gap: 16px; padding: 28px; background: color-mix(in srgb, var(--surface-base) 85%, #7c3aed); border-radius: 16px; border: 1px solid var(--border); }
+.menuCopy { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; min-width: 0; }
+.menuCopy > a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 14px; margin-block: 16px; }
+.menuCopy > a svg { color: var(--detail-text); }
+.menuCopy small { color: var(--text-tertiary); font-size: 13px; line-height: 1.6; }
+.menuPreview { border-radius: 20px; padding: 24px 16px 16px; min-width: 0; background: #faf7fc; color: #201428; box-shadow: 0 20px 40px -30px #0009; border: 4px solid #271b31; }
+.menuPreview > span { font-size: 13px; color: #6b5577; }
+.menuPreview > p { font: 600 24px/1.15 var(--font-display); letter-spacing: -.04em; margin-block: 16px; color: #201428; }
+.categories { display: flex; gap: 6px; }
+.categories button { display: grid; place-items: center; min-height: 44px; padding-inline: 8px; font-size: 13px; border-radius: 6px; }
+.categories button[aria-pressed='true'] { background: var(--detail-accent); color: var(--detail-ink); }
+.menuPreview ul { margin-top: 12px; list-style: none; }
+.menuPreview li { display: flex; align-items: center; gap: 8px; min-height: 40px; border-top: 1px solid #34064e12; font-size: 13px; }
+.menuPreview li > span { color: #6b5577; font-size: 12px; }
+.commercial { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 24px; border-top: 1px solid var(--border); margin-top: 40px; padding-top: 32px; }
+.commercial h3 { font-size: 23px; font-weight: 600; }
+.commercial p { margin-top: 12px; max-width: 55ch; font-size: 14px; line-height: 1.7; color: var(--text-secondary); }
+.commercial > a { white-space: nowrap; }
+.previews[data-filter='present'] { grid-template-columns: 1fr; max-width: 800px; }
+.previews[data-filter='sell'] { grid-template-columns: 1fr 1fr; align-items: stretch; }
+.section a:focus-visible, .section button:focus-visible { outline: 2px solid var(--ring); outline-offset: 4px; }
+@media (max-width: 1023px) { .previews { grid-template-columns: 1fr 1fr; } .website { grid-column: span 2; grid-row: auto; } .sitePreview { min-height: 300px; } .menu { grid-template-columns: 1fr; } .menuPreview { max-width: 240px; width: 100%; margin: auto; } }
+@media (max-width: 767px) { .container { padding: 64px 24px; } .previews, .previews[data-filter='sell'] { grid-template-columns: 1fr; } .website { grid-column: auto; } .sitePreview { margin-inline: 16px; min-height: 280px; } .sitePreview > p { padding-top: 120px; } .previewNav { padding: 20px 16px; } .serviceCaption { padding: 20px; } .menu { grid-template-columns: 1fr 1fr; padding: 20px; gap: 12px; } .menuCopy h3 { font-size: 18px; } .menuCopy p { font-size: 12px; } .menuPreview { padding: 20px 10px 12px; } .menuPreview > p { font-size: 21px; } }
+@media (max-width: 389px) { .menu { grid-template-columns: 1fr; gap: 24px; } }
+@media (prefers-reduced-motion: reduce) { .serviceCaption > a { transition: none; } }

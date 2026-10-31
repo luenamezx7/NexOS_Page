@@ -16,7 +16,6 @@ export function DeliveryProcess() {
   const { scrollYProgress } = useScroll({ target: timelineRef, offset: ['start .9', 'end .45'] });
   return <section id="delivery-process" aria-labelledby="delivery-title" className={styles.section}>
     <div className={styles.container}>
-      <ScrollReveal preset="label" className={styles.eyebrow}><span>05 / COMO ACONTECE</span><span>DA IDEIA À ENTREGA</span></ScrollReveal>
       <header className={styles.splitHeader}><ScrollReveal as="h2" preset="title" id="delivery-title" className={styles.heading}>De ponta a ponta.<br /><span>Com você.</span></ScrollReveal>
         <ScrollReveal delay={.08}><p className={styles.lead}>Você acompanha o caminho. Cada etapa tem um propósito e um ponto de conversa.</p>
           <FieldSet className={styles.processSwitch}><FieldLegend className="sr-only">Tipo de entrega</FieldLegend><FieldGroup className={styles.segmented}>

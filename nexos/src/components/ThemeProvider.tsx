@@ -2,7 +2,7 @@
 
 /**
  * Provider de tema — gerencia modo claro/escuro.
- * Default: preferência do sistema. Persiste em localStorage (nexos-theme).
+ * Default: dark. Preserva a preferência explícita em localStorage (nexos-theme).
  * Sincroniza entre abas via evento customizado.
  * Adiciona/remove classe .dark no <html>.
  */
@@ -29,7 +29,7 @@ function applyTheme(theme: Theme): void {
   const meta = document.querySelector('meta[name="color-scheme"]');
   if (meta) meta.setAttribute('content', theme);
   document.querySelectorAll('meta[name="theme-color"]').forEach(element => {
-    element.setAttribute('content', theme === 'dark' ? '#000000' : '#fdf6ec');
+    element.setAttribute('content', theme === 'dark' ? '#000000' : '#faf7fc');
   });
 }
 
@@ -43,7 +43,7 @@ function subscribe(callback: () => void) {
 let fallback: Theme | undefined;
 function snapshot(): Theme {
   try { const stored = localStorage.getItem(STORAGE_KEY); if (stored === 'light' || stored === 'dark') return stored; } catch {}
-  return fallback ?? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  return fallback ?? 'dark';
 }
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const theme = useSyncExternalStore(subscribe, snapshot, () => 'dark' as Theme);

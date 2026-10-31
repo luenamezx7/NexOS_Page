@@ -1,19 +1,23 @@
 'use client';
 
 import { ArrowUpRight } from 'lucide-react';
-import Image from 'next/image';
 import { raithonRealm } from '@/lib/brand-font';
-import albinoTiger from '../../design-/img-ref/tigre_albino_capuz_fino.svg';
 import { useSectionScroll } from './SmoothScrollProvider';
 import styles from './AboutUs.module.css';
-import { ScrollFloat, ScrollReveal } from './ScrollReveal';
+import { ScrollReveal } from './ScrollReveal';
+import { GlyphMatrix } from './ui/glyph-matrix';
+import { NexosIntegrations } from './NexosIntegrations';
+import { useTheme } from './ThemeProvider';
+import { VISOR_PALETTE } from '@/lib/brand-palette';
 
 /** Keep the existing anchor so bookmarks and shared section links still work. */
 export function AboutUs() {
   const scrollToSection = useSectionScroll();
+  const { theme } = useTheme();
 
   return (
     <section id="testimonials" aria-labelledby="about-title" className={`${styles.section} ${raithonRealm.variable}`}>
+      <div className={styles.matrix} aria-hidden="true"><GlyphMatrix cellSize={22} mutationRate={.025} interval={140} fadeBottom={.8} color={theme === 'dark' ? VISOR_PALETTE.lilac : VISOR_PALETTE.violet} /></div>
       <div className={styles.container}>
         <ScrollReveal preset="label" className={styles.sectionNav}>
           <span>Sobre Nós</span>
@@ -23,16 +27,6 @@ export function AboutUs() {
         </ScrollReveal>
 
         <div className={styles.layout}>
-          <div className={styles.identity}>
-            <ScrollReveal><span role="img" aria-label="Logo NexOS" className={styles.wordmark}>nexos</span>
-            <p className={styles.companyName}>NexOS Lab</p>
-            <p className={styles.signature}>Design, desenvolvimento<br />e conexões com propósito.</p></ScrollReveal>
-            <ScrollReveal preset="image"><ScrollFloat><div className={styles.brandVisual}>
-              <Image src={albinoTiger} alt="Mascote tigre albino da NexOS com óculos roxos" width={380} height={380}
-                sizes="(max-width: 767px) 280px, 380px" className={styles.mascot} />
-            </div></ScrollFloat></ScrollReveal>
-          </div>
-
           <div className={styles.story}>
             <ScrollReveal as="h2" preset="title" id="about-title" className={styles.heading}>
               Design e tecnologia.<br /><span>Negócios mais próximos.</span>
@@ -63,6 +57,9 @@ export function AboutUs() {
             <a href="#services" className={styles.servicesLink} onClick={event => { if (scrollToSection('#services')) event.preventDefault(); }}>
               Ver soluções <ArrowUpRight size={17} aria-hidden="true" />
             </a>
+          </div>
+          <div className={styles.identity}>
+            <ScrollReveal preset="image"><NexosIntegrations /></ScrollReveal>
           </div>
         </div>
       </div>

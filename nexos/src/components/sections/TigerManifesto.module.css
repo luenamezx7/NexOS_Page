@@ -1,14 +1,14 @@
 .section {
   /* This image-led scene retains its own contrast palette in both site themes. */
-  --manifesto-ground: #0c0a11;
+  --manifesto-ground: #000000;
   --manifesto-purple: #d39af8;
-  --manifesto-orange: #ffb36a;
+  --manifesto-orange: #d8ef70;
   --color-ink: #f4edfa;
   --text-secondary: #d8cee3;
   position: relative;
   isolation: isolate;
   width: 100%;
-  min-height: 190svh;
+  min-height: 145svh;
   background: var(--manifesto-ground);
   color: var(--color-ink);
   scroll-margin-top: 0;
@@ -19,7 +19,7 @@
   top: 0;
   display: grid;
   align-items: end;
-  min-height: 100svh;
+  min-height: 85svh;
   overflow: hidden;
   background: var(--manifesto-ground);
 }
@@ -140,7 +140,7 @@
 }
 
 @media (max-width: 767px) {
-  .section { min-height: 165svh; }
+  .section { min-height: 130svh; }
   .portrait {
     inset: 5svh 0 auto;
     height: 72svh;

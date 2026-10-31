@@ -1,0 +1,18 @@
+.section { position: relative; isolation: isolate; overflow: hidden; scroll-margin-top: 100px; background: var(--surface-inset); }
+.section::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(ellipse at 80% 50%, #7c3aed22, transparent 60%); }
+.container { width: min(100%, 1280px); margin: auto; padding: clamp(72px, 9vw, 128px) 40px; }
+.top { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-bottom: 28px; margin-bottom: 56px; border-bottom: 1px solid var(--border); font: 13px/1.5 var(--font-sans); color: var(--text-tertiary); }
+.status { display: inline-flex; gap: 8px; align-items: center; letter-spacing: .02em; }
+.status i { width: 6px; height: 6px; background: var(--detail-accent); border-radius: 50%; }
+.layout { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 7vw, 100px); align-items: center; }
+.copy { min-width: 0; }
+.name { font: 600 clamp(46px, 5.6vw, 80px)/1 var(--font-display); letter-spacing: -.055em; margin-bottom: 36px; }
+.name > span { display: block; margin: 14px 0 0 4px; font: 13px/1.5 var(--font-sans); letter-spacing: normal; color: var(--text-tertiary); }
+.heading { max-width: 18ch; font: 600 clamp(30px, 3.1vw, 44px)/1.14 var(--font-display); letter-spacing: -.035em; }
+.description { margin-top: 24px; max-width: 44ch; color: var(--text-secondary); line-height: 1.8; font-size: 16px; }
+.disclaimer { max-width: 48ch; margin-top: 28px; color: var(--text-tertiary); font-size: 12px; line-height: 1.7; }
+.mockup { display: flex; flex-direction: column; align-items: center; gap: 24px; min-width: 0; margin: 0; }
+.device { width: min(100%, 272px); height: auto; filter: drop-shadow(0 24px 28px color-mix(in srgb, var(--visor-plum) 18%, transparent)); }
+.mockup figcaption { color: var(--text-tertiary); font-size: 13px; line-height: 1.6; text-align: center; }
+@media (max-width: 767px) { .container { padding: 64px 24px; } .top { margin-bottom: 36px; } .layout { grid-template-columns: 1fr; gap: 40px; } .device { width: min(100%, 248px); } .name { margin-bottom: 28px; } }
+@media (forced-colors: active) { .device { filter: none; } }

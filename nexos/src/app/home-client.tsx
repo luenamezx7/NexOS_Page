@@ -19,7 +19,7 @@ const SocialInvite = dynamic(() => import('@/components/sections/SocialInvite').
 const BrandClosing = dynamic(() => import('@/components/sections/BrandClosing').then(m => m.BrandClosing));
 
 // Split bundles without removing the commercial content from the server HTML.
-const MetricsSection = dynamic(() => import('@/components/sections/MetricsSection').then(m => m.MetricsSection));
+const EasyWay = dynamic(() => import('@/components/sections/EasyWay').then(m => m.EasyWay));
 const DeliveryProcess = dynamic(() => import('@/components/sections/DeliveryProcess').then(m => m.DeliveryProcess));
 const PlacaNFCSection = dynamic(() => import('@/components/sections/PlacaNFCSection').then(m => m.PlacaNFCSection));
 const CTAFinal = dynamic(() => import('@/components/sections/CTAFinal').then(m => m.CTAFinal));
@@ -63,34 +63,32 @@ export default function HomeClient() {
         <div className="relative">
           <div id="main-content" tabIndex={-1} className="relative">
             <Hero ref={heroRef} />
-            <SectionBackground index={0} scene="waves">
+            <SectionBackground index={0} scene="waves" experience="studio">
               <FisicoDigitalSection />
             </SectionBackground>
-            <SectionBackground index={1}>
-              <MetricsSection />
-            </SectionBackground>
-            <SectionBackground index={2} scene="product" panel>
-              <PlacaNFCSection />
-            </SectionBackground>
-            <SectionBackground index={3} panel>
+            <SectionBackground index={1} experience="solutions">
               <Services />
             </SectionBackground>
-            <SectionBackground index={4} scene="waves">
+            <SectionBackground index={2} experience="easyway">
+              <EasyWay />
+            </SectionBackground>
+            <SectionBackground index={3} scene="product" experience="nfc">
+              <PlacaNFCSection />
+            </SectionBackground>
+            <SectionBackground index={4} experience="applications">
+              <MascotSolutions />
+            </SectionBackground>
+            <SectionBackground index={5} scene="waves" experience="process">
               <DeliveryProcess />
             </SectionBackground>
-            <SectionBackground index={5}>
+            <SectionBackground index={6} experience="about">
               <AboutUs />
+              <TigerManifesto />
             </SectionBackground>
-            <TigerManifesto />
-            <SectionBackground index={6}>
+            <SectionBackground index={7} scene="image" experience="contact">
               <FAQ />
-            </SectionBackground>
-            <SectionBackground index={7}>
-              <MascotSolutions />
-              <SocialInvite />
-            </SectionBackground>
-            <SectionBackground index={8} scene="image">
               <CTAFinal />
+              <SocialInvite />
             </SectionBackground>
           </div>
           <Footer onViewPresentation={replayPresentation} />

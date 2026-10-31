@@ -32,7 +32,7 @@ function getScrollbarWidth(): number {
 }
 
 function applyDomLock(): void {
-  if (lockCount > 0) return;
+  if (lockCount !== 1) return;
   prevBodyOverflow = document.body.style.overflow;
   prevBodyPaddingRight = document.body.style.paddingRight;
   prevHtmlOverflow = document.documentElement.style.overflow;

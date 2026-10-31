@@ -41,7 +41,7 @@ test('home e páginas comerciais são legíveis e navegáveis sem JavaScript', a
     await expect(page.locator('.waves-entry')).toBeHidden();
     await expect(page.locator('h1')).toContainText('Soluções com IA');
     await expect(page.locator('#hero h1')).toHaveCSS('opacity', '1');
-    await expect(page.locator('#hero .hero-description')).toContainText(/Nexos LAB/i);
+    await expect(page.locator('#hero .hero-description')).toContainText('NFC e QR Code');
     await expect(page.locator('footer')).toContainText('NexOS Performance');
     await expect(page.locator('#faq summary').first()).toHaveText(/NexOS, NexOS Lab e NexOS Performance são a mesma empresa\?/);
     await expect(page.locator('#faq details').first().locator('p')).toBeVisible();
@@ -204,7 +204,7 @@ test('mobile abre diretamente no conteúdo e páginas comerciais não geram over
   }
 });
 
-test('apresentação pode ser revista e concluída apenas por scroll', async ({ page }) => {
+test('apresentação pode ser revista e encerrada por Escape ou pelo botão de pular', async ({ page }) => {
   await page.goto('/');
   await enterPresentation(page);
   const cookies = page.getByRole('dialog', { name: 'Aviso de cookies' });
@@ -214,8 +214,10 @@ test('apresentação pode ser revista e concluída apenas por scroll', async ({ 
   await page.getByRole('button', { name: 'Ver apresentação', exact: true }).click();
   await expect(page.getByRole('dialog', { name: /Apresentação NexOS/ })).toBeVisible();
   await page.keyboard.press('Escape');
-  await expect(page.getByRole('dialog', { name: /Apresentação NexOS/ })).toBeVisible();
-  await enterPresentation(page);
+  await expect(page.getByRole('dialog', { name: /Apresentação NexOS/ })).toHaveCount(0);
+  await expect(page.locator('#hero')).toBeFocused();
+  await page.getByRole('button', { name: 'Ver apresentação', exact: true }).click();
+  await page.getByRole('button', { name: /Pular apresentação/ }).click();
   await expect(page.getByRole('dialog', { name: /Apresentação NexOS/ })).toHaveCount(0);
   await expect(page.locator('#hero')).toBeFocused();
 });

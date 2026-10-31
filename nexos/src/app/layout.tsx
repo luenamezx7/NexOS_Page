@@ -8,6 +8,7 @@ import { SiteAtmosphere } from '@/components/SiteAtmosphere';
 import { JsonLd } from '@/components/JsonLd';
 import { config } from '@/config';
 import { organizationData, pageMetadata, SITE_URL } from '@/lib/seo';
+import { geist, syne } from '@/lib/site-fonts';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -45,7 +46,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [{ media: '(prefers-color-scheme: light)', color: '#eee5d8' }, { media: '(prefers-color-scheme: dark)', color: '#09080f' }],
+  themeColor: [{ media: '(prefers-color-scheme: light)', color: '#faf7fc' }, { media: '(prefers-color-scheme: dark)', color: '#000000' }],
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
@@ -59,12 +60,11 @@ export default async function RootLayout({
 }) {
   const headersList = await headers();
   const nonce = headersList.get('x-nonce');
-  const themeScriptContent = `(function(){var t;try{t=localStorage.getItem('nexos-theme');}catch(e){}var s=t==='light'||t==='dark'?t:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.classList.toggle('dark',s==='dark');document.documentElement.style.colorScheme='only '+s;var m=document.querySelector('meta[name=color-scheme]');if(m)m.content=s;})()`;
+  const themeScriptContent = `(function(){var t;try{t=localStorage.getItem('nexos-theme');}catch(e){}var s=t==='light'||t==='dark'?t:'dark';document.documentElement.classList.toggle('dark',s==='dark');document.documentElement.style.colorScheme='only '+s;var m=document.querySelector('meta[name=color-scheme]');if(m)m.content=s;})()`;
 
   return (
-    <html lang="pt-BR" suppressHydrationWarning className="font-sans dark">
+    <html lang="pt-BR" suppressHydrationWarning className={`${geist.variable} ${syne.variable} font-sans dark`}>
       <head>
-        <link rel="preload" href="/fonts/archivo-variable.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <link rel="preload" href="/fonts/martian-mono-variable.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <meta name="color-scheme" content="dark" />
         {nonce ? (

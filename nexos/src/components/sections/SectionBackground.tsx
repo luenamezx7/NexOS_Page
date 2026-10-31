@@ -12,8 +12,8 @@ import { TOPOGRAPHY_PALETTE } from '@/lib/brand-palette';
 const Topography = dynamic(() => import('../ui/Topography'), { ssr: false });
 
 export function SectionBackground({
-  children, index = 0, scene = 'plain', panel = false,
-}: { children: ReactNode; index?: number; scene?: 'plain' | 'waves' | 'product' | 'image'; panel?: boolean }) {
+  children, index = 0, scene = 'plain', panel = false, experience,
+}: { children: ReactNode; index?: number; scene?: 'plain' | 'waves' | 'product' | 'image'; panel?: boolean; experience?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const near = useInView(ref, { margin: '160px', once: true });
   const visible = useInView(ref, { amount: 0.01 });
@@ -23,7 +23,7 @@ export function SectionBackground({
   const entryOpen = usePresentationActive();
 
   return (
-    <div ref={ref} className={styles.scene} data-section-panel={panel || undefined} data-entered={entered || reduce} data-tone={index % 2 ? 'alternate' : 'base'} data-scene={scene}>
+    <div ref={ref} className={styles.scene} data-home-experience={experience} data-section-panel={panel || undefined} data-entered={entered || reduce} data-tone={index % 2 ? 'alternate' : 'base'} data-scene={scene}>
       <div className={styles.scenery} aria-hidden="true">
         {scene === 'waves' && theme === 'light' && near && !entryOpen && (
           <Topography {...TOPOGRAPHY_PALETTE} lightMode

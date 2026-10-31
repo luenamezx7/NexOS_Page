@@ -1,15 +1,20 @@
 .mark { display: inline-flex; align-items: center; gap: 8px; color: var(--color-ink); white-space: nowrap; }
 .mascot { display: block; width: 46px; height: 46px; flex-shrink: 0; object-fit: contain; }
-.wordmark { display: block; color: var(--brand-wordmark-ink, #000); font: 400 64px/46px var(--font-brand-logo), sans-serif; letter-spacing: 0; font-synthesis: none; transform: translateY(-.1em); }
-.wordmark, .mascot { transform-origin: center; transition: scale 280ms var(--ease-fluid), color var(--brand-color-duration, 700ms) ease; }
-:global(.dark) .wordmark { color: var(--color-ink); }
+.wordmark { --wordmark-sheen: #fff; position: relative; display: block; color: var(--brand-wordmark-ink, #000); font: 400 64px/46px var(--font-brand-logo), sans-serif; letter-spacing: 0; font-synthesis: none; transform: translateY(-.1em); }
+.wordmark::after { content: attr(data-wordmark); position: absolute; inset: 0; pointer-events: none; background: linear-gradient(110deg, transparent 44%, var(--wordmark-sheen) 50%, transparent 56%) 100% 50% / 300% 100%; background-clip: text; -webkit-background-clip: text; color: transparent; -webkit-text-fill-color: transparent; opacity: 0; transition: opacity 350ms ease; }
+.mascot { transform-origin: center; transition: scale 280ms var(--ease-fluid); }
+:global(.dark) .wordmark { --wordmark-sheen: #000; color: var(--color-ink); }
 @media (hover: hover) and (pointer: fine) {
-  .mark .wordmark:hover { scale: 1.04; color: var(--header-brand); }
+  .wordmark:hover::after { opacity: 1; animation: wordmark-sweep 2.4s ease-in-out both; }
   .mark .mascot:hover { scale: 1.07; }
 }
+:global(a:focus-visible) .wordmark::after { opacity: 1; animation: wordmark-sweep 2.4s ease-in-out both; }
+@keyframes wordmark-sweep { from { background-position: 100% 50%; } to { background-position: 0% 50%; } }
 @media (prefers-reduced-motion: reduce) {
-  .wordmark, .mascot { transition: none; }
-  .mark .wordmark:hover, .mark .mascot:hover { scale: none; }
+  .wordmark::after, .wordmark:hover::after, :global(a:focus-visible) .wordmark::after { transition: none; animation: none; background-position: 50% 50%; }
+  .mascot { transition: none; }
+  .mark .mascot:hover { scale: none; }
 }
+@media (forced-colors: active) { .wordmark::after { display: none; } }
 @media (max-width: 767px) { .mark { gap: 5px; } .mascot { width: 28px; height: 28px; } .wordmark { font-size: 42px; line-height: 28px; } }
 @media (max-width: 359px) { .mark { gap: 4px; } .mascot { width: 24px; height: 24px; } .wordmark { font-size: 35px; line-height: 24px; } }

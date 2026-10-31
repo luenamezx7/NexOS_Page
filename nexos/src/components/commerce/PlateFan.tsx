@@ -17,7 +17,7 @@ export function PlateFan() {
   const [selected, setSelected] = useState<string>('blue');
   const reduce = useReducedMotion();
   return <div className={styles.plateStage}>
-    <div className={styles.stageTop}><span>NEXOS / PHYSICAL INTERFACE</span><Nfc size={18} aria-hidden="true" /></div>
+    <div className={styles.stageTop}><span>Placa NFC</span><Nfc size={18} aria-hidden="true" /></div>
     <div id="plate-studies" className={styles.fanArea}>
       <FieldSet><FieldLegend className="sr-only">Prévias visuais da placa</FieldLegend><FieldGroup className={styles.fanCards}>
         {STUDIES.map((study, i) => <motion.label key={study.id} className={styles.fanCard} data-study={study.id} data-selected={selected === study.id}
