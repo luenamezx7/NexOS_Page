@@ -1,24 +1,31 @@
 import type { MetadataRoute } from 'next';
 import { siteUrl } from '@/lib/seo';
 
-// robots.txt padrão de mercado: tudo liberado, exceto áreas
-// técnicas e transacionais (API, pós-pagamento, assets internos).
+// Páginas públicas são acessíveis também ao agente Claude-User; áreas
+// técnicas, transacionais e privadas continuam fora do alcance de crawlers.
+const disallowedPaths = [
+  '/api/',
+  '/sucesso',
+  '/cancelado',
+  '/conta',
+  '/portal/',
+  '/admin-dashboard-su/',
+  '/dashboard',
+  '/auth/',
+];
+
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       {
         userAgent: '*',
         allow: '/',
-        disallow: [
-          '/api/',
-          '/sucesso',
-          '/cancelado',
-          '/conta',
-          '/portal/',
-          '/admin-dashboard-su/',
-          '/dashboard',
-          '/auth/',
-        ],
+        disallow: disallowedPaths,
+      },
+      {
+        userAgent: 'Claude-User',
+        allow: '/',
+        disallow: disallowedPaths,
       },
     ],
     sitemap: siteUrl('/sitemap.xml'),

@@ -93,6 +93,8 @@ test('robots permite renderização e sitemap contém todas as páginas pública
   const rules = await robots.text();
   expect(rules).not.toMatch(/Disallow:\s*\/_next/);
   expect(rules).toContain('Disallow: /api/');
+  expect(rules).toMatch(/User-Agent: Claude-User\s+Allow: \/\s+Disallow: \/api\//);
+  expect(rules).toMatch(/User-Agent: Claude-User[\s\S]*?Disallow: \/portal\//);
   const sitemap = await request.get('/sitemap.xml');
   expect(sitemap.status()).toBe(200);
   const xml = await sitemap.text();
