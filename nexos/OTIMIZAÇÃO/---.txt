@@ -1,0 +1,10 @@
+[✓] Fase 1: Auditar arquitetura, autenticação, dependências, banco, configuração e produção
+[✓] Fase 2: Apresentar diagnóstico e obter aprovação do checklist antes de alterar código
+[✓] Etapa 1: Configurar dependências, schemas versionados e variáveis de ambiente documentadas
+[•] Etapa 2: Configurar e validar Better Auth Core e métodos de autenticação
+[ ] Etapa 3: Modularizar Resend, templates e disparos transacionais
+[ ] Etapa 4: Implementar fluxos de autenticação e gestão de segurança do usuário
+[ ] Etapa 5: Aplicar proteção de rotas, validação de sessão e cookies seguros
+[ ] Etapa 6: Executar testes locais, casos de erro, tipagem, lint e build
+[ ] Etapa 7: Implantar e homologar em produção, documentando resultados e bloqueios
+[ ] Desbloquear homologação: reautenticar conexão Vercel para a equipe nex-os2 e configurar credenciais Google

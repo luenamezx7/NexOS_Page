@@ -1,17 +1,17 @@
 .mark { display: inline-flex; align-items: center; gap: 8px; color: var(--color-ink); white-space: nowrap; }
 .mascot { display: block; width: 46px; height: 46px; flex-shrink: 0; object-fit: contain; }
-.wordmark { --wordmark-sheen: #fff; position: relative; display: block; color: var(--brand-wordmark-ink, #000); font: 400 64px/46px var(--font-brand-logo), sans-serif; letter-spacing: 0; font-synthesis: none; transform: translateY(-.1em); }
-.wordmark::after { content: attr(data-wordmark); position: absolute; inset: 0; pointer-events: none; background: linear-gradient(110deg, transparent 44%, var(--wordmark-sheen) 50%, transparent 56%) 100% 50% / 300% 100%; background-clip: text; -webkit-background-clip: text; color: transparent; -webkit-text-fill-color: transparent; opacity: 0; transition: opacity 350ms ease; }
+.wordmark { --wordmark-sheen: #a42cf4; position: relative; display: block; color: var(--brand-wordmark-ink, #000); font: 400 64px/46px var(--font-brand-logo), sans-serif; letter-spacing: 0; font-synthesis: none; transform: translateY(-.1em); }
+.wordmark::after { content: attr(data-wordmark); position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to right, var(--brand-wordmark-ink, #000) 0%, var(--brand-wordmark-ink, #000) 30%, var(--wordmark-sheen) 50%, var(--brand-wordmark-ink, #000) 70%, var(--brand-wordmark-ink, #000) 100%) 100% 50% / 220% 100% no-repeat; background-clip: text; -webkit-background-clip: text; color: transparent; -webkit-text-fill-color: transparent; opacity: 0; }
 .mascot { transform-origin: center; transition: scale 280ms var(--ease-fluid); }
-:global(.dark) .wordmark { --wordmark-sheen: #000; color: var(--color-ink); }
+:global(.dark) .wordmark { --wordmark-sheen: #d8f56e; --brand-wordmark-ink: var(--color-ink); color: var(--color-ink); }
 @media (hover: hover) and (pointer: fine) {
-  .wordmark:hover::after { opacity: 1; animation: wordmark-sweep 2.4s ease-in-out both; }
+  .mark:hover .wordmark::after { opacity: 1; animation: wordmark-shimmer 2s linear infinite; }
   .mark .mascot:hover { scale: 1.07; }
 }
-:global(a:focus-visible) .wordmark::after { opacity: 1; animation: wordmark-sweep 2.4s ease-in-out both; }
-@keyframes wordmark-sweep { from { background-position: 100% 50%; } to { background-position: 0% 50%; } }
+:global(a:focus-visible) .wordmark::after { opacity: 1; animation: wordmark-shimmer 2s linear infinite; }
+@keyframes wordmark-shimmer { from { background-position: 100% 50%; } to { background-position: 0% 50%; } }
 @media (prefers-reduced-motion: reduce) {
-  .wordmark::after, .wordmark:hover::after, :global(a:focus-visible) .wordmark::after { transition: none; animation: none; background-position: 50% 50%; }
+  .wordmark::after, .mark:hover .wordmark::after, :global(a:focus-visible) .wordmark::after { animation: none; opacity: 0; }
   .mascot { transition: none; }
   .mark .mascot:hover { scale: none; }
 }
