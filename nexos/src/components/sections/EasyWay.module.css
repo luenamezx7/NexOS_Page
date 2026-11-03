@@ -1,5 +1,4 @@
-.section { position: relative; isolation: isolate; overflow: hidden; scroll-margin-top: 100px; background: var(--surface-inset); }
-.section::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(ellipse at 80% 50%, #7c3aed22, transparent 60%); }
+.section { position: relative; isolation: isolate; overflow: hidden; scroll-margin-top: 100px; background: transparent; }
 .container { width: min(100%, 1280px); margin: auto; padding: clamp(72px, 9vw, 128px) 40px; }
 .top { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-bottom: 28px; margin-bottom: 56px; border-bottom: 1px solid var(--border); font: 13px/1.5 var(--font-sans); color: var(--text-tertiary); }
 .status { display: inline-flex; gap: 8px; align-items: center; letter-spacing: .02em; }
@@ -10,9 +9,21 @@
 .name > span { display: block; margin: 14px 0 0 4px; font: 13px/1.5 var(--font-sans); letter-spacing: normal; color: var(--text-tertiary); }
 .heading { max-width: 18ch; font: 600 clamp(30px, 3.1vw, 44px)/1.14 var(--font-display); letter-spacing: -.035em; }
 .description { margin-top: 24px; max-width: 44ch; color: var(--text-secondary); line-height: 1.8; font-size: 16px; }
+.capabilityTitle { margin-top: 28px; font-size: 14px; font-weight: 700; color: var(--color-ink); }
+.capabilities { display: grid; gap: 10px; margin-top: 14px; padding: 0; list-style: none; }
+.capabilities li { display: flex; align-items: center; gap: 12px; min-height: 36px; color: var(--text-secondary); font-size: 15px; line-height: 1.5; }
+.capabilities svg { flex: 0 0 auto; color: var(--visor-violet); }
 .disclaimer { max-width: 48ch; margin-top: 28px; color: var(--text-tertiary); font-size: 12px; line-height: 1.7; }
 .mockup { display: flex; flex-direction: column; align-items: center; gap: 24px; min-width: 0; margin: 0; }
 .device { width: min(100%, 272px); height: auto; filter: drop-shadow(0 24px 28px color-mix(in srgb, var(--visor-plum) 18%, transparent)); }
+.phonePreview { position: relative; width: min(100%, 272px); }
+.phoneScreen { position: absolute; z-index: 2; inset: 12% 8% 5%; display: flex; flex-direction: column; gap: 15px; overflow: hidden; padding: 12px 8px; border-radius: 20px; pointer-events: none; background: radial-gradient(ellipse at 85% 35%, #461564, transparent 60%), #12081f; color: #f9f3fa; font: 10px/1.4 var(--font-sans); }
+.phoneBrand { font-weight: 700; color: #e873f8; }
+.phoneBubble { align-self: flex-end; max-width: 82%; padding: 10px; border-radius: 12px 12px 4px 12px; background: #34164d; }
+.phoneReply { margin-top: 14px; font-size: 13px; font-weight: 600; }
+.phoneChips { display: flex; flex-wrap: wrap; gap: 7px; }
+.phoneChips span { padding: 7px 9px; border: 1px solid #971ef466; border-radius: 999px; background: #971ef422; }
+.phoneInput { margin-top: auto; padding: 10px; border: 1px solid #e873f855; border-radius: 10px; color: #e2d8f5; }
 .mockup figcaption { color: var(--text-tertiary); font-size: 13px; line-height: 1.6; text-align: center; }
 @media (max-width: 767px) { .container { padding: 64px 24px; } .top { margin-bottom: 36px; } .layout { grid-template-columns: 1fr; gap: 40px; } .device { width: min(100%, 248px); } .name { margin-bottom: 28px; } }
 @media (forced-colors: active) { .device { filter: none; } }

@@ -16,8 +16,8 @@ test('mobile não carrega apresentação nem fonte do rodapé no início', async
     await expect(page.locator('.hero-veil canvas')).toHaveCount(0);
     await expect(page.locator('[data-dither-wave]')).toHaveCount(0);
     expect(requests.some(url => url.includes('LastoriaBoldRegular.otf'))).toBe(false);
-    await page.getByRole('button', { name: 'Ativar modo claro' }).click();
-    await expect(page.locator('html')).not.toHaveClass(/dark/);
+    await expect(page.getByRole('button', { name: /Ativar modo (claro|escuro)/ })).toHaveCount(0);
+    await expect(page.locator('html')).toHaveClass(/dark/);
     await expect(page.locator('[data-dither-wave]')).toHaveCount(0);
     await page.locator('footer').scrollIntoViewIfNeeded();
     await expect.poll(() => requests.some(url => url.includes('LastoriaBoldRegular.otf'))).toBe(true);

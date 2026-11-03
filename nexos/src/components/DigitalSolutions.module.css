@@ -4,7 +4,6 @@
 .header h2 { font-size: var(--type-section); font-weight: 600; line-height: 1.1; letter-spacing: -.045em; }
 .header h2 > span { color: var(--display-rose); }
 .header > p { max-width: 56ch; color: var(--text-secondary); font-size: var(--type-lead); line-height: 1.7; margin-top: 24px; }
-.count { font-size: 12px; color: var(--text-tertiary); margin-bottom: 20px; }
 .previews { display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; }
 .website { grid-row: span 2; display: flex; flex-direction: column; min-width: 0; border-radius: 16px; overflow: hidden; background: var(--surface-base); border: 1px solid var(--border); }
 .demoLabel { display: flex; align-items: center; gap: 8px; padding: 20px 24px; font: 13px/1.5 var(--font-sans); color: var(--text-tertiary); }
@@ -44,10 +43,8 @@
 .commercial h3 { font-size: 23px; font-weight: 600; }
 .commercial p { margin-top: 12px; max-width: 55ch; font-size: 14px; line-height: 1.7; color: var(--text-secondary); }
 .commercial > a { white-space: nowrap; }
-.previews[data-filter='present'] { grid-template-columns: 1fr; max-width: 800px; }
-.previews[data-filter='sell'] { grid-template-columns: 1fr 1fr; align-items: stretch; }
 .section a:focus-visible, .section button:focus-visible { outline: 2px solid var(--ring); outline-offset: 4px; }
 @media (max-width: 1023px) { .previews { grid-template-columns: 1fr 1fr; } .website { grid-column: span 2; grid-row: auto; } .sitePreview { min-height: 300px; } .menu { grid-template-columns: 1fr; } .menuPreview { max-width: 240px; width: 100%; margin: auto; } }
-@media (max-width: 767px) { .container { padding: 64px 24px; } .previews, .previews[data-filter='sell'] { grid-template-columns: 1fr; } .website { grid-column: auto; } .sitePreview { margin-inline: 16px; min-height: 280px; } .sitePreview > p { padding-top: 120px; } .previewNav { padding: 20px 16px; } .serviceCaption { padding: 20px; } .menu { grid-template-columns: 1fr 1fr; padding: 20px; gap: 12px; } .menuCopy h3 { font-size: 18px; } .menuCopy p { font-size: 12px; } .menuPreview { padding: 20px 10px 12px; } .menuPreview > p { font-size: 21px; } }
+@media (max-width: 767px) { .container { padding: 64px 24px; } .previews { grid-template-columns: 1fr; } .website { grid-column: auto; } .sitePreview { margin-inline: 16px; min-height: 280px; } .sitePreview > p { padding-top: 120px; } .previewNav { padding: 20px 16px; } .serviceCaption { padding: 20px; } .menu { grid-template-columns: 1fr 1fr; padding: 20px; gap: 12px; } .menuCopy h3 { font-size: 18px; } .menuCopy p { font-size: 12px; } .menuPreview { padding: 20px 10px 12px; } .menuPreview > p { font-size: 21px; } }
 @media (max-width: 389px) { .menu { grid-template-columns: 1fr; gap: 24px; } }
 @media (prefers-reduced-motion: reduce) { .serviceCaption > a { transition: none; } }

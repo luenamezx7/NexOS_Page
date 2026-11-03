@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { UserRound, LogOut, ShieldCheck } from 'lucide-react';
+import { IdCard, LogOut, ShieldCheck } from 'lucide-react';
 import { authClient, signOutAccount } from '@/lib/auth/client';
 import { ProfileOrb } from './ProfileOrb';
 import { Skeleton } from './ui/skeleton';
@@ -37,7 +37,7 @@ export function HeaderAccount({ expanded = false, onNavigate }: { expanded?: boo
       <DropdownMenuContent align="end" sideOffset={14} className={styles.popup}>
         <DropdownMenuGroup>
           <p className={styles.userName}>{user.name || 'Sua conta'}</p>
-          <DropdownMenuItem render={<Link href="/conta" />} className={styles.menuItem}><UserRound /> Minha conta</DropdownMenuItem>
+          <DropdownMenuItem render={<Link href="/conta" />} className={styles.menuItem}><IdCard /> Minha conta</DropdownMenuItem>
           <DropdownMenuItem render={<Link href="/portal/seguranca" />} className={styles.menuItem}><ShieldCheck /> Segurança da conta</DropdownMenuItem>
           <DropdownMenuItem className={styles.menuItem} disabled={busy} closeOnClick={false} onClick={() => void logout()}><LogOut /> {busy ? 'Saindo…' : 'Sair da conta'}</DropdownMenuItem>
         </DropdownMenuGroup>

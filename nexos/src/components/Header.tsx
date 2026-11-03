@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { ChevronDown, Menu, X, ArrowUpRight } from 'lucide-react';
 import { useScroll, useMotionValueEvent } from 'motion/react';
 import { BrandMark } from './BrandMark';
-import { ThemeToggle } from './ThemeToggle';
 import { HeaderAccount } from './HeaderAccount';
 import { useSectionScroll } from './SmoothScrollProvider';
 import { useScrollLock } from './useScrollLock';
@@ -19,9 +18,10 @@ const SOLUTIONS = [
   { label: 'Placa NFC', href: '/placa-nfc' },
 ];
 const NAV_ITEMS = [
+  { label: 'Como funciona', href: '#delivery-process' },
   { label: 'EasyWay', href: '#easyway' },
-  { label: 'Sobre Nós', href: '#testimonials' },
-  { label: 'Contato', href: '#cta-final' },
+  { label: 'Planos', href: '#plans' },
+  { label: 'Sobre', href: '#testimonials' },
 ];
 
 export function Header() {
@@ -65,9 +65,9 @@ export function Header() {
   }, [closeMenu]);
 
   return <>
-    <header role="banner" className={styles.header} data-managed-section-links data-scrolled={scrolled} data-header-state="assembled">
+    <header role="banner" className={styles.header} style={{ backdropFilter: 'blur(16px) saturate(1.15)', WebkitBackdropFilter: 'blur(16px) saturate(1.15)' }} data-managed-section-links data-scrolled={scrolled} data-header-state="assembled">
       <div className={styles.bar}>
-        <a href="#hero" aria-label="NexOS, início" className={styles.brand} onClick={event => { event.preventDefault(); navigate('#hero'); }}><BrandMark /></a>
+        <a href="#hero" aria-label="NexOS, início" className={styles.brand} onClick={event => { event.preventDefault(); navigate('#hero'); }}><BrandMark animated /></a>
         <nav className={styles.desktopNav} aria-label="Navegação principal">
           <DropdownMenu>
             <DropdownMenuTrigger className={styles.navLink}>Soluções <ChevronDown size={13} aria-hidden="true" /></DropdownMenuTrigger>
@@ -82,7 +82,7 @@ export function Header() {
         </nav>
         <div className={styles.actions}>
           <HeaderAccount />
-          <ThemeToggle className={styles.themeToggle} />
+          <a className={styles.contactAction} href="#contact" onClick={event => { event.preventDefault(); navigate('#contact'); }}>Agendar conversa</a>
           <button ref={triggerRef} type="button" className={styles.menuButton} aria-label="Abrir menu" aria-expanded={mobileOpen} aria-controls="mobile-navigation" onClick={() => setMobileOpen(true)}><Menu size={21} aria-hidden="true" /></button>
         </div>
       </div>
@@ -100,6 +100,7 @@ export function Header() {
           <a href="#services" onClick={event => { event.preventDefault(); navigate('#services'); }}>Soluções <ArrowUpRight size={19} aria-hidden="true" /></a>
           <div className={styles.mobileSolutions}>{SOLUTIONS.map(item => <Link key={item.href} href={item.href} onClick={closeMenu}>{item.label}</Link>)}</div>
           {NAV_ITEMS.map(item => <a key={item.href} href={item.href} onClick={event => { event.preventDefault(); navigate(item.href); }}>{item.label}<ArrowUpRight size={19} aria-hidden="true" /></a>)}
+          <a className={styles.mobileContactAction} href="#contact" onClick={event => { event.preventDefault(); navigate('#contact'); }}>Agendar conversa <ArrowUpRight size={19} aria-hidden="true" /></a>
         </nav>
         <HeaderAccount expanded onNavigate={closeMenu} />
         <p className={styles.mobileSignature}>Sites e soluções digitais</p>

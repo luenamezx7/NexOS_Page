@@ -5,8 +5,6 @@ import { siteUrl } from '@/lib/seo';
 // técnicas, transacionais e privadas continuam fora do alcance de crawlers.
 const disallowedPaths = [
   '/api/',
-  '/sucesso',
-  '/cancelado',
   '/conta',
   '/portal/',
   '/admin-dashboard-su/',

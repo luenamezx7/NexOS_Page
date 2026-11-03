@@ -6,13 +6,13 @@
   width: 26px;
   height: 26px;
   border: 1px solid color-mix(in srgb, var(--primary) 35%, transparent);
-  border-radius: 50%;
+  border-radius: 9px;
   background: var(--surface-inset);
   color: var(--primary);
   vertical-align: middle;
   transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease;
 }
-.orb > svg { display: block; width: 62%; height: 62%; }
+.orb > svg { display: block; width: 67%; height: 67%; }
 :global(a:is(:hover, :focus-visible)) > .orb, :global(button:is(:hover, :focus-visible, [aria-expanded='true'])) > .orb { border-color: var(--detail-accent); background: var(--detail-accent); color: var(--detail-ink); }
 @media (prefers-reduced-motion: reduce) { .orb { transition: none; } }
 @media (forced-colors: active) { .orb { background: Canvas; border-color: ButtonText; color: ButtonText; } :global(a:is(:hover, :focus-visible)) > .orb, :global(button:is(:hover, :focus-visible, [aria-expanded='true'])) > .orb { border-color: Highlight; background: Highlight; color: HighlightText; } }

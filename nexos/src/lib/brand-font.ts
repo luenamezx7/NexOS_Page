@@ -9,3 +9,13 @@ export const raithonRealm = localFont({
   display: 'swap',
   preload: false,
 });
+
+/** Shared variable family for the NexOS Lab logo lockup. */
+export const unbounded = localFont({
+  src: '../../design-/FONTES/unbounded/Unbounded-VariableFont_wght.ttf',
+  variable: '--font-header-logo',
+  weight: '200 900',
+  style: 'normal',
+  display: 'swap',
+  preload: false,
+});

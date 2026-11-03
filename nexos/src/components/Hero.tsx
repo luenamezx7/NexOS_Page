@@ -1,7 +1,7 @@
 'use client';
 
 import { forwardRef, useImperativeHandle, useRef, useSyncExternalStore } from 'react';
-import { ArrowDown, ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { HoverLink } from './ui/hover-button';
 import { BackgroundPaths } from './ui/background-paths';
 import { BrandVeil } from './ui/brand-veil';
@@ -42,13 +42,11 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
           <BlurReveal as="h1" id="hero-title" key={String(showHero)} className="hero-heading" speedReveal={3} speedSegment={.8}>Soluções com IA que impulsionam seu negócio</BlurReveal>
           <ScrollReveal as="p" delay={.12} className="hero-description">Sites, landing pages e cardápios com identidade. Experiências NFC e QR Code que conectam sua marca ao mundo real.</ScrollReveal>
           <ScrollReveal className="hero-actions" delay={.2}>
-            <HoverLink href="#services" onClick={event => { event.preventDefault(); scrollToSection('#services'); }}>Explorar soluções</HoverLink>
+            <HoverLink href="#contact" onClick={event => { event.preventDefault(); scrollToSection('#contact'); }}>Agendar conversa</HoverLink>
             <a href="#showcase" onClick={event => { event.preventDefault(); scrollToSection('#showcase'); }} className="hero-text-link">Conhecer a Placa NFC <ArrowUpRight size={17} aria-hidden="true" /></a>
           </ScrollReveal>
+          <a href="#easyway" onClick={event => { event.preventDefault(); scrollToSection('#easyway'); }} className="hero-easyway-link">Conheça o EasyWay, nosso projeto de assistente administrativo com IA <ArrowUpRight size={14} aria-hidden="true" /></a>
         </motion.div>
-        <div className="hero-bottom">
-          <a href="#fisico-digital" onClick={event => { event.preventDefault(); scrollToSection('#fisico-digital'); }}>Explore a NexOS <ArrowDown size={16} aria-hidden="true" /></a>
-        </div>
       </motion.div>
       <HeroBrandStrip active={showHero} />
     </section>

@@ -5,6 +5,7 @@ import { Cpu } from 'lucide-react';
 import { raithonRealm } from '@/lib/brand-font';
 import { AnimatedBeam } from './ui/animated-beam';
 import styles from './NexosIntegrations.module.css';
+import { landingEvidence } from '@/config/landing-evidence';
 
 type AppId = 'whatsapp' | 'instagram' | 'notion' | 'docs' | 'ai';
 
@@ -50,6 +51,7 @@ export function NexosIntegrations() {
         <IntegrationNode app="notion" name="Notion" nodeRef={notionRef} />
         <IntegrationNode app="docs" name="Google Docs" nodeRef={docsRef} />
         <IntegrationNode app="ai" name="IA" nodeRef={aiRef} />
+        {landingEvidence.integrationNodes.map((label, index) => <li key={label} className={styles.proposedNode} data-node={index % 2 ? 'payments' : 'crm'}><span>{label}</span></li>)}
       </ul>
     </div>
     <figcaption>Seus apps, conectados.</figcaption>

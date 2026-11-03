@@ -5,7 +5,6 @@ import { forwardRef, useEffect, useRef, type ButtonHTMLAttributes } from 'react'
 import { cn } from '@/lib/utils';
 import { FRAGMENT_SHADER, VERTEX_SHADER } from './metallic-button-shaders';
 import styles from './metallic-button.module.css';
-import { useTheme } from '@/components/ThemeProvider';
 import { usePresentationActive } from '@/lib/use-presentation-active';
 import { VISOR_PALETTE } from '@/lib/brand-palette';
 
@@ -114,11 +113,10 @@ export interface MetallicSurfaceProps {
 
 /** The same finish can be inserted into existing hold buttons and semantic links. */
 export function MetallicSurface({ baseColor, sheenColor, bandCount = 4, edgeBlur = 0.5, flowAngle = 45, zoom = 8, warp = 0, redFringe, blueFringe = 0.3, idleSpeed = 0, hoverSpeed = 0.8, clickSpeed = 1.4, disabled = false }: MetallicSurfaceProps) {
-  const { theme } = useTheme();
   const entryOpen = usePresentationActive();
-  const resolvedBase = baseColor ?? (theme === 'light' ? VISOR_PALETTE.violet : VISOR_PALETTE.plum);
+  const resolvedBase = baseColor ?? VISOR_PALETTE.plum;
   const resolvedSheen = sheenColor ?? VISOR_PALETTE.lilac;
-  const resolvedRedFringe = redFringe ?? (theme === 'light' ? 0 : 0.3);
+  const resolvedRedFringe = redFringe ?? 0.3;
   const ref = useRef<HTMLSpanElement>(null);
   useEffect(() => {
     const surface = ref.current;

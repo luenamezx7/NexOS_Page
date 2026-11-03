@@ -9,7 +9,6 @@ import {
   ExternalLink,
   RefreshCw,
   ShieldCheck,
-  Zap,
 } from 'lucide-react';
 import styles from './Dashboard.module.css';
 import { signOutAccount } from '@/lib/auth/client';
@@ -54,7 +53,6 @@ type Diagnostics = {
   supabase: { ok?: boolean };
   notion: { ok?: boolean; configured?: boolean; error?: string };
   cloudflare: { ok?: boolean; configured?: boolean };
-  asaas: { configured?: boolean; environment?: string };
 };
 
 export function DashboardClient({
@@ -72,7 +70,6 @@ export function DashboardClient({
 
   const supaDiag = diagnostics?.supabase;
   const notionDiag = diagnostics?.notion;
-  const asaasDiag = diagnostics?.asaas;
   const cloudflareDiag = diagnostics?.cloudflare;
 
   const handleLogout = async () => {
@@ -92,7 +89,6 @@ export function DashboardClient({
 
   const supaOk = supaDiag?.ok ?? null;
   const notionOk = notionDiag?.ok ?? null;
-  const asaasOk = asaasDiag?.configured ? null : false;
   const checkedAt = diagnostics?.checkedAt
     ? diagnostics.checkedAt.replace('T', ' ').slice(0, 19)
     : '—';
@@ -130,7 +126,7 @@ export function DashboardClient({
             icon={<Database size={14} strokeWidth={1.75} aria-hidden="true" />}
             detail={
               supaOk
-                ? 'Consulta de pedidos pelo servidor: OK.'
+                 ? 'Consulta de perfis pelo servidor: OK.'
                 : 'Falha na consulta: confira chave secreta, schema e permissões.'
             }
           />
@@ -144,16 +140,6 @@ export function DashboardClient({
                 : notionDiag?.configured
                   ? 'Configurado, mas a consulta falhou.'
                   : 'Integração de contato não configurada.'
-            }
-          />
-          <ServiceCard
-            title="Asaas"
-            ok={asaasOk}
-            icon={<Zap size={14} strokeWidth={1.75} aria-hidden="true" />}
-            detail={
-              asaasDiag?.configured
-                ? `Chave presente · ${asaasDiag.environment}. Conectividade não testada.`
-                : 'ASAAS_API_KEY ausente no ambiente.'
             }
           />
           <ServiceCard

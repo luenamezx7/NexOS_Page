@@ -1,4 +1,4 @@
-import { ArrowUpRight, ChevronDown, CircleHelp, MessageSquare } from 'lucide-react';
+import { ChevronDown, CircleHelp, MessageSquare } from 'lucide-react';
 import { config } from '@/config';
 import { commercialHref } from '@/lib/commercial';
 import styles from './BottomFunnel.module.css';
@@ -13,32 +13,28 @@ interface FAQItem {
 const FAQ_ITEMS: FAQItem[] = [
   {
     id: '01',
-    question: `${config.brand.name}, ${config.brand.fullName} e ${config.brand.alternateNames.join(' e ')} são a mesma empresa?`,
-    answer: `Sim. ${config.brand.fullName} é o nome completo da ${config.brand.name}, também conhecida como ${config.brand.alternateNames.join(' e ')}. Nosso site oficial é nexoslab.online. Desenvolvemos sites, landing pages e cardápios digitais e oferecemos placas NFC com QR Code para empresas.`,
+    question: 'Quanto custa contratar a NexOS?',
+    answer: 'Valores e condições são definidos com o comercial conforme a solução, a quantidade e o escopo. Entre em contato para alinharmos uma proposta para o seu negócio.',
   },
   {
     id: '02',
-    question: 'O que está incluso no Desenvolvimento NexOS?',
-    answer:
-      'O projeto é definido com você: objetivo, páginas, identidade visual e funcionalidades. Sites, landing pages e cardápios digitais são algumas das aplicações. O escopo é alinhado antes do desenvolvimento.',
+    question: 'Qual o prazo de entrega?',
+    answer: 'O prazo depende do produto, da personalização ou do escopo do serviço. Converse com a NexOS para combinar as etapas e a previsão de entrega do seu pedido.',
   },
   {
     id: '03',
-    question: 'Como funciona a Placa Inteligente NFC + QR Code?',
-    answer:
-      'A placa reúne NFC e QR Code. O cliente aproxima um celular compatível ou lê o código com a câmera para abrir o link escolhido: cardápio, portfólio, redes sociais ou outra página.',
+    question: 'O que está incluso no Desenvolvimento NexOS?',
+    answer: 'O projeto é definido com você: objetivo, páginas, identidade visual e funcionalidades. Sites, landing pages e cardápios digitais são algumas das aplicações. O escopo é alinhado antes do desenvolvimento.',
   },
   {
     id: '04',
-    question: 'Como faço para contratar ou adquirir uma placa?',
-    answer:
-      'Os botões da placa e do Desenvolvimento NexOS abrem uma conversa com nosso comercial no WhatsApp. Alinhamos sua necessidade, personalização ou escopo, prazos e condições para fechar a venda diretamente com você.',
+    question: 'Como funciona a Placa Inteligente NFC + QR Code?',
+    answer: 'A placa reúne NFC e QR Code. O cliente aproxima um celular compatível ou lê o código com a câmera para abrir o link escolhido: cardápio, portfólio, redes sociais ou outra página.',
   },
   {
     id: '05',
-    question: 'Qual o prazo de entrega?',
-    answer:
-      'O prazo depende do produto, da personalização ou do escopo do serviço. Converse com a NexOS para combinar as etapas e a previsão de entrega do seu pedido.',
+    question: 'Como faço para contratar ou adquirir uma placa?',
+    answer: 'Os botões da placa e do Desenvolvimento NexOS abrem uma conversa com nosso comercial no WhatsApp. Alinhamos sua necessidade, personalização ou escopo, prazos e condições para fechar a venda diretamente com você.',
   },
   {
     id: '06',
@@ -48,8 +44,13 @@ const FAQ_ITEMS: FAQItem[] = [
   },
   {
     id: '07',
-    question: 'Como é calculado o frete?',
-    answer: 'Calculamos o frete de acordo com sua região.',
+    question: 'O que é o EasyWay?',
+    answer: 'É um projeto de assistente administrativo com IA. As funcionalidades previstas incluem gerar documentos, organizar notas fiscais, converter arquivos, configurar lembretes e oferecer apoio básico em finanças. Ainda em desenvolvimento, sem data de disponibilidade definida.',
+  },
+  {
+    id: '08',
+    question: `${config.brand.name}, ${config.brand.fullName} e ${config.brand.alternateNames.join(' e ')} são a mesma empresa?`,
+    answer: `Sim. ${config.brand.fullName} é o nome completo da ${config.brand.name}, também conhecida como ${config.brand.alternateNames.join(' e ')}. Nosso site oficial é nexoslab.online. Desenvolvemos sites, landing pages e cardápios digitais e oferecemos placas NFC com QR Code para empresas.`,
   },
 ];
 
@@ -88,7 +89,6 @@ export function FAQ({ className = '' }: FAQProps) {
       <div className={styles.container}>
         <div className={styles.sectionNav} aria-label="Navegação de suporte">
           <span className={styles.currentSection}><CircleHelp size={16} aria-hidden="true" /> Dúvidas frequentes</span>
-           <a href={commercialHref()} target="_blank" rel="noopener noreferrer">Falar com a gente <ArrowUpRight size={16} aria-hidden="true" /></a>
         </div>
 
         <header className={styles.header}>
@@ -117,6 +117,7 @@ export function FAQ({ className = '' }: FAQProps) {
             </a>
           </span>
         </p>
+        <a href="#contact" className={styles.textLink}>Agendar conversa</a>
       </div>
     </section>
   );

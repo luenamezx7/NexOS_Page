@@ -8,7 +8,7 @@ import { useScrollContext } from './SmoothScrollProvider';
 // Trava REAL do scroll da página para modais/drawers.
 // Por que só `overflow: hidden` não bastava: o Lenis intercepta
 // wheel/touch num raf próprio e continua dirigindo window.scroll
-// mesmo com body travado — a página rolava atrás do checkout e o
+// mesmo com body travado — a página rolava atrás do modal e o
 // scroll do drawer brigava com o da página (scroll chaining/jank).
 // Este hook:
 //  - chama lenis.stop()/start() via contexto (o Lenis ignora eventos

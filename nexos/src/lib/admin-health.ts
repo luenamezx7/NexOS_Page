@@ -2,14 +2,9 @@ import 'server-only';
 import { Client } from '@notionhq/client';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { isCloudflareConfigured, verifyToken } from '@/lib/cloudflare';
-import { getAsaasEnv, isAsaasConfigured } from '@/lib/asaas';
 
 export async function publicHealth() {
-  const [supabase, asaas] = await Promise.all([
-    supabasePublicHealth(),
-    Promise.resolve({ configured: isAsaasConfigured() }),
-  ]);
-  return { supabase, asaas };
+  return { supabase: await supabasePublicHealth() };
 }
 
 async function supabasePublicHealth() {
@@ -30,14 +25,13 @@ export async function adminDiagnostics() {
   ]);
   return {
     checkedAt: new Date().toISOString(), supabase, notion, cloudflare,
-    asaas: { configured: isAsaasConfigured(), environment: getAsaasEnv() },
   };
 }
 
 async function supabaseAdminHealth() {
   try {
     const client = createAdminClient();
-    const { error } = await client.from('orders').select('id', { head: true }).limit(1);
+    const { error } = await client.from('profiles').select('id', { head: true }).limit(1);
     return { ok: !error };
   } catch { return { ok: false }; }
 }

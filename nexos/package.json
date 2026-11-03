@@ -19,8 +19,7 @@
     "migrate:passwords": "node scripts/migrate-passwords.mjs",
     "test:browser": "playwright test",
     "test:email": "node --use-system-ca --import tsx scripts/test-email.ts",
-    "typecheck": "tsc --noEmit",
-    "test:auth:live:legacy-invalidado": "node --use-system-ca tests/live-auth.mjs"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

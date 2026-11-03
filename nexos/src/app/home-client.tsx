@@ -7,11 +7,14 @@ import { Hero } from '@/components/Hero';
 import { SectionIndicator } from '@/components/SectionIndicator';
 import { SectionBackground } from '@/components/sections/SectionBackground';
 import { LandingPageBlur } from '@/components/sections/LandingPageBlur';
+import { ProofStrip } from '@/components/sections/ProofStrip';
+import { FloatingWhatsApp } from '@/components/sections/FloatingWhatsApp';
 import BrandEntrance from '@/components/BrandEntrance';
 
 const Services = dynamic(() => import('@/components/Services').then(m => m.Services));
 const AboutUs = dynamic(() => import('@/components/AboutUs').then(m => m.AboutUs));
-const TigerManifesto = dynamic(() => import('@/components/sections/TigerManifesto').then(m => m.TigerManifesto));
+const Plans = dynamic(() => import('@/components/sections/Plans').then(m => m.Plans));
+const ContactForm = dynamic(() => import('@/components/sections/ContactForm').then(m => m.ContactForm));
 const FAQ = dynamic(() => import('@/components/FAQ').then(m => m.FAQ));
 const MascotSolutions = dynamic(() => import('@/components/sections/MascotSolutions').then(m => m.MascotSolutions));
 const Footer = dynamic(() => import('@/components/Footer').then(m => m.Footer));
@@ -63,30 +66,32 @@ export default function HomeClient() {
         <div className="relative">
           <div id="main-content" tabIndex={-1} className="relative">
             <Hero ref={heroRef} />
+            <ProofStrip />
             <SectionBackground index={0} scene="waves" experience="studio">
               <FisicoDigitalSection />
             </SectionBackground>
             <SectionBackground index={1} experience="solutions">
               <Services />
             </SectionBackground>
-            <SectionBackground index={2} experience="easyway">
-              <EasyWay />
-            </SectionBackground>
-            <SectionBackground index={3} scene="product" experience="nfc">
+            <SectionBackground index={2} scene="product" experience="nfc">
               <PlacaNFCSection />
+            </SectionBackground>
+            <SectionBackground index={3} scene="waves" experience="process">
+              <DeliveryProcess />
             </SectionBackground>
             <SectionBackground index={4} experience="applications">
               <MascotSolutions />
             </SectionBackground>
-            <SectionBackground index={5} scene="waves" experience="process">
-              <DeliveryProcess />
+            <SectionBackground index={5} experience="plans"><Plans /></SectionBackground>
+            <SectionBackground index={6} experience="easyway">
+              <EasyWay />
             </SectionBackground>
-            <SectionBackground index={6} experience="about">
+            <SectionBackground index={7} experience="about">
               <AboutUs />
-              <TigerManifesto />
             </SectionBackground>
-            <SectionBackground index={7} scene="image" experience="contact">
+            <SectionBackground index={8} experience="contact">
               <FAQ />
+              <ContactForm />
               <CTAFinal />
               <SocialInvite />
             </SectionBackground>
@@ -96,6 +101,7 @@ export default function HomeClient() {
         </div>
       </div>
       <LandingPageBlur />
+      <FloatingWhatsApp />
     </main>
   );
 }

@@ -8,6 +8,7 @@ import { ArrowUpRight, Check } from 'lucide-react';
 import { FieldGroup, FieldLegend, FieldSet } from '../ui/field';
 import { DELIVERY_STEPS } from './landing-content';
 import styles from './Sections.module.css';
+import { landingEvidence } from '@/config/landing-evidence';
 
 export function DeliveryProcess() {
   const [kind, setKind] = useState<keyof typeof DELIVERY_STEPS>('product');
@@ -44,7 +45,7 @@ export function DeliveryProcess() {
       <motion.ol className={styles.timeline} data-pinned={pinned} style={{ '--process-progress': reduce ? 1 : scrollYProgress } as MotionStyle} aria-label={kind === 'product' ? 'Processo do produto físico' : 'Processo do serviço digital'}>
         {DELIVERY_STEPS[kind].map((step, i) => <li key={step.title} data-active={pinned && i === activeStep} aria-current={pinned && i === activeStep ? 'step' : undefined}>
           <span className={styles.stepMarker}>{String(i + 1).padStart(2, '0')}</span>
-          <span className={styles.stepDetail}>{step.detail}</span><h3>{step.title}</h3><p>{step.body}</p>
+           <span className={styles.stepDetail}>{step.detail}</span><h3>{step.title}</h3><p>{step.body}</p>{landingEvidence.durations[kind][i] && <small>Prazo estimado: {landingEvidence.durations[kind][i]}</small>}
           <span className={styles.stepEnd} aria-hidden="true">{i === 3 ? <Check size={16} /> : <ArrowUpRight size={16} />}</span>
         </li>)}
       </motion.ol>

@@ -39,7 +39,7 @@ for (const theme of ['light', 'dark'] as const) {
       const texture = await atmosphere.evaluate(el => Number(getComputedStyle(el, '::before').opacity));
       expect(texture).toBeGreaterThan(.06);
       expect(texture).toBeLessThan(.1);
-      const primary = page.locator('.hero-actions').getByRole('link', { name: 'Entrar em contato', exact: true });
+      const primary = page.locator('.hero-actions').getByRole('link', { name: 'Agendar conversa', exact: true });
       await expect(primary).toHaveCSS('color', 'rgb(255, 255, 255)');
       await expect(primary).toHaveCSS('background-image', /linear-gradient/);
       const actions = await page.locator('.hero-actions').boundingBox();

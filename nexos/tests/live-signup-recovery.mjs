@@ -84,7 +84,7 @@ try {
     env: {
       ...process.env, SITE_URL: origin, DASHBOARD_ADMIN_USER_IDS: fixtures[0],
       TURNSTILE_ENFORCED: 'false', NEXT_PUBLIC_TURNSTILE_SITE_KEY: 'test-runtime-public-key',
-      TURNSTILE_SECRET_KEY: 'test-runtime-private-key', CHECKOUT_STATUS_SECRET: randomUUID() + randomUUID(),
+      TURNSTILE_SECRET_KEY: 'test-runtime-private-key',
     },
     stdio: ['ignore', 'ignore', 'inherit'],
   });

@@ -6,15 +6,6 @@ export interface Service {
   ctaText: string;
 }
 
-export interface Testimonial {
-  id: string;
-  author: string;
-  role: string;
-  company: string;
-  content: string;
-  avatar?: string;
-}
-
 export interface NavItem {
   label: string;
   href: string;
@@ -40,7 +31,6 @@ export interface SiteConfig {
     ctaSecondary: { label: string; href: string };
   };
   services: Service[];
-  testimonials: Testimonial[];
   navigation: NavItem[];
   footer: {
     links: FooterLink[];

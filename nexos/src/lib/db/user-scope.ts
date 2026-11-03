@@ -7,7 +7,7 @@ import { getUserAccess } from '@/lib/auth/session';
  *
  * POR QUE ESTE MÓDULO EXISTE
  *
- * As tabelas de cliente (`profiles`, `orders`, `addresses`, …) tinham RLS
+ * As tabelas de cliente (como `profiles`) tinham RLS
  * baseado em `auth.uid()`, que vem do JWT do Supabase Auth. Com o Better Auth
  * não existe mais esse JWT: uma sessão Better Auth não se transforma em sessão
  * Supabase. Manter o cliente "do usuário" deixaria `auth.uid()` nulo e o RLS
@@ -15,8 +15,7 @@ import { getUserAccess } from '@/lib/auth/session';
  *
  * Consequência: a consulta passa pela conexão privilegiada — que ignora RLS — e o
  * filtro de propriedade passa a ser responsabilidade exclusiva deste arquivo.
- * Por isso a leitura vem pronta (`selectOwn`) e toda mutação exige prova de
- * posse (`ownsRecord`), em vez de depender de cada rota lembrar do `.eq()`.
+ * Por isso a leitura vem pronta (`selectOwn`).
  *
  * RLS continua ligado, sem policies de cliente: um grant futuro a
  * `anon`/`authenticated` ainda cairia no default-deny.
@@ -24,10 +23,6 @@ import { getUserAccess } from '@/lib/auth/session';
 
 const OWNERSHIP = {
   profiles: 'id',
-  orders: 'owner_id',
-  addresses: 'user_id',
-  idempotency_keys: 'owner_id',
-  customer_bindings: 'application_user_id',
 } as const;
 
 export type OwnedTable = keyof typeof OWNERSHIP;
@@ -42,8 +37,6 @@ export type UserScope = {
   client: AdminClient;
   /** Leitura da tabela já restrita ao usuário. */
   selectOwn(table: OwnedTable): ReturnType<ReturnType<AdminClient['from']>['select']>;
-  /** Leitura de um registro, confirmada como pertencente ao usuário. */
-  ownsRecord(table: OwnedTable, recordId: string): Promise<boolean>;
 };
 
 function ownerColumn(table: OwnedTable): string {
@@ -70,16 +63,6 @@ export async function getUserScope(): Promise<UserScope | null> {
     client,
     selectOwn(table) {
       return client.from(table).select('*').eq(ownerColumn(table), userId);
-    },
-    async ownsRecord(table, recordId) {
-      // O id vem do cliente e portanto é entrada, não prova de autorização.
-      const { data } = await client
-        .from(table)
-        .select('id')
-        .eq('id', recordId)
-        .eq(ownerColumn(table), userId)
-        .maybeSingle();
-      return !!data;
     },
   };
 }

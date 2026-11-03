@@ -16,3 +16,5 @@
 .figure figcaption { margin-top: 24px; color: var(--text-tertiary); font: 14px/1.6 var(--font-sans); text-align: center; }
 @media (max-width: 389px) { .app { width: 82px; font-size: 12px; } }
 @media (forced-colors: active) { .center, .appIcon { background: Canvas; color: CanvasText; border-color: CanvasText; box-shadow: none; } }
+.proposedNode { position: absolute; z-index: 1; top: 90%; display: grid; gap: 3px; width: 88px; transform: translate(-50%, -50%); padding: 10px 4px; border: 1px dashed var(--surface-line); border-radius: 12px; background: var(--surface-base); color: var(--text-secondary); font-size: 12px; line-height: 1.3; text-align: center; }
+.proposedNode small { font-size: 10px; }.proposedNode[data-node='crm'] { left: 19%; }.proposedNode[data-node='payments'] { left: 81%; }

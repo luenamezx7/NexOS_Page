@@ -16,7 +16,7 @@ test('home entrega serviços e links no HTML, antes de qualquer interação', as
   expect(html).not.toContain('google-site-verification-code');
   expect(html).not.toMatch(/<dialog\b[^>]*class="waves-entry/);
   expect(html).not.toContain('<div inert=');
-  expect(html).toContain('<title>NexOS Lab | Criação de Sites, Landing Pages e Placas NFC</title>');
+  expect(html).toContain('<title>NexOS Lab | Sites, Landing Pages, Cardápios Digitais e Placas NFC</title>');
   expect(html).not.toMatch(/lovable/i);
   expect(html).toContain('<meta name="application-name" content="NexOS Lab"');
   expect(html).toContain('<meta property="og:site_name" content="NexOS Lab"');
@@ -43,9 +43,12 @@ test('home e páginas comerciais são legíveis e navegáveis sem JavaScript', a
     await expect(page.locator('#hero h1')).toHaveCSS('opacity', '1');
     await expect(page.locator('#hero .hero-description')).toContainText('NFC e QR Code');
     await expect(page.locator('footer')).toContainText('NexOS Performance');
-    await expect(page.locator('#faq summary').first()).toHaveText(/NexOS, NexOS Lab e NexOS Performance são a mesma empresa\?/);
+    await expect(page.locator('#faq summary').first()).toContainText('Quanto custa contratar a NexOS?');
     await expect(page.locator('#faq details').first().locator('p')).toBeVisible();
-    await expect(page.locator('#faq details').first().locator('p')).toContainText('Nosso site oficial é nexoslab.online');
+    const brandQuestion = page.locator('#faq details').last();
+    await expect(brandQuestion.locator('summary')).toContainText('NexOS, NexOS Lab e NexOS Performance são a mesma empresa?');
+    await brandQuestion.locator('summary').click();
+    await expect(brandQuestion.locator('p')).toContainText('Nosso site oficial é nexoslab.online');
     await expect(page.getByRole('heading', { name: 'Desenvolvimento NexOS' })).toBeVisible();
     expect(await page.locator('#services').evaluate(el => getComputedStyle(el).opacity)).toBe('1');
     await page.getByRole('link', { name: 'Criação de sites', exact: true }).click();
@@ -138,8 +141,9 @@ test('favicon de busca usa o mascote em PNG quadrado e é servido aos crawlers s
     const svg = await request.get('/mascote-tigre-albino.svg');
     expect(svg.status()).toBe(200);
     const artwork = await svg.text();
-    expect(artwork).toContain('viewBox="144 82 1024 1024"');
-    expect(artwork).toContain('fill="#932EEF"');
+    expect(artwork).toContain('viewBox="0 0 1254 1254"');
+    expect(artwork).toContain('id="olho-esquerdo"');
+    expect(artwork).not.toContain('@keyframes');
     await page.goto('http://localhost:3100/favicon.png');
     const renderedIcon = page.locator('img');
     await expect(renderedIcon).toBeVisible();
@@ -152,26 +156,46 @@ test('favicon de busca usa o mascote em PNG quadrado e é servido aos crawlers s
       const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
       let white = 0;
       let black = 0;
-      let violet = 0;
-      let lilac = 0;
       for (let i = 0; i < pixels.length; i += 4) {
-        // The new mascot has ivory fur rather than pure white.
+        // White Nexbot silhouette stays legible on the black favicon background.
         if (pixels[i] > 225 && pixels[i + 1] > 225 && pixels[i + 2] > 225) white++;
         if (pixels[i] < 15 && pixels[i + 1] < 15 && pixels[i + 2] < 15) black++;
-        if (Math.abs(pixels[i] - 147) < 20 && Math.abs(pixels[i + 1] - 46) < 20 && Math.abs(pixels[i + 2] - 239) < 20) violet++;
-        if (Math.abs(pixels[i] - 221) < 20 && Math.abs(pixels[i + 1] - 150) < 20 && Math.abs(pixels[i + 2] - 246) < 20) lilac++;
       }
-      return { white, black, violet, lilac };
+      return { white, black };
     });
     // A valid PNG must contain the actual contrasting mark, not an empty render.
     expect(colors.white).toBeGreaterThan(1000);
     expect(colors.black).toBeGreaterThan(1000);
-    expect(colors.violet).toBeGreaterThan(150);
-    expect(colors.lilac).toBeGreaterThan(50);
     await renderedIcon.screenshot({ path: testInfo.outputPath('favicon.png') });
   } finally {
     await context.close();
   }
+});
+
+test('Nexbot animates only in headers; footer and icons use the static mark', async ({ page, request }) => {
+  await page.goto('/#hero');
+  await page.evaluate(() => document.fonts.ready);
+  const animated = page.locator('header[role="banner"] img[alt="Logo do mascote Nexbot da NexOS"]');
+  await expect(animated).toHaveAttribute('src', /nexbotlogo\.animated[^/]*\.svg/);
+  await expect(animated).toHaveCSS('filter', /drop-shadow/);
+  await expect(animated).not.toHaveCSS('filter', /invert/);
+  await expect(animated).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  const wordmark = page.locator('header[role="banner"] [data-wordmark="nexos"]');
+  const logo = await animated.boundingBox();
+  const text = await wordmark.boundingBox();
+  const lab = await page.locator('header[role="banner"] [data-brand-lab]').boundingBox();
+  expect(logo!.width).toBeGreaterThan(48);
+  expect(logo!.width).toBeLessThan(text!.width / 2);
+  expect(Math.abs(logo!.y + logo!.height / 2 - (text!.y + text!.height / 2))).toBeLessThan(8);
+  expect(Math.abs(text!.y + text!.height - lab!.y - lab!.height)).toBeLessThan(2);
+  await expect(page.locator('header[role="banner"] [data-brand-registration]')).toHaveCount(0);
+  await expect(page.locator('footer img[alt="Logo do mascote Nexbot da NexOS"]')).toHaveAttribute('src', /nexbotlogostatic[^/]*\.svg/);
+  await expect(page.locator('footer img[alt="Logo do mascote Nexbot da NexOS"]')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect(page.locator('footer img[alt="Logo do mascote Nexbot da NexOS"]')).not.toHaveCSS('filter', /invert/);
+  const animation = await request.get(await animated.getAttribute('src') as string);
+  expect(await animation.text()).toContain('@media (prefers-reduced-motion: reduce)');
+  await page.goto('/criacao-de-sites');
+  await expect(page.locator('[data-page-header] img[alt="Logo do mascote Nexbot da NexOS"]')).toHaveAttribute('src', /nexbotlogo\.animated[^/]*\.svg/);
 });
 
 test('dados estruturados descrevem o produto sem publicar oferta ou preço', async ({ page }) => {

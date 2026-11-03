@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1254" height="1254" viewBox="0 0 1254 1254" role="img" aria-labelledby="title desc">
+  <title id="title">Mascote com capuz e olhos estrelados</title>
+  <desc id="desc">Mascote com fundo transparente e olhos estrelados que piscam suavemente. A animação respeita a preferência por movimento reduzido.</desc>
+  <style>
+    #olho-esquerdo, #olho-direito {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: piscar 5.6s cubic-bezier(.4, 0, .2, 1) infinite;
+    }
+    @keyframes piscar {
+      0%, 35%, 45%, 76%, 86%, 100% { transform: scale(1, 1); }
+      37%, 78% { transform: scale(.98, 1.05); }
+      39%, 80% { transform: scale(1.07, .035); }
+      40%, 81% { transform: scale(1.07, .035); }
+      42.5%, 83.5% { transform: scale(.97, 1.06); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #olho-esquerdo, #olho-direito { animation: none; }
+    }
+  </style>
+  <g id="mascote" fill="#000000">
+    <path id="capuz" d="M 355,933 C 291,896 235,850 218,788 C 204,744 218,698 239,651 C 298,517 402,350 524,273 C 583,236 633,216 683,223 C 784,229 847,302 899,404 C 947,499 988,598 1026,695 C 1040,729 1049,766 1032,801 C 1012,846 944,893 883,932 C 891,947 906,971 897,980 C 872,1002 775,1028 699,1040 C 603,1055 452,1053 383,1031 C 357,1023 336,1010 340,980 C 342,964 349,946 355,933 Z"/>
+    <path id="abertura-capuz" fill="#ffffff" d="M 258,735 C 286,650 365,577 442,533 C 499,500 573,465 624,443 C 688,417 734,409 767,436 C 833,498 899,575 947,645 C 966,674 979,708 988,742 C 970,709 944,667 919,638 C 934,700 936,757 918,801 C 900,849 879,869 820,886 C 740,909 640,932 561,952 C 473,975 410,997 381,1030 C 397,991 442,964 490,947 C 521,936 554,928 584,923 C 510,916 442,901 397,878 C 352,856 328,822 322,778 C 316,735 326,680 342,637 C 307,668 280,701 258,735 Z"/>
+    <path id="rosto" d="M 361,716 C 367,658 389,595 430,564 C 473,531 529,520 588,511 C 648,502 714,492 763,510 C 817,526 852,564 873,623 C 892,672 896,721 888,763 C 878,815 846,841 795,856 C 736,873 644,875 576,873 C 510,872 444,869 405,846 C 365,823 354,777 361,716 Z"/>
+    <path id="olho-esquerdo" fill="#ffffff" d="M 508,575 C 514,642 521,660 589,671 C 525,681 516,701 509,771 C 501,701 494,681 430,671 C 493,661 500,641 508,575 Z"/>
+    <path id="olho-direito" fill="#ffffff" d="M 744,575 C 751,642 759,661 825,671 C 760,682 752,701 746,772 C 738,701 729,682 665,671 C 729,661 737,641 744,575 Z"/>
+    <path id="boca" fill="#ffffff" d="M 607,780 L 648,780 C 660,780 660,798 648,798 L 607,798 C 595,798 595,780 607,780 Z"/>
+  </g>
+</svg>

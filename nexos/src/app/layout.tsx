@@ -1,8 +1,6 @@
 import type { Metadata, Viewport } from 'next';
-import { headers } from 'next/headers';
 import './globals.css';
 import { SmoothScrollProvider } from '@/components/SmoothScrollProvider';
-import { ThemeProvider } from '@/components/ThemeProvider';
 import { CookieConsentProvider } from '@/components/cookie-consent';
 import { SiteAtmosphere } from '@/components/SiteAtmosphere';
 import { JsonLd } from '@/components/JsonLd';
@@ -46,44 +44,33 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [{ media: '(prefers-color-scheme: light)', color: '#faf7fc' }, { media: '(prefers-color-scheme: dark)', color: '#000000' }],
+  themeColor: '#07050d',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
   viewportFit: 'cover',
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const headersList = await headers();
-  const nonce = headersList.get('x-nonce');
-  const themeScriptContent = `(function(){var t;try{t=localStorage.getItem('nexos-theme');}catch(e){}var s=t==='light'||t==='dark'?t:'dark';document.documentElement.classList.toggle('dark',s==='dark');document.documentElement.style.colorScheme='only '+s;var m=document.querySelector('meta[name=color-scheme]');if(m)m.content=s;})()`;
-
   return (
-    <html lang="pt-BR" suppressHydrationWarning className={`${geist.variable} ${syne.variable} font-sans dark`}>
+    <html lang="pt-BR" className={`${geist.variable} ${syne.variable} font-sans dark`}>
       <head>
         <link rel="preload" href="/fonts/martian-mono-variable.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <meta name="color-scheme" content="dark" />
-        {nonce ? (
-          <script nonce={nonce} dangerouslySetInnerHTML={{ __html: themeScriptContent }} />
-        ) : (
-          <script dangerouslySetInnerHTML={{ __html: themeScriptContent }} />
-        )}
       </head>
       <body className="min-h-screen min-h-dvh w-full max-w-full overflow-x-clip antialiased">
         <JsonLd data={organizationData} />
         <noscript>
           <style>{`[data-reveal], .landing-page [style*="opacity"], .service-page [style*="opacity"] { opacity: 1 !important; transform: none !important; filter: none !important; } .landing-hero a[href^="#"] { pointer-events: auto !important; } .presentation-replay { display: none !important; }`}</style>
         </noscript>
-        <ThemeProvider>
           <SmoothScrollProvider>
             <SiteAtmosphere />
             <div className="site-shell"><CookieConsentProvider>{children}</CookieConsentProvider></div>
           </SmoothScrollProvider>
-        </ThemeProvider>
       </body>
     </html>
   );

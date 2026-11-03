@@ -53,9 +53,9 @@ test('cancelled OAuth preserves the destination and displays an error', async ({
     callback = route.request().postDataJSON().errorCallbackURL;
     return route.fulfill({ status: 400, json: { code: 'OAUTH_FAILED' } });
   });
-  await page.goto('/portal/acesso?callbackUrl=%2F%3Fcheckout%3Dplaca%26quantity%3D3');
+  await page.goto('/portal/acesso?callbackUrl=%2F%3Forigem%3Dmenu%23services');
   await page.getByRole('button', { name: 'GitHub', exact: true }).click();
-  expect(new URL(callback, 'http://localhost:3100').searchParams.get('callbackUrl')).toBe('/?checkout=placa&quantity=3');
+  expect(new URL(callback, 'http://localhost:3100').searchParams.get('callbackUrl')).toBe('/?origem=menu#services');
   await expect(page.getByRole('alert').filter({ hasText: 'Não foi possível iniciar' })).toBeVisible();
 });
 

@@ -1,29 +1,19 @@
 'use client';
 
-import { ArrowUpRight } from 'lucide-react';
+import Image from 'next/image';
 import { raithonRealm } from '@/lib/brand-font';
-import { useSectionScroll } from './SmoothScrollProvider';
 import styles from './AboutUs.module.css';
 import { ScrollReveal } from './ScrollReveal';
-import { GlyphMatrix } from './ui/glyph-matrix';
 import { NexosIntegrations } from './NexosIntegrations';
-import { useTheme } from './ThemeProvider';
-import { VISOR_PALETTE } from '@/lib/brand-palette';
+import { landingEvidence } from '@/config/landing-evidence';
 
 /** Keep the existing anchor so bookmarks and shared section links still work. */
 export function AboutUs() {
-  const scrollToSection = useSectionScroll();
-  const { theme } = useTheme();
-
   return (
     <section id="testimonials" aria-labelledby="about-title" className={`${styles.section} ${raithonRealm.variable}`}>
-      <div className={styles.matrix} aria-hidden="true"><GlyphMatrix cellSize={22} mutationRate={.025} interval={140} fadeBottom={.8} color={theme === 'dark' ? VISOR_PALETTE.lilac : VISOR_PALETTE.violet} /></div>
       <div className={styles.container}>
         <ScrollReveal preset="label" className={styles.sectionNav}>
           <span>Sobre Nós</span>
-          <a href="#faq" onClick={event => { if (scrollToSection('#faq')) event.preventDefault(); }}>
-            Dúvidas frequentes <ArrowUpRight size={16} aria-hidden="true" />
-          </a>
         </ScrollReveal>
 
         <div className={styles.layout}>
@@ -54,14 +44,12 @@ export function AboutUs() {
               </ScrollReveal>
             </div>
 
-            <a href="#services" className={styles.servicesLink} onClick={event => { if (scrollToSection('#services')) event.preventDefault(); }}>
-              Ver soluções <ArrowUpRight size={17} aria-hidden="true" />
-            </a>
           </div>
           <div className={styles.identity}>
             <ScrollReveal preset="image"><NexosIntegrations /></ScrollReveal>
           </div>
         </div>
+        {landingEvidence.founder && <div className={styles.founders}><h3>Quem está por trás da NexOS</h3><div className={styles.founderCard}><Image className={styles.founderPhoto} src={landingEvidence.founder.photo} alt={`Foto de ${landingEvidence.founder.name}`} width={112} height={112} /><div><strong>{landingEvidence.founder.name}</strong><p>{landingEvidence.founder.role}</p></div></div></div>}
       </div>
     </section>
   );

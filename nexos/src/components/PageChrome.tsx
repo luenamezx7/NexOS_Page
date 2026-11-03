@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { BrandMark } from './BrandMark';
-import { ThemeToggle } from './ThemeToggle';
 import { ProfileOrb } from './ProfileOrb';
 
 const PAGE_LINKS = [
@@ -20,14 +19,13 @@ export function PageHeader({ children }: { children?: ReactNode }) {
   return (
     <header className="page-header" role="banner" data-page-header>
       <a href="#main-content" className="page-skip-link">Pular para o conteúdo</a>
-      <Link href="/" className="page-header-brand" aria-label="NexOS — página inicial"><BrandMark /></Link>
+       <Link href="/" className="page-header-brand" aria-label="NexOS — página inicial"><BrandMark animated /></Link>
       <nav className="page-header-nav" aria-label="Navegação de páginas">
         {PAGE_LINKS.map(({ href, label }) => <Link key={href} href={href} aria-current={pathname === href ? 'page' : undefined}>{href === '/portal/acesso' && <ProfileOrb />}{label}</Link>)}
       </nav>
       <div className="page-header-actions">
         {children}
         <Link href="/" className="page-back-link"><ArrowLeft size={16} aria-hidden="true" /><span>Voltar ao site</span></Link>
-        <ThemeToggle />
       </div>
     </header>
   );

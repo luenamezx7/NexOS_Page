@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 const routes = ['/placa-nfc', '/criacao-de-sites', '/landing-pages', '/cardapio-digital', '/privacidade', '/termos', '/cookies', '/lgpd', '/reembolso', '/portal/acesso', '/portal/redefinir', '/admin-dashboard-su/secure-entry', '/pagina-inexistente-nexos'];
 
-for (const theme of ['light', 'dark'] as const) {
+for (const theme of ['dark'] as const) {
   for (const width of [390, 1366]) {
     test(`${theme} / ${width}px: internal pages share brand chrome and fit the viewport`, async ({ page }, testInfo) => {
       test.setTimeout(90000);
@@ -20,9 +20,9 @@ for (const theme of ['light', 'dark'] as const) {
         await expect(page.locator('[data-page-header]'), route).toBeVisible();
         await expect(page.locator('h1'), route).toHaveCount(1);
         await expect(page.locator('h1'), route).toBeVisible();
-        await expect(page.getByRole('button', { name: theme === 'light' ? 'Ativar modo escuro' : 'Ativar modo claro' }), route).toBeVisible();
+        await expect(page.getByRole('button', { name: /Ativar modo (claro|escuro)/ }), route).toHaveCount(0);
+        await expect(page.locator('html'), route).toHaveClass(/dark/);
         await expect(page.locator('.interior-atmosphere'), route).toHaveCount(1);
-        await expect(page.locator('.interior-atmosphere .brand-veil-light'), route).toHaveCSS('background-image', /radial-gradient/);
         await expect(page.locator('.interior-atmosphere canvas'), route).toHaveCount(0);
         await page.evaluate(() => document.fonts.ready);
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), route).toBe(true);
@@ -38,10 +38,9 @@ for (const theme of ['light', 'dark'] as const) {
   }
 }
 
-test('internal links preserve theme and legal navigation exposes the active document', async ({ page }) => {
+test('internal links stay dark and legal navigation exposes the active document', async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem('nexos-theme', 'light'));
   await page.goto('/privacidade');
-  await page.getByRole('button', { name: 'Ativar modo escuro' }).click();
   await page.getByRole('navigation', { name: 'Documentos legais' }).getByRole('link', { name: 'Termos', exact: true }).click();
   await expect(page).toHaveURL(/\/termos$/);
   await expect(page.locator('html')).toHaveClass(/dark/);

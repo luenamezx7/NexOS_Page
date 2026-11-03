@@ -37,32 +37,6 @@ export const config: SiteConfig = {
       ctaText: 'Adquirir Placa',
     },
   ],
-  testimonials: [
-    {
-      id: '1',
-      author: 'Marina Santos',
-      role: 'CTO',
-      company: 'FinTech Brazil',
-      content: 'A equipe entregou nosso MVP em 6 semanas com qualidade de código que nos permitiu escalar para 100k usuários sem refatorar.',
-      avatar: '/avatars/marina.svg',
-    },
-    {
-      id: '2',
-      author: 'Rafael Oliveira',
-      role: 'Founder',
-      company: 'EduFlow',
-      content: 'O design system que criaram reduziu nosso tempo de desenvolvimento de features em 40%. ROI claro desde o mês 1.',
-      avatar: '/avatars/rafael.svg',
-    },
-    {
-      id: '3',
-      author: 'Camila Rodrigues',
-      role: 'VP Product',
-      company: 'HealthTech Latam',
-      content: 'Discovery bem feito economizou 6 meses de desenvolvimento errado. Clareza total do que construir e por quê.',
-      avatar: '/avatars/camila.svg',
-    },
-  ],
   navigation: [
     { label: 'Serviços', href: '#services' },
     { label: 'Sobre Nós', href: '#testimonials' },
@@ -88,8 +62,8 @@ export const config: SiteConfig = {
   },
   whatsapp,
   meta: {
-    title: 'Criação de Sites, Landing Pages e Placas NFC',
-    description: 'NexOS Lab, também conhecida como NexOS Performance: sites, landing pages e cardápios digitais para empresas. Placas NFC com QR Code para seu atendimento.',
+    title: 'Sites, Landing Pages, Cardápios Digitais e Placas NFC',
+    description: 'NexOS Lab cria sites, landing pages, cardápios digitais e placas NFC com QR Code para empresas. Conheça o EasyWay, assistente administrativo com IA em desenvolvimento.',
     ogImage: '/og',
   },
 };

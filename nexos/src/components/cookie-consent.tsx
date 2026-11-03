@@ -21,8 +21,8 @@ import { useScrollLock } from './useScrollLock';
 // ============================================================
 // NexOS — Consentimento de Cookies (LGPD)
 // - Banner inferior (sem body lock: não bloqueia navegação)
-// - Central de preferências em modal (mesmo padrão do checkout/
-//   LegalModal: backdrop, body lock, ESC, scroll isolado)
+// - Central de preferências em modal
+//   com backdrop, body lock, ESC e scroll isolado
 // - Persistência: localStorage `nexos-cookie-consent-v1` (12 meses)
 // - Categorias: necessary (sempre on) + functional + analytics + marketing
 // - Hook de gating: window.__nexosConsent + evento `nexos:consent-updated`
@@ -324,7 +324,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
         )}
       </AnimatePresence>
 
-      {/* ——— Central de preferências (modal, padrão checkout) ——— */}
+      {/* ——— Central de preferências ——— */}
       <AnimatePresence>
         {prefsOpen && (
           <>

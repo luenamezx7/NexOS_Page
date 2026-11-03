@@ -7,7 +7,7 @@ import 'server-only';
 //
 // Nota: Tokens Turnstile são de uso único. No fluxo de auth,
 // o token é validado pelo Supabase (não aqui). Em outros fluxos
-// (contato, checkout), a validação é feita no servidor.
+// (contato), a validação é feita no servidor.
 // ============================================================
 
 const VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";

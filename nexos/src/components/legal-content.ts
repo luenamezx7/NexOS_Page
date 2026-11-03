@@ -127,7 +127,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
     sections: [
       {
         heading: '1. O que usamos',
-        body: 'Estritamente necessários (sempre ativos): nexos-theme (tema claro/escuro) e nexos-cookie-consent-v1 (sua escolha de cookies, 12 meses). Sem eles o site não lembra suas preferências.',
+        body: 'Estritamente necessários (sempre ativos): nexos-cookie-consent-v1 registra sua escolha de cookies por 12 meses. Sem ele o site não lembra suas preferências.',
       },
       {
         heading: '2. Opcionais (só com seu consentimento)',

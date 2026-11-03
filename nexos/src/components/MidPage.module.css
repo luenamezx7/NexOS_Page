@@ -80,12 +80,10 @@
 .footerSection { --mid-surface: color-mix(in srgb, var(--color-ink) 3%, var(--color-canvas)); --mid-line: color-mix(in srgb, var(--color-ink) 14%, transparent); --mid-muted: var(--text-secondary); --mid-accent: var(--display-rose); position: relative; isolation: isolate; overflow: hidden; background: var(--color-canvas); color: var(--color-ink); }
 .footerSection > :global([data-brand-veil]) { opacity: .8; }
 :global(.dark) .footerSection { --mid-accent: var(--display-rose); }
-.footerInner { position: relative; z-index: 1; width: 100%; max-width: 1280px; margin-inline: auto; padding: 56px 24px 32px; }
+.footerInner { position: relative; z-index: 1; width: 100%; max-width: 1280px; margin-inline: auto; padding: 48px 24px 24px; }
 .footerGrid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; }
 .brandBlock { min-width: 0; }
 .brandLink { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; color: inherit; text-decoration: none; }
-.brandSignature { display: block; width: 160px; height: 72px; flex-shrink: 0; }
-.brandMascot { display: block; width: 48px; height: 48px; flex-shrink: 0; object-fit: contain; }
 .brandMark { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 8px; background: var(--color-ink); color: var(--color-canvas); font-family: var(--font-display); font-size: 13px; font-weight: 700; letter-spacing: -0.02em; flex-shrink: 0; }
 .brandTag { margin-top: 8px; font-family: var(--font-sans); font-size: 14px; color: var(--mid-muted); }
 .brandDesc { margin-top: 10px; max-width: 36ch; font-size: 14px; line-height: 1.5; color: var(--mid-muted); }
@@ -95,7 +93,7 @@
 .socialLink:is(:hover, :focus-visible) { border-color: var(--detail-accent); background: var(--detail-accent); color: var(--detail-ink); }
 .colTitle { margin-bottom: 16px; font-family: var(--font-sans); font-size: 14px; font-weight: 600; color: var(--color-ink); }
 .colList { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
-.colLink { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; font-size: 14px; color: var(--mid-muted); text-decoration: none; transition: color 200ms; }
+.colLink { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-size: 15px; color: var(--color-ink); text-decoration: none; transition: color 200ms; }
 .colLink:hover { color: var(--color-ink); }
 .colLinkArrow { color: var(--detail-text); opacity: 0; transition: opacity 200ms, transform 200ms; }
 .colLink:hover .colLinkArrow { opacity: 1; transform: translate(1px, -1px); }
@@ -104,8 +102,6 @@
 .footerMeta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
 .cookieBtn { display: inline-flex; align-items: center; min-height: 44px; border: 0; background: transparent; padding: 0; font-family: var(--font-sans); font-size: var(--type-small); letter-spacing: 0; color: var(--text-tertiary); text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
 .cookieBtn:hover { color: var(--color-ink); }
-.statusLine { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-sans); font-size: 13px; color: var(--text-tertiary); }
-.statusDot { width: 6px; height: 6px; border-radius: 50%; background: var(--detail-accent); flex-shrink: 0; }
 
 @media (max-width: 359px) {
   .container, .footerInner { padding-inline: 16px; }
@@ -123,7 +119,7 @@
 }
 @media (min-width: 768px) {
   .container { padding: 56px 40px 80px; }
-  .footerInner { padding: 64px 32px 48px; }
+  .footerInner { padding: 56px 32px 32px; }
   .header { margin-bottom: 48px; }
   .pillarOverlineId { display: inline; }
   .bentoCard { padding: 28px; }
