@@ -12,7 +12,9 @@ import { useTurnstileConfig } from '@/lib/use-turnstile-config';
 import { authClient, authErrorMessage, signOutAccount } from '@/lib/auth/client';
 import { Button } from '@/components/ui/Button';
 import { SocialProviderIcon } from './SocialProviderIcon';
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from '@/components/ui/field';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import styles from './LoginForm.module.css';
 import { MetallicButton } from '@/components/ui/metallic-button';
@@ -21,8 +23,8 @@ import { PageFooter } from '../PageChrome';
 
 type Mode = 'login' | 'signup' | 'forgot' | 'magic' | 'verify-email';
 const MODE_DESCRIPTION: Record<Mode, string> = {
-  login: 'Acesse seus pedidos, dados e configurações.',
-  signup: 'Crie seu acesso para comprar e acompanhar seus pedidos.',
+  login: 'Entre com seu e-mail e senha ou escolha outra forma de acesso.',
+  signup: 'Crie sua conta para gerenciar seus dados e acessar os serviços da ezway.',
   forgot: 'Receba um link para definir uma nova senha.',
   magic: 'Enviaremos um link de acesso ao seu e-mail.',
   'verify-email': 'Confirme seu cadastro para continuar.',
@@ -143,18 +145,27 @@ export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, 
       <div className={styles.content} id="main-content">
         {userFlow && <AuthStory recovery={mode === 'forgot'} />}
         {!userFlow && <aside className={styles.story}>
-          <p className={styles.storyLabel}>NexOS Ops / Controlled Access</p>
+          <p className={styles.storyLabel}>ezway Ops / Controlled Access</p>
           <h2 className={`${styles.adminHeading} mt-4`}>Ambiente administrativo restrito.</h2>
           <p className={styles.storyDescription}>Acesso por papel, sessão revogável e autenticação em duas etapas obrigatória para operadores.</p>
         </aside>}
-        <ScrollReveal as="section" preset="card" className={styles.panel} aria-labelledby="login-title">
-          <p className={styles.overline}>{userFlow ? 'Sua conta NexOS' : 'Acesso administrativo'}</p>
+        <ScrollReveal as="section" preset="card" className={styles.panelWrap} aria-labelledby="login-title">
+          <Card className={styles.panel}>
+          <CardHeader className={styles.panelHeader}>
+           <p className={styles.overline}>{userFlow ? 'Sua conta ezway' : 'Acesso administrativo'}</p>
+           {userFlow && step === 'credentials' && (mode === 'login' || mode === 'signup') &&
+             <div className={styles.modeSwitch} role="group" aria-label="Tipo de acesso">
+               <button type="button" aria-pressed={mode === 'login'} onClick={() => goMode('login')} disabled={busy}>Entrar</button>
+               <button type="button" aria-pressed={mode === 'signup'} onClick={() => goMode('signup')} disabled={busy}>Criar conta</button>
+             </div>}
           <div className={styles.title}>
             {!userFlow && <LockKeyhole size={20} />}
             <h1 id="login-title" className={styles.heading}>{step === 'totp' ? 'Verificação em duas etapas' : mode === 'signup' ? 'Criar sua conta' : mode === 'forgot' ? 'Recuperar senha' : mode === 'magic' ? 'Entrar por link de e-mail' : mode === 'verify-email' ? 'Confirme seu e-mail' : userFlow ? 'Entrar na sua conta' : 'Entrada do operador'}</h1>
           </div>
-          <p className={styles.description}>{step === 'totp' ? 'Confirme sua identidade para concluir o acesso.' : !userFlow && mode === 'login' ? 'Área restrita a operadores autorizados.' : MODE_DESCRIPTION[mode]}</p>
-          <div className={styles.formStack}>
+           <p className={styles.description}>{step === 'totp' ? 'Confirme sua identidade para concluir o acesso.' : !userFlow && mode === 'login' ? 'Área restrita a operadores autorizados.' : MODE_DESCRIPTION[mode]}</p>
+          </CardHeader>
+          <CardContent className={styles.panelContent}>
+           <div className={styles.formStack}>
             {(error || (step === 'credentials' && security.error)) && <Alert variant="destructive"><AlertDescription>{error || security.error}</AlertDescription></Alert>}
             {step === 'credentials' && (mode === 'login' || mode === 'signup') && socialProviders.length > 0 &&
               <div className={styles.social} role="group" data-social-auth-mode={socialAuthMode} aria-label={mode === 'signup' ? 'Criar conta com provedor' : 'Entrar com provedor'}>
@@ -168,21 +179,21 @@ export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, 
             </>}
             {step === 'credentials' && mode !== 'verify-email' && <form onSubmit={e => { e.preventDefault(); void submit(new FormData(e.currentTarget)); }}>
               <FieldGroup className={styles.formGroup}>
-                {mode === 'signup' && <Field><FieldLabel htmlFor="login-name">Nome</FieldLabel><input id="login-name" name="name" autoComplete="name" required maxLength={120} className="field-input" disabled={busy} /></Field>}
-                <Field><FieldLabel htmlFor="login-email">E-mail</FieldLabel><input id="login-email" name="email" type="email" autoComplete="username webauthn" required maxLength={254} className="field-input" disabled={busy} /></Field>
+                {mode === 'signup' && <Field><FieldLabel htmlFor="login-name">Nome</FieldLabel><Input id="login-name" name="name" autoComplete="name" required maxLength={120} className="field-input" disabled={busy} /></Field>}
+                <Field><FieldLabel htmlFor="login-email">E-mail</FieldLabel><Input id="login-email" name="email" type="email" autoComplete="username webauthn" required maxLength={254} className="field-input" disabled={busy} /></Field>
                 {(mode === 'login' || mode === 'signup') && <Field>
                   <FieldLabel htmlFor="login-password">Senha</FieldLabel>
                   <div className={styles.passwordControl}>
-                    <input id="login-password" name="password" type={showPassword ? 'text' : 'password'} autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} required minLength={mode === 'signup' ? 12 : 1} maxLength={256} value={password} onChange={e => setPassword(e.target.value)} className="field-input" disabled={busy} />
+                    <Input id="login-password" name="password" type={showPassword ? 'text' : 'password'} autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} required minLength={mode === 'signup' ? 12 : 1} maxLength={256} value={password} onChange={e => setPassword(e.target.value)} className="field-input" disabled={busy} />
                     <button type="button" onClick={() => setShowPassword(v => !v)} aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'} aria-pressed={showPassword} className={styles.passwordToggle}>{showPassword ? <EyeOff size={17} aria-hidden="true" /> : <Eye size={17} aria-hidden="true" />}</button>
                   </div>
-                  {mode === 'signup' && <><p className="text-sm text-muted-foreground">12+ caracteres, maiúscula, minúscula, número e símbolo.</p><PasswordStrengthMeter password={password} /></>}
+                   {mode === 'signup' && <><FieldDescription>12+ caracteres, maiúscula, minúscula, número e símbolo.</FieldDescription><PasswordStrengthMeter password={password} /></>}
                   {mode === 'login' && <button type="button" onClick={() => goMode('forgot')} className={styles.forgotLink}>Esqueceu a senha?</button>}
                 </Field>}
-                {mode === 'signup' && <Field><FieldLabel htmlFor="confirm-password">Confirmar senha</FieldLabel><input id="confirm-password" name="confirmPassword" type="password" autoComplete="new-password" required minLength={12} maxLength={256} className="field-input" disabled={busy} /></Field>}
+                {mode === 'signup' && <Field><FieldLabel htmlFor="confirm-password">Confirmar senha</FieldLabel><Input id="confirm-password" name="confirmPassword" type="password" autoComplete="new-password" required minLength={12} maxLength={256} className="field-input" disabled={busy} /></Field>}
                 <Turnstile key={captchaKey} onVerify={setCaptcha} onExpire={() => setCaptcha('')} onError={() => setCaptcha('')} />
                 <MetallicButton type="submit" disabled={busy || captchaBlocked} className="w-full" aria-busy={busy}>{busy ? 'Aguarde…' : mode === 'signup' ? 'Criar conta' : mode === 'forgot' ? 'Enviar link de redefinição' : mode === 'magic' ? 'Enviar link de acesso' : 'Entrar'}<ArrowRight size={16} aria-hidden="true" /></MetallicButton>
-                {userFlow && <button type="button" disabled={busy} className="self-start text-sm underline underline-offset-4" onClick={() => goMode(mode === 'signup' ? 'login' : 'signup')}>{mode === 'signup' ? 'Já tenho conta' : 'Criar uma conta'}</button>}
+                {userFlow && (mode === 'signup' || mode === 'login') && <button type="button" disabled={busy} className="self-start text-sm underline underline-offset-4" onClick={() => goMode(mode === 'signup' ? 'login' : 'signup')}>{mode === 'signup' ? 'Já tenho conta' : 'Criar uma conta'}</button>}
                 {mode !== 'login' && <button type="button" disabled={busy} onClick={() => goMode('login')} className="self-start text-sm underline underline-offset-4">Voltar ao login</button>}
               </FieldGroup>
             </form>}
@@ -199,15 +210,17 @@ export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, 
             {step === 'totp' && <form onSubmit={e => { e.preventDefault(); void verify(String(new FormData(e.currentTarget).get('code') ?? '').trim()); }}>
               <FieldGroup>
                 <p>Confirme o segundo fator para concluir o acesso. O desafio expira em 10 minutos.</p>
-                <Field><FieldLabel htmlFor="login-code">{backup ? 'Código de recuperação' : 'Código do autenticador'}</FieldLabel><input key={String(backup)} id="login-code" name="code" inputMode={backup ? 'text' : 'numeric'} autoComplete="one-time-code" pattern={backup ? undefined : '[0-9]{6}'} minLength={backup ? 1 : 6} maxLength={backup ? 64 : 6} required className="field-input font-mono" disabled={busy} /></Field>
+                 <Field><FieldLabel htmlFor="login-code">{backup ? 'Código de recuperação' : 'Código do autenticador'}</FieldLabel><Input key={String(backup)} id="login-code" name="code" inputMode={backup ? 'text' : 'numeric'} autoComplete="one-time-code" pattern={backup ? undefined : '[0-9]{6}'} minLength={backup ? 1 : 6} maxLength={backup ? 64 : 6} required className="field-input font-mono" disabled={busy} /></Field>
                 <MetallicButton type="submit" disabled={busy} className="w-full">{busy ? 'Confirmando…' : 'Confirmar acesso'}</MetallicButton>
                 <button type="button" disabled={busy} onClick={() => { setBackup(v => !v); setError(''); }} className="self-start text-sm underline underline-offset-4">{backup ? 'Usar aplicativo autenticador' : 'Usar código de recuperação'}</button>
                 <button type="button" disabled={busy} onClick={() => void guard(async () => { await signOutAccount(); window.location.replace(loginPath); })} className="self-start text-sm underline underline-offset-4">Sair e usar outra conta</button>
               </FieldGroup>
             </form>}
             {message && <p role="status" aria-live="polite" className="text-sm leading-relaxed">{message}</p>}
-          </div>
-          <nav aria-label="Links legais" className="mt-8 flex flex-wrap gap-4 text-xs text-muted-foreground">{[['/privacidade', 'Privacidade'], ['/termos', 'Termos'], ['/lgpd', 'LGPD'], ['/cookies', 'Cookies']].map(([url, label]) => <Link key={url} href={url} className="underline underline-offset-2">{label}</Link>)}</nav>
+           </div>
+          </CardContent>
+          <CardFooter className={styles.panelFooter}><FieldSeparator /><nav aria-label="Links legais" className="flex flex-wrap gap-4 text-xs text-muted-foreground">{[['/privacidade', 'Privacidade'], ['/termos', 'Termos'], ['/lgpd', 'LGPD'], ['/cookies', 'Cookies']].map(([url, label]) => <Link key={url} href={url} className="underline underline-offset-2">{label}</Link>)}</nav></CardFooter>
+          </Card>
         </ScrollReveal>
       </div>
       <PageFooter />

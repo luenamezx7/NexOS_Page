@@ -1,5 +1,5 @@
 // ============================================================
-// NexOS — Cloudflare API v4 — helper server-side
+// ezway — Cloudflare API v4 — helper server-side
 // Docs: https://developers.cloudflare.com/api/
 // Token: CLOUDFLARE_API_TOKEN (Bearer)
 //       CLOUDFLARE_ACCOUNT_ID (opcional, para filtros)

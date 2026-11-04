@@ -4,7 +4,7 @@ import { sanitizeCallbackPath } from '@/lib/auth/callback';
 import { enabledSocialProviders, socialAuthMode } from '@/lib/auth/social';
 import { LoginForm } from '@/components/auth/LoginForm';
 
-export const metadata = { title: 'Acesso restrito | NexOS', robots: { index: false, follow: false } };
+export const metadata = { title: 'Acesso restrito | ezway', robots: { index: false, follow: false } };
 export const dynamic = 'force-dynamic';
 
 export default async function SecureEntryPage({

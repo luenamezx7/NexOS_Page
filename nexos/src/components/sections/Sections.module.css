@@ -8,9 +8,9 @@
 }
 .scene[data-tone="alternate"] { --section-ground: #f4edf8; }
 .scene[data-scene="product"] { --section-ground: #f0e9f5; }
-:global(.dark) .scene { --section-ground: #07050d; }
-:global(.dark) .scene[data-tone="alternate"] { --section-ground: #0f0a1a; }
-:global(.dark) .scene[data-scene="product"] { --section-ground: #170c2b; }
+:global(.dark) .scene,
+:global(.dark) .scene[data-tone="alternate"],
+:global(.dark) .scene[data-scene="product"] { --section-ground: #000; }
 .scene[data-section-panel] {
   margin: 24px auto;
   border-radius: var(--panel-radius);
@@ -19,21 +19,21 @@
 .scene:first-of-type { margin-top: 0; }
 .scenery { position: absolute; inset: 0; z-index: -1; overflow: hidden; border-radius: inherit; pointer-events: none; }
 .scene[data-scene="plain"] .scenery { background: radial-gradient(ellipse at 18% 8%, color-mix(in srgb, var(--visor-violet) 9%, transparent), transparent 57%); }
-:global(.dark) .scene[data-scene="plain"] .scenery { background: radial-gradient(ellipse at 18% 8%, #971ef421, transparent 57%); }
+:global(.dark) .scene[data-scene="plain"] .scenery { background: none; }
 .sceneContent { position: relative; }
 .contours { position: absolute; inset: 0; opacity: .42; mask-image: linear-gradient(90deg, #0009, transparent 38%, transparent 62%, #000b); }
 .scene[data-scene="waves"] .scenery { background: radial-gradient(ellipse at 85% 45%, color-mix(in srgb, var(--visor-lilac) 12%, transparent), transparent 65%), radial-gradient(ellipse at 15% 70%, color-mix(in srgb, var(--visor-violet) 10%, transparent), transparent 60%); }
-:global(.dark) .scene[data-scene="waves"] .scenery { background: radial-gradient(ellipse at 12% 12%, #971ef42e, transparent 56%), radial-gradient(ellipse at 85% 78%, #e873f81c, transparent 50%); }
+:global(.dark) .scene[data-scene="waves"] .scenery { background: none; }
 .fieldImage { position: absolute; inset: -24px; background: url('/nexos-field.svg') center / cover no-repeat; opacity: .24; mask-image: linear-gradient(90deg, #0009, transparent 26%, transparent 72%, #000c); }
 :global(.dark) .fieldImage { background-image: url('/nexos-field-dark.svg'); opacity: .3; }
 .scene[data-scene="product"] .fieldImage { opacity: .32; mask-image: linear-gradient(90deg, transparent, #000 12%, #000 30%, transparent 49%); }
 .scene[data-scene="product"] .scenery { background: radial-gradient(ellipse at 12% 22%, rgba(var(--brand-accent-rgb), .16), transparent 45%), radial-gradient(ellipse at 95% 85%, rgba(var(--brand-secondary-rgb), .1), transparent 38%); }
-:global(.dark) .scene[data-scene="product"] .scenery { background: radial-gradient(ellipse at 12% 22%, #971ef42e, transparent 55%), radial-gradient(ellipse at 95% 85%, #e873f81c, transparent 45%); }
+:global(.dark) .scene[data-scene="product"] .scenery { background: none; }
 /* Preto OLED nas seções de produto; sem halos sobre o conteúdo ou sobre o blur da viewport. */
 :global(.dark) .scene[data-home-experience="nfc"],
-:global(.dark) .scene[data-home-experience="easyway"] { --section-ground: #000; }
+:global(.dark) .scene[data-home-experience="easychat"] { --section-ground: #000; }
 :global(.dark) .scene[data-home-experience="nfc"] .scenery,
-:global(.dark) .scene[data-home-experience="easyway"] .scenery { background: none; }
+:global(.dark) .scene[data-home-experience="easychat"] .scenery { background: none; }
 :global(.dark) .scene[data-home-experience="nfc"] .fieldImage { display: none; }
 .section { scroll-margin-top: 100px; }
 .container { width: min(100%, 1280px); margin-inline: auto; padding: var(--section-space) 40px; }
@@ -82,6 +82,8 @@
   .chartPanel:hover, .channelPanel:hover, .connection:hover { border-color: color-mix(in srgb, var(--landing-accent) 23%, var(--surface-line)); box-shadow: var(--surface-shadow), 0 12px 40px -32px var(--panel-halo); }
 }
 .chartPanel { background: radial-gradient(ellipse at 70% 110%, var(--ambient-violet), transparent 70%), var(--surface-base); }
+:global(.dark) .connection { background: var(--surface-base); }
+:global(.dark) .chartPanel { background: var(--surface-base); }
 .chartTop { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between; }
 .chartTop > span { display: inline-flex; align-items: center; gap: 8px; font: 11px var(--font-mono); }
 .chartTop > fieldset { width: 180px; max-width: 100%; flex-shrink: 0; }
@@ -112,16 +114,18 @@
 .processCounter { margin-top: 24px; color: var(--detail-text); font: 500 12px/1.5 var(--font-mono); letter-spacing: .08em; }
 .timeline { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; list-style: none; margin-top: 56px; }
 .timeline { position: relative; }
-.timeline::after { content: ''; position: absolute; z-index: 0; top: 22px; left: 22px; right: calc(25% - 22px); height: 1px; pointer-events: none; background: var(--detail-accent); transform: scaleX(var(--process-progress, 0)); transform-origin: left; }
 .timeline .stepMarker { z-index: 1; }
-.timeline li { position: relative; min-width: 0; padding: 0 24px 32px 0; border-bottom: 1px solid var(--landing-line); }
-.timeline li::before { content: ''; position: absolute; top: 22px; left: 0; right: 0; height: 1px; background: var(--landing-line); }
+.timeline li { position: relative; min-width: 0; padding: 0 24px 32px 0; border-bottom: 1px solid var(--landing-line); transition: border-color .35s ease; }
+.timeline li::before { content: ''; position: absolute; top: 22px; left: 0; right: 0; height: 1px; background: color-mix(in srgb, var(--color-ink) 24%, var(--color-canvas)); }
 .timeline li:last-child::before { right: calc(100% - 44px); }
-.stepMarker { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--detail-accent); border-radius: 14px; background: var(--detail-accent); color: var(--detail-ink); font: 500 13px var(--font-sans); margin-bottom: 32px; }
+.stepMarker { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid color-mix(in srgb, var(--color-ink) 32%, var(--color-canvas)); border-radius: 50%; background: color-mix(in srgb, var(--color-ink) 12%, var(--color-canvas)); color: color-mix(in srgb, var(--color-ink) 65%, var(--color-canvas)); font: 600 13px var(--font-sans); margin-bottom: 32px; transition: background-color .35s ease, border-color .35s ease, color .35s ease, box-shadow .35s ease, transform .35s ease; }
+.timeline li[data-active='true'] { border-color: color-mix(in srgb, var(--brand-lime) 55%, var(--landing-line)); }
+.timeline li[data-active='true'] .stepMarker { border-color: var(--brand-lime); background: var(--brand-lime); color: var(--detail-ink); transform: scale(1.08); box-shadow: 0 0 0 5px color-mix(in srgb, var(--brand-lime) 18%, transparent), 0 0 18px color-mix(in srgb, var(--brand-lime) 66%, transparent), 0 0 36px color-mix(in srgb, var(--brand-lime) 32%, transparent); }
 .stepDetail { display: block; font: 13px/1.5 var(--font-sans); color: var(--landing-muted); margin-bottom: 14px; }
 .timeline h3 { font-size: 25px; line-height: 1.2; }
 .timeline p { font-size: var(--type-body); line-height: 1.7; color: var(--landing-muted); margin-top: 14px; }
-.stepEnd { display: block; color: var(--detail-text); margin-top: 24px; }
+.stepEnd { display: block; color: var(--landing-muted); margin-top: 24px; transition: color .35s ease; }
+.timeline li[data-active='true'] .stepEnd { color: var(--detail-text); }
 .processFoot { display: flex; justify-content: space-between; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 24px; font: 13px/1.6 var(--font-sans); color: var(--landing-muted); }
 .processFoot a { display: inline-flex; gap: 8px; align-items: center; min-height: 44px; color: var(--color-ink); }
 .processFoot a svg, .processFoot a:is(:hover, :focus-visible) { color: var(--detail-text); }
@@ -132,10 +136,9 @@
   .processStage { position: sticky; top: 76px; display: flex; flex-direction: column; justify-content: center; min-height: calc(100svh - 76px); padding-block: 20px; }
   .processStage .splitHeader { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: end; gap: 40px; margin-bottom: 0; }
   .processStage .timeline { margin-top: 20px; }
-  .processStage .timeline li { padding-bottom: 20px; opacity: .85; transition: opacity .3s ease, transform .3s ease, border-color .3s ease; }
-  .processStage .timeline li[data-active='true'] { opacity: 1; transform: translateY(-5px); border-color: var(--detail-accent); }
-  .processStage .timeline li[data-active='true'] .stepMarker { box-shadow: 0 0 0 6px color-mix(in srgb, var(--detail-accent) 18%, transparent); }
-  .processStage .stepMarker { margin-bottom: 20px; transition: box-shadow .3s ease; }
+  .processStage .timeline li { padding-bottom: 20px; opacity: .78; transition: opacity .35s ease, border-color .35s ease; }
+  .processStage .timeline li[data-active='true'] { opacity: 1; }
+  .processStage .stepMarker { margin-bottom: 20px; }
   .processStage .timeline p { margin-top: 10px; }
   .processStage .stepEnd { margin-top: 14px; }
 }
@@ -189,7 +192,6 @@
   .channelPanel h3 { margin-top: 20px; }
   .lineChart { min-height: 140px; }
   .timeline { grid-template-columns: minmax(0, 1fr); margin-top: 32px; }
-  .timeline::after { display: none; }
   .timeline li { padding: 0 0 32px 68px; border-bottom: 0; min-height: 180px; }
   .timeline li::before, .timeline li:last-child::before { top: 0; bottom: 0; height: auto; width: 1px; left: 22px; right: auto; }
   .timeline li:last-child::before { height: 44px; }
@@ -204,7 +206,8 @@
   .ctaBottom { flex-direction: column; align-items: stretch; gap: 24px; margin-top: 32px; padding-top: 24px; }
   .ctaActions :global(.btn-primary-nex) { width: 100%; padding-inline: 16px; gap: 12px; font-size: 12px; }
 }
-@media (prefers-reduced-motion: reduce) { .chartPanel, .channelPanel, .connection { transition: none; } .connectionAura, .connection .connectionNodes svg { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .chartPanel, .channelPanel, .connection, .timeline li, .stepMarker, .stepEnd { transition: none; } .connectionAura, .connection .connectionNodes svg { animation: none; } }
 @media (forced-colors: active) { .scene[data-section-panel] { background: Canvas; border-color: CanvasText; box-shadow: none; } .scene::before, .scenery { display: none; } }
+@media (forced-colors: active) { .stepMarker { background: Canvas; color: CanvasText; border-color: CanvasText; } .timeline li[data-active='true'] .stepMarker { background: Highlight; color: HighlightText; border-color: Highlight; box-shadow: none; } }
 @media (prefers-reduced-motion: reduce) { .textLink svg { transition: none; } }
 @media (forced-colors: active) { .heading > span, .ctaLayout h2 span { background: none; color: CanvasText; } }

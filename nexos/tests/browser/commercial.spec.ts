@@ -24,7 +24,7 @@ test('landing offers have no public prices and quantity is sent to commercial', 
   await expect(page.locator('#services')).toContainText('Valores e condições são definidos com o comercial');
   await page.getByRole('button', { name: 'Aumentar quantidade' }).click();
   const href = await page.locator('#showcase').getByRole('link', { name: 'Personalizar minha placa', exact: true }).getAttribute('href');
-  expect(new URL(href!).searchParams.get('text')).toContain('2 Placas Inteligentes NexOS');
+  expect(new URL(href!).searchParams.get('text')).toContain('2 Placas Inteligentes ezway');
 });
 
 for (const theme of ['light', 'dark']) {
@@ -36,8 +36,8 @@ for (const theme of ['light', 'dark']) {
     }, theme);
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/#hero');
-    await expect(page.getByRole('dialog', { name: 'Apresentação NexOS' })).toHaveCount(0);
-    const carousel = page.getByRole('region', { name: 'Suportes e soluções NexOS', exact: true });
+    await expect(page.getByRole('dialog', { name: 'Apresentação ezway' })).toHaveCount(0);
+    const carousel = page.getByRole('region', { name: 'Suportes e soluções ezway', exact: true });
     for (const width of [320, 390, 768, 1440]) {
       await page.setViewportSize({ width, height: 900 });
       await carousel.scrollIntoViewIfNeeded();

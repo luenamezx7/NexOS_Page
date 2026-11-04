@@ -20,7 +20,7 @@ const draws = (page: Page) => page.evaluate(() => (window as unknown as { __wave
 
 test('abertura escura mantém a receita Waves e as estrelas, sem CTA de entrada', async ({ page }) => {
   await monitorDraws(page); await page.goto('/'); await openPresentation(page);
-  const dialog = page.getByRole('dialog', { name: 'Apresentação NexOS' });
+  const dialog = page.getByRole('dialog', { name: 'Apresentação ezway' });
   await expect(dialog).toBeFocused(); await expect(dialog.getByRole('heading')).toHaveText(phrase);
   await expect(dialog.getByRole('button')).toHaveCount(0); await expect(dialog.getByRole('link')).toHaveCount(0);
   await page.keyboard.press('Escape'); await page.keyboard.press('Enter'); await expect(dialog).toBeVisible();
@@ -68,7 +68,7 @@ for (const theme of ['light', 'dark'] as const) {
     try {
       for (const viewport of [{ width: 1366, height: 768 }, { width: 360, height: 740 }, { width: 844, height: 390 }]) {
         await page.setViewportSize(viewport); await page.goto('/'); await openPresentation(page);
-        const dialog = page.getByRole('dialog', { name: 'Apresentação NexOS' });
+        const dialog = page.getByRole('dialog', { name: 'Apresentação ezway' });
         await expect(dialog).toBeFocused(); await expect(dialog.getByRole('heading')).toHaveText(phrase);
         await expect(dialog.getByRole('button')).toHaveCount(0);
         await page.evaluate(() => document.fonts.ready);
@@ -112,7 +112,7 @@ test('home e F5 mostram o conteúdo sem apresentação, inclusive após um repla
   await expect(page.locator('body')).not.toHaveCSS('overflow', 'hidden');
   await page.getByRole('link', { name: 'Criação de sites', exact: true }).click();
   await expect(page).toHaveURL(/\/criacao-de-sites$/);
-  await page.getByRole('link', { name: 'NexOS — página inicial', exact: true }).click();
+  await page.getByRole('link', { name: 'ezway — página inicial', exact: true }).click();
   await expect(page).toHaveURL(/\/$/); await expect(page.locator('.waves-entry')).toHaveCount(0);
   await openPresentation(page);
   await page.reload(); await expect(page.locator('.waves-entry')).toHaveCount(0);
@@ -120,7 +120,7 @@ test('home e F5 mostram o conteúdo sem apresentação, inclusive após um repla
 
 test('abrir documento em rota interna e voltar à home não mostra apresentação', async ({ page }) => {
   await page.goto('/criacao-de-sites');
-  await page.getByRole('link', { name: 'NexOS — página inicial', exact: true }).click();
+  await page.getByRole('link', { name: 'ezway — página inicial', exact: true }).click();
   await expect(page).toHaveURL(/\/$/); await expect(page.locator('.waves-entry')).toHaveCount(0);
   await page.reload(); await expect(page.locator('.waves-entry')).toHaveCount(0);
 });

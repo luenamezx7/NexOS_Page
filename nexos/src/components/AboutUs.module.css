@@ -46,8 +46,8 @@
   display: block;
   width: fit-content;
   color: #000;
-  font: 400 clamp(32px, 8cqi, 56px)/1 var(--font-brand-logo), sans-serif;
-  letter-spacing: 0;
+  font: 700 clamp(32px, 8cqi, 56px)/1 'Avenir Next', 'Helvetica Neue', Arial, sans-serif;
+  letter-spacing: -.045em;
   font-synthesis: none;
   white-space: nowrap;
   transform: translateY(-.1em);

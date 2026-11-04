@@ -1,5 +1,6 @@
 .section, .proof { position: relative; isolation: isolate; scroll-margin-top: 100px; background: var(--color-canvas); color: var(--color-ink); }
 .section::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(ellipse at 16% 4%, color-mix(in srgb, var(--visor-violet) 17%, transparent), transparent 62%); }
+:global(.dark) .section::before { display: none; }
 .inner { width: min(100%, 1280px); margin: auto; padding: clamp(64px, 8vw, 120px) 40px; }
 .kicker { margin-bottom: 16px; color: var(--detail-text); font-size: 14px; }
 .section h2 { max-width: 16ch; font: 750 clamp(34px, 4.5vw, 62px)/1.1 var(--font-display); letter-spacing: -.04em; }
@@ -33,6 +34,6 @@
 .submit:disabled { opacity: .6; cursor: not-allowed; }
 .success { padding: 32px; border: 1px solid var(--surface-line); border-radius: 22px; background: var(--surface-raised); }
 .success h3 { font-size: 24px; }.success p { margin-block: 16px; }.success button { min-height: 44px; text-decoration: underline; }
-.floating { position: fixed; z-index: 39; right: max(22px, env(safe-area-inset-right)); bottom: max(28px, env(safe-area-inset-bottom)); display: grid; place-items: center; width: 52px; height: 52px; border: 1px solid #e1ffa2; border-radius: 50%; background: #d6f55b; color: #12081f; box-shadow: 0 0 28px #d6f55b77; }
+.floating { position: fixed; z-index: 39; right: max(22px, env(safe-area-inset-right)); bottom: max(28px, env(safe-area-inset-bottom)); display: grid; place-items: center; width: 52px; height: 52px; border: 1px solid var(--brand-lime); border-radius: 50%; background: var(--brand-lime); color: #12081f; box-shadow: 0 0 28px #d9f22a77; }
 @media(max-width: 767px) { .inner { padding: 64px 24px; }.proof ul, .planGrid, .contactLayout, .form { grid-template-columns: 1fr; }.proof .inner { padding-block: 30px; }.founderInvite { align-items: flex-start; flex-direction: column; }.floating { right: 16px; bottom: max(20px, env(safe-area-inset-bottom)); }.form { padding: 20px; } }
 @media(prefers-reduced-motion: reduce) { .plan { transition: none; }.plan:hover { transform: none; } }

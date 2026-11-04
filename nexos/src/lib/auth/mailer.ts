@@ -22,8 +22,8 @@ async function sendAuthEmail({ to, url }: AuthEmailParams, heading: string, mess
 }
 
 export const sendVerificationEmail = (params: AuthEmailParams) => sendAuthEmail(params,
-  'Confirme seu e-mail no NexOS', 'Confirme seu endereço para ativar a conta. O link expira em 1 hora.', 'Confirmar e-mail');
+  'Confirme seu e-mail na ezway', 'Confirme seu endereço para ativar a conta. O link expira em 1 hora.', 'Confirmar e-mail');
 export const sendResetPasswordEmail = (params: AuthEmailParams) => sendAuthEmail(params,
-  'Redefina sua senha no NexOS', 'Recebemos um pedido de redefinição de senha. Este link é de uso único e expira em 1 hora.', 'Criar nova senha');
+  'Redefina sua senha na ezway', 'Recebemos um pedido de redefinição de senha. Este link é de uso único e expira em 1 hora.', 'Criar nova senha');
 export const sendMagicLinkEmail = (params: AuthEmailParams) => sendAuthEmail(params,
-  'Seu link de acesso ao NexOS', 'Use este link para entrar com segurança. Ele pode ser usado uma única vez e expira em 10 minutos.', 'Entrar no NexOS');
+  'Seu link de acesso à ezway', 'Use este link para entrar com segurança. Ele pode ser usado uma única vez e expira em 10 minutos.', 'Entrar na ezway');

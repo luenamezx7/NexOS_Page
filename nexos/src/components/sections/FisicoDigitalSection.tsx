@@ -3,6 +3,7 @@
 import { ArrowUpRight, Braces, Fingerprint, Layers, Nfc, ScanLine } from 'lucide-react';
 import styles from './Sections.module.css';
 import { ScrollFloat, ScrollReveal } from '../ScrollReveal';
+import { useLocale } from '@/lib/locale';
 
 const FEATURES = [
   { icon: Layers, label: 'Design', title: 'Uma identidade. Em cada detalhe.', body: 'Sua marca orienta a experiência, da primeira tela ao ponto de contato físico.' },
@@ -11,6 +12,7 @@ const FEATURES = [
 ];
 
 export function FisicoDigitalSection() {
+  const { t } = useLocale();
   return <section id="fisico-digital" aria-labelledby="fisico-title" className={styles.section}>
     <div className={styles.container}>
       <div className={styles.brandGrid}>
@@ -21,10 +23,10 @@ export function FisicoDigitalSection() {
         </header>
         <ScrollReveal preset="card" delay={.12}><ScrollFloat className={styles.connection}>
           <div className={styles.connectionAura} aria-hidden="true" />
-          <span className={styles.connectionLabel}>Do físico ao digital</span>
+           <span className={styles.connectionLabel}>{t('Do físico ao digital')}</span>
           <div className={styles.connectionNodes} aria-hidden="true"><Fingerprint /><i /><Nfc /><i /><ScanLine /></div>
-          <div className={styles.connectionLabels}><span>Sua marca</span><span>Um gesto</span><span>Seu digital</span></div>
-          <span className={styles.connectionStatus}><i aria-hidden="true" /> Aproxime ou escaneie</span>
+           <div className={styles.connectionLabels}><span>{t('Sua marca')}</span><span>{t('Um gesto')}</span><span>{t('Seu digital')}</span></div>
+           <span className={styles.connectionStatus}><i aria-hidden="true" /> {t('Aproxime ou escaneie')}</span>
         </ScrollFloat></ScrollReveal>
       </div>
       <div className={styles.featureGrid}>{FEATURES.map(({ icon: Icon, label, title, body }, index) => <ScrollReveal as="article" key={label} delay={index * .08}>

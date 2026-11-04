@@ -10,7 +10,7 @@ for (const width of [1366, 390]) {
     await page.setViewportSize({ width, height: width === 390 ? 844 : 768 });
     await page.goto('/');
     await openPresentation(page);
-    const dialog = page.getByRole('dialog', { name: 'Apresentação NexOS' });
+    const dialog = page.getByRole('dialog', { name: 'Apresentação ezway' });
     const portal = dialog.locator('[data-gp-transparent]');
     await expect(portal).toHaveAttribute('data-gp-motion', 'on', { timeout: 15000 });
     await expect(portal).toHaveAttribute('data-gp-focus', 'n');
@@ -52,7 +52,7 @@ for (const width of [1366, 390]) {
 test('apresentação não oferece botão ou link de entrada', async ({ page }) => {
   await page.goto('/');
   await openPresentation(page);
-  const dialog = page.getByRole('dialog', { name: 'Apresentação NexOS' });
+  const dialog = page.getByRole('dialog', { name: 'Apresentação ezway' });
   const portal = dialog.locator('[data-gp-transparent]');
   await expect(portal).toHaveAttribute('data-gp-motion', 'on', { timeout: 15000 });
   await expect(dialog.getByRole('button')).toHaveCount(0);
@@ -72,7 +72,7 @@ test('toque percorre o portal no celular', async ({ browser }) => {
   try {
     await page.goto('/');
     await openPresentation(page);
-    const dialog = page.getByRole('dialog', { name: 'Apresentação NexOS' });
+    const dialog = page.getByRole('dialog', { name: 'Apresentação ezway' });
     const portal = dialog.locator('[data-gp-transparent]');
     await expect(portal).toHaveAttribute('data-gp-motion', 'on', { timeout: 15000 });
     const session = await context.newCDPSession(page);
@@ -93,7 +93,7 @@ test('movimento reduzido mantém a leitura e entrada direta', async ({ page }) =
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
   await openPresentation(page);
-  const dialog = page.getByRole('dialog', { name: 'Apresentação NexOS' });
+  const dialog = page.getByRole('dialog', { name: 'Apresentação ezway' });
   await expect(dialog.getByRole('heading')).toBeVisible();
   await expect(dialog).toBeFocused();
   await page.keyboard.press('PageDown');
@@ -104,7 +104,7 @@ test('movimento reduzido mantém a leitura e entrada direta', async ({ page }) =
 test('teclado aproxima o texto e conclui a entrada no hero', async ({ page }) => {
   await page.goto('/');
   await openPresentation(page);
-  const dialog = page.getByRole('dialog', { name: 'Apresentação NexOS' });
+  const dialog = page.getByRole('dialog', { name: 'Apresentação ezway' });
   const portal = dialog.locator('[data-gp-transparent]');
   await expect(portal).toHaveAttribute('data-gp-motion', 'on', { timeout: 15000 });
   await page.keyboard.press('PageDown');

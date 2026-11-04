@@ -16,11 +16,11 @@ export function LandingPageBlur() {
   }, []);
   if (entryOpen || heroVisible) return null;
   return <>
-    <GradualBlur target="page" position="top" height="clamp(96px, 16svh, 160px)" strength={3}
-      layers={8} curve="linear" exponential
+    <GradualBlur target="page" position="top" height="clamp(72px, 12svh, 120px)" strength={3}
+      layers={4} curve="linear" exponential
       zIndex={40} className="landing-header-blur" />
-    <GradualBlur target="page" position="bottom" height="clamp(120px, 24svh, 240px)" strength={4}
-      layers={8} curve="linear" exponential autoHide
+    <GradualBlur target="page" position="bottom" height="clamp(96px, 18svh, 160px)" strength={4}
+      layers={4} curve="linear" exponential autoHide
       zIndex={30} className="landing-edge-blur" />
   </>;
 }

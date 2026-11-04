@@ -107,7 +107,7 @@ export function DashboardClient({
       </PageHeader>
 
       <main className={styles.main} id="main-content">
-        <div className="page-intro"><p className="page-kicker">NexOS / Operações</p><h1 className="page-title">Dashboard técnica</h1><p className={styles.meta}>{user.email} · {checkedAt} UTC</p></div>
+        <div className="page-intro"><p className="page-kicker">ezway / Operações</p><h1 className="page-title">Dashboard técnica</h1><p className={styles.meta}>{user.email} · {checkedAt} UTC</p></div>
         {msg && (
           <p role="alert" className={styles.alert}>
             {msg}

@@ -15,7 +15,7 @@ export function LegalPage({ slug }: { slug: string }) {
     <PageHeader />
     <main id="main-content" className="page-narrow">
         <div className="page-intro">
-          <p className="page-kicker">NexOS / Legal</p>
+          <p className="page-kicker">ezway / Legal</p>
           <h1 className="page-title">{doc.title}</h1>
           <p className="mt-4 text-sm text-[var(--text-tertiary)]">{doc.updated}</p>
           <p className="mt-5 max-w-[62ch] text-lg leading-relaxed text-[var(--text-secondary)]">{doc.intro}</p>

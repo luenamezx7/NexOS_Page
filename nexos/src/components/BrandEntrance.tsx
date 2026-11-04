@@ -3,8 +3,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { BrandWordmark } from './BrandWordmark';
 import { useScrollContext } from './SmoothScrollProvider';
-import { raithonRealm } from '@/lib/brand-font';
 import styles from './BrandEntrance.module.css';
+import { useLocale } from '@/lib/locale';
 
 interface BrandEntranceProps {
   onComplete: (entered: boolean) => void;
@@ -12,6 +12,7 @@ interface BrandEntranceProps {
 
 /** Server-rendered cover prevents the hero flashing before the opening fade. */
 export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
+  const { t } = useLocale();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const exitRef = useRef<(() => void) | null>(null);
   const completeRef = useRef<(() => void) | null>(null);
@@ -46,11 +47,16 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
     const beginExit = () => {
       if (disposed || completed || leaving) return;
       leaving = true;
-      // Paint and reveal the real hero underneath before dissolving the cover.
+      // Give the hero two paints to settle before the opaque cover starts fading.
       dialog.dataset.revealing = 'true';
       notify();
-      setPhase('leaving');
-      later(complete, media.matches ? 180 : 850);
+      frame = requestAnimationFrame(() => {
+        frame = requestAnimationFrame(() => {
+          if (disposed) return;
+          setPhase('leaving');
+          later(complete, media.matches ? 180 : 850);
+        });
+      });
     };
     const start = () => {
       if (disposed || completed || leaving || started) return;
@@ -73,7 +79,7 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
 
     // Use the actual closing-logo font before the fade, with a bounded fallback.
     const fontDeadline = later(start, 1400);
-    void document.fonts.load(`400 100px ${raithonRealm.style.fontFamily}`, 'NEXOS').then(() => {
+    void document.fonts.load('700 100px "Avenir Next"', 'ezway').then(() => {
       clearTimeout(fontDeadline);
       timers.delete(fontDeadline);
       start();
@@ -108,7 +114,7 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
       data-presentation
       data-phase={phase}
       data-lenis-prevent
-      aria-label="Apresentação NexOS"
+       aria-label={t('Apresentação ezway')}
       className={styles.dialog}
       onCancel={event => { event.preventDefault(); exitRef.current?.(); }}
       onTransitionEnd={event => {
@@ -118,7 +124,7 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
       <div className={styles.stage}>
         <div className={styles.frame}><BrandWordmark animated /></div>
       </div>
-      <button type="button" className={styles.skip} onClick={() => exitRef.current?.()}>Pular apresentação <span aria-hidden="true">↗</span></button>
+       <button type="button" className={styles.skip} onClick={() => exitRef.current?.()}>{t('Pular apresentação')} <span aria-hidden="true">↗</span></button>
     </dialog>
   </>;
 }

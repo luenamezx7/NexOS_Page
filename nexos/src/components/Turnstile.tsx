@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
  * Automatically loads the Turnstile script and handles cleanup.
  */
 import { useTurnstileConfig } from '@/lib/use-turnstile-config';
+import { useLocale } from '@/lib/locale';
 
 declare global {
   interface Window {
@@ -43,6 +44,7 @@ interface TurnstileProps {
 }
 
 export function Turnstile({ onVerify, onExpire, onError, theme = 'auto', size = 'normal' }: TurnstileProps) {
+  const { t, locale } = useLocale();
   const { siteKey, required, loading, configured, error } = useTurnstileConfig();
   const container = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
@@ -56,18 +58,18 @@ export function Turnstile({ onVerify, onExpire, onError, theme = 'auto', size = 
     void loadTurnstile().then(() => {
       if (cancelled || !container.current || !window.turnstile) return;
       widget = window.turnstile.render(container.current, {
-        sitekey: siteKey, theme, size,
+         sitekey: siteKey, theme, size, language: locale,
         callback: (token: string) => { if (!cancelled) { setFailed(false); callbacks.current.onVerify(token); } },
         'expired-callback': () => { if (!cancelled) callbacks.current.onExpire?.(); },
         'error-callback': () => { if (!cancelled) { setFailed(true); callbacks.current.onError?.(); } },
       });
     }).catch(() => { if (!cancelled) { setFailed(true); callbacks.current.onError?.(); } });
     return () => { cancelled = true; if (widget !== undefined) window.turnstile?.remove(widget); };
-  }, [siteKey, required, configured, loading, theme, size, attempt]);
-  if (loading) return <p role="status" className="text-sm">Preparando verificação de segurança…</p>;
-  if (error || (required && !configured)) return <p role="alert" className="text-sm">{error || 'Verificação de segurança não está configurada.'}</p>;
+   }, [siteKey, required, configured, loading, theme, size, attempt, locale]);
+   if (loading) return <p role="status" className="text-sm">{t('Preparando verificação de segurança…')}</p>;
+   if (error || (required && !configured)) return <p role="alert" className="text-sm">{t(error || 'Verificação de segurança não está configurada.')}</p>;
   return required && siteKey ? <div>
-    <div ref={container} role="group" className="min-h-[65px]" aria-label="Verificação de segurança" />
-    {failed && <button type="button" className="text-sm underline underline-offset-4" onClick={() => { setFailed(false); callbacks.current.onExpire?.(); setAttempt(v => v + 1); }}>Tentar verificação novamente</button>}
+     <div ref={container} role="group" className="min-h-[65px]" aria-label={t('Verificação de segurança')} />
+     {failed && <button type="button" className="text-sm underline underline-offset-4" onClick={() => { setFailed(false); callbacks.current.onExpire?.(); setAttempt(v => v + 1); }}>{t('Tentar verificação novamente')}</button>}
   </div> : null;
 }

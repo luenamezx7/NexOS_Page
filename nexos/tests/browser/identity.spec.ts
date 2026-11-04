@@ -126,7 +126,7 @@ test('hero heading and actions are horizontally centered on desktop and mobile',
   }
 });
 
-test('hero uses one shared ASCII field and the active section marker is NexOS pink', async ({ page }) => {
+test('hero uses one shared ASCII field and scroll progress is pink', async ({ page }) => {
   await setTheme(page, 'dark');
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -135,9 +135,11 @@ test('hero uses one shared ASCII field and the active section marker is NexOS pi
   await expect(page.locator('.site-atmosphere')).toHaveAttribute('data-hero-active', 'true');
   await expect(page.locator('#hero canvas[data-ascii-flow]')).toHaveCount(0);
   await expect(page.locator('.site-atmosphere .night-sky canvas')).toHaveCount(1);
-  const navigation = page.getByRole('navigation', { name: 'Navegação de seções' });
-  await expect(navigation.locator('button[aria-current="true"] > span').first()).toHaveCSS('background-color', 'rgb(255, 22, 141)');
+  const progress = page.getByRole('progressbar', { name: 'Progresso da página' });
+  await expect(progress).toBeVisible();
+  await expect(progress).toHaveAttribute('aria-valuenow', '0');
   await page.locator('#faq').scrollIntoViewIfNeeded();
+  await expect.poll(async () => Number(await progress.getAttribute('aria-valuenow'))).toBeGreaterThan(0);
   await expect(page.locator('.site-atmosphere')).toHaveAttribute('data-hero-active', 'false');
 });
 

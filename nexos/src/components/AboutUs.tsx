@@ -1,16 +1,17 @@
 'use client';
 
 import Image from 'next/image';
-import { raithonRealm } from '@/lib/brand-font';
 import styles from './AboutUs.module.css';
 import { ScrollReveal } from './ScrollReveal';
-import { NexosIntegrations } from './NexosIntegrations';
+import { EasyWayIntegrations } from './EasyWayIntegrations';
 import { landingEvidence } from '@/config/landing-evidence';
+import { useLocale } from '@/lib/locale';
 
 /** Keep the existing anchor so bookmarks and shared section links still work. */
 export function AboutUs() {
+  const { t } = useLocale();
   return (
-    <section id="testimonials" aria-labelledby="about-title" className={`${styles.section} ${raithonRealm.variable}`}>
+    <section id="testimonials" aria-labelledby="about-title" className={styles.section}>
       <div className={styles.container}>
         <ScrollReveal preset="label" className={styles.sectionNav}>
           <span>Sobre Nós</span>
@@ -22,7 +23,7 @@ export function AboutUs() {
               Design e tecnologia.<br /><span>Negócios mais próximos.</span>
             </ScrollReveal>
             <ScrollReveal as="p" delay={.08} className={styles.lead}>
-              Somos a NexOS Lab. Unimos design, desenvolvimento e estratégia para criar experiências digitais que fazem sentido para o seu negócio.
+              Somos a ezway. Unimos design, desenvolvimento e estratégia para criar experiências digitais que fazem sentido para o seu negócio.
             </ScrollReveal>
             <div className={styles.body}>
               <ScrollReveal as="p">
@@ -46,10 +47,10 @@ export function AboutUs() {
 
           </div>
           <div className={styles.identity}>
-            <ScrollReveal preset="image"><NexosIntegrations /></ScrollReveal>
+            <ScrollReveal preset="image"><EasyWayIntegrations /></ScrollReveal>
           </div>
         </div>
-        {landingEvidence.founder && <div className={styles.founders}><h3>Quem está por trás da NexOS</h3><div className={styles.founderCard}><Image className={styles.founderPhoto} src={landingEvidence.founder.photo} alt={`Foto de ${landingEvidence.founder.name}`} width={112} height={112} /><div><strong>{landingEvidence.founder.name}</strong><p>{landingEvidence.founder.role}</p></div></div></div>}
+        {landingEvidence.founder && <div className={styles.founders}><h3>{t('Quem está por trás da ezway')}</h3><div className={styles.founderCard}><Image className={styles.founderPhoto} src={landingEvidence.founder.photo} alt={`${t('Foto de')} ${landingEvidence.founder.name}`} width={112} height={112} /><div><strong>{landingEvidence.founder.name}</strong><p>{t(landingEvidence.founder.role)}</p></div></div></div>}
       </div>
     </section>
   );

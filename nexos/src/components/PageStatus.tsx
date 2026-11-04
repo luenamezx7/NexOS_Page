@@ -12,12 +12,12 @@ export function PageStatus({ label, title, description, alert = false }: {
       <PageHeader />
       <main className="page-narrow page-status" id="main-content">
         <ScrollReveal preset="card" className="page-panel page-status-panel">
-          <p className="page-kicker">NexOS / {label}</p>
+          <p className="page-kicker">ezway / {label}</p>
           <h1 className="page-title">{title}</h1>
           <p role={alert ? 'alert' : undefined}>{description}</p>
           <div className="page-status-actions">
             <Link href="/" className="btn-primary-nex"><ArrowLeft size={16} aria-hidden="true" /> Voltar ao site</Link>
-            <a href="mailto:nexosperformance@gmail.com" className="page-text-link">Falar com a NexOS <ArrowUpRight size={16} aria-hidden="true" /></a>
+            <a href="mailto:nexosperformance@gmail.com" className="page-text-link">Falar com a ezway <ArrowUpRight size={16} aria-hidden="true" /></a>
           </div>
         </ScrollReveal>
       </main>

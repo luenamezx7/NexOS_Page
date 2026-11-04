@@ -93,7 +93,7 @@ export function SecuritySettings({ enabled: initialEnabled, hasPassword: initial
       <CardHeader><CardTitle>Aplicativo autenticador (2FA)</CardTitle><CardDescription>{enabled ? 'Ativo. Novos acessos exigem o segundo fator, inclusive por Google, GitHub, Magic Link e Passkey.' : 'Use Google Authenticator, 1Password ou outro aplicativo TOTP.'}</CardDescription></CardHeader>
       <CardContent className="flex flex-col gap-5">
         {!enabled && !qr && <form onSubmit={e => { e.preventDefault(); void guard(async () => {
-          const result = await authClient.twoFactor.enable({ method: 'totp', issuer: 'NexOS', ...(hasPassword ? { password: currentPassword } : {}) });
+          const result = await authClient.twoFactor.enable({ method: 'totp', issuer: 'ezway', ...(hasPassword ? { password: currentPassword } : {}) });
           if (result.error) throw result.error;
           const data = result.data as { totpURI?: string; backupCodes?: string[] };
           if (!data.totpURI) throw new Error('Não foi possível gerar o autenticador.');
@@ -131,7 +131,7 @@ export function SecuritySettings({ enabled: initialEnabled, hasPassword: initial
       </CardContent>
     </Card>
     <Card className={styles.keysCard}>
-      <CardHeader><CardTitle>Chaves de acesso</CardTitle><CardDescription>Entre com Touch ID, Face ID, Windows Hello ou uma chave de segurança. O NexOS não recebe seus dados biométricos.</CardDescription></CardHeader>
+      <CardHeader><CardTitle>Chaves de acesso</CardTitle><CardDescription>Entre com Touch ID, Face ID, Windows Hello ou uma chave de segurança. A ezway não recebe seus dados biométricos.</CardDescription></CardHeader>
       <CardContent className="flex flex-col gap-5">
         <form className={styles.keysForm} onSubmit={e => { e.preventDefault(); const name = String(new FormData(e.currentTarget).get('name') ?? '').trim(); void guard(async () => {
           if (!window.isSecureContext || !window.PublicKeyCredential) throw new Error('Este navegador não suporta chaves de acesso neste endereço. Use HTTPS.');

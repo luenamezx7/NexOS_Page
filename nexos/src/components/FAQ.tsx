@@ -1,8 +1,11 @@
+'use client';
+
 import { ChevronDown, CircleHelp, MessageSquare } from 'lucide-react';
 import { config } from '@/config';
 import { commercialHref } from '@/lib/commercial';
 import styles from './BottomFunnel.module.css';
 import { ScrollReveal } from './ScrollReveal';
+import { useLocale } from '@/lib/locale';
 
 interface FAQItem {
   id: string;
@@ -13,17 +16,17 @@ interface FAQItem {
 const FAQ_ITEMS: FAQItem[] = [
   {
     id: '01',
-    question: 'Quanto custa contratar a NexOS?',
+    question: 'Quanto custa contratar a ezway?',
     answer: 'Valores e condições são definidos com o comercial conforme a solução, a quantidade e o escopo. Entre em contato para alinharmos uma proposta para o seu negócio.',
   },
   {
     id: '02',
     question: 'Qual o prazo de entrega?',
-    answer: 'O prazo depende do produto, da personalização ou do escopo do serviço. Converse com a NexOS para combinar as etapas e a previsão de entrega do seu pedido.',
+    answer: 'O prazo depende do produto, da personalização ou do escopo do serviço. Converse com a ezway para combinar as etapas e a previsão de entrega do seu pedido.',
   },
   {
     id: '03',
-    question: 'O que está incluso no Desenvolvimento NexOS?',
+    question: 'O que está incluso no Desenvolvimento ezway?',
     answer: 'O projeto é definido com você: objetivo, páginas, identidade visual e funcionalidades. Sites, landing pages e cardápios digitais são algumas das aplicações. O escopo é alinhado antes do desenvolvimento.',
   },
   {
@@ -34,7 +37,7 @@ const FAQ_ITEMS: FAQItem[] = [
   {
     id: '05',
     question: 'Como faço para contratar ou adquirir uma placa?',
-    answer: 'Os botões da placa e do Desenvolvimento NexOS abrem uma conversa com nosso comercial no WhatsApp. Alinhamos sua necessidade, personalização ou escopo, prazos e condições para fechar a venda diretamente com você.',
+    answer: 'Os botões da placa e do Desenvolvimento ezway abrem uma conversa com nosso comercial no WhatsApp. Alinhamos sua necessidade, personalização ou escopo, prazos e condições para fechar a venda diretamente com você.',
   },
   {
     id: '06',
@@ -44,13 +47,13 @@ const FAQ_ITEMS: FAQItem[] = [
   },
   {
     id: '07',
-    question: 'O que é o EasyWay?',
+    question: 'O que é o EasyChat?',
     answer: 'É um projeto de assistente administrativo com IA. As funcionalidades previstas incluem gerar documentos, organizar notas fiscais, converter arquivos, configurar lembretes e oferecer apoio básico em finanças. Ainda em desenvolvimento, sem data de disponibilidade definida.',
   },
   {
     id: '08',
-    question: `${config.brand.name}, ${config.brand.fullName} e ${config.brand.alternateNames.join(' e ')} são a mesma empresa?`,
-    answer: `Sim. ${config.brand.fullName} é o nome completo da ${config.brand.name}, também conhecida como ${config.brand.alternateNames.join(' e ')}. Nosso site oficial é nexoslab.online. Desenvolvemos sites, landing pages e cardápios digitais e oferecemos placas NFC com QR Code para empresas.`,
+    question: `O que a ${config.brand.name} oferece?`,
+    answer: `A ${config.brand.name} desenvolve sites, landing pages e cardápios digitais e oferece placas NFC com QR Code para empresas.`,
   },
 ];
 
@@ -61,18 +64,19 @@ function FAQAccordionItem({
   item: FAQItem;
   initiallyOpen: boolean;
 }) {
+  const { t } = useLocale();
   return (
     <details name="nexos-faq" className={styles.faqItem} open={initiallyOpen}>
       <summary className={styles.faqTrigger}>
         <span className={styles.faqIndex} aria-hidden="true">{item.id}</span>
-        <span className={styles.faqQuestion}>{item.question}</span>
+        <span className={styles.faqQuestion}>{t(item.question)}</span>
         <span className={styles.faqIcon} aria-hidden="true">
           <ChevronDown size={16} strokeWidth={2} />
         </span>
       </summary>
-      <div id={`faq-answer-${item.id}`} role="region" aria-label={item.question} className={styles.faqPanel}>
+      <div id={`faq-answer-${item.id}`} role="region" aria-label={t(item.question)} className={styles.faqPanel}>
         <div className={styles.faqAnswer}>
-          <p>{item.answer}</p>
+          <p>{t(item.answer)}</p>
         </div>
       </div>
     </details>
@@ -84,11 +88,12 @@ interface FAQProps {
 }
 
 export function FAQ({ className = '' }: FAQProps) {
+  const { t } = useLocale();
   return (
     <section id="faq" aria-labelledby="faq-title" className={`${styles.section} ${styles.faqSection} ${className}`}>
       <div className={styles.container}>
-        <div className={styles.sectionNav} aria-label="Navegação de suporte">
-          <span className={styles.currentSection}><CircleHelp size={16} aria-hidden="true" /> Dúvidas frequentes</span>
+        <div className={styles.sectionNav} aria-label={t('Navegação de suporte')}>
+          <span className={styles.currentSection}><CircleHelp size={16} aria-hidden="true" /> {t('Dúvidas frequentes')}</span>
         </div>
 
         <header className={styles.header}>
@@ -100,7 +105,7 @@ export function FAQ({ className = '' }: FAQProps) {
           </ScrollReveal>
         </header>
 
-        <ul className={`${styles.faqList} list-none`} role="list" aria-label="Perguntas frequentes">
+        <ul className={`${styles.faqList} list-none`} role="list" aria-label={t('Perguntas frequentes')}>
           {FAQ_ITEMS.map((item, index) => (
             <ScrollReveal as="li" key={item.id} delay={Math.min(index * .04, .12)}>
               <FAQAccordionItem item={item} initiallyOpen={item.id === FAQ_ITEMS[0].id} />
@@ -111,13 +116,13 @@ export function FAQ({ className = '' }: FAQProps) {
         <p className={styles.faqFooter}>
           <CircleHelp size={16} aria-hidden="true" />
           <span>
-            Ficou com dúvida?{' '}
+             {t('Ficou com dúvida?')}{' '}
             <a href={commercialHref()} target="_blank" rel="noopener noreferrer" className={styles.textLink}>
-              <MessageSquare size={16} aria-hidden="true" /> Fale com a gente
+               <MessageSquare size={16} aria-hidden="true" /> {t('Fale com a gente')}
             </a>
           </span>
         </p>
-        <a href="#contact" className={styles.textLink}>Agendar conversa</a>
+        <a href="#contact" className={styles.textLink}>{t('Agendar conversa')}</a>
       </div>
     </section>
   );

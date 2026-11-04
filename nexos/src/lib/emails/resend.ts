@@ -15,4 +15,4 @@ export function getResend(): Resend {
   return client ??= new Resend(key);
 }
 
-export const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'NexOS <noreply@nexoslab.online>';
+export const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'ezway <noreply@nexoslab.online>';

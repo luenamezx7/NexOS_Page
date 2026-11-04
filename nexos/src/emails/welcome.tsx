@@ -8,11 +8,11 @@ interface WelcomeEmailProps {
 
 export function WelcomeEmail({ name, dashboardUrl }: WelcomeEmailProps) {
   return (
-    <EmailLayout preheader="Bem-vindo ao NexOS! Sua conta foi criada com sucesso.">
+    <EmailLayout preheader="Boas-vindas à ezway! Sua conta foi criada com sucesso.">
       <Section style={styles.section}>
         <Heading style={styles.heading}>Bem-vindo, {name}!</Heading>
         <Text style={styles.text}>
-          Sua conta no <strong>NexOS</strong> foi criada com sucesso. Estamos animados em ter você por aqui.
+          Sua conta na <strong>ezway</strong> foi criada com sucesso. Estamos animados em ter você por aqui.
         </Text>
         <Text style={styles.text}>
           Acesse seu painel para começar a construir soluções digitais que escalam.

@@ -98,13 +98,20 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     async function setup() {
       stop();
       if (pathname !== '/' || !media.matches || disposed) return;
+      // Native scrolling remains compositor-driven on limited CPUs/GPUs;
+      // the page's visual animations still run and stay visibility-aware.
+      const deviceMemory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory;
+      if ((deviceMemory !== undefined && deviceMemory <= 4) || (navigator.hardwareConcurrency > 0 && navigator.hardwareConcurrency <= 4)) return;
       const current = generation;
       const { default: Lenis } = await import('lenis');
       if (disposed || !media.matches || current !== generation) return;
       // Anchor handling belongs to the shared controller, never two scroll systems.
-      instance = new Lenis({ duration: 1, lerp: 0.08, wheelMultiplier: 1, infinite: false, anchors: false });
+      instance = new Lenis({ duration: 1, lerp: 0.07, wheelMultiplier: 0.9, infinite: false, anchors: false });
       setLenis(instance);
+      const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+      if (disposed || current !== generation) return;
       instance.on('scroll', () => {
+        ScrollTrigger.update();
         if (!scrolling) { scrolling = true; setIsScrolling(true); }
         clearTimeout(timeout);
         timeout = setTimeout(() => { scrolling = false; setIsScrolling(false); }, 150);

@@ -146,7 +146,7 @@ void main(){
   float g=getColorChanges(color1.g,color2.g,stripe_g,w,blur+fwidth(stripe_g),bump,u_colorTint.g);
   float b=getColorChanges(color1.b,color2.b,stripe_b,w,blur+fwidth(stripe_b),bump,u_colorTint.b);
   vec3 color=vec3(r,g,b);
-  // Keep the supplied reflections but color the metal with the NexOS palette.
+  // Keep the supplied reflections but color the metal with the ezway palette.
   vec3 finish=mix(u_colorTint.rgb,vec3(.55,.18,.89),smoothstep(.25,.75,uv.x));
   float luminance=dot(color,vec3(.299,.587,.114));
   color=mix(finish*.38,finish,luminance);

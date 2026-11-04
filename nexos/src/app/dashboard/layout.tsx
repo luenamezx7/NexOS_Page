@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Dashboard Técnica — NexOS',
+  title: 'Dashboard Técnica — ezway',
   robots: { index: false, follow: false },
 };
 

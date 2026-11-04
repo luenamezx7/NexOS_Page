@@ -22,7 +22,7 @@ export function pageMetadata(path: string, title: string, description: string): 
       url: siteUrl(path),
       title: socialTitle,
       description,
-      images: [{ url: siteUrl(config.meta.ogImage), width: 1200, height: 630, alt: 'NexOS — Sites, landing pages e placas NFC' }],
+      images: [{ url: siteUrl(config.meta.ogImage), width: 1200, height: 630, alt: 'ezway — Sites, landing pages e placas NFC' }],
     },
     twitter: {
       card: 'summary_large_image',
@@ -43,7 +43,7 @@ export const organizationData = {
       alternateName: [config.brand.name, ...config.brand.alternateNames],
       description: config.meta.description,
       url: siteUrl(),
-      logo: siteUrl('/nexos-logo-light.svg'),
+      logo: siteUrl('/logo-ghost.svg'),
       email: 'nexosperformance@gmail.com',
       telephone: `+${config.whatsapp.number}`,
       taxID: '69.194.842/0001-28',

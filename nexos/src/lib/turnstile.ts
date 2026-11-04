@@ -1,6 +1,6 @@
 import 'server-only';
 // ============================================================
-// NexOS — Cloudflare Turnstile (proteção anti-bot)
+// ezway — Cloudflare Turnstile (proteção anti-bot)
 // Docs: https://developers.cloudflare.com/turnstile/
 // Site Key: NEXT_PUBLIC_TURNSTILE_SITE_KEY (exposto no client)
 // Secret: TURNSTILE_SECRET_KEY (server-only)

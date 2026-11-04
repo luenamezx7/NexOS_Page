@@ -10,7 +10,7 @@ export const raithonRealm = localFont({
   preload: false,
 });
 
-/** Shared variable family for the NexOS Lab logo lockup. */
+/** Shared variable family for the ezway logo lockup. */
 export const unbounded = localFont({
   src: '../../design-/FONTES/unbounded/Unbounded-VariableFont_wght.ttf',
   variable: '--font-header-logo',

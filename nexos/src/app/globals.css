@@ -9,18 +9,18 @@
 @tailwind utilities;
 
 /* ============================================================
-   NexOS — Digital / OLED identity
+   ezway — Digital / OLED identity
    Base: creme #fdf6ec · OLED #000000 · purple visor in both themes
    Layers: stars 0, content 1, navigation 40–50, dialogs top layer.
    Perf rule: animate ONLY transform + opacity. No giant blurs.
    ============================================================ */
 
 @theme {
-  --font-display: var(--font-syne), ui-sans-serif, system-ui, sans-serif;
-  --font-heavy: var(--font-syne), ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Avenir Next', 'Helvetica Neue', var(--font-syne), ui-sans-serif, system-ui, sans-serif;
+  --font-heavy: 'Avenir Next', 'Helvetica Neue', var(--font-syne), ui-sans-serif, system-ui, sans-serif;
   --font-dirty: "Dirtyline", "Space Grotesk", sans-serif;
   --font-old-english: "Old English", serif;
-  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Avenir Next', 'Helvetica Neue', var(--font-geist), ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Martian Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   /* Neutral surfaces shared across both themes. */
@@ -40,6 +40,7 @@
 }
 
 :root {
+  --brand-lime: #d9f22a;
   --page-width: 1216px;
   --radius-control: 12px;
   --radius-card: 24px;
@@ -119,7 +120,7 @@
     linear-gradient(125deg, #ffffff80 0%, #ffffff18 36%, transparent 62%, #e873f81a 100%),
     rgb(253 246 236 / 66%);
   --header-glass-border: rgb(255 255 255 / 78%);
-  --header-glass-filter: blur(36px) saturate(180%) contrast(106%);
+  --header-glass-filter: blur(14px) saturate(140%);
   --header-glass-shadow:
     inset 0 1px 0 #ffffffe6,
     inset 0 -1px 0 #971ef421,
@@ -324,6 +325,8 @@
 html {
   font-size: 16px;
   scroll-behavior: auto;
+  /* Keep the same content width while the opening dialog locks scrolling. */
+  scrollbar-gutter: stable;
   scroll-padding-bottom: var(--cookie-banner-space, 0px);
   background-color: var(--color-canvas);
   /* clip (não hidden): não cria scroll-container, então position: sticky continua travando */
@@ -1084,8 +1087,8 @@ select.field-input option {
 .hero-heading { max-width: 24ch; margin-inline: auto; font-family: var(--font-display); font-size: clamp(48px, 5.9vw, 84px); font-weight: 650; line-height: 1.07; letter-spacing: -.055em; text-wrap: balance; }
 .hero-description { max-width: 49ch; margin: 28px auto 0; font-size: 17px; line-height: 1.7; color: var(--landing-muted); text-wrap: pretty; }
 .hero-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px 28px; margin-top: 32px; }
-.hero-easyway-link { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; margin-top: 18px; padding: 8px 16px; border: 1px solid color-mix(in srgb, var(--visor-lilac) 45%, transparent); border-radius: 999px; background: color-mix(in srgb, var(--visor-plum) 20%, transparent); color: var(--color-ink); font-size: 13px; line-height: 1.5; text-decoration: none; }
-.hero-easyway-link:hover, .hero-easyway-link:focus-visible { border-color: var(--visor-lilac); box-shadow: 0 0 24px #971ef444; }
+.hero-easychat-link { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; margin-top: 18px; padding: 8px 16px; border: 1px solid color-mix(in srgb, var(--visor-lilac) 45%, transparent); border-radius: 999px; background: color-mix(in srgb, var(--visor-plum) 20%, transparent); color: var(--color-ink); font-size: 13px; line-height: 1.5; text-decoration: none; }
+.hero-easychat-link:hover, .hero-easychat-link:focus-visible { border-color: var(--visor-lilac); box-shadow: 0 0 24px #971ef444; }
 .hero-bottom { position: absolute; bottom: 28px; left: 40px; right: 40px; display: flex; justify-content: center; align-items: center; gap: 24px; padding-top: 20px; color: var(--landing-muted); font: 13px/1.5 var(--font-sans); }
 .hero-bottom a { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; color: var(--color-ink); }
 .hero-text-link { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 44px; padding: 8px 0; color: var(--landing-muted); font-size: 14px; font-weight: 500; text-underline-offset: 5px; transition: color 200ms ease; }
@@ -1093,7 +1096,6 @@ select.field-input option {
 .hero-text-link:focus-visible { outline: 2px solid var(--ring); outline-offset: 5px; border-radius: 4px; }
 .hero-text-link svg { transition: transform 300ms var(--ease-fluid); }
 .hero-accent { background: var(--visor-text-gradient); background-clip: text; -webkit-background-clip: text; color: transparent; }
-.dark .hero-ia { text-shadow: 0 6px 32px #971ef440; }
 .hero-text-link:hover svg { transform: translate(3px, -3px); }
 .hero-coordinate { position: absolute; right: 40px; bottom: 40px; font: 11px var(--font-mono); letter-spacing: 0.12em; color: var(--muted-foreground); writing-mode: vertical-rl; }
 .landing-hero .tech-badge { padding: 0; border: none; background: none; color: var(--muted-foreground); letter-spacing: 0.1em; }
@@ -1250,7 +1252,7 @@ html:not(.dark) .waves-entry-stars { opacity: 0.28; }
 /* Shared atmosphere and material. Route roots let the single star layer show through. */
 .site-atmosphere { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 .interior-atmosphere { bottom: auto; height: min(900px, 100svh); opacity: 0.4; }
-.dark .interior-atmosphere { opacity: 0.5; }
+.dark .interior-atmosphere { display: none; }
 .interior-atmosphere .brand-veil { --grainient-angle: 0deg; }
 .interior-atmosphere .brand-veil::after { background: linear-gradient(to bottom, transparent, var(--color-canvas) 92%); }
 .night-sky { position: absolute; inset: 0; display: none; opacity: 0.38; }
@@ -1297,6 +1299,14 @@ html:not(.dark) .waves-entry-stars { opacity: 0.28; }
 .page-header-nav a:is(:hover, [aria-current='page']), .page-back-link:hover { color: var(--primary); background: color-mix(in srgb, var(--primary) 7%, transparent); }
 .page-header-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; max-width: 100%; }
 .page-header-actions > .page-session-email { max-width: 22ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted-foreground); font: 11px var(--font-mono); }
+@media (max-width: 767px) {
+  .page-header { gap: 2px 12px; padding: 8px 14px; }
+  .page-header-nav { order: 3; width: 100%; justify-content: space-between; gap: 2px; }
+  .page-header-nav a { padding-inline: 6px; font-size: 12px; }
+  .page-header-actions { margin-left: auto; gap: 2px; }
+  .page-header-actions > .page-session-email, .page-back-link span { display: none; }
+  .page-back-link { width: 44px; padding: 0; }
+}
 .page-intro { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding-block: 48px 32px; }
 .page-intro > p:not(.page-kicker) { max-width: 62ch; font-size: var(--type-lead); line-height: 1.7; }
 .page-kicker { color: var(--text-tertiary); font: 500 14px/1.6 var(--font-sans); }
@@ -1429,7 +1439,7 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
 }
 @media (forced-colors: active) { .brand-veil { display: none; } }
 
-/* NexOS dark palette: violet and magenta surfaces with lime reserved for actions.
+/* EasyWay dark palette: violet and magenta surfaces with lime reserved for actions.
    Layers: scenery 0, content 1, lower edge 30, upper edge 40, header/menus 50,
    native dialogs use the browser top layer. */
 .dark {
@@ -1442,31 +1452,28 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
   --surface-glass: #170c2beb; --reading-glass: #170c2bf0; --field-surface: #170c2b;
   --panel-ground: #0f0a1a; --panel-alternate: #170c2b; --panel-border: #2a1d45;
   --text-secondary: #e2d8f5; --text-tertiary: #d2c9e1; --muted-foreground: #d2c9e1;
-  --border: #2a1d45; --input: #644286; --ring: #d6f55b;
+  --border: #2a1d45; --input: #644286; --ring: var(--brand-lime);
   --primary: #d898ff; --primary-foreground: #000000; --secondary: #191121;
   --accent: #241046; --accent-foreground: #fff; --muted: #170c2b;
   --display-rose: #ff6bdd; --display-purple: #b65cff;
   --header-glass-background: #0f0a1ae8; --header-glass-border: #2a1d45;
   --ambient-blue: #7a2cf52e; --ambient-violet: #7a2cf543; --electric-blue: #b65cff;
-  --detail-accent: #d6f55b; --detail-ink: #12081f; --detail-text: #d6f55b;
+  --detail-accent: var(--brand-lime); --detail-ink: #12081f; --detail-text: var(--brand-lime);
   --visor-text-gradient: linear-gradient(105deg, #b65cff, #ff6bdd);
 }
-.hero-atmosphere { position: absolute; inset: 0; pointer-events: none; }
-.hero-gradient-blend { position: absolute; inset: 0 0 auto; height: min(62svh, 640px); pointer-events: none; opacity: .8; mask-image: linear-gradient(to bottom, #000 0%, #000 22%, #000b 54%, transparent 100%); }
-.dark .hero-gradient-blend { opacity: .95; }
-.hero-heading :is([data-reveal-word='Soluções'], [data-reveal-word='IA']) { background: linear-gradient(110deg, #7c3aed 0%, #971ef4 55%, #b25cf0 100%); background-clip: text; -webkit-background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
-.dark .hero-heading :is([data-reveal-word='Soluções'], [data-reveal-word='IA']) { background-image: linear-gradient(110deg, #d6f55b 0%, #ecffac 38%, #c58bff 100%); }
-.dark .hero-heading [data-reveal-word='IA'] { background-image: linear-gradient(110deg, #d6f55b 0%, #d6f55b 35%, #b65cff 100%); }
+.landing-hero.oceanic-surface { --color-canvas: #000; --color-ink: #f9f3fa; --text-secondary: #c4b6cf; --text-tertiary: #bcb0c8; --landing-muted: var(--text-secondary); --landing-line: rgb(249 243 250 / 16%); --landing-accent: #e39aff; color: var(--color-ink); }
+/* Figma artwork is rasterized once at high resolution: no large live SVG filter or WebGL on the hero. */
+.hero-gradient-blend { position: absolute; inset: 0; pointer-events: none; background: #000 url('/gradiente-ezway.avif') center top / cover no-repeat; }
+.hero-heading :is([data-reveal-word='Soluções'], [data-reveal-word='IA'], [data-reveal-word='AI-powered'], [data-reveal-word='solutions']) { background: none; color: var(--brand-lime); -webkit-text-fill-color: var(--brand-lime); text-shadow: none; }
 /* Motion filters create individual paint layers. Each glyph needs its own
    synchronized gradient so the word never disappears during/after a reveal. */
-.hero-heading :is([data-reveal-word='Soluções'], [data-reveal-word='IA']) [data-blur-letter] { background-image: inherit; background-clip: text; -webkit-background-clip: text; background-size: var(--word-gradient-width) 100%; background-position: var(--word-gradient-position) center; }
-.hero-atmosphere::after { content: ''; position: absolute; inset: 0; opacity: .035; mask-image: linear-gradient(to bottom, #000, transparent 45%); background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23fff' filter='url(%23n)' opacity='.6' d='M0 0h180v180H0z'/%3E%3C/svg%3E"); }
+.hero-heading :is([data-reveal-word='Soluções'], [data-reveal-word='IA'], [data-reveal-word='AI-powered'], [data-reveal-word='solutions']) [data-blur-letter] { background-image: inherit; background-clip: text; -webkit-background-clip: text; background-size: var(--word-gradient-width) 100%; background-position: var(--word-gradient-position) center; }
 .background-paths { position: absolute; inset: 0; overflow: hidden; pointer-events: none; opacity: .55; mask-image: linear-gradient(90deg, transparent 12%, #000 65%); }
 .background-paths svg { width: 100%; height: 100%; }
 .landing-hero .background-paths { opacity: .3; mask-image: linear-gradient(to bottom, #000, #0006 24%, transparent 48%); }
 :is(.landing-page, .service-page) :is(.primary-action, .btn-primary-nex) { background: var(--detail-accent); color: var(--detail-ink); border-color: var(--detail-accent); box-shadow: none; }
 :is(.landing-page, .service-page) :is(.primary-action, .btn-primary-nex)::before { display: none; }
-:is(.landing-page, .service-page) :is(.primary-action, .btn-primary-nex):is(:hover, :focus-visible, :active):not(:disabled):not([aria-disabled='true']) { background: #e5fa8c; color: var(--detail-ink); border-color: #e5fa8c; box-shadow: 0 0 24px #d8ef701a; }
+:is(.landing-page, .service-page) :is(.primary-action, .btn-primary-nex):is(:hover, :focus-visible, :active):not(:disabled):not([aria-disabled='true']) { background: var(--brand-lime); color: var(--detail-ink); border-color: var(--brand-lime); box-shadow: 0 0 24px #d9f22a33; }
 :is(.landing-page, .service-page) :is(.primary-action, .btn-primary-nex) :is(.metallic-content, svg) { color: inherit; }
 .hero-text-link svg, .hero-bottom a svg { color: var(--detail-text); }
 .hero-text-link:is(:hover, :focus-visible), .hero-bottom a:is(:hover, :focus-visible), .page-header-nav a:is(:hover, :focus-visible) { color: var(--detail-text); }
@@ -1482,18 +1489,17 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
   .hero-actions { align-items: stretch; width: min(100%, 380px); margin-top: 32px; }
   .hero-actions > * { width: 100%; min-width: 0; }
   .hero-text-link { min-height: 52px; padding: 0 20px; justify-content: space-between; border: 1px solid #ffffff80; border-radius: 12px; color: var(--color-ink); }
-  .hero-easyway-link { display: inline-flex; justify-content: flex-start; max-width: 34ch; min-height: 44px; margin-top: 16px; padding: 0; border: 0; background: none; color: var(--text-secondary); font-size: 13px; line-height: 1.5; text-align: left; }
-  .hero-easyway-link svg { flex: 0 0 auto; color: var(--detail-accent); }
+  .hero-easychat-link { display: inline-flex; justify-content: flex-start; max-width: 34ch; min-height: 44px; margin-top: 16px; padding: 0; border: 0; background: none; color: var(--text-secondary); font-size: 13px; line-height: 1.5; text-align: left; }
+  .hero-easychat-link svg { flex: 0 0 auto; color: var(--detail-accent); }
   .landing-hero [data-hero-brand-strip] { opacity: .65; }
   .hero-bottom { left: 24px; right: 24px; }
   .hero-bottom > span { display: none; }
-  .hero-gradient-blend { height: min(54svh, 460px); mask-image: linear-gradient(to bottom, #000 0%, #000 20%, #0009 48%, transparent 100%); }
 }
 @media (max-height: 740px) and (min-width: 768px) {
   .hero-container { padding-block: 96px 90px; }
   .hero-heading { font-size: clamp(48px, 6vw, 76px); }
 }
 @media (forced-colors: active) {
-  .hero-atmosphere, .background-paths, .hero-gradient-blend { display: none; }
-  .hero-heading :is([data-reveal-word='Soluções'], [data-reveal-word='IA']) { background: none; color: CanvasText; -webkit-text-fill-color: CanvasText; }
+  .background-paths, .hero-gradient-blend { display: none; }
+  .hero-heading :is([data-reveal-word='Soluções'], [data-reveal-word='IA'], [data-reveal-word='AI-powered'], [data-reveal-word='solutions']) { background: none; color: CanvasText; -webkit-text-fill-color: CanvasText; text-shadow: none; }
 }

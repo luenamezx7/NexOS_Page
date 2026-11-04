@@ -1,4 +1,4 @@
-/* Dashboard técnica NexOS — tokens alinhados ao design system */
+/* Dashboard técnica EasyWay — tokens alinhados ao design system */
 .page {
   --dash-surface: color-mix(in srgb, var(--color-ink) 3%, var(--color-canvas));
   --dash-raised: color-mix(in srgb, var(--color-ink) 5%, var(--color-canvas));

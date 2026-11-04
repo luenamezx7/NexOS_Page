@@ -10,7 +10,7 @@ import styles from '@/components/auth/SecuritySettings.module.css';
 import { PageStatus } from '@/components/PageStatus';
 import { PageFooter } from '@/components/PageChrome';
 
-export const metadata = { title: 'Segurança da conta | NexOS', robots: { index: false, follow: false } };
+export const metadata = { title: 'Segurança da conta | ezway', robots: { index: false, follow: false } };
 export const dynamic = 'force-dynamic';
 
 export default async function SegurancaPage({ searchParams }: { searchParams: Promise<{ callbackUrl?: string | string[] }> }) {
@@ -25,7 +25,7 @@ export default async function SegurancaPage({ searchParams }: { searchParams: Pr
     <main className="interior-page">
       <AuthHeader />
       <div className={styles.page} id="main-content">
-        <header className={styles.header}><Link href="/conta" className="page-text-link">Voltar à minha conta</Link><p className="page-kicker">NexOS / Sua proteção</p><h1 className="page-title">Segurança da conta</h1><p className="text-muted-foreground">Gerencie sua senha, suas chaves de acesso e o aplicativo autenticador.</p></header>
+        <header className={styles.header}><Link href="/conta" className="page-text-link">Voltar à minha conta</Link><p className="page-kicker">ezway / Sua proteção</p><h1 className="page-title">Segurança da conta</h1><p className="text-muted-foreground">Gerencie sua senha, suas chaves de acesso e o aplicativo autenticador.</p></header>
         <SecuritySettings enabled={access.twoFactorEnabled} hasPassword={accounts.some(a => a.providerId === 'credential')} isAdmin={access.role === 'admin'} callbackUrl={sanitizeCallbackPath(params.callbackUrl)} />
       </div>
       <PageFooter />

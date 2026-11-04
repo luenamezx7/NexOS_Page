@@ -89,7 +89,7 @@ for (const theme of ['light', 'dark']) {
       await expect(instagram.getByRole('link', { name: 'Visitar Instagram' })).toHaveAttribute('target', '_blank');
       await instagram.scrollIntoViewIfNeeded();
       await page.screenshot({ path: testInfo.outputPath(`instagram-${theme}-${width}.png`) });
-      await expect(page.locator('#brand-closing h2')).toHaveText('NEXOS');
+      await expect(page.locator('#brand-closing h2')).toHaveText('ezway');
       await page.locator('#brand-closing').scrollIntoViewIfNeeded();
       await page.evaluate(() => document.fonts.ready);
       const wordmark = await page.locator('#brand-closing h2').boundingBox();

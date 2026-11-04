@@ -19,15 +19,15 @@ export interface IphoneProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 /** Magic UI iPhone. DOM media sits below the SVG frame for Safari/iOS compatibility. */
-export function Iphone({ src, videoSrc, className, ...props }: IphoneProps) {
+export function Iphone({ src, videoSrc, children, className, ...props }: IphoneProps) {
   const maskId = `iphone-screen-${useId().replace(/:/g, '')}`;
-  const hasMedia = Boolean(src || videoSrc);
+  const hasMedia = Boolean(src || videoSrc || children);
   const screenMask = hasMedia ? `url(#${maskId})` : undefined;
 
   return <div className={cn(styles.phone, className)} data-iphone {...props}>
     {hasMedia && <div className={styles.media}>
-      {videoSrc ? <video className={styles.video} src={videoSrc} poster={src} autoPlay loop muted playsInline preload="metadata" />
-        : <Image src={src!} alt="" fill unoptimized sizes="(max-width: 767px) 248px, 272px" className={styles.image} />}
+      {children ?? (videoSrc ? <video className={styles.video} src={videoSrc} poster={src} autoPlay loop muted playsInline preload="metadata" />
+        : <Image src={src!} alt="" fill unoptimized sizes="(max-width: 767px) 248px, 272px" className={styles.image} />)}
     </div>}
     <svg viewBox={`0 0 ${PHONE_WIDTH} ${PHONE_HEIGHT}`} fill="none" xmlns="http://www.w3.org/2000/svg" className={styles.frameSvg} aria-hidden="true">
       <g mask={screenMask}>

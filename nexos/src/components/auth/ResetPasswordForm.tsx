@@ -169,7 +169,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
           <p className="mt-8 text-sm leading-relaxed text-ink/75">
             Precisa de ajuda?{' '}
             <a href="mailto:nexosperformance@gmail.com" className="underline underline-offset-4">
-              Fale com a NexOS
+              Fale com a ezway
             </a>
           </p>
         </ScrollReveal>

@@ -193,7 +193,7 @@ export default function GlyphPortal({
       let offset = 0;
       candidates = []; letters = [];
       if (linesKey) {
-        // NexOS extension: measure each real line and its ink at the same font size
+        // ezway extension: measure each real line and its ink at the same font size
         // as SVG, rather than shrinking the complete sentence into one tiny line.
         const rows = linesKey.split("\n");
         const rowMetrics = rows.map(row => { context.font = `${font.fontWeight} 100px ${font.fontFamily}`; return context.measureText(row); });

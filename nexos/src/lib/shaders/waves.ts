@@ -1,4 +1,4 @@
-// Original fragment shader; palette supplied by the NexOS waves renderer.
+// Original fragment shader; palette supplied by the ezway waves renderer.
 export const WAVES_FRAGMENT_SHADER = `
 // "Waves" — made with the 21st.dev Shader Builder
 // Packed WebGL1 uniforms (the shader exposes readable u_* aliases as macros):

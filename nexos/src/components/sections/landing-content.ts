@@ -6,7 +6,7 @@ export const DEMO_METRICS = {
 
 export const DELIVERY_STEPS = {
   product: [
-    { title: 'Escolha', body: 'Defina a quantidade e converse com a NexOS sobre o uso da sua placa.', detail: 'Modelo + quantidade' },
+    { title: 'Escolha', body: 'Defina a quantidade e converse com a ezway sobre o uso da sua placa.', detail: 'Modelo + quantidade' },
     { title: 'Personalização', body: 'Alinhamos a identidade visual e o link que o cliente vai acessar.', detail: 'Sua marca + seu link' },
     { title: 'Preparação', body: 'A arte e os acessos são conferidos antes da finalização do produto.', detail: 'Revisão + conferência' },
     { title: 'Entrega', body: 'Combinamos o envio e orientamos a utilização no seu ponto de atendimento.', detail: 'Produto + orientação' },

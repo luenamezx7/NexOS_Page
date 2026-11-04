@@ -4,7 +4,7 @@ import AccountClient from '@/components/account/AccountClient';
 import { PageStatus } from '@/components/PageStatus';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Minha conta | NexOS', robots: { index: false, follow: false } };
+export const metadata = { title: 'Minha conta | ezway', robots: { index: false, follow: false } };
 
 export default async function ContaPage() {
   const access = await getUserAccess();

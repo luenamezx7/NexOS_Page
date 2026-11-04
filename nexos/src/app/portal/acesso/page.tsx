@@ -8,7 +8,7 @@ import { enabledSocialProviders, socialAuthMode } from '@/lib/auth/social';
  */
 import { LoginForm } from '@/components/auth/LoginForm';
 
-export const metadata = { title: 'Área do cliente | NexOS', robots: { index: false, follow: false } };
+export const metadata = { title: 'Área do cliente | ezway', robots: { index: false, follow: false } };
 export const dynamic = 'force-dynamic';
 
 export default async function PortalAcessoPage({

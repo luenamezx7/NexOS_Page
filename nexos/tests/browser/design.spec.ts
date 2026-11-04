@@ -113,7 +113,7 @@ test('stage 4: plate showcase and services stay clear at every breakpoint', asyn
   const services = page.locator('#services');
   await expect(services).toBeVisible();
   await expect(services.getByRole('heading', { name: 'Ideias boas merecem' })).toBeVisible();
-  await expect(services.getByRole('article', { name: /Desenvolvimento NexOS/ })).toBeVisible();
+  await expect(services.getByRole('article', { name: /Desenvolvimento ezway/ })).toBeVisible();
   await expect(services.getByRole('link', { name: 'Falar com o comercial' })).toBeVisible();
   await expect(services.getByRole('article')).toHaveCount(1);
 
@@ -271,7 +271,7 @@ test('stage 6: FAQ accordion and contact funnel stay usable end to end', async (
   const contact = page.locator('#cta-final');
   await expect(contact).toBeVisible();
   await expect(contact.getByRole('heading', { name: /Sua próxima ideia/ })).toBeVisible();
-  await expect(contact.getByRole('link', { name: 'Conversar com a NexOS' })).toHaveAttribute('href', /^https:\/\/wa.me\//);
+  await expect(contact.getByRole('link', { name: 'Conversar com a ezway' })).toHaveAttribute('href', /^https:\/\/wa.me\//);
   await expect(page.locator('#contact')).toHaveCount(0);
 
   for (const width of [320, 390, 768, 1024, 1280, 1536]) {
@@ -281,7 +281,7 @@ test('stage 6: FAQ accordion and contact funnel stay usable end to end', async (
     await noOverflow(page);
     await contact.scrollIntoViewIfNeeded();
     await noOverflow(page);
-    const send = contact.getByRole('link', { name: 'Conversar com a NexOS' });
+    const send = contact.getByRole('link', { name: 'Conversar com a ezway' });
     const box = await send.boundingBox();
     expect(box!.x).toBeGreaterThanOrEqual(0);
     expect(box!.x + box!.width).toBeLessThanOrEqual(width + 1);

@@ -62,7 +62,7 @@ test('hero e footer usam BrandVeil, enquanto as demais seções mantêm seus tem
 test('demonstration charts change period and product/service timeline changes its steps', async ({ page }) => {
   await openLanding(page);
   const metrics = page.locator('#metrics');
-  await expect(metrics).toContainText('NÃO REPRESENTAM RESULTADOS DA NEXOS');
+  await expect(metrics).toContainText('NÃO REPRESENTAM RESULTADOS DA EZWAY');
   await metrics.getByRole('radio', { name: '90 dias' }).check();
   await expect(metrics.getByRole('img', { name: /90 dias/ })).toBeVisible();
   await expect(metrics).toContainText('1.842');
@@ -86,7 +86,7 @@ test('illustrative plate cards stay visible while quantity and commercial messag
   await showcase.getByRole('button', { name: 'Aumentar quantidade' }).click();
   const commercial = showcase.getByRole('link', { name: 'Adquirir Placa' });
   const href = await commercial.getAttribute('href');
-  expect(new URL(href!).searchParams.get('text')).toContain('2 Placas Inteligentes NexOS');
+  expect(new URL(href!).searchParams.get('text')).toContain('2 Placas Inteligentes ezway');
   await expect(quantity).toHaveText('2');
   await expect(showcase.locator('img')).toHaveCount(0);
   await expect(showcase.getByRole('group', { name: 'Prévias visuais da placa' }).getByRole('radio')).toHaveCount(3);
@@ -102,7 +102,7 @@ test('FAQ, mascot photo strip and final commercial CTA remain usable without a c
   await faq.locator('summary').nth(2).click();
   await expect(faq.locator('details[open]')).toHaveCount(1);
   await expect(faq.locator('details').nth(2).locator('p')).toBeVisible();
-  await expect(page.locator('#cta-final').getByRole('link', { name: 'Conversar com a NexOS' })).toHaveAttribute('href', /^https:\/\/wa.me\//);
+  await expect(page.locator('#cta-final').getByRole('link', { name: 'Conversar com a ezway' })).toHaveAttribute('href', /^https:\/\/wa.me\//);
   await expect(page.locator('#contact')).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Enviar projeto', exact: true })).toHaveCount(0);
   await expect(page.locator('#mascot-solutions li')).toHaveCount(4);
@@ -117,19 +117,19 @@ for (const theme of ['light', 'dark']) {
     await expect(about).toBeVisible();
     await expect(about.getByRole('heading', { level: 2 })).toHaveCount(1);
     await expect(about.getByRole('heading', { level: 3 })).toHaveCount(2);
-    await expect(about).toContainText('Somos a NexOS Lab.');
+    await expect(about).toContainText('Somos a ezway.');
     await expect(about).toContainText('placas NFC e QR Code');
     await expect(about).not.toContainText('Documentação');
     await expect(about.locator('.gradual-blur')).toHaveCount(0);
     await page.evaluate(() => document.fonts.ready);
     const family = await page.locator('header [class*="wordmark"]').evaluate(element => getComputedStyle(element).fontFamily);
-    const logo = about.getByRole('img', { name: 'Logo NexOS', exact: true });
+    const logo = about.getByRole('img', { name: 'Logo ezway', exact: true });
     await expect(logo).toHaveCSS('font-family', family);
     const logoColor = await logo.evaluate(element => getComputedStyle(element).color);
     await logo.hover();
     await expect(logo).toHaveCSS('color', logoColor);
     await expect(logo).toHaveCSS('scale', 'none');
-    const mascot = about.getByRole('img', { name: 'Mascote tigre albino da NexOS com óculos roxos', exact: true });
+    const mascot = about.getByRole('img', { name: 'Mascote tigre albino da ezway com óculos roxos', exact: true });
     await expect(mascot).toBeVisible();
     await expect(mascot).toHaveJSProperty('complete', true);
     expect(await mascot.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);

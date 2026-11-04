@@ -2,10 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { ChevronDown, Menu, X, ArrowUpRight } from 'lucide-react';
+import { ChevronDown, X, ArrowUpRight } from 'lucide-react';
 import { useScroll, useMotionValueEvent } from 'motion/react';
 import { BrandMark } from './BrandMark';
+import { ListViewIcon } from './ListViewIcon';
 import { HeaderAccount } from './HeaderAccount';
+import { LanguageSwitch } from './LanguageSwitch';
+import { useLocale } from '@/lib/locale';
 import { useSectionScroll } from './SmoothScrollProvider';
 import { useScrollLock } from './useScrollLock';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
@@ -19,12 +22,13 @@ const SOLUTIONS = [
 ];
 const NAV_ITEMS = [
   { label: 'Como funciona', href: '#delivery-process' },
-  { label: 'EasyWay', href: '#easyway' },
+  { label: 'EasyChat', href: '#easychat' },
   { label: 'Planos', href: '#plans' },
   { label: 'Sobre', href: '#testimonials' },
 ];
 
 export function Header() {
+  const { t } = useLocale();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -58,32 +62,33 @@ export function Header() {
   }, [mobileOpen, scrollToSection]);
 
   useEffect(() => {
-    const desktop = matchMedia('(min-width: 1024px)');
+    const desktop = matchMedia('(min-width: 1200px)');
     const resize = () => { if (desktop.matches) closeMenu(); };
     desktop.addEventListener('change', resize);
     return () => desktop.removeEventListener('change', resize);
   }, [closeMenu]);
 
   return <>
-    <header role="banner" className={styles.header} style={{ backdropFilter: 'blur(16px) saturate(1.15)', WebkitBackdropFilter: 'blur(16px) saturate(1.15)' }} data-managed-section-links data-scrolled={scrolled} data-header-state="assembled">
+    <header role="banner" className={styles.header} data-managed-section-links data-scrolled={scrolled} data-header-state="assembled">
       <div className={styles.bar}>
-        <a href="#hero" aria-label="NexOS, início" className={styles.brand} onClick={event => { event.preventDefault(); navigate('#hero'); }}><BrandMark animated /></a>
-        <nav className={styles.desktopNav} aria-label="Navegação principal">
+        <a href="#hero" aria-label={t('ezway, início')} className={styles.brand} onClick={event => { event.preventDefault(); navigate('#hero'); }}><BrandMark /></a>
+        <nav className={styles.desktopNav} aria-label={t('Navegação principal')}>
           <DropdownMenu>
-            <DropdownMenuTrigger className={styles.navLink}>Soluções <ChevronDown size={13} aria-hidden="true" /></DropdownMenuTrigger>
+            <DropdownMenuTrigger className={styles.navLink}>{t('Soluções')} <ChevronDown size={13} aria-hidden="true" /></DropdownMenuTrigger>
             <DropdownMenuContent className={styles.popup} sideOffset={14}>
               <DropdownMenuGroup>
-                <DropdownMenuItem render={<Link href="/#services" />} className={styles.menuItem}>Explorar soluções <ArrowUpRight size={15} aria-hidden="true" /></DropdownMenuItem>
-                {SOLUTIONS.map(item => <DropdownMenuItem key={item.href} render={<Link href={item.href} />} className={styles.menuItem}>{item.label}</DropdownMenuItem>)}
+                <DropdownMenuItem render={<Link href="/#services" />} className={styles.menuItem}>{t('Explorar soluções')} <ArrowUpRight size={15} aria-hidden="true" /></DropdownMenuItem>
+                {SOLUTIONS.map(item => <DropdownMenuItem key={item.href} render={<Link href={item.href} />} className={styles.menuItem}>{t(item.label)}</DropdownMenuItem>)}
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
-          {NAV_ITEMS.map(item => <a key={item.href} href={item.href} className={styles.navLink} onClick={event => { event.preventDefault(); navigate(item.href); }}>{item.label}</a>)}
+          {NAV_ITEMS.map(item => <a key={item.href} href={item.href} className={styles.navLink} onClick={event => { event.preventDefault(); navigate(item.href); }}>{t(item.label)}</a>)}
         </nav>
         <div className={styles.actions}>
           <HeaderAccount />
-          <a className={styles.contactAction} href="#contact" onClick={event => { event.preventDefault(); navigate('#contact'); }}>Agendar conversa</a>
-          <button ref={triggerRef} type="button" className={styles.menuButton} aria-label="Abrir menu" aria-expanded={mobileOpen} aria-controls="mobile-navigation" onClick={() => setMobileOpen(true)}><Menu size={21} aria-hidden="true" /></button>
+          <LanguageSwitch />
+          <a className={styles.contactAction} href="#contact" onClick={event => { event.preventDefault(); navigate('#contact'); }}>{t('Agendar conversa')}</a>
+           <button ref={triggerRef} type="button" className={styles.menuButton} aria-label={t('Abrir menu')} aria-expanded={mobileOpen} aria-controls="mobile-navigation" onClick={() => setMobileOpen(true)}><ListViewIcon isActive={mobileOpen} /></button>
         </div>
       </div>
     </header>
@@ -95,15 +100,15 @@ export function Header() {
       else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
     }}>
       <div className={styles.mobilePanel}>
-        <div className={styles.mobileHeading}><span id="mobile-menu-title">Explore a NexOS</span><button type="button" className={styles.closeButton} aria-label="Fechar menu" onClick={closeMenu}><X size={22} /></button></div>
-        <nav aria-label="Navegação móvel" className={styles.mobileNav}>
-          <a href="#services" onClick={event => { event.preventDefault(); navigate('#services'); }}>Soluções <ArrowUpRight size={19} aria-hidden="true" /></a>
-          <div className={styles.mobileSolutions}>{SOLUTIONS.map(item => <Link key={item.href} href={item.href} onClick={closeMenu}>{item.label}</Link>)}</div>
-          {NAV_ITEMS.map(item => <a key={item.href} href={item.href} onClick={event => { event.preventDefault(); navigate(item.href); }}>{item.label}<ArrowUpRight size={19} aria-hidden="true" /></a>)}
-          <a className={styles.mobileContactAction} href="#contact" onClick={event => { event.preventDefault(); navigate('#contact'); }}>Agendar conversa <ArrowUpRight size={19} aria-hidden="true" /></a>
+        <div className={styles.mobileHeading}><span id="mobile-menu-title">{t('Explore a ezway')}</span><button type="button" className={styles.closeButton} aria-label={t('Fechar menu')} onClick={closeMenu}><X size={22} /></button></div>
+         <nav aria-label={t('Navegação móvel')} className={styles.mobileNav}>
+          <a href="#services" onClick={event => { event.preventDefault(); navigate('#services'); }}>{t('Soluções')} <ArrowUpRight size={19} aria-hidden="true" /></a>
+          <div className={styles.mobileSolutions}>{SOLUTIONS.map(item => <Link key={item.href} href={item.href} onClick={closeMenu}>{t(item.label)}</Link>)}</div>
+          {NAV_ITEMS.map(item => <a key={item.href} href={item.href} onClick={event => { event.preventDefault(); navigate(item.href); }}>{t(item.label)}<ArrowUpRight size={19} aria-hidden="true" /></a>)}
+          <a className={styles.mobileContactAction} href="#contact" onClick={event => { event.preventDefault(); navigate('#contact'); }}>{t('Agendar conversa')} <ArrowUpRight size={19} aria-hidden="true" /></a>
         </nav>
         <HeaderAccount expanded onNavigate={closeMenu} />
-        <p className={styles.mobileSignature}>Sites e soluções digitais</p>
+        <p className={styles.mobileSignature}>{t('Sites e soluções digitais')}</p>
       </div>
     </dialog>
   </>;

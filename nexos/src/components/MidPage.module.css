@@ -1,4 +1,4 @@
-/* Layout: design-/design-system.md. Cores e fontes: identidade NexOS. */
+/* Layout: design-/design-system.md. Cores e fontes: identidade EasyWay. */
 .section {
   --mid-surface: color-mix(in srgb, var(--color-ink) 3%, var(--color-canvas));
   --mid-raised: color-mix(in srgb, var(--color-ink) 5%, var(--color-canvas));

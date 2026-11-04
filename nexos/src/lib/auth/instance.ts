@@ -62,7 +62,7 @@ export function createAuth(test: AuthTestOptions = {}) {
   const mail = test.mail ?? { verification: sendVerificationEmail, reset: sendResetPasswordEmail, magic: sendMagicLinkEmail };
   const broker = test.supabaseOAuth ?? (test.pool ? null : supabaseOAuthConfig());
   return betterAuth({
-    appName: 'NexOS',
+    appName: 'ezway',
     database: new PostgresDialect({ pool: test.pool ?? (async () => createPool()) }),
     secret, baseURL: site, basePath: '/api/auth', trustedOrigins: [site],
     emailAndPassword: {
@@ -142,14 +142,14 @@ export function createAuth(test: AuthTestOptions = {}) {
       },
     },
     plugins: [
-      twoFactor({ issuer: 'NexOS', allowPasswordless: true, skipVerificationOnEnable: false,
+      twoFactor({ issuer: 'ezway', allowPasswordless: true, skipVerificationOnEnable: false,
         backupCodeOptions: { amount: 10, storeBackupCodes: 'encrypted' } }),
       adminPlugin({ defaultRole: 'user', adminRoles: ['admin'], roles: {
         user: ac.newRole({}), admin: ac.newRole({ adminPanel: ['view', 'manageUsers', 'impersonate'] }),
       } }),
       magicLink({ expiresIn: 600, storeToken: 'hashed', disableSignUp: true,
         sendMagicLink: async ({ email, url }) => mail.magic({ to: email, url }) }),
-      passkey({ rpName: 'NexOS', rpID: new URL(site).hostname, origin: site,
+      passkey({ rpName: 'ezway', rpID: new URL(site).hostname, origin: site,
         authenticatorSelection: { residentKey: 'required', userVerification: 'required' },
         registration: { afterVerification: async ({ verification }) => {
           if (!verification.registrationInfo?.userVerified) throw new APIError('BAD_REQUEST', { message: 'Confirme sua identidade no dispositivo para cadastrar a chave.' });

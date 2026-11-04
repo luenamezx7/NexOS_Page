@@ -39,7 +39,7 @@ export async function sendWelcomeEmail(
     const { data, error } = await getResend().emails.send({
       from: FROM_EMAIL,
       to: [email],
-      subject: 'Bem-vindo ao NexOS! 🚀',
+      subject: 'Boas-vindas à ezway! 🚀',
       react: WelcomeEmail({
         name,
         dashboardUrl: getDashboardUrl(userType),

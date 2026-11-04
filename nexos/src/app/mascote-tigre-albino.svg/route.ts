@@ -1,11 +1,3 @@
-import { readFile } from 'node:fs/promises';
-import { join } from 'node:path';
-
+// Keep the previous icon URL working for cached links and crawlers.
 export const dynamic = 'force-static';
-
-export async function GET() {
-  const svg = await readFile(join(process.cwd(), 'design-', 'rebrand-nexos', 'nexbotlogostatic.svg'), 'utf8');
-  return new Response(svg, {
-    headers: { 'Content-Type': 'image/svg+xml; charset=utf-8' },
-  });
-}
+export { GET } from '../logo-ghost.svg/route';

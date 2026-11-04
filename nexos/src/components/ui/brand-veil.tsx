@@ -23,7 +23,7 @@ export function BrandVeil({ variant = 'default' }: { variant?: 'default' | 'hero
 
   return (
     <div ref={ref} data-brand-veil data-variant={variant} aria-hidden="true" className="brand-veil">
-      {near && (!entryOpen || revealing) && <Grainient
+      {near && <Grainient
         colors={GRAINIENT_PALETTES[theme]}
         angle={variant === 'default' ? 55 : 0}
         flow={0.65}
@@ -32,7 +32,7 @@ export function BrandVeil({ variant = 'default' }: { variant?: 'default' | 'hero
         grainSize={variant === 'hero' ? 1.5 : 1.2}
         grainAnimated={false}
         maxFPS={30}
-        paused={!visible}
+        paused={!visible || (entryOpen && !revealing)}
         dpr={1}
         speed={variant === 'interior' ? 0.3 : 0.55}
         interactive={false}

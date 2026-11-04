@@ -2,16 +2,16 @@ import type { SiteConfig } from './types';
 
 const whatsapp = {
   number: '5564993289250',
-  message: 'Olá, vim pelo site da NexOS e gostaria de conversar sobre meu projeto.',
+  message: 'Olá, vim pelo site da ezway e gostaria de conversar sobre meu projeto.',
 };
 
 export const config: SiteConfig = {
   brand: {
-    name: 'NexOS',
-    fullName: 'NexOS Lab',
-    alternateNames: ['NexOS Performance'],
+    name: 'ezway',
+    fullName: 'ezway',
+    alternateNames: [],
     tagline: 'Serviços Digitais de Escala',
-    logo: 'NX',
+    logo: 'EZ',
     },
   
   
@@ -24,7 +24,7 @@ export const config: SiteConfig = {
   services: [
     {
       id: 'dev',
-      title: 'Desenvolvimento NexOS',
+      title: 'Desenvolvimento ezway',
       description: 'Seu negócio merece uma presença digital que explique o que você faz e facilite o próximo contato. Criamos sites, portfólios, cardápios digitais e landing pages com a sua identidade, navegação clara e foco no seu objetivo.',
       features: ['Sites e portfólios para apresentar sua marca', 'Cardápios digitais fáceis de consultar', 'Landing pages para suas campanhas', 'Experiência adaptada ao celular', 'Design e desenvolvimento sob medida', 'Escopo e entrega alinhados com você'],
       ctaText: 'Falar com o comercial',
@@ -63,7 +63,7 @@ export const config: SiteConfig = {
   whatsapp,
   meta: {
     title: 'Sites, Landing Pages, Cardápios Digitais e Placas NFC',
-    description: 'NexOS Lab cria sites, landing pages, cardápios digitais e placas NFC com QR Code para empresas. Conheça o EasyWay, assistente administrativo com IA em desenvolvimento.',
+    description: 'ezway cria sites, landing pages, cardápios digitais e placas NFC com QR Code para empresas. Conheça o EasyChat, assistente administrativo com IA em desenvolvimento.',
     ogImage: '/og',
   },
 };

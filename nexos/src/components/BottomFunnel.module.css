@@ -1,4 +1,4 @@
-/* Layout: design-/design-system.md. Cores e fontes: identidade NexOS. */
+/* Layout: design-/design-system.md. Cores e fontes: identidade EasyWay. */
 .section {
   --bottom-surface: var(--surface-base);
   --bottom-raised: var(--surface-raised);
@@ -28,6 +28,7 @@
 .faqItem { border: 1px solid var(--bottom-line); border-radius: 20px; background: color-mix(in srgb, var(--bottom-surface) 82%, transparent); overflow: hidden; box-shadow: inset 0 1px 0 var(--surface-edge); transition: border-color 200ms, background-color 200ms; }
 .faqItem:hover { border-color: color-mix(in srgb, var(--bottom-accent) 24%, var(--bottom-line)); }
 .faqItem[open] { border-color: color-mix(in srgb, var(--bottom-accent) 45%, var(--bottom-line)); background: radial-gradient(ellipse at 100% 0%, var(--ambient-violet), transparent 80%), var(--bottom-raised); }
+:global(.dark) .faqItem[open] { background: var(--bottom-raised); }
 .faqTrigger { display: flex; width: 100%; min-height: 56px; align-items: center; justify-content: space-between; gap: 12px 16px; padding: 16px 20px; text-align: left; list-style: none; cursor: pointer; }
 .faqTrigger::-webkit-details-marker { display: none; }
 .faqTrigger:hover { color: var(--detail-text); }

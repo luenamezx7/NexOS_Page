@@ -15,7 +15,7 @@ import { PageFooter } from '@/components/PageChrome';
  * bloqueia a recuperação.
  */
 export const metadata: Metadata = {
-  title: 'Redefinir senha | NexOS',
+  title: 'Redefinir senha | ezway',
   robots: { index: false, follow: false },
 };
 export const dynamic = 'force-dynamic';

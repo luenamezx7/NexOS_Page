@@ -27,7 +27,7 @@ function getNotionClient(): Client | null {
 function getServiceLabel(serviceId: string): string {
   // maps internal service id to display label, fallback to id itself
   const map: Record<string, string> = {
-    dev: 'Desenvolvimento NexOS',
+    dev: 'Desenvolvimento ezway',
     placa: 'Placa NFC + QR Code',
     design: 'Product Design & Branding',
     strategy: 'Estratégia & Discovery',

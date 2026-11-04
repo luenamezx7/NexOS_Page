@@ -19,7 +19,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
     title: 'Política de Privacidade',
     updated: 'Atualizado em setembro de 2026',
     intro:
-      'Esta Política descreve como a NexOS coleta, usa e protege dados pessoais no site, na sua conta e nas conversas com nosso atendimento comercial.',
+      'Esta Política descreve como a ezway coleta, usa e protege dados pessoais no site, na sua conta e nas conversas com nosso atendimento comercial.',
     sections: [
       {
         heading: '1. Dados que coletamos',
@@ -45,7 +45,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
     title: 'Termos de Uso',
     updated: 'Atualizado em setembro de 2026',
     intro:
-      'Ao usar o site e contratar Desenvolvimento NexOS ou a Placa Inteligente NFC + QR Code, você concorda com estes Termos.',
+      'Ao usar o site e contratar Desenvolvimento ezway ou a Placa Inteligente NFC + QR Code, você concorda com estes Termos.',
     sections: [
       {
         heading: '1. Serviços',
@@ -57,7 +57,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
       },
       {
         heading: '3. Uso aceitável',
-        body: 'É vedado tentar burlar os mecanismos de segurança do site, enviar dados maliciosos ou usar marcas NexOS sem autorização.',
+        body: 'É vedado tentar burlar os mecanismos de segurança do site, enviar dados maliciosos ou usar marcas ezway sem autorização.',
       },
       {
         heading: '4. Suporte',
@@ -71,7 +71,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
     title: 'LGPD — Direitos do Titular',
     updated: 'Atualizado em setembro de 2026 · Lei nº 13.709/2018',
     intro:
-      'A NexOS atua como controladora dos dados da sua conta e dos dados compartilhados com nosso atendimento comercial.',
+      'A ezway atua como controladora dos dados da sua conta e dos dados compartilhados com nosso atendimento comercial.',
     sections: [
       {
         heading: '1. Bases legais',
@@ -87,7 +87,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
       },
       {
         heading: '4. Encarregado (DPO)',
-        body: 'Encarregado: NexOS Performance — nexosperformance@gmail.com — WhatsApp +55 64 99328-9250.',
+        body: 'Encarregado: ezway — nexosperformance@gmail.com — WhatsApp +55 64 99328-9250.',
       },
     ],
   },
@@ -104,7 +104,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
         body: 'Arrependimento em até 7 dias corridos (art. 49 do CDC) para produtos não personalizados. Defeito de fabricação: troca ou reembolso integral em até 30 dias. Frete de devolução por defeito é por nossa conta; por arrependimento, calculamos o frete de acordo com sua região.',
       },
       {
-        heading: '2. Desenvolvimento NexOS',
+        heading: '2. Desenvolvimento ezway',
         body: 'Sinal/kickoff não reembolsável após início do Discovery. Entregas incrementais: reembolso proporcional às sprints não executadas.',
       },
       {

@@ -18,13 +18,13 @@ export const servicePages = {
   sites: {
     path: '/criacao-de-sites',
     title: 'Criação de Sites para Empresas',
-    description: 'Criação de sites e portfólios para empresas e profissionais. Design e desenvolvimento sob medida, com atendimento remoto da NexOS.',
+    description: 'Criação de sites e portfólios para empresas e profissionais. Design e desenvolvimento sob medida, com atendimento remoto da ezway.',
     headline: 'Um site à altura do seu negócio.',
     intro: 'Apresente seus serviços, organize seus contatos e dê à sua marca um endereço próprio na internet.',
     label: 'Criação de sites',
     productId: 'dev',
     overviewTitle: 'Sua empresa, com espaço próprio.',
-    overview: 'Um site institucional reúne o que o cliente precisa para conhecer sua empresa: serviços, informações de contato e formas de começar uma conversa. Na NexOS, o projeto parte do seu objetivo e da identidade do negócio. A estrutura, o design e o desenvolvimento são definidos juntos, com navegação adaptada a celulares e computadores.',
+    overview: 'Um site institucional reúne o que o cliente precisa para conhecer sua empresa: serviços, informações de contato e formas de começar uma conversa. Na ezway, o projeto parte do seu objetivo e da identidade do negócio. A estrutura, o design e o desenvolvimento são definidos juntos, com navegação adaptada a celulares e computadores.',
     applications: [
       { title: 'Site institucional', body: 'Organize a apresentação da empresa, seus serviços e canais de atendimento em um só lugar.' },
       { title: 'Portfólio profissional', body: 'Apresente seus trabalhos reais com contexto, imagens e uma forma direta de entrar em contato.' },
@@ -46,7 +46,7 @@ export const servicePages = {
   landing: {
     path: '/landing-pages',
     title: 'Desenvolvimento de Landing Pages',
-    description: 'Landing pages para apresentar ofertas, divulgar serviços e receber contatos. Alinhe sua campanha com design e desenvolvimento sob medida da NexOS.',
+    description: 'Landing pages para apresentar ofertas, divulgar serviços e receber contatos. Alinhe sua campanha com design e desenvolvimento sob medida da ezway.',
     headline: 'Uma página. Uma oferta clara.',
     intro: 'Landing pages para apresentar sua oferta e levar o visitante ao próximo passo: contato, orçamento ou compra.',
     label: 'Landing pages',
@@ -80,11 +80,11 @@ export const servicePages = {
     label: 'Cardápio digital',
     productId: 'dev',
     overviewTitle: 'Mais clareza na hora de escolher.',
-    overview: 'O cardápio digital permite apresentar categorias, itens e preços em uma página que o cliente abre no próprio celular. Pode ser compartilhado nas redes sociais, no WhatsApp ou por QR Code no estabelecimento. A NexOS desenvolve a apresentação conforme o conteúdo e a identidade do seu negócio.',
+    overview: 'O cardápio digital permite apresentar categorias, itens e preços em uma página que o cliente abre no próprio celular. Pode ser compartilhado nas redes sociais, no WhatsApp ou por QR Code no estabelecimento. A ezway desenvolve a apresentação conforme o conteúdo e a identidade do seu negócio.',
     applications: [
       { title: 'Restaurantes e lanchonetes', body: 'Apresente refeições, bebidas e acompanhamentos com descrições e preços organizados por categoria.' },
       { title: 'Cafés e confeitarias', body: 'Reúna os itens disponíveis e as informações que ajudam o cliente a escolher.' },
-      { title: 'Atendimento no balcão ou na mesa', body: 'Compartilhe o endereço do cardápio por QR Code ou conecte-o a uma Placa Inteligente NexOS.' },
+      { title: 'Atendimento no balcão ou na mesa', body: 'Compartilhe o endereço do cardápio por QR Code ou conecte-o a uma Placa Inteligente ezway.' },
     ],
     preparation: ['Categorias, nomes, descrições e preços atuais dos itens.', 'Fotos dos produtos, quando disponíveis.', 'Identidade visual e informações de atendimento.', 'Forma desejada de contato ou pedido e necessidades de atualização.'],
     steps: [
@@ -102,13 +102,13 @@ export const servicePages = {
   plate: {
     path: '/placa-nfc',
     title: 'Placa NFC com QR Code para Empresas',
-    description: 'Conheça a Placa Inteligente NexOS com NFC e QR Code. Direcione clientes para seu cardápio, WhatsApp, portfólio ou redes sociais por aproximação ou câmera.',
+    description: 'Conheça a Placa Inteligente ezway com NFC e QR Code. Direcione clientes para seu cardápio, WhatsApp, portfólio ou redes sociais por aproximação ou câmera.',
     headline: 'Aproxime. Escaneie. Conecte.',
     intro: 'Uma placa com NFC e QR Code para levar o cliente ao link que seu negócio precisa compartilhar.',
     label: 'Placa NFC + QR Code',
     productId: 'placa',
     overviewTitle: 'Do atendimento presencial ao seu link.',
-    overview: 'A Placa Inteligente NexOS reúne NFC e QR Code em uma peça de acrílico. Em um celular compatível com NFC, o cliente aproxima o aparelho. Como alternativa, usa a câmera para escanear o QR Code. Os dois caminhos levam ao endereço escolhido para seu negócio, como um cardápio, portfólio ou página de contato.',
+    overview: 'A Placa Inteligente ezway reúne NFC e QR Code em uma peça de acrílico. Em um celular compatível com NFC, o cliente aproxima o aparelho. Como alternativa, usa a câmera para escanear o QR Code. Os dois caminhos levam ao endereço escolhido para seu negócio, como um cardápio, portfólio ou página de contato.',
     applications: [
       { title: 'Cardápio e informações', body: 'Coloque a placa na mesa ou no balcão para compartilhar o endereço do seu cardápio digital.' },
       { title: 'WhatsApp e redes sociais', body: 'Facilite o acesso aos canais em que seus clientes já conversam com a empresa.' },
@@ -116,13 +116,13 @@ export const servicePages = {
     ],
     preparation: ['Nome e identidade visual do negócio.', 'Endereço que a placa deve abrir.', 'Quantidade de unidades e pontos de uso.', 'CEP para o comercial calcular o frete.'],
     steps: [
-      { title: 'Escolher o destino', body: 'Defina qual link o cliente deve abrir e converse com a NexOS sobre a personalização.' },
+      { title: 'Escolher o destino', body: 'Defina qual link o cliente deve abrir e converse com a ezway sobre a personalização.' },
       { title: 'Alinhar com o comercial', body: 'Simule a quantidade na home e envie sua seleção pelo WhatsApp. Confirmamos personalização, frete, prazo e condições para fechar a venda.' },
       { title: 'Usar no atendimento', body: 'Posicione a placa onde o cliente possa aproximar o celular ou ler o QR Code com a câmera.' },
     ],
     questions: [
       { question: 'Funciona em qualquer celular?', answer: 'A aproximação exige um aparelho compatível com NFC e com o recurso habilitado. O QR Code oferece uma alternativa para celulares com câmera e leitura de códigos. Abrir o link depende de acesso à internet.' },
-      { question: 'Posso escolher o link da placa?', answer: 'Sim. A placa pode direcionar para o endereço combinado com a NexOS, como WhatsApp, cardápio, portfólio ou redes sociais. Alinhe o destino e a personalização antes da produção.' },
+      { question: 'Posso escolher o link da placa?', answer: 'Sim. A placa pode direcionar para o endereço combinado com a ezway, como WhatsApp, cardápio, portfólio ou redes sociais. Alinhe o destino e a personalização antes da produção.' },
       { question: 'A compra inclui a criação de um site?', answer: 'Não. A placa compartilha um link. O desenvolvimento de site ou cardápio digital é um serviço separado, caso você ainda precise criar o endereço de destino.' },
       { question: 'Como solicito uma proposta para várias unidades?', answer: 'Selecione a quantidade desejada na home e fale com nosso comercial pelo WhatsApp. Valores, personalização, frete e condições são alinhados durante o atendimento.' },
     ],

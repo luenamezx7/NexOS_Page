@@ -15,12 +15,12 @@ export function EmailLayout({ children, preheader }: EmailLayoutProps) {
           <tr>
             <td style={styles.container}>
               <header style={styles.header}>
-                <div style={styles.logo}>NX</div>
+                <div style={styles.logo}>EW</div>
               </header>
               <main style={styles.main}>{children}</main>
               <footer style={styles.footer}>
                 <p style={styles.footerText}>
-                  NexOS — Serviços Digitais de Escala
+                  ezway — Serviços Digitais de Escala
                 </p>
                 <p style={styles.footerLinks}>
                   <a href="https://nexoslab.online/privacidade" style={styles.link}>Política de Privacidade</a>

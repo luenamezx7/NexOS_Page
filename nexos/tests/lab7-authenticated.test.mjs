@@ -58,7 +58,7 @@ test('LAB 7: header reflects a real persisted session, image, mobile actions and
     await expect(profile.locator('img')).toHaveAttribute('src', `${SITE}/favicon.png`);
     await page.setViewportSize({ width: 375, height: 844 });
     await page.getByRole('button', { name: 'Abrir menu' }).click();
-    const menu = page.getByRole('dialog', { name: 'Explore a NexOS' });
+    const menu = page.getByRole('dialog', { name: 'Explore a ezway' });
     await expect(menu.getByRole('link', { name: 'Segurança da conta' })).toHaveAttribute('href', '/portal/seguranca');
     await menu.getByRole('button', { name: 'Sair da conta' }).click();
     await page.waitForURL(`${SITE}/portal/acesso`);

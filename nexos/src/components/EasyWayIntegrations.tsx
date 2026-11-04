@@ -2,10 +2,10 @@
 
 import { useRef, type RefObject } from 'react';
 import { Cpu } from 'lucide-react';
-import { raithonRealm } from '@/lib/brand-font';
 import { AnimatedBeam } from './ui/animated-beam';
-import styles from './NexosIntegrations.module.css';
+import styles from './EasyWayIntegrations.module.css';
 import { landingEvidence } from '@/config/landing-evidence';
+import { useLocale } from '@/lib/locale';
 
 type AppId = 'whatsapp' | 'instagram' | 'notion' | 'docs' | 'ai';
 
@@ -28,7 +28,8 @@ function IntegrationNode({ app, name, nodeRef }: { app: AppId; name: string; nod
   </li>;
 }
 
-export function NexosIntegrations() {
+export function EasyWayIntegrations() {
+  const { t } = useLocale();
   const containerRef = useRef<HTMLDivElement>(null);
   const centerRef = useRef<HTMLDivElement>(null);
   const whatsappRef = useRef<HTMLDivElement>(null);
@@ -37,23 +38,23 @@ export function NexosIntegrations() {
   const docsRef = useRef<HTMLDivElement>(null);
   const aiRef = useRef<HTMLDivElement>(null);
 
-  return <figure className={`${styles.figure} ${raithonRealm.variable}`} aria-label="NexOS conectada a WhatsApp, Instagram, Notion, Google Docs e inteligência artificial">
+  return <figure className={styles.figure} aria-label={t('ezway conectada a WhatsApp, Instagram, Notion, Google Docs e inteligência artificial')}>
     <div ref={containerRef} className={styles.diagram} data-integrations>
       <AnimatedBeam containerRef={containerRef} fromRef={whatsappRef} toRef={centerRef} duration={4.8} repeatDelay={1.5} />
       <AnimatedBeam containerRef={containerRef} fromRef={instagramRef} toRef={centerRef} delay={.7} duration={4.8} repeatDelay={1.5} />
       <AnimatedBeam containerRef={containerRef} fromRef={notionRef} toRef={centerRef} delay={1.4} duration={4.8} repeatDelay={1.5} />
       <AnimatedBeam containerRef={containerRef} fromRef={docsRef} toRef={centerRef} delay={2.1} duration={4.8} repeatDelay={1.5} />
       <AnimatedBeam containerRef={containerRef} fromRef={aiRef} toRef={centerRef} delay={2.8} duration={4.8} repeatDelay={1.5} />
-      <div ref={centerRef} className={styles.center} data-integration-center><span role="img" aria-label="Logo NexOS" className={styles.wordmark}>nexos</span></div>
-      <ul className={styles.apps} aria-label="Aplicativos conectados">
+      <div ref={centerRef} className={styles.center} data-integration-center><span role="img" aria-label="Logo ezway" className={styles.wordmark}>ezway</span></div>
+       <ul className={styles.apps} aria-label={t('Aplicativos conectados')}>
         <IntegrationNode app="whatsapp" name="WhatsApp" nodeRef={whatsappRef} />
         <IntegrationNode app="instagram" name="Instagram" nodeRef={instagramRef} />
         <IntegrationNode app="notion" name="Notion" nodeRef={notionRef} />
         <IntegrationNode app="docs" name="Google Docs" nodeRef={docsRef} />
-        <IntegrationNode app="ai" name="IA" nodeRef={aiRef} />
-        {landingEvidence.integrationNodes.map((label, index) => <li key={label} className={styles.proposedNode} data-node={index % 2 ? 'payments' : 'crm'}><span>{label}</span></li>)}
+         <IntegrationNode app="ai" name={t('IA')} nodeRef={aiRef} />
+         {landingEvidence.integrationNodes.map((label, index) => <li key={label} className={styles.proposedNode} data-node={index % 2 ? 'payments' : 'crm'}><span>{t(label)}</span></li>)}
       </ul>
     </div>
-    <figcaption>Seus apps, conectados.</figcaption>
+     <figcaption>{t('Seus apps, conectados.')}</figcaption>
   </figure>;
 }

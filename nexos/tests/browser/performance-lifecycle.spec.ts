@@ -13,7 +13,7 @@ test.beforeEach(async ({ page }) => {
 test('a abertura não mantém efeitos WebGL e blurs da home trabalhando por baixo', async ({ page }) => {
   await page.goto('/');
   await openPresentation(page);
-  const dialog = page.getByRole('dialog', { name: 'Apresentação NexOS' });
+  const dialog = page.getByRole('dialog', { name: 'Apresentação ezway' });
   await expect(dialog.locator('[data-topography]')).toHaveAttribute('data-motion', 'animated');
   await expect(page.locator('[data-scene="waves"] [data-topography]')).toHaveCount(0);
   await expect(page.locator('#hero .grainient-container')).toHaveCount(0);
@@ -34,13 +34,24 @@ test('o Topography pausa fora da tela e reutiliza o canvas ao voltar', async ({ 
   await expect(topology.locator('canvas')).toHaveAttribute('data-retained-canvas', 'yes');
 });
 
-test('a navegação do header e do indicador chega à seção sem disputa de scroll', async ({ page }) => {
+test('a navegação do header chega à seção sem disputa com o progresso de scroll', async ({ page }) => {
   await page.goto('/#hero');
   await expect(page.locator('html')).toHaveClass(/lenis/);
-  await page.getByRole('navigation', { name: 'Navegação principal', exact: true }).getByRole('link', { name: 'Contato', exact: true }).click();
-  await expect.poll(() => page.locator('#cta-final').evaluate(element => Math.abs(element.getBoundingClientRect().top - parseFloat(getComputedStyle(element).scrollMarginTop || '0'))), { timeout: 20000 }).toBeLessThan(4);
-  await page.getByRole('button', { name: 'Ir para Início', exact: true }).click();
+  await page.getByRole('banner').getByRole('link', { name: 'Agendar conversa', exact: true }).click();
+  await expect.poll(() => page.locator('#contact').evaluate(element => Math.abs(element.getBoundingClientRect().top - parseFloat(getComputedStyle(element).scrollMarginTop || '0'))), { timeout: 20000 }).toBeLessThan(4);
+  await page.getByRole('link', { name: 'ezway, início', exact: true }).click();
   await expect.poll(() => page.evaluate(() => scrollY), { timeout: 20000 }).toBeLessThan(4);
+});
+
+test('CPU limitada usa scroll nativo sem desligar as animações da página', async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'hardwareConcurrency', { configurable: true, value: 4 });
+  });
+  await page.goto('/#hero');
+  await expect(page.locator('html')).not.toHaveClass(/lenis/);
+  await expect(page.locator('header [data-brand-way]')).toHaveCSS('animation-name', /way-gradient/);
+  await page.getByRole('banner').getByRole('link', { name: 'Agendar conversa', exact: true }).click();
+  await expect.poll(() => page.locator('#contact').evaluate(element => Math.abs(element.getBoundingClientRect().top - parseFloat(getComputedStyle(element).scrollMarginTop || '0'))), { timeout: 20000 }).toBeLessThan(4);
 });
 
 test('o gradual blur fica apenas nas bordas da tela, sem blur entre seções', async ({ page }) => {
@@ -63,7 +74,7 @@ for (const theme of ['light', 'dark']) {
     await page.goto('/#hero');
     const blur = page.locator('.landing-edge-blur');
     await expect(blur).toBeVisible();
-    await expect(blur.locator('[data-gradual-blur-layer]')).toHaveCount(8);
+    await expect(blur.locator('[data-gradual-blur-layer]')).toHaveCount(4);
     await expect.poll(() => blur.evaluate(root => (root as HTMLElement).style.getPropertyValue('--gradual-blur-reveal'))).toBe('1.000');
     await expect(blur.locator('.gradual-blur-bloom, .gradual-blur-tint')).toHaveCount(0);
     const layers = blur.locator('[data-gradual-blur-layer]');
@@ -84,8 +95,8 @@ for (const theme of ['light', 'dark']) {
       await page.mouse.move(width / 2, 830);
       await expect(layers.last()).toHaveCSS('backdrop-filter', 'blur(48px)');
       const box = await blur.boundingBox();
-      expect(box!.height).toBeGreaterThanOrEqual(120);
-      expect(box!.height).toBeLessThanOrEqual(240);
+      expect(box!.height).toBeGreaterThanOrEqual(96);
+      expect(box!.height).toBeLessThanOrEqual(160);
       const topBox = await page.locator('.landing-header-blur').boundingBox();
       expect(topBox!.y + topBox!.height).toBeLessThan(422);
       expect(box!.y).toBeGreaterThan(422);

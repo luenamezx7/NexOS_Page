@@ -10,8 +10,8 @@ export interface NotificationPayload {
   detail: string;
 }
 const HEADINGS: Record<NotificationPayload['kind'], string> = {
-  welcome: 'Bem-vindo ao NexOS', login: 'Novo acesso à sua conta NexOS',
-  security: 'Alerta de segurança do NexOS', notice: 'Notificação do NexOS',
+  welcome: 'Boas-vindas à ezway', login: 'Novo acesso à sua conta ezway',
+  security: 'Alerta de segurança da ezway', notice: 'Notificação da ezway',
 };
 
 export async function enqueueNotification(userId: string, eventKey: string, payload: NotificationPayload): Promise<void> {

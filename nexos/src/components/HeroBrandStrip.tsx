@@ -18,7 +18,7 @@ export function HeroBrandStrip({ active = true }: { active?: boolean }) {
     document.addEventListener('visibilitychange', update);
     return () => document.removeEventListener('visibilitychange', update);
   }, []);
-  return <div ref={ref} role="region" aria-label="Pilares da NexOS" className={styles.strip} data-hero-brand-strip data-running={active && visible && !paused && !hidden}>
+  return <div ref={ref} role="region" aria-label="Pilares da ezway" className={styles.strip} data-hero-brand-strip data-running={active && visible && !paused && !hidden}>
     <Marquee duration={32} pauseOnHover direction="left" fade fadeAmount={12} className={styles.viewport}>
       {BRAND_PILLARS.map(pillar => <span className={styles.item} key={pillar}><span className={styles.spark} aria-hidden="true" />{pillar}</span>)}
     </Marquee>

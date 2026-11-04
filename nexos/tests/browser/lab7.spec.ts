@@ -27,10 +27,10 @@ test('real guest session, dark default, nine experiences and usable navigation',
   await expect(page.getByRole('menuitem', { name: 'Sites e Portfólios' })).toHaveAttribute('href', '/criacao-de-sites');
   await page.keyboard.press('Escape');
   await expect(header.getByRole('button', { name: 'Soluções', exact: true })).toBeFocused();
-  await header.getByRole('link', { name: 'EasyWay' }).click();
-  await expect(page).toHaveURL(/#easyway$/);
+  await header.getByRole('link', { name: 'EasyChat' }).click();
+  await expect(page).toHaveURL(/#easychat$/);
   await expect(header).toHaveAttribute('data-scrolled', 'true');
-  await expect(page.locator('#easyway')).toContainText('Nome provisório. Interface conceitual.');
+  await expect(page.locator('#easychat')).toContainText('Nome provisório. Interface conceitual.');
   await header.getByRole('link', { name: 'Sobre Nós' }).click();
   await expect(page.locator('.landing-header-blur')).toHaveCSS('pointer-events', 'none');
   await expect(page.locator('.landing-edge-blur')).toHaveCSS('pointer-events', 'none');
@@ -42,7 +42,7 @@ test('session loading, authenticated image/fallback, keyboard menu and logout er
   let release!: () => void;
   const wait = new Promise<void>(resolve => { release = resolve; });
   let signedOut = false;
-  const fixture = { user: { id: 'ui-fixture', name: 'Cliente NexOS', email: 'ui@example.test', emailVerified: true, image: '/favicon.png', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }, session: { id: 'ui-session', userId: 'ui-fixture', token: 'ui-only', expiresAt: '2099-01-01T00:00:00.000Z', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() } };
+  const fixture = { user: { id: 'ui-fixture', name: 'Cliente ezway', email: 'ui@example.test', emailVerified: true, image: '/favicon.png', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }, session: { id: 'ui-session', userId: 'ui-fixture', token: 'ui-only', expiresAt: '2099-01-01T00:00:00.000Z', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() } };
   await page.route('**/api/auth/get-session', async route => { await wait; await route.fulfill({ json: signedOut ? null : fixture }); });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await openHome(page);
@@ -69,7 +69,7 @@ test('mobile modal traps focus, exposes guest text and restores scroll before an
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await openHome(page);
   await page.getByRole('button', { name: 'Abrir menu' }).click();
-  const menu = page.getByRole('dialog', { name: 'Explore a NexOS' });
+  const menu = page.getByRole('dialog', { name: 'Explore a ezway' });
   await expect(menu).toBeVisible();
   await expect(menu.getByRole('link', { name: 'Minha conta', exact: true })).toHaveAttribute('href', '/portal/acesso');
   expect(await page.evaluate(() => getComputedStyle(document.body).overflow)).toBe('hidden');
@@ -81,11 +81,11 @@ test('mobile modal traps focus, exposes guest text and restores scroll before an
   await expect(menu).not.toBeVisible();
   await expect(page.getByRole('button', { name: 'Abrir menu' })).toBeFocused();
   await page.getByRole('button', { name: 'Abrir menu' }).click();
-  await menu.getByRole('link', { name: 'EasyWay', exact: true }).click();
+  await menu.getByRole('link', { name: 'EasyChat', exact: true }).click();
   await expect(menu).not.toBeVisible();
-  await expect(page).toHaveURL(/#easyway$/);
+  await expect(page).toHaveURL(/#easychat$/);
   expect(await page.evaluate(() => getComputedStyle(document.body).overflow)).not.toBe('hidden');
-  await expect.poll(() => page.locator('#easyway').evaluate(el => Math.abs(el.getBoundingClientRect().top - parseFloat(getComputedStyle(el).scrollMarginTop)))).toBeLessThan(5);
+  await expect.poll(() => page.locator('#easychat').evaluate(el => Math.abs(el.getBoundingClientRect().top - parseFloat(getComputedStyle(el).scrollMarginTop)))).toBeLessThan(5);
 });
 
 test('marquee moves, pauses on hover and keyboard control, then becomes static under reduced motion', async ({ page }) => {
@@ -130,7 +130,7 @@ for (const theme of ['dark', 'light'] as const) {
       await expect(page.locator('#hero-title [data-reveal-word="IA"]')).toHaveCSS('background-image', /linear-gradient/);
       await expect(page.getByRole('link', { name: 'Explorar soluções', exact: true }).first()).toBeVisible();
       await page.screenshot({ path: testInfo.outputPath(`hero-${theme}-${width}.png`) });
-      for (const id of ['services', 'easyway', 'showcase', 'mascot-solutions', 'testimonials', 'faq', 'cta-final']) {
+      for (const id of ['services', 'easychat', 'showcase', 'mascot-solutions', 'testimonials', 'faq', 'cta-final']) {
         await page.locator(`#${id}`).scrollIntoViewIfNeeded();
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${id} @${width}`).toBe(true);
       }
@@ -143,7 +143,7 @@ for (const theme of ['dark', 'light'] as const) {
     await expect(page.locator('#services')).toContainText('Massa artesanal');
     await page.getByRole('radio', { name: 'Explorar tudo' }).check();
     await page.locator('#services').screenshot({ path: testInfo.outputPath(`solutions-${theme}.png`) });
-    await page.locator('#easyway').screenshot({ path: testInfo.outputPath(`easyway-${theme}.png`) });
+    await page.locator('#easychat').screenshot({ path: testInfo.outputPath(`easychat-${theme}.png`) });
     await page.locator('#testimonials').scrollIntoViewIfNeeded();
     await expect(page.locator('[data-globe-state]')).toHaveAttribute('data-globe-state', /ready|unavailable/, { timeout: 15000 });
     await expect(page.locator('#testimonials img')).toHaveCount(0);

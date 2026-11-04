@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+test.use({ channel: process.env.PLAYWRIGHT_CHANNEL || undefined });
+
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem('nexos-cookie-consent-v1', JSON.stringify({ necessary: true, functional: false, analytics: false, marketing: false, updatedAt: new Date().toISOString() }));
@@ -8,12 +10,13 @@ test.beforeEach(async ({ page }) => {
 
 test('a apresentação automática usa a logo do fechamento e reaparece após F5', async ({ page }) => {
   await page.goto('/#hero');
-  const dialog = page.getByRole('dialog', { name: 'Apresentação NexOS' });
+  const dialog = page.getByRole('dialog', { name: 'Apresentação ezway' });
   await expect(dialog).toBeVisible();
   await expect(dialog).toBeFocused();
-  const logo = dialog.getByText('NEXOS', { exact: true });
-  await expect(logo).toHaveCSS('background-clip', /text/);
-  expect(await logo.evaluate(el => getComputedStyle(el).animationName)).not.toBe('none');
+  const logo = dialog.getByText('ezway', { exact: true });
+  const way = logo.locator('span');
+  await expect(way).toHaveCSS('background-clip', /text/);
+  expect(await way.evaluate(el => getComputedStyle(el).animationName)).not.toBe('none');
   const family = await logo.evaluate(el => getComputedStyle(el).fontFamily);
   await expect(dialog).toHaveCount(0, { timeout: 10000 });
   await expect(page.locator('#hero')).toBeFocused();
@@ -27,9 +30,30 @@ test('a apresentação automática usa a logo do fechamento e reaparece após F5
   await expect(page.locator('#hero')).toBeFocused();
 });
 
+test('recarregar mantém o hero alinhado durante a saída da apresentação', async ({ page }) => {
+  await page.setViewportSize({ width: 1366, height: 900 });
+  await page.goto('/');
+  const dialog = page.locator('dialog[data-presentation]');
+  await expect(dialog).toBeVisible();
+  const bounds = () => page.locator('#hero').evaluate(element => {
+    const rect = element.getBoundingClientRect();
+    return { x: rect.x, width: rect.width, scrollWidth: document.documentElement.scrollWidth };
+  });
+  await dialog.getByRole('button', { name: 'Pular apresentação' }).click();
+  await expect(dialog).toHaveCount(0);
+  const beforeReload = await bounds();
+  await page.reload();
+  await expect(dialog).toBeVisible();
+  const covered = await bounds();
+  await dialog.getByRole('button', { name: 'Pular apresentação' }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect.poll(bounds).toEqual(covered);
+  expect(await bounds()).toEqual(beforeReload);
+});
+
 test('o controle do footer repete a nova apresentação e Escape revela o hero', async ({ page }) => {
   await page.goto('/');
-  const dialog = page.getByRole('dialog', { name: 'Apresentação NexOS' });
+  const dialog = page.getByRole('dialog', { name: 'Apresentação ezway' });
   await expect(dialog).toHaveCount(0, { timeout: 10000 });
   await page.getByRole('button', { name: 'Ver apresentação', exact: true }).click();
   await expect(dialog).toBeVisible();
@@ -47,11 +71,11 @@ for (const theme of ['light', 'dark']) {
     await page.goto('/');
     const dialog = page.locator('dialog[data-presentation]');
     await expect(dialog).toBeVisible();
-    await expect(dialog.getByText('NEXOS', { exact: true })).toHaveCSS('animation-name', 'none');
+    await expect(dialog.getByText('ezway', { exact: true }).locator('span')).toHaveCSS('animation-name', 'none');
     await expect(dialog).toHaveCount(0, { timeout: 6000 });
     await expect(page.locator('.landing-edge-blur, .landing-header-blur')).toHaveCount(0);
-    const strip = page.getByRole('region', { name: 'Pilares da NexOS' });
-    await expect(strip.getByRole('listitem')).toHaveCount(6);
+    const strip = page.getByRole('region', { name: 'Pilares da ezway' });
+    await expect(strip.locator('[data-marquee-track] > div').first().locator(':scope > div')).toHaveCount(6);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.locator('#services').scrollIntoViewIfNeeded();
     await expect(page.locator('.landing-edge-blur')).toHaveCount(1);
@@ -61,7 +85,7 @@ for (const theme of ['light', 'dark']) {
 
 test('links diretos exibem a apresentação antes de restaurar a seção pedida', async ({ page }) => {
   await page.goto('/#showcase');
-  const dialog = page.getByRole('dialog', { name: 'Apresentação NexOS' });
+  const dialog = page.getByRole('dialog', { name: 'Apresentação ezway' });
   await expect(dialog).toBeVisible();
   await expect(dialog).toHaveCount(0, { timeout: 10000 });
   await expect.poll(() => page.locator('#showcase').evaluate(el => Math.abs(el.getBoundingClientRect().top) < 160)).toBe(true);
@@ -74,7 +98,7 @@ test('sem JavaScript a apresentação não bloqueia o conteúdo', async ({ brows
     await page.goto(baseURL!);
     await expect(page.locator('[data-presentation]')).toBeHidden();
     await expect(page.locator('#hero h1')).toBeVisible();
-    await expect(page.locator('#hero .primary-action')).toHaveAttribute('href', /^https:\/\//);
+    await expect(page.locator('#hero .primary-action')).toHaveAttribute('href', '#contact');
   } finally {
     await context.close();
   }

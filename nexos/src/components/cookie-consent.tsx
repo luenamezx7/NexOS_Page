@@ -19,7 +19,7 @@ import { useTheme } from './ThemeProvider';
 import { useScrollLock } from './useScrollLock';
 
 // ============================================================
-// NexOS — Consentimento de Cookies (LGPD)
+// ezway — Consentimento de Cookies (LGPD)
 // - Banner inferior (sem body lock: não bloqueia navegação)
 // - Central de preferências em modal
 //   com backdrop, body lock, ESC e scroll isolado
@@ -366,7 +366,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                     <p
                       className={`font-mono text-[11px] uppercase tracking-[0.18em] ${isDark ? 'text-white/40' : 'text-ink/40'}`}
                     >
-                      NexOS · Privacidade
+                      ezway · Privacidade
                     </p>
                     <h2
                       id="cookie-prefs-title"

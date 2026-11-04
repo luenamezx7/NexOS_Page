@@ -49,7 +49,10 @@ for (const width of [390, 1366]) {
     if (width < 768) {
       await page.getByRole('button', { name: 'Abrir menu', exact: true }).click();
       await page.getByRole('navigation', { name: 'Navegação móvel', exact: true }).getByRole('link', { name: 'Serviços', exact: true }).click();
-    } else await page.getByRole('button', { name: 'Ir para Serviços', exact: true }).click();
+    } else {
+      await page.getByRole('navigation', { name: 'Navegação principal' }).getByRole('button', { name: 'Soluções' }).click();
+      await page.getByRole('link', { name: 'Explorar soluções' }).click();
+    }
     await aligned(page, 'services');
     await expect(page).toHaveURL(/#services$/);
     await page.goBack();
@@ -57,7 +60,7 @@ for (const width of [390, 1366]) {
     await page.locator('#fisico-digital a[href="#showcase"]').click();
     await aligned(page, 'showcase');
     await expect(page).toHaveURL(/#showcase$/);
-    await page.getByRole('link', { name: 'NexOS, início', exact: true }).click();
+    await page.getByRole('link', { name: 'ezway, início', exact: true }).click();
     await expect.poll(() => page.evaluate(() => scrollY)).toBeLessThan(2);
   });
 }
@@ -68,7 +71,7 @@ test('native service anchors and cross-page footer links use the same offsets', 
   await aligned(page, 'como-funciona');
   await page.getByRole('contentinfo').getByRole('link', { name: 'Sobre Nós', exact: true }).click();
   await expect(page).toHaveURL(/\/#testimonials$/);
-  await expect(page.getByRole('dialog', { name: 'Apresentação NexOS' })).toHaveCount(0);
+  await expect(page.getByRole('dialog', { name: 'Apresentação ezway' })).toHaveCount(0);
   await aligned(page, 'testimonials');
 });
 

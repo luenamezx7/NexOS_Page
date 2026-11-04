@@ -17,7 +17,7 @@
 .mockup { display: flex; flex-direction: column; align-items: center; gap: 24px; min-width: 0; margin: 0; }
 .device { width: min(100%, 272px); height: auto; filter: drop-shadow(0 24px 28px color-mix(in srgb, var(--visor-plum) 18%, transparent)); }
 .phonePreview { position: relative; width: min(100%, 272px); }
-.phoneScreen { position: absolute; z-index: 2; inset: 12% 8% 5%; display: flex; flex-direction: column; gap: 15px; overflow: hidden; padding: 12px 8px; border-radius: 20px; pointer-events: none; background: radial-gradient(ellipse at 85% 35%, #461564, transparent 60%), #12081f; color: #f9f3fa; font: 10px/1.4 var(--font-sans); }
+.phoneScreen { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 15px; min-width: 0; padding: 58px 13px 17px; pointer-events: none; background: radial-gradient(ellipse at 85% 35%, #461564, transparent 60%), #12081f; color: #f9f3fa; font: 10px/1.4 var(--font-sans); }
 .phoneBrand { font-weight: 700; color: #e873f8; }
 .phoneBubble { align-self: flex-end; max-width: 82%; padding: 10px; border-radius: 12px 12px 4px 12px; background: #34164d; }
 .phoneReply { margin-top: 14px; font-size: 13px; font-weight: 600; }

@@ -4,12 +4,13 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { Header } from '@/components/Header';
 import { Hero } from '@/components/Hero';
-import { SectionIndicator } from '@/components/SectionIndicator';
+import { ScrollProgress } from '@/components/ScrollProgress';
 import { SectionBackground } from '@/components/sections/SectionBackground';
 import { LandingPageBlur } from '@/components/sections/LandingPageBlur';
 import { ProofStrip } from '@/components/sections/ProofStrip';
 import { FloatingWhatsApp } from '@/components/sections/FloatingWhatsApp';
 import BrandEntrance from '@/components/BrandEntrance';
+import { useLocale } from '@/lib/locale';
 
 const Services = dynamic(() => import('@/components/Services').then(m => m.Services));
 const AboutUs = dynamic(() => import('@/components/AboutUs').then(m => m.AboutUs));
@@ -22,13 +23,14 @@ const SocialInvite = dynamic(() => import('@/components/sections/SocialInvite').
 const BrandClosing = dynamic(() => import('@/components/sections/BrandClosing').then(m => m.BrandClosing));
 
 // Split bundles without removing the commercial content from the server HTML.
-const EasyWay = dynamic(() => import('@/components/sections/EasyWay').then(m => m.EasyWay));
+const EasyChat = dynamic(() => import('@/components/sections/EasyChat').then(m => m.EasyChat));
 const DeliveryProcess = dynamic(() => import('@/components/sections/DeliveryProcess').then(m => m.DeliveryProcess));
 const PlacaNFCSection = dynamic(() => import('@/components/sections/PlacaNFCSection').then(m => m.PlacaNFCSection));
 const CTAFinal = dynamic(() => import('@/components/sections/CTAFinal').then(m => m.CTAFinal));
 const FisicoDigitalSection = dynamic(() => import('@/components/sections/FisicoDigitalSection').then(m => m.FisicoDigitalSection));
 
 export default function HomeClient() {
+  const { t } = useLocale();
   const [entrance, setEntrance] = useState({ visible: true, key: 0 });
   const entranceGeneration = useRef(0);
   const heroRef = useRef<HTMLElement>(null);
@@ -60,9 +62,9 @@ export default function HomeClient() {
     <main className="landing-page w-full max-w-full overflow-x-clip bg-canvas text-ink">
       {entrance.visible && <BrandEntrance key={entrance.key} onComplete={handleEntranceComplete} />}
       <div>
-        <a href="#main-content" className="skip-link">Pular para o conteúdo</a>
+         <a href="#main-content" className="skip-link">{t('Pular para o conteúdo')}</a>
         <Header />
-        <SectionIndicator />
+        <ScrollProgress />
         <div className="relative">
           <div id="main-content" tabIndex={-1} className="relative">
             <Hero ref={heroRef} />
@@ -83,8 +85,8 @@ export default function HomeClient() {
               <MascotSolutions />
             </SectionBackground>
             <SectionBackground index={5} experience="plans"><Plans /></SectionBackground>
-            <SectionBackground index={6} experience="easyway">
-              <EasyWay />
+            <SectionBackground index={6} experience="easychat">
+              <EasyChat />
             </SectionBackground>
             <SectionBackground index={7} experience="about">
               <AboutUs />

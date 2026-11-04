@@ -22,7 +22,7 @@ export function MetricsSection() {
       <ScrollReveal preset="label" className={styles.eyebrow}><span>02 / DADOS & SINAIS</span><span>PRÉVIA DEMONSTRATIVA</span></ScrollReveal>
       <header className={styles.splitHeader}>
         <ScrollReveal as="h2" preset="title" id="metrics-title" className={styles.heading}>Cada interação.<br /><span>Um novo sinal.</span></ScrollReveal>
-        <ScrollReveal delay={.08}><p className={styles.lead}>Uma visão do que pode ser acompanhado no digital. Esta composição usa dados fictícios para demonstrar os gráficos.</p><p className={styles.demoNote}>DADOS ILUSTRATIVOS · NÃO REPRESENTAM RESULTADOS DA NEXOS</p></ScrollReveal>
+        <ScrollReveal delay={.08}><p className={styles.lead}>Uma visão do que pode ser acompanhado no digital. Esta composição usa dados fictícios para demonstrar os gráficos.</p><p className={styles.demoNote}>DADOS ILUSTRATIVOS · NÃO REPRESENTAM RESULTADOS DA EZWAY</p></ScrollReveal>
       </header>
       <div className={styles.metricsGrid}>
         <ScrollFloat className={styles.floatingPanel} distance={14}><ScrollReveal as="article" preset="card" className={styles.chartPanel}>

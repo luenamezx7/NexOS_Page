@@ -3,7 +3,7 @@
 import { useId } from 'react';
 import { cn } from '@/lib/utils';
 
-// Oceanic Shimmer, from the 21st.dev Gradient Builder, recolored for NexOS.
+// Oceanic Shimmer, from the 21st.dev Gradient Builder, recolored for ezway.
 // Live CSS gradients and static grain; no canvas, animation loop, or remote assets.
 // Original recipe: https://21st.dev/community/gradients/editor?from=edd345b3-bbfc-488d-9798-87a22acf7276
 export function GradientBackground({ className }: { className?: string }) {

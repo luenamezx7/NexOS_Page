@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useScrollContext } from './SmoothScrollProvider';
 
 // ============================================================
-// NexOS — useScrollLock(active)
+// ezway — useScrollLock(active)
 // Trava REAL do scroll da página para modais/drawers.
 // Por que só `overflow: hidden` não bastava: o Lenis intercepta
 // wheel/touch num raf próprio e continua dirigindo window.scroll

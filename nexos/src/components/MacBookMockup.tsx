@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 
 // ============================================================
-// NexOS — MacBook Air 13 — Figma ORIGINAL
+// ezway — MacBook Air 13 — Figma ORIGINAL
 // Fonte: Figma Community "MacBook Air 13 Free Figma Mockups (99% Vector)"
 // URL: https://www.figma.com/design/JIvK9di4d5ZMSaA1xGcp2S/...?node-id=4-4
 // Arquivo: public/mackbook_1.svg (export direto do Figma, viewBox 2180x1324)
