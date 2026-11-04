@@ -9,7 +9,7 @@
 .accountLink { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 4px 0; font: 500 13px/1.4 var(--font-sans); color: var(--text-secondary); text-decoration-color: transparent; text-underline-offset: 6px; transition: color 200ms, text-decoration-color 200ms; white-space: nowrap; }
 .accountLabel { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .contactAction, .mobileContactAction { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 16px; border-radius: 12px; background: var(--brand-lime); color: #12081f; font: 700 13px/1.2 var(--font-sans); white-space: nowrap; transition: box-shadow 180ms, transform 180ms; }
-.contactAction:hover, .mobileContactAction:hover { box-shadow: 0 0 28px #d9f22a66; transform: translateY(-2px); }
+.contactAction:hover, .mobileContactAction:hover { box-shadow: 0 0 28px color-mix(in srgb, var(--brand-lime) 40%, transparent); transform: translateY(-2px); }
 .mobileContactAction { margin-top: 16px; justify-content: space-between; }
 .accountLink:hover { color: var(--color-ink); text-decoration: underline; text-decoration-color: currentColor; }
 .accountSkeleton { width: 86px; height: 16px; background: color-mix(in srgb, var(--color-ink) 9%, transparent); }

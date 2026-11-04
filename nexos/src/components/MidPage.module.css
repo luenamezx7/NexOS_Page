@@ -11,7 +11,7 @@
 }
 :global(.dark) .section { --mid-accent: var(--landing-accent, var(--display-rose)); }
 .container { width: 100%; max-width: 1280px; margin-inline: auto; padding: 48px 24px 64px; }
-.sectionNav { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; margin-bottom: 32px; border-bottom: 1px solid var(--mid-line); padding-bottom: 16px; font-size: 13px; }
+.sectionNav { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; margin-bottom: 32px; font-size: 13px; }
 .sectionNav a, .currentSection { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; }
 .sectionNav a { color: var(--mid-muted); }
 .sectionNav a:hover { color: var(--mid-accent); }
@@ -41,7 +41,7 @@
 .metric { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; margin-top: 20px; }
 .metricValue { font-family: var(--font-display); font-size: clamp(26px, 4vw, 32px); font-weight: 600; letter-spacing: -0.04em; line-height: 1.1; font-variant-numeric: tabular-nums; }
 .metricLabel { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--mid-muted); }
-.cardAction { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--mid-line); }
+.cardAction { margin-top: auto; padding-top: 20px; }
 .cardAction :global(.btn-secondary-nex) { width: 100%; min-height: 44px; justify-content: space-between; border-radius: 8px; font-size: 14px; }
 
 /* Ecosystem / terminal */
@@ -97,7 +97,7 @@
 .colLink:hover { color: var(--color-ink); }
 .colLinkArrow { color: var(--detail-text); opacity: 0; transition: opacity 200ms, transform 200ms; }
 .colLink:hover .colLinkArrow { opacity: 1; transform: translate(1px, -1px); }
-.footerBottom { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--mid-line); }
+.footerBottom { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; margin-top: 40px; padding-top: 24px; }
 .copyright { font-size: var(--type-small); color: var(--text-tertiary); }
 .footerMeta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
 .cookieBtn { display: inline-flex; align-items: center; min-height: 44px; border: 0; background: transparent; padding: 0; font-family: var(--font-sans); font-size: var(--type-small); letter-spacing: 0; color: var(--text-tertiary); text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }

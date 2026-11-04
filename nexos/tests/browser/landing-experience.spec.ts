@@ -1,6 +1,8 @@
 import { test, expect, type Page } from '@playwright/test';
 import { enterPresentation } from './helpers/presentation';
 
+test.use({ channel: process.env.PLAYWRIGHT_CHANNEL || undefined });
+
 async function openLanding(page: Page, theme: 'light' | 'dark' | 'system' = 'dark', skipIntro = true) {
   await page.addInitScript(({ theme, skipIntro }) => {
     if (skipIntro) sessionStorage.setItem('nexos-boot-seen', '1');
@@ -53,7 +55,7 @@ test('Placa NFC and ezway use OLED black without changing edge blur', async ({ p
   await expect(page.locator('[data-home-experience="nfc"] .gradual-blur, [data-home-experience="easychat"] .gradual-blur')).toHaveCount(0);
 });
 
-test('Figma hero background fills the section, header glass is always visible and account has the new icon', async ({ page }) => {
+test('fiber-only hero fills the section, header glass is always visible and account has the new icon', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await openLanding(page);
@@ -65,13 +67,15 @@ test('Figma hero background fills the section, header glass is always visible an
   if (await page.evaluate(() => matchMedia('(prefers-reduced-transparency: reduce)').matches)) {
     await expect(header).toHaveCSS('backdrop-filter', 'none');
   } else {
-    await expect(header).toHaveCSS('backdrop-filter', /blur\(16px\)/);
+    await expect(header).toHaveCSS('backdrop-filter', /blur\(14px\)/);
   }
-  const grain = page.locator('#hero .hero-gradient-blend');
-  expect((await grain.boundingBox())!.height).toBeGreaterThanOrEqual(844);
-  await expect(grain).toHaveCSS('background-image', /gradiente-ezway\.avif/);
+  const fibers = page.locator('#hero .hero-fibers');
+  expect((await fibers.boundingBox())!.height).toBeGreaterThanOrEqual(844);
+  await expect(fibers.locator('canvas')).toBeVisible();
+  await expect(page.locator('#hero .hero-gradient-blend')).toHaveCount(0);
   await expect(page.locator('#hero [data-brand-veil]')).toHaveCount(0);
-  const account = header.getByRole('link', { name: 'Minha conta' });
+  await header.getByRole('button', { name: 'Abrir menu' }).click();
+  const account = page.getByRole('dialog', { name: 'Explore a ezway' }).getByRole('link', { name: 'Minha conta' });
   await expect(account.locator('[data-profile-orb] svg')).toHaveClass(/lucide-id-card/);
   await expect(account).toHaveAttribute('href', '/portal/acesso');
 });

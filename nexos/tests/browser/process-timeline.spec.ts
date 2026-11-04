@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 test.use({ channel: process.env.PLAYWRIGHT_CHANNEL || undefined });
 
 for (const width of [390, 1366]) {
-  test(`${width}px: only the step at the scrolling position glows lime`, async ({ page }) => {
+  test(`${width}px: only the step at the scrolling position glows coral`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/');
     await expect(page.locator('dialog[data-presentation]')).toHaveCount(0, { timeout: 15000 });
@@ -19,11 +19,11 @@ for (const width of [390, 1366]) {
         scrollTo({ top: top + range * ((index + .5) / 4), behavior: 'instant' });
       }, { index, desktop: width >= 768 });
       await expect(steps.nth(index)).toHaveAttribute('aria-current', 'step');
-      await expect(steps.locator('[class*="stepMarker"]').nth(index)).toHaveCSS('background-color', 'rgb(217, 242, 42)');
+      await expect(steps.locator('[class*="stepMarker"]').nth(index)).toHaveCSS('background-color', 'rgb(255, 143, 130)');
       for (let other = 0; other < 4; other++) {
         if (other === index) continue;
         await expect(steps.nth(other)).not.toHaveAttribute('aria-current', 'step');
-        await expect(steps.locator('[class*="stepMarker"]').nth(other)).not.toHaveCSS('background-color', 'rgb(217, 242, 42)');
+        await expect(steps.locator('[class*="stepMarker"]').nth(other)).not.toHaveCSS('background-color', 'rgb(255, 143, 130)');
       }
     }
     await section.getByRole('radio', { name: 'Serviço digital' }).check();

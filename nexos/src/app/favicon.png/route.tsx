@@ -9,7 +9,7 @@ export async function GET() {
   // Rasterize the ghost's first frame at build time for a square favicon.
   // Google Search needs a square raster favicon at a stable, crawlable URL.
   const svg = frameMascotSvg(await readFile(join(process.cwd(), 'design-', 'rebrand-nexos', 'ezwayghostblack1animated.svg'), 'utf8'))
-    .replace(/fill="(#000|#fff)"/g, (_, color: string) => `fill="${color === '#000' ? '#d9f22a' : '#170c2b'}"`);
+    .replace(/fill="(#000|#fff)"/g, (_, color: string) => `fill="${color === '#000' ? '#ff8f82' : '#170c2b'}"`);
 
   return new ImageResponse(
     (

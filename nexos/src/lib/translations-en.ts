@@ -359,6 +359,7 @@ export const en: Record<string, string> = {
   'Aproxime ou escaneie': 'Tap or scan',
   'Um projeto digital, uma placa conectada ou uma ideia que ainda está tomando forma.': 'A digital project, a connected plate or an idea still taking shape.',
   'Sua próxima ideia. Vamos colocar no ar?': 'Your next idea. Ready to bring it online?',
+  'Mascote 3D da ezway, flutuando com olhos em forma de estrelas': 'ezway’s floating 3D mascot with star-shaped eyes',
   'Conversar com a ezway no WhatsApp': 'Talk to ezway on WhatsApp',
   'Prefiro conversar por e-mail': 'I prefer email',
   'Visite nosso Instagram.': 'Visit us on Instagram.',

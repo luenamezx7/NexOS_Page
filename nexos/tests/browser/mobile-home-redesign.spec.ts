@@ -12,7 +12,7 @@ for (const width of [320, 390]) {
     await expect(intro).toHaveCount(0);
 
     const header = page.getByRole('banner');
-    await expect(header.getByRole('button', { name: 'Switch to English' })).toBeVisible();
+    await expect(header.getByRole('button', { name: 'Selecionar idioma: Português' })).toBeVisible();
     await expect(header.getByRole('link', { name: 'Minha conta' })).toBeHidden();
     const hero = page.locator('#hero');
     await expect(hero.locator('.hero-description')).toBeVisible();
@@ -63,7 +63,7 @@ test('short mobile viewport preserves the headline, subtitle and CTA', async ({ 
   if (await intro.isVisible()) await intro.getByRole('button', { name: 'Pular apresentação' }).click();
   await expect(intro).toHaveCount(0);
   const hero = page.locator('#hero');
-  await expect(hero.locator('.hero-fibers')).toHaveCount(0);
+  await expect(hero.locator('.hero-fibers canvas')).toBeVisible();
   await expect(hero.locator('.hero-description')).toBeVisible();
   const cta = await hero.getByRole('link', { name: 'Agendar conversa' }).boundingBox();
   expect(cta!.y + cta!.height).toBeLessThanOrEqual((await hero.boundingBox())!.height);

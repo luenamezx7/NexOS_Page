@@ -1,6 +1,6 @@
 .section { position: relative; isolation: isolate; overflow: hidden; scroll-margin-top: 100px; background: transparent; }
 .container { width: min(100%, 1280px); margin: auto; padding: clamp(72px, 9vw, 128px) 40px; }
-.top { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-bottom: 28px; margin-bottom: 56px; border-bottom: 1px solid var(--border); font: 13px/1.5 var(--font-sans); color: var(--text-tertiary); }
+.top { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 56px; font: 13px/1.5 var(--font-sans); color: var(--text-tertiary); }
 .status { display: inline-flex; gap: 8px; align-items: center; letter-spacing: .02em; }
 .status i { width: 6px; height: 6px; background: var(--detail-accent); border-radius: 50%; }
 .layout { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 7vw, 100px); align-items: center; }

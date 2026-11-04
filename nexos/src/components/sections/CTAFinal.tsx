@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import Image from 'next/image';
 import { config } from '@/config';
-import animatedBrand from '../../../design-/rebrand-nexos/Create_an_animated_3D_brand_f300f145_2K.jpg';
+import animatedBrand from '../../../design-/rebrand-nexos/Glossy Black Flame Mascot1.png';
 import styles from './Sections.module.css';
 import { ScrollReveal } from '../ScrollReveal';
 import { BlurReveal } from '../blur-reveal';
@@ -28,7 +28,7 @@ export function CTAFinal() {
         gsap.fromTo(visual, { yPercent: 6 }, { yPercent: -6, ease: 'none', scrollTrigger: { trigger: section, start: 'top bottom', end: 'bottom top', scrub: true } });
       }, section);
       let leave = () => {};
-      let move = (_event: PointerEvent) => {};
+      let move: (event: PointerEvent) => void = () => {};
       if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
         const x = gsap.quickTo(image, 'x', { duration: .7, ease: 'power2.out' });
         const y = gsap.quickTo(image, 'y', { duration: .7, ease: 'power2.out' });
@@ -62,10 +62,10 @@ export function CTAFinal() {
           <Image src={animatedBrand} alt={t('Mascote 3D da ezway, flutuando com olhos em forma de estrelas')} fill sizes="(max-width: 767px) 100vw, 45vw" className={styles.ctaBrandImage} loading="lazy" />
         </div>
       </div>
-      <div className={styles.ctaBottom}><ScrollReveal as="p">Um projeto digital, uma placa conectada ou uma ideia que ainda está tomando forma.</ScrollReveal><ScrollReveal className={styles.ctaActions} delay={.1}>
-        <a href="#contact" className="btn-primary-nex">Agendar conversa <ArrowUpRight size={18} aria-hidden="true" /></a>
-        <a href={whatsapp} target="_blank" rel="noopener noreferrer" className={styles.textLink}>Conversar com a ezway no WhatsApp <ArrowUpRight size={16} aria-hidden="true" /></a>
-        <a href="mailto:nexosperformance@gmail.com" className={styles.textLink}>Prefiro conversar por e-mail <ArrowUpRight size={16} aria-hidden="true" /></a>
+      <div className={styles.ctaBottom}><ScrollReveal as="p">{t('Um projeto digital, uma placa conectada ou uma ideia que ainda está tomando forma.')}</ScrollReveal><ScrollReveal className={styles.ctaActions} delay={.1}>
+        <a href="#contact" className="btn-primary-nex">{t('Agendar conversa')} <ArrowUpRight size={18} aria-hidden="true" /></a>
+        <a href={whatsapp} target="_blank" rel="noopener noreferrer" className={styles.textLink}>{t('Conversar com a ezway no WhatsApp')} <ArrowUpRight size={16} aria-hidden="true" /></a>
+        <a href="mailto:nexosperformance@gmail.com" className={styles.textLink}>{t('Prefiro conversar por e-mail')} <ArrowUpRight size={16} aria-hidden="true" /></a>
       </ScrollReveal></div>
     </div>
   </section>;

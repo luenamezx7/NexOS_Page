@@ -118,7 +118,7 @@ export function ScrollReveal({ children, as = 'div', preset = 'body', delay = 0,
   }, [delay, preset, reduce]);
 
   const Tag = as;
-  return <Tag {...props} ref={(node: HTMLElement | null) => { ref.current = node; }} data-reveal={preset} data-reveal-state="visible">{locale === 'en' ? translateChildren(children, t) : children}</Tag>;
+  return <Tag {...props} ref={(node: HTMLElement | null) => { ref.current = node; }} data-reveal={preset} data-reveal-state="visible">{locale !== 'pt' ? translateChildren(children, t) : children}</Tag>;
 }
 
 /** An independent, transform-only decorative layer; never put sticky controls inside. */

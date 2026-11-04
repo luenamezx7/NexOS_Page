@@ -6,10 +6,10 @@
 .hero > * { position: relative; }
 .hero h1 { font-size: clamp(38px, 4.8vw, 64px); line-height: 1.08; font-stretch: 95%; font-weight: 730; letter-spacing: -.04em; max-width: 20ch; text-wrap: balance; }
 .applications { gap: 16px; }
-.applications > article { padding: 24px 0; border-top: 1px solid var(--surface-line); background: transparent; }
+.applications > article { padding: 24px 0; background: transparent; }
 .applications h3 { font-weight: 650; letter-spacing: -.02em; }
 .steps { gap: 24px; }
-.steps > li { border-top: 1px solid var(--surface-line); padding-top: 20px; }
+.steps > li { padding-top: 20px; }
 .steps > li > span { display: inline-grid; place-items: center; width: 40px; height: 40px; color: var(--detail-ink); border-radius: 12px; background: var(--detail-accent); border: 1px solid var(--detail-accent); }
 .content > .proposal:global(.topography-glass) { background: transparent; }
 .questions details > summary { min-height: 56px; border-radius: 8px; }

@@ -64,9 +64,9 @@
 .connectionNodes i { flex: 1; height: 1px; margin-inline: 16px; background: var(--landing-line); position: relative; }
 .connectionNodes i::after { content: ''; position: absolute; right: 0; top: -2px; width: 5px; height: 5px; background: var(--detail-accent); border-radius: 50%; }
 .connectionLabels { display: flex; justify-content: space-between; font: 13px/1.5 var(--font-sans); color: var(--color-ink); padding-bottom: 32px; }
-.connectionStatus { display: flex; align-items: center; gap: 8px; padding-top: 16px; border-top: 1px solid var(--landing-line); }
+.connectionStatus { display: flex; align-items: center; gap: 8px; padding-top: 16px; }
 .connectionStatus i { width: 6px; height: 6px; border-radius: 50%; background: var(--detail-accent); }
-.featureGrid { display: grid; grid-template-columns: 1.1fr 1fr 1fr; gap: 28px; margin-top: 56px; padding-top: 32px; border-top: 1px solid var(--landing-line); }
+.featureGrid { display: grid; grid-template-columns: 1.1fr 1fr 1fr; gap: 28px; margin-top: 56px; }
 .featureGrid article { padding: 8px 16px 8px 0; }
 .featureTop { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; color: var(--text-tertiary); font: 500 13px/1.5 var(--font-sans); }
 .featureTop svg { color: var(--detail-text); }
@@ -115,11 +115,10 @@
 .timeline { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; list-style: none; margin-top: 56px; }
 .timeline { position: relative; }
 .timeline .stepMarker { z-index: 1; }
-.timeline li { position: relative; min-width: 0; padding: 0 24px 32px 0; border-bottom: 1px solid var(--landing-line); transition: border-color .35s ease; }
+.timeline li { position: relative; min-width: 0; padding: 0 24px 32px 0; }
 .timeline li::before { content: ''; position: absolute; top: 22px; left: 0; right: 0; height: 1px; background: color-mix(in srgb, var(--color-ink) 24%, var(--color-canvas)); }
 .timeline li:last-child::before { right: calc(100% - 44px); }
 .stepMarker { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid color-mix(in srgb, var(--color-ink) 32%, var(--color-canvas)); border-radius: 50%; background: color-mix(in srgb, var(--color-ink) 12%, var(--color-canvas)); color: color-mix(in srgb, var(--color-ink) 65%, var(--color-canvas)); font: 600 13px var(--font-sans); margin-bottom: 32px; transition: background-color .35s ease, border-color .35s ease, color .35s ease, box-shadow .35s ease, transform .35s ease; }
-.timeline li[data-active='true'] { border-color: color-mix(in srgb, var(--brand-lime) 55%, var(--landing-line)); }
 .timeline li[data-active='true'] .stepMarker { border-color: var(--brand-lime); background: var(--brand-lime); color: var(--detail-ink); transform: scale(1.08); box-shadow: 0 0 0 5px color-mix(in srgb, var(--brand-lime) 18%, transparent), 0 0 18px color-mix(in srgb, var(--brand-lime) 66%, transparent), 0 0 36px color-mix(in srgb, var(--brand-lime) 32%, transparent); }
 .stepDetail { display: block; font: 13px/1.5 var(--font-sans); color: var(--landing-muted); margin-bottom: 14px; }
 .timeline h3 { font-size: 25px; line-height: 1.2; }
@@ -143,22 +142,25 @@
   .processStage .stepEnd { margin-top: 14px; }
 }
 .finalCta { position: relative; margin: 0 auto; width: min(100%, 1280px); padding: var(--section-space) 40px; }
-.brandCta { overflow: hidden; background: #d3d0cc; color: #17151b; }
+.brandCta { overflow: hidden; background: radial-gradient(ellipse at 76% 43%, #eee7e7 0%, transparent 52%), #d3d0cc; color: #17151b; }
 .brandCta .finalCta { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .95fr); align-items: center; column-gap: clamp(36px, 6vw, 96px); row-gap: 32px; }
 .brandCta .ctaLayout { align-self: end; }
 .brandCta .ctaLayout h2 { max-width: 12ch; color: #17151b; }
-.brandCta .ctaBottom { align-self: start; flex-direction: column; align-items: flex-start; gap: 24px; margin: 0; border-color: #17151b44; color: #352e39; }
+.brandCta .ctaLayout h2 span { background: none; color: #382044; -webkit-text-fill-color: #382044; }
+.brandCta .ctaBottom { align-self: start; flex-direction: column; align-items: flex-start; gap: 24px; margin: 0; padding-top: 0; color: #352e39; }
 .brandCta .ctaBottom > p { color: #352e39; }
 .brandCta .textLink { color: #17151b; }
-.ctaVisual { position: relative; grid-column: 2; grid-row: 1 / span 2; width: 100%; aspect-ratio: 1 / 1.08; overflow: hidden; border-radius: var(--radius-card); background: #cecbc7; }
+.ctaVisual { position: relative; isolation: isolate; grid-column: 2; grid-row: 1 / span 2; width: 100%; aspect-ratio: 1 / 1.08; }
+.ctaVisual::before { position: absolute; z-index: -1; inset: 4% -7% 5%; border-radius: 50%; background: radial-gradient(ellipse at 52% 42%, #fff8f2 0%, #f6ecff 27%, #a88bc577 49%, transparent 72%), radial-gradient(ellipse at 62% 67%, color-mix(in srgb, var(--brand-lime) 40%, transparent), transparent 53%); filter: blur(28px); content: ''; }
+.ctaVisual::after { position: absolute; z-index: -1; inset: auto 14% 0; height: 16%; border-radius: 50%; background: #48355255; filter: blur(30px); content: ''; }
 .ctaImageMotion { position: absolute; inset: -14px; }
-.ctaBrandImage { object-fit: cover; object-position: 50% 54%; }
+.ctaBrandImage { object-fit: contain; object-position: center; filter: drop-shadow(0 14px 20px #30203940) drop-shadow(0 0 30px #f8e8ff77); }
 .ctaAnchor { position: absolute; top: 0; }
 .ctaLayout { display: flex; align-items: center; justify-content: space-between; gap: 32px; }
 .ctaLayout h2 { font-size: clamp(38px, 5vw, 68px); line-height: 1.08; font-stretch: 95%; font-weight: 750; letter-spacing: -.04em; }
 .ctaLayout h2 span { background: var(--visor-text-gradient); background-clip: text; -webkit-background-clip: text; color: transparent; }
 .ctaArrow { width: 80px; height: 80px; flex-shrink: 0; color: var(--detail-text); }
-.ctaBottom { display: flex; justify-content: space-between; align-items: end; gap: 40px; border-top: 1px solid var(--landing-line); margin-top: 48px; padding-top: 32px; }
+.ctaBottom { display: flex; justify-content: space-between; align-items: end; gap: 40px; margin-top: 48px; padding-top: 32px; }
 .ctaBottom > p { max-width: 40ch; font-size: var(--type-lead); line-height: 1.7; color: var(--landing-muted); }
 .ctaActions { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
 .ctaActions :global(.btn-primary-nex) { min-height: 52px; gap: 24px; padding-inline: 24px; border-radius: var(--radius-control); font-size: 14px; }
@@ -191,8 +193,8 @@
   .connection { min-height: 250px; padding: 24px; border-radius: var(--radius-card); }
   .featureGrid { grid-template-columns: minmax(0, 1fr); margin-top: 36px; }
   .featureGrid { gap: 0; }
-  .featureGrid article { padding: 24px 0; border-bottom: 1px solid var(--landing-line); }
-  .featureGrid article:last-child { border-bottom: 0; padding-bottom: 0; }
+  .featureGrid article { padding: 24px 0; }
+  .featureGrid article:last-child { padding-bottom: 0; }
   .featureTop { margin-bottom: 14px; }
   .featureGrid h3, .featureGrid p { max-width: none; }
   .chartTop { align-items: flex-start; }
@@ -201,7 +203,7 @@
   .channelPanel h3 { margin-top: 20px; }
   .lineChart { min-height: 140px; }
   .timeline { grid-template-columns: minmax(0, 1fr); margin-top: 32px; }
-  .timeline li { padding: 0 0 32px 68px; border-bottom: 0; min-height: 180px; }
+  .timeline li { padding: 0 0 32px 68px; min-height: 180px; }
   .timeline li::before, .timeline li:last-child::before { top: 0; bottom: 0; height: auto; width: 1px; left: 22px; right: auto; }
   .timeline li:last-child::before { height: 44px; }
   .stepMarker { position: absolute; left: 0; top: 0; margin-bottom: 0; }
@@ -209,7 +211,7 @@
   .timeline h3 { font-size: 24px; }
   .stepEnd { display: none; }
   .timeline li:last-child { padding-bottom: 0; min-height: auto; }
-  .processFoot { border-top: 1px solid var(--landing-line); padding-top: 20px; }
+  .processFoot { padding-top: 20px; }
   .ctaLayout h2 { font-size: clamp(34px, 8vw, 52px); }
   .ctaBottom { flex-direction: column; align-items: stretch; gap: 24px; margin-top: 32px; padding-top: 24px; }
   .brandCta .ctaBottom { margin-top: 0; }

@@ -40,7 +40,7 @@
 }
 
 :root {
-  --brand-lime: #d9f22a;
+  --brand-lime: #ff8f82; /* Original: #d9f22a. Keep the token name for a reversible palette swap. */
   --page-width: 1216px;
   --radius-control: 12px;
   --radius-card: 24px;
@@ -1319,7 +1319,7 @@ html:not(.dark) .waves-entry-stars { opacity: 0.28; }
 .legal-document p { max-width: 65ch; overflow-wrap: anywhere; }
 .page-text-link { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 44px; font-size: 14px; color: var(--primary); }
 .page-text-link:hover { text-decoration: underline; text-underline-offset: 4px; }
-.page-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 32px; width: min(calc(100% - 48px), var(--page-width)); margin: 40px auto 0; padding-block: 24px 32px; border-top: 1px solid var(--border); }
+.page-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 32px; width: min(calc(100% - 48px), var(--page-width)); margin: 40px auto 0; padding-block: 24px 32px; }
 .page-footer p, .page-footer a { font-size: 12px; color: var(--muted-foreground); }
 .page-footer nav { display: flex; flex-wrap: wrap; gap: 8px 24px; }
 .page-footer a { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; }
@@ -1439,7 +1439,7 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
 }
 @media (forced-colors: active) { .brand-veil { display: none; } }
 
-/* EasyWay dark palette: violet and magenta surfaces with lime reserved for actions.
+/* EasyWay dark palette: violet and magenta surfaces with coral reserved for actions.
    Layers: scenery 0, content 1, lower edge 30, upper edge 40, header/menus 50,
    native dialogs use the browser top layer. */
 .dark {
@@ -1462,10 +1462,8 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
   --visor-text-gradient: linear-gradient(105deg, #b65cff, #ff6bdd);
 }
 .landing-hero.oceanic-surface { --color-canvas: #000; --color-ink: #f9f3fa; --text-secondary: #c4b6cf; --text-tertiary: #bcb0c8; --landing-muted: var(--text-secondary); --landing-line: rgb(249 243 250 / 16%); --landing-accent: #e39aff; color: var(--color-ink); }
-/* Static artwork remains visible when WebGL or motion is unavailable. */
-.hero-gradient-blend { position: absolute; inset: 0; pointer-events: none; background: #000 url('/gradiente-ezway.avif') center top / 100% 100% no-repeat; opacity: .42; }
-.hero-fibers { position: absolute; inset: 0; opacity: .8; }
-.hero-fibers::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 65% 55% at 50% 48%, #000b, transparent 90%), linear-gradient(180deg, transparent 5%, #0009 78%, #000c); }
+.hero-fibers { position: absolute; inset: 0; }
+.hero-fibers::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 60% 48% at 50% 55%, #0008, transparent 88%), linear-gradient(180deg, transparent 55%, #0008 100%); }
 .hero-heading :is([data-reveal-word='Soluções'], [data-reveal-word='IA'], [data-reveal-word='AI-powered'], [data-reveal-word='solutions']) { background: none; color: var(--brand-lime); -webkit-text-fill-color: var(--brand-lime); text-shadow: none; }
 /* Motion filters create individual paint layers. Each glyph needs its own
    synchronized gradient so the word never disappears during/after a reveal. */
@@ -1475,7 +1473,7 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
 .landing-hero .background-paths { opacity: .3; mask-image: linear-gradient(to bottom, #000, #0006 24%, transparent 48%); }
 :is(.landing-page, .service-page) :is(.primary-action, .btn-primary-nex) { background: var(--detail-accent); color: var(--detail-ink); border-color: var(--detail-accent); box-shadow: none; }
 :is(.landing-page, .service-page) :is(.primary-action, .btn-primary-nex)::before { display: none; }
-:is(.landing-page, .service-page) :is(.primary-action, .btn-primary-nex):is(:hover, :focus-visible, :active):not(:disabled):not([aria-disabled='true']) { background: var(--brand-lime); color: var(--detail-ink); border-color: var(--brand-lime); box-shadow: 0 0 24px #d9f22a33; }
+:is(.landing-page, .service-page) :is(.primary-action, .btn-primary-nex):is(:hover, :focus-visible, :active):not(:disabled):not([aria-disabled='true']) { background: var(--brand-lime); color: var(--detail-ink); border-color: var(--brand-lime); box-shadow: 0 0 24px color-mix(in srgb, var(--brand-lime) 20%, transparent); }
 :is(.landing-page, .service-page) :is(.primary-action, .btn-primary-nex) :is(.metallic-content, svg) { color: inherit; }
 .hero-text-link svg, .hero-bottom a svg { color: var(--detail-text); }
 .hero-text-link:is(:hover, :focus-visible), .hero-bottom a:is(:hover, :focus-visible), .page-header-nav a:is(:hover, :focus-visible) { color: var(--detail-text); }
@@ -1492,7 +1490,7 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
   .hero-description { display: block; max-width: 36ch; margin: 20px 0 0; font-size: 14px; line-height: 1.55; color: #e0d6e8; }
   .hero-actions { flex-direction: column; align-items: flex-start; width: min(100%, 380px); gap: 10px; margin-top: 22px; }
   .hero-actions > :first-child { width: 100%; min-width: 0; }
-  .hero-fibers { opacity: .55; mask-image: linear-gradient(to bottom, #000 10%, #0009 48%, transparent 85%); }
+  .hero-fibers { mask-image: linear-gradient(to bottom, #000 5%, #000 48%, #0009 78%, transparent 100%); }
   .hero-text-link { width: fit-content; min-height: 44px; padding: 4px 0; justify-content: flex-start; gap: 8px; border: 0; color: var(--text-secondary); }
   .hero-easychat-link, .landing-hero [data-hero-brand-strip] { display: none; }
   .landing-page [data-blur-letter] { filter: none !important; transform: none !important; }
@@ -1504,7 +1502,7 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
   .hero-heading { font-size: clamp(48px, 6vw, 76px); }
 }
 @media (forced-colors: active) {
-  .background-paths, .hero-gradient-blend, .hero-fibers { display: none; }
+  .background-paths, .hero-fibers { display: none; }
   .hero-actions > a:first-child { background: ButtonFace; color: ButtonText; border: 1px solid ButtonText; }
   .hero-heading :is([data-reveal-word='Soluções'], [data-reveal-word='IA'], [data-reveal-word='AI-powered'], [data-reveal-word='solutions']) { background: none; color: CanvasText; -webkit-text-fill-color: CanvasText; text-shadow: none; }
 }
