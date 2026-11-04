@@ -10,7 +10,7 @@
 .scene[data-scene="product"] { --section-ground: #f0e9f5; }
 :global(.dark) .scene,
 :global(.dark) .scene[data-tone="alternate"],
-:global(.dark) .scene[data-scene="product"] { --section-ground: #000; }
+:global(.dark) .scene[data-scene="product"] { --section-ground: var(--palette-bg); }
 .scene[data-section-panel] {
   margin: 24px auto;
   border-radius: var(--panel-radius);
@@ -29,9 +29,9 @@
 .scene[data-scene="product"] .fieldImage { opacity: .32; mask-image: linear-gradient(90deg, transparent, #000 12%, #000 30%, transparent 49%); }
 .scene[data-scene="product"] .scenery { background: radial-gradient(ellipse at 12% 22%, rgba(var(--brand-accent-rgb), .16), transparent 45%), radial-gradient(ellipse at 95% 85%, rgba(var(--brand-secondary-rgb), .1), transparent 38%); }
 :global(.dark) .scene[data-scene="product"] .scenery { background: none; }
-/* Preto OLED nas seções de produto; sem halos sobre o conteúdo ou sobre o blur da viewport. */
+/* Product sections keep the same dark canvas without extra saturated halos. */
 :global(.dark) .scene[data-home-experience="nfc"],
-:global(.dark) .scene[data-home-experience="easychat"] { --section-ground: #000; }
+:global(.dark) .scene[data-home-experience="easychat"] { --section-ground: var(--palette-bg); }
 :global(.dark) .scene[data-home-experience="nfc"] .scenery,
 :global(.dark) .scene[data-home-experience="easychat"] .scenery { background: none; }
 :global(.dark) .scene[data-home-experience="nfc"] .fieldImage { display: none; }
@@ -119,7 +119,7 @@
 .timeline li::before { content: ''; position: absolute; top: 22px; left: 0; right: 0; height: 1px; background: color-mix(in srgb, var(--color-ink) 24%, var(--color-canvas)); }
 .timeline li:last-child::before { right: calc(100% - 44px); }
 .stepMarker { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid color-mix(in srgb, var(--color-ink) 32%, var(--color-canvas)); border-radius: 50%; background: color-mix(in srgb, var(--color-ink) 12%, var(--color-canvas)); color: color-mix(in srgb, var(--color-ink) 65%, var(--color-canvas)); font: 600 13px var(--font-sans); margin-bottom: 32px; transition: background-color .35s ease, border-color .35s ease, color .35s ease, box-shadow .35s ease, transform .35s ease; }
-.timeline li[data-active='true'] .stepMarker { border-color: var(--brand-lime); background: var(--brand-lime); color: var(--detail-ink); transform: scale(1.08); box-shadow: 0 0 0 5px color-mix(in srgb, var(--brand-lime) 18%, transparent), 0 0 18px color-mix(in srgb, var(--brand-lime) 66%, transparent), 0 0 36px color-mix(in srgb, var(--brand-lime) 32%, transparent); }
+.timeline li[data-active='true'] .stepMarker { border-color: var(--palette-action); background: var(--palette-action); color: var(--palette-ink); transform: scale(1.08); box-shadow: 0 0 0 5px color-mix(in srgb, var(--palette-action) 16%, transparent), 0 0 18px color-mix(in srgb, var(--palette-action) 38%, transparent); }
 .stepDetail { display: block; font: 13px/1.5 var(--font-sans); color: var(--landing-muted); margin-bottom: 14px; }
 .timeline h3 { font-size: 25px; line-height: 1.2; }
 .timeline p { font-size: var(--type-body); line-height: 1.7; color: var(--landing-muted); margin-top: 14px; }
@@ -142,19 +142,19 @@
   .processStage .stepEnd { margin-top: 14px; }
 }
 .finalCta { position: relative; margin: 0 auto; width: min(100%, 1280px); padding: var(--section-space) 40px; }
-.brandCta { overflow: hidden; background: radial-gradient(ellipse at 76% 43%, #eee7e7 0%, transparent 52%), #d3d0cc; color: #17151b; }
+.brandCta { overflow: hidden; background: radial-gradient(ellipse at 76% 43%, color-mix(in srgb, var(--palette-highlight) 10%, transparent) 0%, transparent 56%), var(--palette-bg); color: var(--palette-ink); }
 .brandCta .finalCta { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .95fr); align-items: center; column-gap: clamp(36px, 6vw, 96px); row-gap: 32px; }
 .brandCta .ctaLayout { align-self: end; }
-.brandCta .ctaLayout h2 { max-width: 12ch; color: #17151b; }
-.brandCta .ctaLayout h2 span { background: none; color: #382044; -webkit-text-fill-color: #382044; }
-.brandCta .ctaBottom { align-self: start; flex-direction: column; align-items: flex-start; gap: 24px; margin: 0; padding-top: 0; color: #352e39; }
-.brandCta .ctaBottom > p { color: #352e39; }
-.brandCta .textLink { color: #17151b; }
+.brandCta .ctaLayout h2 { max-width: 12ch; color: var(--palette-ink); }
+.brandCta .ctaLayout h2 span { background: none; color: var(--palette-highlight); -webkit-text-fill-color: var(--palette-highlight); }
+.brandCta .ctaBottom { align-self: start; flex-direction: column; align-items: flex-start; gap: 24px; margin: 0; padding-top: 0; color: var(--palette-muted); }
+.brandCta .ctaBottom > p { color: var(--palette-muted); }
+.brandCta .textLink { color: var(--palette-highlight); }
 .ctaVisual { position: relative; isolation: isolate; grid-column: 2; grid-row: 1 / span 2; width: 100%; aspect-ratio: 1 / 1.08; }
-.ctaVisual::before { position: absolute; z-index: -1; inset: 4% -7% 5%; border-radius: 50%; background: radial-gradient(ellipse at 52% 42%, #fff8f2 0%, #f6ecff 27%, #a88bc577 49%, transparent 72%), radial-gradient(ellipse at 62% 67%, color-mix(in srgb, var(--brand-lime) 40%, transparent), transparent 53%); filter: blur(28px); content: ''; }
+.ctaVisual::before { position: absolute; z-index: -1; inset: 4% -7% 5%; border-radius: 50%; background: radial-gradient(ellipse at 52% 42%, color-mix(in srgb, var(--palette-ink) 63%, transparent) 0%, color-mix(in srgb, var(--palette-highlight) 46%, transparent) 29%, color-mix(in srgb, var(--palette-action) 18%, transparent) 55%, transparent 74%); filter: blur(28px); content: ''; }
 .ctaVisual::after { position: absolute; z-index: -1; inset: auto 14% 0; height: 16%; border-radius: 50%; background: #48355255; filter: blur(30px); content: ''; }
 .ctaImageMotion { position: absolute; inset: -14px; }
-.ctaBrandImage { object-fit: contain; object-position: center; filter: drop-shadow(0 14px 20px #30203940) drop-shadow(0 0 30px #f8e8ff77); }
+.ctaBrandImage { object-fit: contain; object-position: center; filter: drop-shadow(0 14px 20px #0009) drop-shadow(0 0 30px color-mix(in srgb, var(--palette-highlight) 24%, transparent)); }
 .ctaAnchor { position: absolute; top: 0; }
 .ctaLayout { display: flex; align-items: center; justify-content: space-between; gap: 32px; }
 .ctaLayout h2 { font-size: clamp(38px, 5vw, 68px); line-height: 1.08; font-stretch: 95%; font-weight: 750; letter-spacing: -.04em; }

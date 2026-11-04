@@ -45,7 +45,7 @@ export function EasyWayIntegrations() {
       <AnimatedBeam containerRef={containerRef} fromRef={notionRef} toRef={centerRef} delay={1.4} duration={4.8} repeatDelay={1.5} />
       <AnimatedBeam containerRef={containerRef} fromRef={docsRef} toRef={centerRef} delay={2.1} duration={4.8} repeatDelay={1.5} />
       <AnimatedBeam containerRef={containerRef} fromRef={aiRef} toRef={centerRef} delay={2.8} duration={4.8} repeatDelay={1.5} />
-      <div ref={centerRef} className={styles.center} data-integration-center><span role="img" aria-label="Logo ezway" className={styles.wordmark}>ezway</span></div>
+      <div ref={centerRef} className={styles.center} data-integration-center><span role="img" aria-label="Logo ezway" className={styles.wordmark}>ez<span className={styles.way} data-brand-way>way</span></span></div>
        <ul className={styles.apps} aria-label={t('Aplicativos conectados')}>
         <IntegrationNode app="whatsapp" name="WhatsApp" nodeRef={whatsappRef} />
         <IntegrationNode app="instagram" name="Instagram" nodeRef={instagramRef} />

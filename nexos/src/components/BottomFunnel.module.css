@@ -52,7 +52,7 @@
 .field label { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--bottom-muted); }
 .field :global(.field-input) { min-height: 48px; font-size: 16px; }
 .field textarea:global(.field-input) { min-height: 128px; resize: vertical; }
-.error { font-size: 12px; color: var(--bottom-accent); }
+.error { font-size: 12px; color: var(--destructive); }
 .submitRow { margin-top: 24px; padding-top: 20px; }
 .submit:global(.btn-primary-nex) { width: 100%; min-height: 48px; border-radius: 8px; font-size: 14px; letter-spacing: 0; }
 .legalNote { margin-top: 16px; font-size: 12px; line-height: 1.5; color: var(--bottom-muted); text-align: center; }

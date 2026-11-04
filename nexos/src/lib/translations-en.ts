@@ -85,6 +85,7 @@ export const en: Record<string, string> = {
   'Conclua a verificação de segurança.': 'Complete the security check.',
   'Não foi possível enviar. Tente novamente.': 'Could not send your message. Please try again.',
   'Perguntas frequentes.': 'Frequently asked questions.',
+  'Perguntas frequentes': 'Frequently asked questions',
   'Respostas diretas.': 'Straight answers.',
   'Dúvidas frequentes': 'Frequently asked questions',
   'Sobre o projeto, a placa e o pedido. Se precisar de mais detalhes, fale com a gente.': 'About projects, plates and orders. Need more information? Get in touch.',

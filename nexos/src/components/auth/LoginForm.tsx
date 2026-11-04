@@ -141,7 +141,7 @@ export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, 
 
   return (
     <main className={styles.customer}>
-      <AuthHeader />
+       <AuthHeader accountOnly={userFlow} />
       <div className={styles.content} id="main-content">
         {userFlow && <AuthStory recovery={mode === 'forgot'} />}
         {!userFlow && <aside className={styles.story}>

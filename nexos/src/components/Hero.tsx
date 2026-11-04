@@ -13,8 +13,14 @@ import { ScrollReveal } from './ScrollReveal';
 import { useSectionScroll } from './SmoothScrollProvider';
 import { HeroBrandStrip } from './HeroBrandStrip';
 import { useLocale } from '@/lib/locale';
+import { SITE_PALETTE } from '@/lib/brand-palette';
 
 const subscribeHydration = () => () => {};
+const heroGlassWords = {
+  pt: ['IA', 'impulsionam'],
+  en: ['AI-powered', 'forward'],
+  es: ['IA', 'potencian'],
+} as const;
 
 export const Hero = forwardRef<HTMLElement, { className?: string }>(function Hero({ className = '' }, ref) {
   const reduce = useReducedMotion();
@@ -33,12 +39,12 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
 
   return (
     <section ref={sectionRef} id="hero" tabIndex={-1} aria-labelledby="hero-title" data-home-experience="hero" data-managed-section-links data-nav-ready={navigationReady} className={cn('landing-hero oceanic-surface', className)}>
-      {showHero && <div className="hero-fibers" aria-hidden="true"><GhostFibers glowColor="#a353ed" secondaryColor="#e34faf" lineColor="#efd6ff" layers={2} threads={48} density={0.7} particles={0.22} sparkle={0.35} glow={0.9} brightness={1.3} speed={0.24} flow={0.18} dpr={1.25} mouseInteraction pulseOnClick intro={false} paused={reduce} /></div>}
+      {showHero && <div className="hero-fibers" aria-hidden="true"><GhostFibers glowColor={SITE_PALETTE.action} secondaryColor={SITE_PALETTE.highlight} lineColor={SITE_PALETTE.ink} layers={2} threads={48} density={0.7} particles={0.22} sparkle={0.35} glow={0.7} brightness={1.1} speed={0.24} flow={0.18} dpr={1.25} mouseInteraction pulseOnClick intro={false} paused={reduce} /></div>}
       <motion.div className="hero-container" data-hero-scroll style={reduce ? undefined : { scale, y, opacity }}>
         <motion.div className="hero-copy" initial={false} animate={showHero ? 'show' : 'hidden'}
           variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { duration: reduce ? 0 : .6 } } }}>
           <ScrollReveal as="p" preset="label" className="hero-eyebrow"><span aria-hidden="true" /> {t('Sites e soluções digitais')}</ScrollReveal>
-          <BlurReveal as="h1" id="hero-title" key={`${showHero}-${locale}`} className="hero-heading" speedReveal={3} speedSegment={.8}>{t('Soluções com IA que impulsionam seu negócio')}</BlurReveal>
+          <BlurReveal as="h1" id="hero-title" key={`${showHero}-${locale}`} className="hero-heading" speedReveal={3} speedSegment={.8} glassWords={heroGlassWords[locale]}>{t('Soluções com IA que impulsionam seu negócio')}</BlurReveal>
           <ScrollReveal as="p" delay={.12} className="hero-description">{t('Sites, landing pages e cardápios com identidade. Experiências NFC e QR Code que conectam sua marca ao mundo real.')}</ScrollReveal>
           <ScrollReveal className="hero-actions" delay={.2}>
              <ButtonWithIcon href="#contact" onClick={event => { event.preventDefault(); scrollToSection('#contact'); }}>{t('Agendar conversa')}</ButtonWithIcon>

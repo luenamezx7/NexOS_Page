@@ -39,8 +39,8 @@ export function DeliveryProcess() {
   return <section ref={sectionRef} id="delivery-process" aria-labelledby="delivery-title" className={`${styles.section} ${styles.processSection}`}>
     <div className={`${styles.container} ${styles.processContainer}`}>
       <div className={styles.processStage}>
-      <header className={styles.splitHeader}><ScrollReveal as="h2" preset="title" id="delivery-title" className={styles.heading}>De ponta a ponta.<br /><span>Com você.</span></ScrollReveal>
-        <ScrollReveal delay={.08}><p className={styles.lead}>Você acompanha o caminho. Cada etapa tem um propósito e um ponto de conversa.</p>
+       <header className={styles.splitHeader}><ScrollReveal as="h2" preset="title" id="delivery-title" className={styles.heading}>{t('De ponta a ponta.')}<br /><span>{t('Com você.')}</span></ScrollReveal>
+         <ScrollReveal delay={.08}><p className={styles.lead}>{t('Você acompanha o caminho. Cada etapa tem um propósito e um ponto de conversa.')}</p>
            <FieldSet className={styles.processSwitch}><FieldLegend className="sr-only">{t('Tipo de entrega')}</FieldLegend><FieldGroup className={styles.segmented}>
              <label data-selected={kind === 'product'}><input type="radio" name="delivery-kind" checked={kind === 'product'} onChange={() => setKind('product')} />{t('Produto físico')}</label>
              <label data-selected={kind === 'service'}><input type="radio" name="delivery-kind" checked={kind === 'service'} onChange={() => setKind('service')} />{t('Serviço digital')}</label>
@@ -55,7 +55,7 @@ export function DeliveryProcess() {
           <span className={styles.stepEnd} aria-hidden="true">{i === 3 ? <Check size={16} /> : <ArrowUpRight size={16} />}</span>
         </li>)}
        </ol>
-      <ScrollReveal className={styles.processFoot}><span>Escopo e prazos são alinhados para cada pedido.</span><a href="#cta-final">Vamos alinhar o seu? <ArrowUpRight size={16} aria-hidden="true" /></a></ScrollReveal>
+       <ScrollReveal className={styles.processFoot}><span>{t('Escopo e prazos são alinhados para cada pedido.')}</span><a href="#cta-final">{t('Vamos alinhar o seu?')} <ArrowUpRight size={16} aria-hidden="true" /></a></ScrollReveal>
       </div>
     </div>
   </section>;

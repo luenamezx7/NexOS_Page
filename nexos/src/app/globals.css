@@ -40,7 +40,20 @@
 }
 
 :root {
-  --brand-lime: #ff8f82; /* Original: #d9f22a. Keep the token name for a reversible palette swap. */
+  /* Official site palette. Component colors below derive from these tokens. */
+  --palette-bg: #09090f;
+  --palette-surface: #15121f;
+  --palette-border: #2c253c;
+  --palette-action: #7c3aed;
+  --palette-action-hover: #6d28d9;
+  /* CTA color follows the scroll progress line; dark text keeps AA contrast. */
+  --palette-cta: #ff168d;
+  --palette-cta-hover: #ff42bf;
+  --palette-cta-ink: var(--palette-bg);
+  --palette-highlight: #c4b5fd;
+  --palette-ink: #f5f3ff;
+  --palette-muted: #aba6ba;
+  --brand-action: var(--palette-action);
   --page-width: 1216px;
   --radius-control: 12px;
   --radius-card: 24px;
@@ -79,9 +92,9 @@
   --ui-highlight: 253, 246, 236;
   --ui-highlight-color: #fdf6ec;
   /* Source: glasses in design-/img-ref/mascote_lobo_roxo.svg. */
-  --visor-violet: #971ef4;
-  --visor-lilac: #e873f8;
-  --visor-plum: #34064e;
+  --visor-violet: var(--palette-action);
+  --visor-lilac: var(--palette-highlight);
+  --visor-plum: var(--palette-surface);
   --visor-gradient: linear-gradient(105deg, var(--visor-plum) 0%, var(--visor-violet) 30%, var(--visor-lilac) 50%, var(--visor-violet) 75%, var(--visor-plum) 100%);
   --visor-text-gradient: linear-gradient(105deg, var(--visor-plum) 0%, var(--visor-violet) 55%, var(--visor-plum) 100%);
   --nex-pink: var(--visor-violet);
@@ -127,8 +140,8 @@
     inset 1px 0 0 #ffffff66,
     0 18px 48px -20px #34064e4d,
     0 4px 14px -6px #34064e26;
-  --commerce-buy: var(--visor-violet);
-  --commerce-buy-hover: var(--visor-plum);
+  --commerce-buy: var(--palette-action);
+  --commerce-buy-hover: var(--palette-action-hover);
   --nex-hairline: color-mix(in srgb, var(--color-ink) 12%, transparent);
   --section-indicator: var(--nex-pink-hot);
   --section-indicator-glow: rgba(var(--brand-accent-rgb), 0.32);
@@ -165,17 +178,17 @@
 }
 
 .dark {
-  --surface-base: #15131e;
-  --surface-raised: #1c1927;
-  --surface-inset: #100e18;
-  --surface-line: rgb(204 193 241 / 12%);
+  --surface-base: var(--palette-surface);
+  --surface-raised: var(--palette-surface);
+  --surface-inset: var(--palette-bg);
+  --surface-line: var(--palette-border);
   --surface-edge: rgb(236 227 255 / 10%);
   --surface-shadow: inset 0 1px 0 var(--surface-edge), 0 24px 64px -36px #000000b3;
   --ambient-violet: rgb(134 67 237 / 11%);
   --ambient-blue: rgb(104 90 168 / 7%);
-  --panel-ground: #100e18;
-  --panel-alternate: #13101c;
-  --panel-border: rgb(216 199 244 / 10%);
+  --panel-ground: var(--palette-surface);
+  --panel-alternate: var(--palette-surface);
+  --panel-border: var(--palette-border);
   --panel-rim: rgb(235 217 255 / 12%);
   --panel-halo: rgb(151 30 244 / 12%);
   --atmosphere-violet: rgb(135 55 213 / 19%);
@@ -190,17 +203,17 @@
   --brand-choice: var(--visor-lilac);
   --brand-secondary: var(--visor-violet);
   --mockup-middle: var(--visor-plum);
-  --brand-accent-rgb: 232, 115, 248;
-  --brand-choice-rgb: 232, 115, 248;
-  --brand-secondary-rgb: 151, 30, 244;
-  --action-gradient: linear-gradient(115deg, #8136dc 0%, #692cbd 50%, #51238e 100%);
+  --brand-accent-rgb: 124, 58, 237;
+  --brand-choice-rgb: 124, 58, 237;
+  --brand-secondary-rgb: 196, 181, 253;
+  --action-gradient: linear-gradient(115deg, var(--palette-cta), var(--palette-cta-hover));
   --action-glass-background: linear-gradient(125deg, #ffffff14, #ffffff04 70%), rgb(27 15 43 / 50%);
   --action-glass-border: rgb(226 179 255 / 25%);
-  --metallic-veil: linear-gradient(110deg, #971ef4e6 0%, #34064ee6 100%);
+  --metallic-veil: linear-gradient(110deg, var(--palette-action), var(--palette-action-hover));
   --metallic-static-base: var(--visor-gradient);
   --metallic-static-veil: var(--action-gradient);
   --metallic-inner-shadow: #34064e55;
-  --header-brand: var(--visor-lilac);
+  --header-brand: var(--palette-highlight);
   --header-glass-background:
     linear-gradient(125deg, #ffffff1f 0%, #ffffff05 38%, transparent 62%, #971ef417 100%),
     rgb(10 6 16 / 66%);
@@ -211,48 +224,48 @@
     inset 1px 0 0 #ffffff12,
     0 20px 56px -20px #000000b3,
     0 4px 18px -8px #34064e80;
-  --commerce-buy: var(--visor-violet);
-  --commerce-buy-hover: color-mix(in srgb, var(--visor-violet) 80%, var(--visor-plum));
+  --commerce-buy: var(--palette-action);
+  --commerce-buy-hover: var(--palette-action-hover);
   --nex-gradient-accent: var(--visor-gradient);
   --nex-gradient-accent-radial: radial-gradient(ellipse at center, var(--visor-lilac) 0%, var(--visor-violet) 40%, var(--visor-plum) 72%, transparent 100%);
   --ns-muted: #8f8f8f;
-  --display-rose: var(--visor-lilac);
-  --display-purple: var(--visor-violet);
-  --visor-text-gradient: linear-gradient(105deg, var(--visor-lilac) 0%, var(--visor-violet) 55%, var(--visor-lilac) 100%);
+  --display-rose: var(--palette-highlight);
+  --display-purple: var(--palette-highlight);
+  --visor-text-gradient: linear-gradient(105deg, var(--palette-ink) 0%, var(--palette-highlight) 55%, var(--palette-ink) 100%);
   --star-shadow: #ffffff;
   --star-color: #ffffff;
-  --surface-glass: rgba(16, 16, 27, 0.96);
-  --reading-glass: rgba(16, 16, 27, 0.97);
-  --reading-glass-border: rgba(249, 243, 250, 0.12);
+  --surface-glass: color-mix(in srgb, var(--palette-surface) 96%, transparent);
+  --reading-glass: color-mix(in srgb, var(--palette-surface) 97%, transparent);
+  --reading-glass-border: var(--palette-border);
   --reading-glass-shadow: inset 0 1px 0 #ffffff0a;
-  --text-secondary: color-mix(in srgb, var(--color-ink) 82%, var(--color-canvas));
-  --text-tertiary: color-mix(in srgb, var(--color-ink) 69%, var(--color-canvas));
-  --field-surface: #0b0b14;
+  --text-secondary: var(--palette-muted);
+  --text-tertiary: var(--palette-muted);
+  --field-surface: var(--palette-surface);
   --text-gradient-start: var(--display-rose);
   --text-gradient-end: var(--display-purple);
   --section-indicator: var(--nex-pink-hot);
   --section-indicator-glow: rgba(var(--brand-accent-rgb), 0.32);
   --section-indicator-glow-soft: rgba(var(--brand-accent-rgb), 0.12);
-  --background: #000000;
-  --foreground: oklch(0.985 0 0);
-  --card: #10101b;
-  --card-foreground: oklch(0.985 0 0);
-  --popover: #151420;
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: var(--visor-lilac);
-  --primary-foreground: var(--visor-plum);
+  --background: var(--palette-bg);
+  --foreground: var(--palette-ink);
+  --card: var(--palette-surface);
+  --card-foreground: var(--palette-ink);
+  --popover: var(--palette-surface);
+  --popover-foreground: var(--palette-ink);
+  --primary: var(--palette-action);
+  --primary-foreground: var(--palette-ink);
   --ui-highlight: 255, 255, 255;
   --ui-highlight-color: #ffffff;
-  --secondary: #171018;
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: #171018;
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: color-mix(in srgb, var(--visor-plum) 60%, var(--color-canvas));
-  --accent-foreground: oklch(0.985 0 0);
+  --secondary: var(--palette-surface);
+  --secondary-foreground: var(--palette-ink);
+  --muted: var(--palette-surface);
+  --muted-foreground: var(--palette-muted);
+  --accent: var(--palette-border);
+  --accent-foreground: var(--palette-ink);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: var(--visor-lilac);
+  --border: var(--palette-border);
+  --input: var(--palette-border);
+  --ring: var(--palette-highlight);
 }
 
 /* Bun's variable font families, served locally. See FONTES.md for sources. */
@@ -1023,8 +1036,8 @@ select.field-input option {
   --landing-accent: var(--display-rose);
   --landing-edge-tint: #fdf6ec25;
 }
-.dark .landing-page { --landing-accent: #e39aff; --landing-edge-tint: #00000025; }
-.landing-page :where(h1, h2, h3) { font-family: var(--font-display); }
+.dark .landing-page { --landing-accent: var(--palette-highlight); --landing-edge-tint: #00000025; }
+.landing-page :where(h1, h2, h3), .service-page :where(h1, h2, h3) { font-family: var(--font-display); text-wrap: balance; overflow-wrap: break-word; }
 .landing-page footer { background: var(--color-canvas); }
 .landing-page .btn-primary-nex, .landing-page .btn-primary-glow { font-family: var(--font-sans); letter-spacing: 0; font-weight: 600; }
 .landing-page:has(input:focus-visible, textarea:focus-visible, select:focus-visible) :is(.landing-edge-blur, .landing-header-blur) { opacity: 0; }
@@ -1043,16 +1056,16 @@ select.field-input option {
   color: var(--color-ink);
 }
 .dark .oceanic-surface {
-  --color-canvas: #000000;
-  --color-ink: #f9f3fa;
-  --text-secondary: #c4b6cf;
-  --text-tertiary: #bcb0c8;
-  --display-rose: var(--visor-lilac);
+  --color-canvas: var(--palette-bg);
+  --color-ink: var(--palette-ink);
+  --text-secondary: var(--palette-muted);
+  --text-tertiary: var(--palette-muted);
+  --display-rose: var(--palette-highlight);
   --landing-muted: var(--text-secondary);
-  --landing-line: rgb(249 243 250 / 16%);
-  --landing-accent: #e39aff;
-  --visor-text-gradient: linear-gradient(105deg, #efb0ff 0%, #d391ff 55%, #a54aff 100%);
-  --ring: #d391ff;
+  --landing-line: var(--palette-border);
+  --landing-accent: var(--palette-highlight);
+  --visor-text-gradient: linear-gradient(105deg, var(--palette-ink), var(--palette-highlight));
+  --ring: var(--palette-highlight);
   color: var(--color-ink);
 }
 .brand-veil {
@@ -1087,8 +1100,8 @@ select.field-input option {
 .hero-heading { max-width: 24ch; margin-inline: auto; font-family: var(--font-display); font-size: clamp(48px, 5.9vw, 84px); font-weight: 650; line-height: 1.07; letter-spacing: -.055em; text-wrap: balance; }
 .hero-description { max-width: 49ch; margin: 28px auto 0; font-size: 17px; line-height: 1.7; color: var(--landing-muted); text-wrap: pretty; }
 .hero-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px 28px; margin-top: 32px; }
-.hero-easychat-link { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; margin-top: 18px; padding: 8px 16px; border: 1px solid color-mix(in srgb, var(--visor-lilac) 45%, transparent); border-radius: 999px; background: color-mix(in srgb, var(--visor-plum) 20%, transparent); color: var(--color-ink); font-size: 13px; line-height: 1.5; text-decoration: none; }
-.hero-easychat-link:hover, .hero-easychat-link:focus-visible { border-color: var(--visor-lilac); box-shadow: 0 0 24px #971ef444; }
+.hero-easychat-link { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; margin-top: 18px; padding: 8px 16px; border: 1px solid var(--palette-border); border-radius: 999px; background: transparent; color: var(--palette-highlight); font-size: 13px; line-height: 1.5; text-decoration: none; }
+.hero-easychat-link:hover, .hero-easychat-link:focus-visible { border-color: var(--palette-highlight); box-shadow: 0 0 24px color-mix(in srgb, var(--palette-highlight) 18%, transparent); }
 .hero-bottom { position: absolute; bottom: 28px; left: 40px; right: 40px; display: flex; justify-content: center; align-items: center; gap: 24px; padding-top: 20px; color: var(--landing-muted); font: 13px/1.5 var(--font-sans); }
 .hero-bottom a { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; color: var(--color-ink); }
 .hero-text-link { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 44px; padding: 8px 0; color: var(--landing-muted); font-size: 14px; font-weight: 500; text-underline-offset: 5px; transition: color 200ms ease; }
@@ -1439,42 +1452,50 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
 }
 @media (forced-colors: active) { .brand-veil { display: none; } }
 
-/* EasyWay dark palette: violet and magenta surfaces with coral reserved for actions.
+/* Site palette: dark canvas, neutral panels and restrained violet actions.
    Layers: scenery 0, content 1, lower edge 30, upper edge 40, header/menus 50,
    native dialogs use the browser top layer. */
 .dark {
   color-scheme: only dark;
-  --color-canvas: #07050d; --background: #07050d; --color-ink: #fff; --foreground: #fff;
-  --color-card: #170c2b; --card: #170c2b; --card-foreground: #fff;
-  --popover: #0f0a1a; --popover-foreground: #fff;
-  --surface-base: #0f0a1a; --surface-raised: #170c2b; --surface-inset: #0b0715;
-  --surface-line: #2a1d45; --surface-edge: #ffffff12;
-  --surface-glass: #170c2beb; --reading-glass: #170c2bf0; --field-surface: #170c2b;
-  --panel-ground: #0f0a1a; --panel-alternate: #170c2b; --panel-border: #2a1d45;
-  --text-secondary: #e2d8f5; --text-tertiary: #d2c9e1; --muted-foreground: #d2c9e1;
-  --border: #2a1d45; --input: #644286; --ring: var(--brand-lime);
-  --primary: #d898ff; --primary-foreground: #000000; --secondary: #191121;
-  --accent: #241046; --accent-foreground: #fff; --muted: #170c2b;
-  --display-rose: #ff6bdd; --display-purple: #b65cff;
-  --header-glass-background: #0f0a1ae8; --header-glass-border: #2a1d45;
-  --ambient-blue: #7a2cf52e; --ambient-violet: #7a2cf543; --electric-blue: #b65cff;
-  --detail-accent: var(--brand-lime); --detail-ink: #12081f; --detail-text: var(--brand-lime);
-  --visor-text-gradient: linear-gradient(105deg, #b65cff, #ff6bdd);
+  --color-canvas: var(--palette-bg); --background: var(--palette-bg); --color-ink: var(--palette-ink); --foreground: var(--palette-ink);
+  --color-card: var(--palette-surface); --card: var(--palette-surface); --card-foreground: var(--palette-ink);
+  --popover: var(--palette-surface); --popover-foreground: var(--palette-ink);
+  --surface-base: var(--palette-surface); --surface-raised: var(--palette-surface); --surface-inset: var(--palette-bg);
+  --surface-line: var(--palette-border); --surface-edge: #ffffff12;
+  --surface-glass: color-mix(in srgb, var(--palette-surface) 96%, transparent); --reading-glass: var(--surface-glass); --field-surface: var(--palette-surface);
+  --panel-ground: var(--palette-surface); --panel-alternate: var(--palette-surface); --panel-border: var(--palette-border);
+  --text-secondary: var(--palette-muted); --text-tertiary: var(--palette-muted); --muted-foreground: var(--palette-muted);
+  --border: var(--palette-border); --input: var(--palette-border); --ring: var(--palette-highlight);
+  --primary: var(--palette-action); --primary-foreground: var(--palette-ink); --secondary: var(--palette-surface);
+  --accent: var(--palette-border); --accent-foreground: var(--palette-ink); --muted: var(--palette-surface);
+  --display-rose: var(--palette-highlight); --display-purple: var(--palette-highlight);
+  --header-glass-background: color-mix(in srgb, var(--palette-surface) 94%, transparent); --header-glass-border: var(--palette-border);
+  --ambient-blue: color-mix(in srgb, var(--palette-highlight) 7%, transparent); --ambient-violet: color-mix(in srgb, var(--palette-action) 12%, transparent); --electric-blue: var(--palette-highlight);
+  --action-glass-border: var(--palette-border); --action-glass-background: transparent;
+  --detail-accent: var(--palette-action); --detail-ink: var(--palette-ink); --detail-text: var(--palette-highlight);
+  --visor-text-gradient: linear-gradient(105deg, var(--palette-ink), var(--palette-highlight));
 }
-.landing-hero.oceanic-surface { --color-canvas: #000; --color-ink: #f9f3fa; --text-secondary: #c4b6cf; --text-tertiary: #bcb0c8; --landing-muted: var(--text-secondary); --landing-line: rgb(249 243 250 / 16%); --landing-accent: #e39aff; color: var(--color-ink); }
+.landing-hero.oceanic-surface { --color-canvas: var(--palette-bg); --color-ink: var(--palette-ink); --text-secondary: var(--palette-muted); --text-tertiary: var(--palette-muted); --landing-muted: var(--text-secondary); --landing-line: var(--palette-border); --landing-accent: var(--palette-highlight); color: var(--color-ink); }
 .hero-fibers { position: absolute; inset: 0; }
 .hero-fibers::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 60% 48% at 50% 55%, #0008, transparent 88%), linear-gradient(180deg, transparent 55%, #0008 100%); }
-.hero-heading :is([data-reveal-word='Soluções'], [data-reveal-word='IA'], [data-reveal-word='AI-powered'], [data-reveal-word='solutions']) { background: none; color: var(--brand-lime); -webkit-text-fill-color: var(--brand-lime); text-shadow: none; }
-/* Motion filters create individual paint layers. Each glyph needs its own
-   synchronized gradient so the word never disappears during/after a reveal. */
-.hero-heading :is([data-reveal-word='Soluções'], [data-reveal-word='IA'], [data-reveal-word='AI-powered'], [data-reveal-word='solutions']) [data-blur-letter] { background-image: inherit; background-clip: text; -webkit-background-clip: text; background-size: var(--word-gradient-width) 100%; background-position: var(--word-gradient-position) center; }
+/* Each glyph paints its own complete glass fill: no word-width gradient seams or empty letters. */
+.hero-heading [data-glass-word] { background: none; border: 0; box-shadow: none; }
+.hero-heading [data-glass-word] [data-blur-letter] { color: var(--palette-highlight); background: linear-gradient(155deg, var(--palette-ink) 0%, var(--palette-highlight) 38%, color-mix(in srgb, var(--palette-highlight) 75%, var(--palette-action)) 68%, var(--palette-ink) 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; -webkit-text-stroke: .006em var(--palette-highlight); text-shadow: 0 0 18px color-mix(in srgb, var(--palette-action) 24%, transparent); }
 .background-paths { position: absolute; inset: 0; overflow: hidden; pointer-events: none; opacity: .55; mask-image: linear-gradient(90deg, transparent 12%, #000 65%); }
 .background-paths svg { width: 100%; height: 100%; }
 .landing-hero .background-paths { opacity: .3; mask-image: linear-gradient(to bottom, #000, #0006 24%, transparent 48%); }
-:is(.landing-page, .service-page) :is(.primary-action, .btn-primary-nex) { background: var(--detail-accent); color: var(--detail-ink); border-color: var(--detail-accent); box-shadow: none; }
+:is(.landing-page, .service-page) :is(.primary-action, .btn-primary-nex) { background: var(--palette-cta); color: var(--palette-cta-ink); border-color: var(--palette-cta); box-shadow: none; }
 :is(.landing-page, .service-page) :is(.primary-action, .btn-primary-nex)::before { display: none; }
-:is(.landing-page, .service-page) :is(.primary-action, .btn-primary-nex):is(:hover, :focus-visible, :active):not(:disabled):not([aria-disabled='true']) { background: var(--brand-lime); color: var(--detail-ink); border-color: var(--brand-lime); box-shadow: 0 0 24px color-mix(in srgb, var(--brand-lime) 20%, transparent); }
+:is(.landing-page, .service-page) :is(.primary-action, .btn-primary-nex):is(:hover, :focus-visible, :active):not(:disabled):not([aria-disabled='true']) { background: var(--palette-cta-hover); color: var(--palette-cta-ink); border-color: var(--palette-cta-hover); box-shadow: 0 0 24px color-mix(in srgb, var(--palette-cta) 20%, transparent); }
 :is(.landing-page, .service-page) :is(.primary-action, .btn-primary-nex) :is(.metallic-content, svg) { color: inherit; }
+.site-shell :is(.btn-primary-nex, .btn-primary-glow, .primary-action) { background: var(--palette-cta); color: var(--palette-cta-ink); border-color: var(--palette-cta); box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.site-shell :is(.btn-primary-nex, .btn-primary-glow, .primary-action):is(:hover, :focus-visible, :active):not(:disabled):not([aria-disabled='true']) { background: var(--palette-cta-hover); color: var(--palette-cta-ink); border-color: var(--palette-cta-hover); box-shadow: 0 0 24px color-mix(in srgb, var(--palette-cta) 20%, transparent); }
+.site-shell :is(.btn-primary-nex, .btn-primary-glow, .primary-action)::before { display: none; }
+.site-shell :is(.btn-secondary-nex, .action-glass) { background: transparent; color: var(--palette-highlight); border-color: var(--palette-border); box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.site-shell :is(.btn-secondary-nex, .action-glass):is(:hover, :focus-visible, :active):not(:disabled):not([aria-disabled='true']) { background: var(--palette-surface); color: var(--palette-highlight); border-color: var(--palette-highlight); box-shadow: none; }
+.site-shell :is(.btn-secondary-nex, .action-glass)::before { display: none; }
+.site-shell :is(.btn-primary-nex, .btn-primary-glow, .primary-action, .btn-secondary-nex, .action-glass):focus-visible { outline-color: var(--palette-highlight); }
+.site-shell :is(a, button, input, textarea, select, summary):focus-visible { outline-color: var(--palette-highlight); }
 .hero-text-link svg, .hero-bottom a svg { color: var(--detail-text); }
 .hero-text-link:is(:hover, :focus-visible), .hero-bottom a:is(:hover, :focus-visible), .page-header-nav a:is(:hover, :focus-visible) { color: var(--detail-text); }
 @media (prefers-reduced-motion: reduce) {
@@ -1487,7 +1508,7 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
   .hero-copy { text-align: left; }
   .hero-heading { margin: 0; font-size: clamp(38px, 10vw, 50px); max-width: 13ch; line-height: 1.12; }
   .hero-eyebrow { display: none; }
-  .hero-description { display: block; max-width: 36ch; margin: 20px 0 0; font-size: 14px; line-height: 1.55; color: #e0d6e8; }
+.hero-description { display: block; max-width: 36ch; margin: 20px 0 0; font-size: 14px; line-height: 1.55; color: var(--palette-muted); }
   .hero-actions { flex-direction: column; align-items: flex-start; width: min(100%, 380px); gap: 10px; margin-top: 22px; }
   .hero-actions > :first-child { width: 100%; min-width: 0; }
   .hero-fibers { mask-image: linear-gradient(to bottom, #000 5%, #000 48%, #0009 78%, transparent 100%); }
@@ -1503,6 +1524,6 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
 }
 @media (forced-colors: active) {
   .background-paths, .hero-fibers { display: none; }
-  .hero-actions > a:first-child { background: ButtonFace; color: ButtonText; border: 1px solid ButtonText; }
-  .hero-heading :is([data-reveal-word='Soluções'], [data-reveal-word='IA'], [data-reveal-word='AI-powered'], [data-reveal-word='solutions']) { background: none; color: CanvasText; -webkit-text-fill-color: CanvasText; text-shadow: none; }
+  .site-shell :is(.btn-primary-nex, .btn-primary-glow, .primary-action, .btn-secondary-nex, .action-glass) { background: ButtonFace; color: ButtonText; border-color: ButtonText; box-shadow: none; }
+  .hero-heading [data-glass-word] [data-blur-letter] { background: none; color: CanvasText; -webkit-text-fill-color: CanvasText; -webkit-text-stroke: 0; text-shadow: none; }
 }

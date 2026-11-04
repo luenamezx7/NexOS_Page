@@ -29,7 +29,7 @@ export default async function ResetPasswordPage({ searchParams }: { searchParams
 
   return (
     <main className={styles.customer}>
-      <AuthHeader />
+       <AuthHeader accountOnly />
       <div className={styles.content} id="main-content">
       <AuthStory recovery />
       <section className={`${styles.panel} flex flex-col gap-6`} aria-labelledby="reset-link-title">

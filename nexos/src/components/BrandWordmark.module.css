@@ -10,8 +10,5 @@
   white-space: nowrap;
   color: var(--color-ink);
 }
-.animated .way { animation-duration: 4s; }
-.way { color: #bd4dff; background: linear-gradient(110deg, #7020ed, #c337ff 28%, #e280ff 56%, #9223eb 80%, #c337ff); background-size: 250% 100%; background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: way-gradient 5s ease-in-out infinite alternate; }
-@keyframes way-gradient { from { background-position: 0% 50%; } to { background-position: 100% 50%; } }
-@media (prefers-reduced-motion: reduce) { .way { animation: none; } }
-@media (forced-colors: active) { .wordmark, .way { background: none; color: CanvasText; -webkit-text-fill-color: CanvasText; } }
+.way { color: var(--palette-cta); }
+@media (forced-colors: active) { .wordmark, .way { color: CanvasText; } }

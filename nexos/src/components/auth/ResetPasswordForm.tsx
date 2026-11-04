@@ -71,7 +71,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
 
   return (
     <main className={styles.customer}>
-      <AuthHeader />
+       <AuthHeader accountOnly />
 
       <div className={styles.content} id="main-content">
         <AuthStory recovery />

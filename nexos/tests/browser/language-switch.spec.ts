@@ -72,26 +72,42 @@ test('keeps the language switch accessible without horizontal overflow', async (
   }
 });
 
-test('keeps the coral hero highlights in both languages and aligns the EasyChat preview with the phone screen', async ({ page }) => {
+test('renders complete glass letters and pink wordmarks in all three languages', async ({ page }) => {
   await page.goto('/');
   const intro = page.locator('dialog[data-presentation]');
-  if (await intro.isVisible()) await intro.getByRole('button', { name: 'Pular apresentação' }).click();
+  if (await intro.isVisible()) {
+    await expect(intro.locator('[data-brand-way]')).toHaveCSS('color', 'rgb(255, 22, 141)');
+    await intro.getByRole('button', { name: 'Pular apresentação' }).click();
+  }
   await expect(intro).toHaveCount(0);
   await expect(page.getByRole('banner').locator('[data-brand-way]')).toHaveText('way');
   await expect(page.getByRole('banner').locator('[data-wordmark]')).toHaveText('ez');
+  await expect(page.getByRole('banner').locator('[data-brand-way]')).toHaveCSS('color', 'rgb(255, 22, 141)');
 
-  for (const words of [['Soluções', 'IA'], ['AI-powered', 'solutions']]) {
+  for (const [words, language, next] of [
+    [['IA', 'impulsionam'], 'Português', 'English'],
+    [['AI-powered', 'forward'], 'English', 'Español'],
+    [['IA', 'potencian'], 'Español', null],
+  ] as const) {
+    await expect(page.locator('#hero [data-glass-word]')).toHaveCount(2);
     for (const word of words) {
-      const accent = page.locator('#hero').locator(`[data-reveal-word="${word}"]`);
+      const accent = page.locator('#hero').locator(`[data-reveal-word="${word}"][data-glass-word]`);
       await expect(accent).toHaveCSS('background-image', 'none');
-      await expect(accent).toHaveCSS('color', 'rgb(255, 143, 130)');
-      await expect(accent).toHaveCSS('text-shadow', 'none');
+      await expect(accent).toHaveCSS('border-top-width', '0px');
+      for (const letter of await accent.locator('[data-blur-letter]').all()) {
+        await expect(letter).toHaveCSS('background-clip', 'text');
+        await expect(letter).toHaveCSS('-webkit-text-fill-color', 'rgba(0, 0, 0, 0)');
+        await expect(letter).toHaveCSS('background-size', 'auto');
+      }
     }
-    if (words[0] === 'Soluções') {
-      await page.getByRole('banner').getByRole('button', { name: 'Selecionar idioma: Português' }).click();
-      await page.getByRole('menuitem', { name: 'English' }).click();
+    if (next) {
+      const label = language === 'Português' ? 'Selecionar idioma' : 'Select language';
+      await page.getByRole('banner').getByRole('button', { name: `${label}: ${language}` }).click();
+      await page.getByRole('menuitem', { name: next }).click();
     }
   }
+  await expect(page.locator('#brand-closing [data-brand-way]')).toHaveCSS('color', 'rgb(255, 22, 141)');
+  await expect(page.locator('#brand-closing')).toContainText('Hecho por ezway');
 
   for (const width of [390, 1366]) {
     await page.setViewportSize({ width, height: 844 });
@@ -116,9 +132,35 @@ test('fills the pink top progress line when scrolling and resets at the start', 
   await expect(intro).toHaveCount(0);
   const progress = page.getByRole('progressbar', { name: 'Progresso da página' });
   await expect(progress).toBeVisible();
+  await expect(page.locator('#hero .hero-actions a').first()).toHaveCSS('background-color', 'rgb(255, 22, 141)');
   await expect(page.getByRole('navigation', { name: 'Navegação de seções' })).toHaveCount(0);
   await page.evaluate(() => scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }));
   await expect.poll(async () => Number(await progress.getAttribute('aria-valuenow'))).toBeGreaterThan(95);
   await page.evaluate(() => scrollTo({ top: 0, behavior: 'instant' }));
   await expect.poll(async () => Number(await progress.getAttribute('aria-valuenow'))).toBeLessThan(5);
+});
+
+test('keeps headings and body copy within mobile and desktop layouts in every language', async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem('nexos-boot-seen', '1'));
+  for (const locale of ['pt', 'en', 'es']) {
+    await page.goto('/');
+    if (locale !== 'pt') {
+      await page.getByRole('banner').getByRole('button', { name: /idioma|language|idioma/i }).click();
+      await page.getByRole('menuitem', { name: locale === 'en' ? 'English' : 'Español' }).click();
+    }
+    for (const width of [390, 1366]) {
+      await page.setViewportSize({ width, height: 844 });
+      for (const path of ['/', '/criacao-de-sites', '/landing-pages', '/cardapio-digital', '/placa-nfc']) {
+        await page.goto(path);
+        await expect(page.locator('main h1').first()).toBeVisible();
+        expect(await page.evaluate(() => {
+          const headings = [...document.querySelectorAll('main h1, main h2, main h3')];
+          return document.documentElement.scrollWidth <= innerWidth + 1 && headings.every(heading => {
+            const { left, right, width } = heading.getBoundingClientRect();
+            return width > 0 && left >= -1 && right <= innerWidth + 1;
+          });
+        }), `${locale} ${width}px ${path}`).toBe(true);
+      }
+    }
+  }
 });

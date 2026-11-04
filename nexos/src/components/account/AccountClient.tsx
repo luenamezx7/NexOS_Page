@@ -58,7 +58,7 @@ function formatDateTime(date: string | null) {
 
 function AccountShell({ children, email }: { children: ReactNode; email?: string }) {
   return <div className={`interior-page ${styles.shell}`}>
-    <PageHeader>{email && <><span className="page-session-email">{email}</span><LogoutButton /></>}</PageHeader>
+    <PageHeader accountOnly>{email && <><span className="page-session-email">{email}</span><LogoutButton /></>}</PageHeader>
     <main className={`page-container account-content ${styles.content}`} id="main-content">
       <div className={`page-intro ${styles.intro}`}><p className="page-kicker">ezway / Área do cliente</p><h1 className="page-title">Minha conta</h1><p>Seu espaço para cuidar dos seus dados e do acesso à ezway.</p></div>
       {children}

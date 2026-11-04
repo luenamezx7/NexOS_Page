@@ -2,12 +2,11 @@
 .lockup { display: inline-flex; align-items: baseline; white-space: nowrap; }
 .wordmark, .way { display: block; font-family: 'Avenir Next', 'Helvetica Neue', Arial, sans-serif; font-size: 34px; line-height: 1.12; font-synthesis: none; letter-spacing: -.045em; font-weight: 700; }
 .wordmark { color: var(--color-ink); }
-.way { color: #bd4dff; background: linear-gradient(110deg, #7020ed 0%, #c337ff 28%, #e280ff 55%, #9223eb 80%, #c337ff 100%); background-size: 250% 100%; background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: way-gradient 5s ease-in-out infinite alternate; }
-@keyframes way-gradient { from { background-position: 0% 50%; } to { background-position: 100% 50%; } }
+.way { color: var(--palette-cta); }
 .mascot { display: block; width: 50px; height: 50px; flex-shrink: 0; object-fit: contain; margin-inline: -5px 0; background: transparent; transition: scale 180ms ease; }
 :global(.dark) .mascot { filter: invert(1); }
 @media (hover: hover) and (pointer: fine) { .mark:hover .mascot { scale: 1.05; } }
-@media (prefers-reduced-motion: reduce) { .mascot { transition: none; } .mark:hover .mascot { scale: none; } .way { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .mascot { transition: none; } .mark:hover .mascot { scale: none; } }
 @media (max-width: 767px) { .mark { gap: 4px; } .wordmark, .way { font-size: 25px; } .mascot { width: 40px; height: 40px; margin-inline: -4px 0; } }
 @media (max-width: 359px) { .wordmark, .way { font-size: 20px; } .mascot { width: 34px; height: 34px; margin-inline: -3px 0; } }
-@media (forced-colors: active) { .way { background: none; color: CanvasText; -webkit-text-fill-color: CanvasText; } }
+@media (forced-colors: active) { .way { color: CanvasText; } }

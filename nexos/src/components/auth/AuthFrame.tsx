@@ -1,11 +1,10 @@
-import Link from 'next/link';
-import { ArrowUpRight, KeyRound, ShieldCheck, UserRound } from 'lucide-react';
+import { KeyRound, ShieldCheck, UserRound } from 'lucide-react';
 import styles from './LoginForm.module.css';
 import { PageHeader } from '../PageChrome';
 import { ScrollReveal } from '../ScrollReveal';
 
-export function AuthHeader() {
-  return <PageHeader />;
+export function AuthHeader({ accountOnly = false }: { accountOnly?: boolean }) {
+  return <PageHeader accountOnly={accountOnly} />;
 }
 
 export function AuthStory({ recovery = false }: { recovery?: boolean }) {
@@ -18,6 +17,5 @@ export function AuthStory({ recovery = false }: { recovery?: boolean }) {
       <li><UserRound size={17} aria-hidden="true" /><span>Seus dados</span></li>
       <li><KeyRound size={17} aria-hidden="true" /><span>Segurança da conta</span></li>
     </ul>
-    <Link href="/#services" className={styles.storyLink}>Conhecer as soluções <ArrowUpRight size={15} aria-hidden="true" /></Link>
   </aside>;
 }

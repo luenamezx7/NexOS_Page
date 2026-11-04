@@ -17,9 +17,9 @@ export function FisicoDigitalSection() {
     <div className={styles.container}>
       <div className={styles.brandGrid}>
         <header>
-          <ScrollReveal as="h2" preset="title" id="fisico-title" className={styles.heading}>Tecnologia com<br /><span>ponto de contato.</span></ScrollReveal>
-          <ScrollReveal as="p" delay={.06} className={styles.lead}>Design, desenvolvimento e produtos conectados. Partes diferentes da mesma experiência: a do seu cliente.</ScrollReveal>
-          <ScrollReveal delay={.12}><a href="#showcase" className={styles.textLink}>Explore essa conexão <ArrowUpRight size={18} aria-hidden="true" /></a></ScrollReveal>
+          <ScrollReveal as="h2" preset="title" id="fisico-title" className={styles.heading}>{t('Tecnologia com')}<br /><span>{t('ponto de contato.')}</span></ScrollReveal>
+          <ScrollReveal as="p" delay={.06} className={styles.lead}>{t('Design, desenvolvimento e produtos conectados. Partes diferentes da mesma experiência: a do seu cliente.')}</ScrollReveal>
+          <ScrollReveal delay={.12}><a href="#showcase" className={styles.textLink}>{t('Explore essa conexão')} <ArrowUpRight size={18} aria-hidden="true" /></a></ScrollReveal>
         </header>
         <ScrollReveal preset="card" delay={.12}><ScrollFloat className={styles.connection}>
           <div className={styles.connectionAura} aria-hidden="true" />
@@ -30,8 +30,8 @@ export function FisicoDigitalSection() {
         </ScrollFloat></ScrollReveal>
       </div>
       <div className={styles.featureGrid}>{FEATURES.map(({ icon: Icon, label, title, body }, index) => <ScrollReveal as="article" key={label} delay={index * .08}>
-        <div className={styles.featureTop}><span>{label}</span><Icon size={21} strokeWidth={1.6} aria-hidden="true" /></div>
-        <h3>{title}</h3><p>{body}</p>
+         <div className={styles.featureTop}><span>{t(label)}</span><Icon size={21} strokeWidth={1.6} aria-hidden="true" /></div>
+         <h3>{t(title)}</h3><p>{t(body)}</p>
       </ScrollReveal>)}</div>
     </div>
   </section>;

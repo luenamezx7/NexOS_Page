@@ -28,10 +28,11 @@ test('home entrega serviços e links no HTML, antes de qualquer interação', as
   expect(websites).toHaveLength(1);
   expect(websites[0].name).toBe('ezway');
   expect(websites[0].alternateName).toContain('ezway');
-  expect(websites[0].alternateName).toContain(new URL(websites[0].url).hostname);
+  expect(websites[0].alternateName).not.toContain(new URL(websites[0].url).hostname);
   const organization = entities.find(item => item['@type'] === 'Organization');
   expect(organization.name).toBe('ezway');
   expect(organization.alternateName).toContain('ezway');
+  expect(new URL(organization.logo).pathname).toBe('/favicon.png');
 });
 
 test('home e páginas comerciais são legíveis e navegáveis sem JavaScript', async ({ browser }) => {
@@ -125,7 +126,7 @@ test('favicon de busca usa o mascote em PNG quadrado e é servido aos crawlers s
   try {
     for (const path of ['/', '/criacao-de-sites']) {
       await page.goto(`http://localhost:3100${path}`);
-      await expect(page.locator('head link[rel="icon"][type="image/png"]')).toHaveAttribute('href', '/favicon.png?v=2');
+      await expect(page.locator('head link[rel="icon"][type="image/png"]')).toHaveAttribute('href', '/favicon.png?v=3');
       await expect(page.locator('head link[rel="icon"][type="image/png"]')).toHaveAttribute('sizes', '192x192');
       await expect(page.locator('head link[rel="icon"][type="image/svg+xml"]')).toHaveCount(0);
     }
@@ -155,8 +156,8 @@ test('favicon de busca usa o mascote em PNG quadrado e é servido aos crawlers s
       const context = canvas.getContext('2d')!;
       context.drawImage(image, 0, 0);
       const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
-      let lime = 0;
-      let violet = 0;
+       let pink = 0;
+       let dark = 0;
       let left = canvas.width;
       let right = 0;
       let top = canvas.height;
@@ -164,19 +165,19 @@ test('favicon de busca usa o mascote em PNG quadrado e é servido aos crawlers s
       for (let i = 0; i < pixels.length; i += 4) {
         const x = (i / 4) % canvas.width;
         const y = Math.floor(i / 4 / canvas.width);
-        if (pixels[i] > 175 && pixels[i + 1] > 195 && pixels[i + 2] < 100) {
-          lime++;
+         if (pixels[i] > 225 && pixels[i + 1] < 95 && pixels[i + 2] > 105 && pixels[i + 2] < 205) {
+           pink++;
           left = Math.min(left, x);
           right = Math.max(right, x);
           top = Math.min(top, y);
           bottom = Math.max(bottom, y);
         }
-        if (pixels[i] < 50 && pixels[i + 1] < 35 && pixels[i + 2] < 70) violet++;
+         if (pixels[i] < 50 && pixels[i + 1] < 35 && pixels[i + 2] < 70) dark++;
       }
-      return { lime, violet, left, right, top, bottom };
+       return { pink, dark, left, right, top, bottom };
     });
-    expect(colors.lime).toBeGreaterThan(3000);
-    expect(colors.violet).toBeGreaterThan(1000);
+     expect(colors.pink).toBeGreaterThan(3000);
+     expect(colors.dark).toBeGreaterThan(1000);
     expect(colors.left).toBeGreaterThan(5);
     expect(colors.right).toBeLessThan(186);
     expect(colors.top).toBeGreaterThan(5);
@@ -188,7 +189,7 @@ test('favicon de busca usa o mascote em PNG quadrado e é servido aos crawlers s
   }
 });
 
-test('ghost mark is shared by headers and footer with animated way lettering', async ({ page, request }) => {
+test('ghost mark is shared by headers and footer with pink way lettering', async ({ page, request }) => {
   await page.goto('/#hero');
   await page.evaluate(() => document.fonts.ready);
   const animated = page.locator('header[role="banner"] img[src="/logo-ghost.svg"]');
@@ -204,7 +205,7 @@ test('ghost mark is shared by headers and footer with animated way lettering', a
   expect(Math.abs(text!.y + text!.height - way!.y - way!.height)).toBeLessThan(2);
   await expect(page.locator('header[role="banner"] [data-brand-registration]')).toHaveCount(0);
   await expect(page.locator('footer img[src="/logo-ghost.svg"]')).toHaveCount(1);
-  await expect(page.locator('footer [data-brand-way]')).toHaveCSS('animation-name', /way-gradient$/);
+   await expect(page.locator('footer [data-brand-way]')).toHaveCSS('color', 'rgb(255, 22, 141)');
   const animation = await request.get(await animated.getAttribute('src') as string);
   expect(await animation.text()).toContain('@media (prefers-reduced-motion: reduce)');
   await page.goto('/criacao-de-sites');

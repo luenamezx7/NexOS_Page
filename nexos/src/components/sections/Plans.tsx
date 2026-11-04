@@ -17,8 +17,8 @@ export function Plans() {
   const ready = plans.every(plan => landingEvidence.plans[plan.name]?.startingPrice && landingEvidence.plans[plan.name].inclusions.length > 0);
   return <section id="plans" className={styles.section} aria-labelledby="plans-title">
     <div className={styles.inner}>
-      <ScrollReveal as="p" preset="label" className={styles.kicker}>Planos</ScrollReveal>
-      <ScrollReveal as="h2" preset="title" id="plans-title">Um ponto de partida para cada projeto.</ScrollReveal>
+      <ScrollReveal as="p" preset="label" className={styles.kicker}>{t('Planos')}</ScrollReveal>
+      <ScrollReveal as="h2" preset="title" id="plans-title">{t('Um ponto de partida para cada projeto.')}</ScrollReveal>
        <p className={styles.explainer}>{t('Escopo, valores e condições são alinhados diretamente com você.')}</p>
       {ready ? <div className={styles.planGrid}>{plans.map(plan => <ScrollReveal as="article" preset="card" className={styles.plan} data-highlighted={plan.highlighted} key={plan.name}>
          <h3>{t(plan.name)}</h3>

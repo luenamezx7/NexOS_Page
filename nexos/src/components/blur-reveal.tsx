@@ -18,6 +18,7 @@ export interface BlurRevealProps {
   inView?: boolean
   once?: boolean
   letterSpacing?: string | number
+  glassWords?: readonly string[]
 }
 
 export function BlurReveal({
@@ -35,6 +36,7 @@ export function BlurReveal({
   inView = false,
   once = true,
   letterSpacing,
+  glassWords,
 }: BlurRevealProps) {
   const reduce = usePrefersReducedMotion()
   const MotionTag = motion[as as keyof typeof motion] as typeof motion.div
@@ -92,7 +94,7 @@ export function BlurReveal({
           <span className="sr-only">{children}</span>
           {children &&
             children.split(" ").map((word, wordIndex, wordsArray) => (
-              <span key={`word-${wordIndex}`} data-reveal-word={word} className="inline-block whitespace-nowrap" aria-hidden="true">
+              <span key={`word-${wordIndex}`} data-reveal-word={word} data-glass-word={glassWords?.includes(word) ? '' : undefined} className="inline-block whitespace-nowrap" aria-hidden="true">
                 {word.split("").map((char, charIndex) => (
                   <motion.span
                     key={`char-${wordIndex}-${charIndex}`}

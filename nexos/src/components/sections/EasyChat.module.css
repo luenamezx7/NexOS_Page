@@ -17,13 +17,13 @@
 .mockup { display: flex; flex-direction: column; align-items: center; gap: 24px; min-width: 0; margin: 0; }
 .device { width: min(100%, 272px); height: auto; filter: drop-shadow(0 24px 28px color-mix(in srgb, var(--visor-plum) 18%, transparent)); }
 .phonePreview { position: relative; width: min(100%, 272px); }
-.phoneScreen { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 15px; min-width: 0; padding: 58px 13px 17px; pointer-events: none; background: radial-gradient(ellipse at 85% 35%, #461564, transparent 60%), #12081f; color: #f9f3fa; font: 10px/1.4 var(--font-sans); }
-.phoneBrand { font-weight: 700; color: #e873f8; }
+.phoneScreen { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 15px; min-width: 0; padding: 58px 13px 17px; pointer-events: none; background: radial-gradient(ellipse at 85% 35%, color-mix(in srgb, var(--palette-action) 14%, transparent), transparent 60%), var(--palette-surface); color: var(--palette-ink); font: 10px/1.4 var(--font-sans); }
+.phoneBrand { font-weight: 700; color: var(--palette-highlight); }
 .phoneBubble { align-self: flex-end; max-width: 82%; padding: 10px; border-radius: 12px 12px 4px 12px; background: #34164d; }
 .phoneReply { margin-top: 14px; font-size: 13px; font-weight: 600; }
 .phoneChips { display: flex; flex-wrap: wrap; gap: 7px; }
-.phoneChips span { padding: 7px 9px; border: 1px solid #971ef466; border-radius: 999px; background: #971ef422; }
-.phoneInput { margin-top: auto; padding: 10px; border: 1px solid #e873f855; border-radius: 10px; color: #e2d8f5; }
+.phoneChips span { padding: 7px 9px; border: 1px solid var(--palette-border); border-radius: 999px; background: color-mix(in srgb, var(--palette-action) 12%, var(--palette-surface)); }
+.phoneInput { margin-top: auto; padding: 10px; border: 1px solid var(--palette-border); border-radius: 10px; color: var(--palette-muted); }
 .mockup figcaption { color: var(--text-tertiary); font-size: 13px; line-height: 1.6; text-align: center; }
 @media (max-width: 767px) { .container { padding: 64px 24px; } .top { margin-bottom: 36px; } .layout { grid-template-columns: 1fr; gap: 40px; } .device { width: min(100%, 248px); } .name { margin-bottom: 28px; } }
 @media (forced-colors: active) { .device { filter: none; } }
