@@ -53,7 +53,7 @@ export function ScrollReveal({ children, as = 'div', preset = 'body', delay = 0,
       element.dataset.revealState = 'visible';
     };
     // Read the preference directly too, before the external-store hydration update.
-    if (reduce || matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window) || !element.animate) {
+    if (reduce || matchMedia('(prefers-reduced-motion: reduce), (max-width: 767px)').matches || !('IntersectionObserver' in window) || !element.animate) {
       restore();
       return;
     }

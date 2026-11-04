@@ -64,7 +64,7 @@ test('o controle do footer repete a nova apresentação e Escape revela o hero',
 });
 
 for (const theme of ['light', 'dark']) {
-  test(`${theme}: a entrada mobile respeita movimento reduzido e libera a faixa`, async ({ page }) => {
+  test(`${theme}: a entrada mobile respeita movimento reduzido e mantém o hero limpo`, async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.addInitScript(theme => localStorage.setItem('nexos-theme', theme), theme);
@@ -74,8 +74,7 @@ for (const theme of ['light', 'dark']) {
     await expect(dialog.getByText('ezway', { exact: true }).locator('span')).toHaveCSS('animation-name', 'none');
     await expect(dialog).toHaveCount(0, { timeout: 6000 });
     await expect(page.locator('.landing-edge-blur, .landing-header-blur')).toHaveCount(0);
-    const strip = page.getByRole('region', { name: 'Pilares da ezway' });
-    await expect(strip.locator('[data-marquee-track] > div').first().locator(':scope > div')).toHaveCount(6);
+    await expect(page.locator('[data-hero-brand-strip]')).toBeHidden();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.locator('#services').scrollIntoViewIfNeeded();
     await expect(page.locator('.landing-edge-blur')).toHaveCount(1);
@@ -98,7 +97,7 @@ test('sem JavaScript a apresentação não bloqueia o conteúdo', async ({ brows
     await page.goto(baseURL!);
     await expect(page.locator('[data-presentation]')).toBeHidden();
     await expect(page.locator('#hero h1')).toBeVisible();
-    await expect(page.locator('#hero .primary-action')).toHaveAttribute('href', '#contact');
+    await expect(page.locator('#hero a[href="#contact"]')).toBeVisible();
   } finally {
     await context.close();
   }

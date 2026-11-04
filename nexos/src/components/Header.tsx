@@ -32,6 +32,7 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const servicesRef = useRef<HTMLDetailsElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const destination = useRef<string | null>(null);
   const scrollToSection = useSectionScroll();
@@ -92,23 +93,25 @@ export function Header() {
         </div>
       </div>
     </header>
-    <dialog ref={dialogRef} id="mobile-navigation" className={styles.mobileDialog} aria-labelledby="mobile-menu-title" data-lenis-prevent onCancel={closeMenu} onClose={() => { closeMenu(); if (!destination.current) triggerRef.current?.focus(); }} onClick={event => { if (event.target === event.currentTarget) closeMenu(); }} onKeyDown={event => {
-      if (event.key !== 'Tab') return;
-      const controls = [...event.currentTarget.querySelectorAll<HTMLElement>('a[href],button:not([disabled]),[tabindex="0"]')].filter(element => element.getClientRects().length > 0);
+    <dialog ref={dialogRef} id="mobile-navigation" className={styles.mobileDialog} aria-labelledby="mobile-menu-title" data-lenis-prevent onCancel={closeMenu} onClose={() => { servicesRef.current?.removeAttribute('open'); closeMenu(); if (!destination.current) triggerRef.current?.focus(); }} onClick={event => { if (event.target === event.currentTarget) closeMenu(); }} onKeyDown={event => {
+       if (event.key !== 'Tab') return;
+       const controls = [...event.currentTarget.querySelectorAll<HTMLElement>('a[href],button:not([disabled]),summary,[tabindex="0"]')].filter(element => element.getClientRects().length > 0);
       const first = controls[0], last = controls[controls.length - 1];
       if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
       else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
     }}>
       <div className={styles.mobilePanel}>
-        <div className={styles.mobileHeading}><span id="mobile-menu-title">{t('Explore a ezway')}</span><button type="button" className={styles.closeButton} aria-label={t('Fechar menu')} onClick={closeMenu}><X size={22} /></button></div>
-         <nav aria-label={t('Navegação móvel')} className={styles.mobileNav}>
-          <a href="#services" onClick={event => { event.preventDefault(); navigate('#services'); }}>{t('Soluções')} <ArrowUpRight size={19} aria-hidden="true" /></a>
-          <div className={styles.mobileSolutions}>{SOLUTIONS.map(item => <Link key={item.href} href={item.href} onClick={closeMenu}>{t(item.label)}</Link>)}</div>
-          {NAV_ITEMS.map(item => <a key={item.href} href={item.href} onClick={event => { event.preventDefault(); navigate(item.href); }}>{t(item.label)}<ArrowUpRight size={19} aria-hidden="true" /></a>)}
-          <a className={styles.mobileContactAction} href="#contact" onClick={event => { event.preventDefault(); navigate('#contact'); }}>{t('Agendar conversa')} <ArrowUpRight size={19} aria-hidden="true" /></a>
-        </nav>
-        <HeaderAccount expanded onNavigate={closeMenu} />
-        <p className={styles.mobileSignature}>{t('Sites e soluções digitais')}</p>
+         <div className={styles.mobileHeading}><span id="mobile-menu-title">{t('Explore a ezway')}</span><button type="button" className={styles.closeButton} aria-label={t('Fechar menu')} onClick={closeMenu}><X size={22} /></button></div>
+          <nav aria-label={t('Navegação móvel')} className={styles.mobileNav}>
+           <a href="#services" onClick={event => { event.preventDefault(); navigate('#services'); }}>{t('Soluções')}</a>
+           {NAV_ITEMS.map(item => <a key={item.href} href={item.href} onClick={event => { event.preventDefault(); navigate(item.href); }}>{t(item.label)}</a>)}
+           <details ref={servicesRef} className={styles.mobileSolutions}>
+             <summary>{t('Serviços')} <ChevronDown size={17} aria-hidden="true" /></summary>
+             <div>{SOLUTIONS.map(item => <Link key={item.href} href={item.href} onClick={closeMenu}>{t(item.label)}</Link>)}</div>
+           </details>
+           <a className={styles.mobileContactAction} href="#contact" onClick={event => { event.preventDefault(); navigate('#contact'); }}>{t('Agendar conversa')} <ArrowUpRight size={18} aria-hidden="true" /></a>
+         </nav>
+         <HeaderAccount expanded onNavigate={closeMenu} />
       </div>
     </dialog>
   </>;

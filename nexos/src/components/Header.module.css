@@ -15,7 +15,7 @@
 .accountSkeleton { width: 86px; height: 16px; background: color-mix(in srgb, var(--color-ink) 9%, transparent); }
 .avatarButton { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; }
 .avatar { width: 34px; height: 34px; }
-.header :is(button, a):focus-visible, .popup :is(button, a):focus-visible, .mobileDialog :is(button, a):focus-visible { outline: 2px solid var(--ring); outline-offset: 4px; border-radius: 6px; }
+.header :is(button, a):focus-visible, .popup :is(button, a):focus-visible, .mobileDialog :is(button, a, summary):focus-visible { outline: 2px solid var(--ring); outline-offset: 4px; border-radius: 6px; }
 .menuButton { display: none; width: 44px; height: 44px; place-items: center; border-radius: 8px; }
 .popup { width: 244px; padding: 8px; border: 1px solid var(--border); background: var(--popover); color: var(--popover-foreground); font-family: var(--font-sans); box-shadow: 0 20px 60px -24px #0009; }
 .menuItem { display: flex; justify-content: flex-start; gap: 10px; min-height: 44px; padding: 10px 12px; cursor: pointer; }
@@ -23,19 +23,29 @@
 .menuItem > svg:last-child:not(:first-child) { margin-left: auto; }
 .userName { padding: 10px 12px 14px; color: var(--muted-foreground); font-size: 12px; overflow-wrap: anywhere; }
 .accountError { padding: 10px 12px; font-size: 12px; color: var(--foreground); }
-.mobileDialog { position: fixed; inset: 0; width: 100%; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 12px; border: 0; background: transparent; color: var(--foreground); }
+.mobileDialog { position: fixed; inset: 0; width: 100%; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 8px; border: 0; background: transparent; color: var(--foreground); }
 .mobileDialog::backdrop { background: #000a; backdrop-filter: blur(8px); }
-.mobilePanel { width: min(100%, 520px); max-height: calc(100dvh - 24px); overflow-y: auto; margin-left: auto; padding: 12px 24px 24px; border-radius: 16px; border: 1px solid var(--border); background: var(--popover); box-shadow: 0 24px 80px #0005; animation: menu-enter 240ms var(--ease-fluid); }
-.mobileHeading { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 8px 20px; font-size: 13px; color: var(--muted-foreground); }
+.mobilePanel { width: min(100%, 360px); max-height: calc(100dvh - 16px); overflow-y: auto; overscroll-behavior: contain; margin-left: auto; padding: 8px 18px 16px; border-radius: 14px; border: 1px solid var(--border); background: var(--popover); box-shadow: 0 24px 80px #0005; animation: menu-enter 240ms var(--ease-fluid); }
+.mobileHeading { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 4px 0 12px; border-bottom: 1px solid var(--border); background: var(--popover); font: 600 11px/1.4 var(--font-sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted-foreground); }
 .closeButton { display: grid; place-items: center; width: 44px; height: 44px; color: var(--foreground); }
-.mobileNav { display: flex; flex-direction: column; }
-.mobileNav > a { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; font: 500 22px/1.2 var(--font-sans); }
-.mobileSolutions { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; padding-block: 8px 24px; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
-.mobileSolutions a { display: flex; align-items: center; min-height: 44px; color: var(--muted-foreground); font-size: 13px; }
-.expandedAccount { display: flex; flex-direction: column; gap: 4px; padding-top: 20px; margin-top: 16px; border-top: 1px solid var(--border); font-size: 14px; }
+.mobileNav { display: flex; flex-direction: column; padding-top: 8px; }
+.mobileNav > a:not(.mobileContactAction) { display: flex; align-items: center; min-height: 44px; padding-inline: 8px; border-radius: 8px; font: 550 16px/1.25 var(--font-sans); }
+.mobileNav > a:not(.mobileContactAction):hover { background: color-mix(in srgb, var(--color-ink) 7%, transparent); }
+.mobileSolutions { margin-top: 4px; padding-block: 4px; border-block: 1px solid var(--border); }
+.mobileSolutions summary { display: flex; align-items: center; justify-content: space-between; min-height: 44px; padding-inline: 8px; color: var(--text-secondary); font: 550 14px/1.3 var(--font-sans); cursor: pointer; list-style: none; }
+.mobileSolutions summary::-webkit-details-marker { display: none; }
+.mobileSolutions summary svg { transition: transform 180ms ease; }
+.mobileSolutions[open] summary svg { transform: rotate(180deg); }
+.mobileSolutions > div { display: grid; gap: 2px; margin: 4px 0 8px 8px; padding-left: 16px; border-left: 1px solid var(--border); }
+.mobileSolutions:not([open]) > div { display: none; }
+.mobileSolutions a { display: flex; align-items: center; min-height: 44px; padding-inline: 8px; border-radius: 8px; color: var(--text-secondary); font-size: 14px; }
+.mobileSolutions a:hover { background: color-mix(in srgb, var(--color-ink) 7%, transparent); color: var(--color-ink); }
+.mobileNav > .mobileContactAction { min-height: 44px; margin-top: 12px; padding-inline: 14px; font: 700 14px/1.2 var(--font-sans); }
+.expandedAccount { display: flex; flex-direction: column; gap: 4px; padding-top: 8px; margin-top: 12px; border-top: 1px solid var(--border); font-size: 14px; }
+.expandedAccount .accountLink { gap: 10px; padding-inline: 8px; }
 .expandedAccount > :is(a, button) { min-height: 44px; display: flex; align-items: center; text-align: left; }
+.expandedAccount .accountLabel { position: static; width: auto; height: auto; margin: 0; overflow: visible; clip-path: none; white-space: normal; }
 .userRow { display: flex; align-items: center; gap: 12px; padding-bottom: 12px; }
-.mobileSignature { margin-top: 24px; font: 13px/1.5 var(--font-sans); color: var(--muted-foreground); }
 @keyframes menu-enter { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
 @media (max-width: 1199px) {
   .header { inset-inline: 12px; }
@@ -49,7 +59,12 @@
   .accountSkeleton { width: 28px; }
   .actions { gap: 4px; }
 }
-@media (max-width: 767px) { .bar { min-height: 64px; padding-block: 8px; } }
+@media (max-width: 767px) {
+  .header { inset-inline: 12px; border-radius: 14px; }
+  .bar { min-height: 60px; padding: 6px 12px; }
+  .actions .accountSlot { display: none; }
+  .mobilePanel { padding: 8px 16px 16px; }
+}
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .header { background: var(--popover); } }
 @media (prefers-reduced-transparency: reduce) { .header { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: var(--popover); } .mobileDialog::backdrop { backdrop-filter: none; background: var(--popover); } }
 @media (prefers-reduced-motion: reduce) { .header, .avatar { transition: none; } .mobilePanel { animation: none; } }

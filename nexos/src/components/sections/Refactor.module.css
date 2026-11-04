@@ -35,5 +35,14 @@
 .success { padding: 32px; border: 1px solid var(--surface-line); border-radius: 22px; background: var(--surface-raised); }
 .success h3 { font-size: 24px; }.success p { margin-block: 16px; }.success button { min-height: 44px; text-decoration: underline; }
 .floating { position: fixed; z-index: 39; right: max(22px, env(safe-area-inset-right)); bottom: max(28px, env(safe-area-inset-bottom)); display: grid; place-items: center; width: 52px; height: 52px; border: 1px solid var(--brand-lime); border-radius: 50%; background: var(--brand-lime); color: #12081f; box-shadow: 0 0 28px #d9f22a77; }
-@media(max-width: 767px) { .inner { padding: 64px 24px; }.proof ul, .planGrid, .contactLayout, .form { grid-template-columns: 1fr; }.proof .inner { padding-block: 30px; }.founderInvite { align-items: flex-start; flex-direction: column; }.floating { right: 16px; bottom: max(20px, env(safe-area-inset-bottom)); }.form { padding: 20px; } }
+@media(max-width: 767px) {
+  .inner { padding: 48px 24px; }
+  .section h2 { font-size: clamp(30px, 8vw, 36px); line-height: 1.16; }
+  .explainer { margin: 16px 0 28px; }
+  .proof ul, .planGrid, .contactLayout, .form { grid-template-columns: 1fr; }
+  .proof .inner { padding-block: 24px; }
+  .founderInvite { align-items: flex-start; flex-direction: column; gap: 16px; }
+  .floating { right: 16px; bottom: max(20px, env(safe-area-inset-bottom)); width: 44px; height: 44px; border-color: color-mix(in srgb, var(--brand-lime) 55%, transparent); background: var(--surface-raised); color: var(--brand-lime); box-shadow: 0 8px 24px #0006; }
+  .form { padding: 20px; }
+}
 @media(prefers-reduced-motion: reduce) { .plan { transition: none; }.plan:hover { transform: none; } }
