@@ -30,6 +30,32 @@ test('a apresentação automática usa a logo do fechamento e reaparece após F5
   await expect(page.locator('#hero')).toBeFocused();
 });
 
+test('o contador progride até 100% antes da abertura e reinicia ao repetir a apresentação', async ({ page }) => {
+  await page.goto('/');
+  const dialog = page.locator('dialog[data-presentation]');
+  const progress = dialog.locator('[data-presentation-progress]');
+  await expect(progress).toHaveAttribute('role', 'progressbar');
+  await expect(progress).toHaveAttribute('aria-valuemin', '0');
+  await expect(progress).toHaveAttribute('aria-valuemax', '100');
+  await expect(progress).toHaveAttribute('aria-valuenow', /\d+/);
+  const percentage = dialog.locator('[data-presentation-percentage]');
+  await expect(percentage).toBeVisible();
+  const logoBounds = await dialog.getByText('ezway', { exact: true }).boundingBox();
+  const numberBounds = await percentage.boundingBox();
+  expect(numberBounds!.y).toBeGreaterThan(logoBounds!.y + logoBounds!.height);
+  expect(Math.abs(numberBounds!.x + numberBounds!.width / 2 - logoBounds!.x - logoBounds!.width / 2)).toBeLessThan(2);
+  await dialog.getByRole('button', { name: 'Pular apresentação' }).click();
+  await expect(progress).toHaveAttribute('aria-valuenow', '100');
+  await expect(percentage).toHaveText('100%');
+  await expect(dialog).toHaveCount(0);
+
+  await page.getByRole('button', { name: 'Ver apresentação', exact: true }).click();
+  await expect(progress).toHaveAttribute('aria-valuenow', '0');
+  await expect.poll(async () => Number(await progress.getAttribute('aria-valuenow'))).toBeGreaterThan(0);
+  await expect(progress).toHaveAttribute('aria-valuenow', '100');
+  await expect(dialog).toHaveCount(0);
+});
+
 test('recarregar mantém o hero alinhado durante a saída da apresentação', async ({ page }) => {
   await page.setViewportSize({ width: 1366, height: 900 });
   await page.goto('/');

@@ -6,7 +6,7 @@ import { useInView } from 'motion/react';
 import { Marquee } from './marquee';
 import styles from './HeroBrandStrip.module.css';
 
-const BRAND_PILLARS = ['Sites', 'Portfólios', 'Landing pages', 'Cardápios digitais', 'Placas NFC', 'QR Code'];
+const BRAND_PILLARS = ['Placas NFC', 'QR Code', 'Cardápios digitais', 'Sites', 'Portfólios', 'Landing pages'];
 
 export function HeroBrandStrip({ active = true }: { active?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);

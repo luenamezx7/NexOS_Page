@@ -17,6 +17,7 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
   const exitRef = useRef<(() => void) | null>(null);
   const completeRef = useRef<(() => void) | null>(null);
   const [phase, setPhase] = useState<'pending' | 'entering' | 'leaving'>('pending');
+  const [progress, setProgress] = useState(0);
   const { lenis } = useScrollContext();
 
   useLayoutEffect(() => {
@@ -27,6 +28,7 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
     let leaving = false;
     let started = false;
     let frame = 0;
+    let progressFrame = 0;
     const timers = new Set<ReturnType<typeof setTimeout>>();
     const media = matchMedia('(prefers-reduced-motion: reduce)');
     const htmlOverflow = document.documentElement.style.overflow;
@@ -47,6 +49,8 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
     const beginExit = () => {
       if (disposed || completed || leaving) return;
       leaving = true;
+      cancelAnimationFrame(progressFrame);
+      setProgress(100);
       // Give the hero two paints to settle before the opaque cover starts fading.
       dialog.dataset.revealing = 'true';
       notify();
@@ -63,7 +67,17 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
       started = true;
       frame = requestAnimationFrame(() => {
         setPhase('entering');
-        later(beginExit, media.matches ? 400 : 1850);
+        const duration = media.matches ? 400 : 1850;
+        if (!media.matches) {
+          const startTime = performance.now();
+          const tick = (now: number) => {
+            if (disposed || leaving) return;
+            setProgress(Math.min(99, Math.floor((now - startTime) / duration * 100)));
+            progressFrame = requestAnimationFrame(tick);
+          };
+          progressFrame = requestAnimationFrame(tick);
+        }
+        later(beginExit, duration);
       });
     };
 
@@ -88,6 +102,7 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
     return () => {
       disposed = true;
       cancelAnimationFrame(frame);
+      cancelAnimationFrame(progressFrame);
       timers.forEach(clearTimeout);
       exitRef.current = null;
       completeRef.current = null;
@@ -122,7 +137,14 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
       }}
     >
       <div className={styles.stage}>
-        <div className={styles.frame}><BrandWordmark animated /></div>
+        <div className={styles.frame}>
+          <BrandWordmark animated />
+          <span className={styles.progressNumber} data-presentation-percentage aria-hidden="true">{progress}%</span>
+        </div>
+      </div>
+      <div className={styles.progress} role="progressbar" aria-label={t('Preparando a página')} aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress} data-presentation-progress>
+        <div className={styles.progressDetails} aria-hidden="true">{t('Preparando a página')}</div>
+        <div className={styles.progressTrack} aria-hidden="true"><span className={styles.progressFill} style={{ transform: `scaleX(${progress / 100})` }} /></div>
       </div>
        <button type="button" className={styles.skip} onClick={() => exitRef.current?.()}>{t('Pular apresentação')} <span aria-hidden="true">↗</span></button>
     </dialog>

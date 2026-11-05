@@ -38,16 +38,17 @@ export const config: SiteConfig = {
     },
   ],
   navigation: [
+    { label: 'Placa NFC + QR Code', href: '#showcase' },
     { label: 'Serviços', href: '#services' },
     { label: 'Sobre Nós', href: '#testimonials' },
     { label: 'Contato', href: '#cta-final' },
   ],
   footer: {
     links: [
+      { label: 'Placa NFC + QR Code', href: '/placa-nfc' },
       { label: 'Criação de sites', href: '/criacao-de-sites' },
       { label: 'Landing pages', href: '/landing-pages' },
       { label: 'Cardápio digital', href: '/cardapio-digital' },
-      { label: 'Placa NFC + QR Code', href: '/placa-nfc' },
     ],
     legal: [
       { label: 'Política de Privacidade', href: '/privacidade' },
@@ -62,8 +63,8 @@ export const config: SiteConfig = {
   },
   whatsapp,
   meta: {
-    title: 'Sites, Landing Pages, Cardápios Digitais e Placas NFC',
-    description: 'ezway cria sites, landing pages, cardápios digitais e placas NFC com QR Code para empresas. Conheça o EasyChat, assistente administrativo com IA em desenvolvimento.',
+    title: 'Placa Inteligente NFC + QR Code e Soluções Digitais',
+    description: 'Conecte seu negócio do balcão ao digital com a Placa Inteligente NFC + QR Code da ezway. Use seu endereço ou desenvolva um site, cardápio digital ou landing page à parte.',
     ogImage: '/og',
   },
 };

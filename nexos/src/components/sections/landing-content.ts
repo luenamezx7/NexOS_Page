@@ -6,9 +6,9 @@ export const DEMO_METRICS = {
 
 export const DELIVERY_STEPS = {
   product: [
-    { title: 'Escolha', body: 'Defina a quantidade e converse com a ezway sobre o uso da sua placa.', detail: 'Modelo + quantidade' },
-    { title: 'Personalização', body: 'Alinhamos a identidade visual e o link que o cliente vai acessar.', detail: 'Sua marca + seu link' },
-    { title: 'Preparação', body: 'A arte e os acessos são conferidos antes da finalização do produto.', detail: 'Revisão + conferência' },
+    { title: 'Conversa', body: 'Entendemos seu negócio, onde a placa será usada e o que seu cliente precisa encontrar.', detail: 'Uso + quantidade' },
+    { title: 'Personalização', body: 'Alinhamos a identidade da placa e o endereço de destino, que pode ser seu ou desenvolvido à parte pela ezway.', detail: 'Sua marca + seu endereço' },
+    { title: 'Preparação', body: 'Conferimos a arte e o acesso ao endereço configurado antes de finalizar a placa.', detail: 'Arte + acesso' },
     { title: 'Entrega', body: 'Combinamos o envio e orientamos a utilização no seu ponto de atendimento.', detail: 'Produto + orientação' },
   ],
   service: [

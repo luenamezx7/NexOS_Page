@@ -72,11 +72,11 @@ export default function HomeClient() {
             <SectionBackground index={0} scene="waves" experience="studio">
               <FisicoDigitalSection />
             </SectionBackground>
-            <SectionBackground index={1} experience="solutions">
-              <Services />
-            </SectionBackground>
-            <SectionBackground index={2} scene="product" experience="nfc">
+            <SectionBackground index={1} scene="product" experience="nfc">
               <PlacaNFCSection />
+            </SectionBackground>
+            <SectionBackground index={2} experience="solutions">
+              <Services />
             </SectionBackground>
             <SectionBackground index={3} scene="waves" experience="process">
               <DeliveryProcess />

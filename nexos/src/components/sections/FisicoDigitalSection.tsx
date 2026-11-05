@@ -18,7 +18,7 @@ export function FisicoDigitalSection() {
       <div className={styles.brandGrid}>
         <header>
           <ScrollReveal as="h2" preset="title" id="fisico-title" className={styles.heading}>{t('Tecnologia com')}<br /><span>{t('ponto de contato.')}</span></ScrollReveal>
-          <ScrollReveal as="p" delay={.06} className={styles.lead}>{t('Design, desenvolvimento e produtos conectados. Partes diferentes da mesma experiência: a do seu cliente.')}</ScrollReveal>
+           <ScrollReveal as="p" delay={.06} className={styles.lead}>{t('Do balcão à tela do celular, cada contato pode levar seu cliente a conhecer melhor sua marca, consultar informações ou começar uma conversa.')}</ScrollReveal>
           <ScrollReveal delay={.12}><a href="#showcase" className={styles.textLink}>{t('Explore essa conexão')} <ArrowUpRight size={18} aria-hidden="true" /></a></ScrollReveal>
         </header>
         <ScrollReveal preset="card" delay={.12}><ScrollFloat className={styles.connection}>

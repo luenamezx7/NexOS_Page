@@ -36,6 +36,25 @@
 }
 .dialog[data-phase='entering'] .frame { opacity: 1; transform: translateY(0) scale(1); }
 .dialog[data-phase='leaving'] .frame { opacity: 0; transform: translateY(-6px) scale(1.015); }
+.progressNumber {
+  display: block;
+  margin-top: clamp(20px, 4vh, 40px);
+  color: var(--pink-soft);
+  font: 700 clamp(44px, 7vw, 88px)/1 var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.05em;
+  text-align: center;
+}
+.progress {
+  position: absolute;
+  left: max(24px, env(safe-area-inset-left));
+  bottom: max(32px, env(safe-area-inset-bottom));
+  width: min(240px, calc(100vw - 48px));
+  color: var(--text-tertiary);
+}
+.progressDetails { font: 600 11px/1.5 var(--font-sans); }
+.progressTrack { height: 2px; margin-top: 10px; background: color-mix(in srgb, var(--color-ink) 18%, transparent); overflow: hidden; }
+.progressFill { display: block; width: 100%; height: 100%; background: var(--palette-cta); transform-origin: left center; }
 .skip {
   position: absolute;
   right: max(24px, env(safe-area-inset-right));
@@ -53,9 +72,9 @@
 }
 .skip:hover { background: color-mix(in srgb, var(--visor-violet) 7%, transparent); color: var(--color-ink); }
 .skip:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
-@media (max-width: 767px) { .frame { width: 86vw; } }
+@media (max-width: 767px) { .frame { width: 86vw; } .progress { bottom: max(92px, calc(env(safe-area-inset-bottom) + 92px)); } }
 @media (prefers-reduced-motion: reduce) {
   .dialog { transition-duration: 150ms; }
   .frame { transform: none !important; transition: opacity 150ms ease; }
 }
-@media (forced-colors: active) { .dialog { background: Canvas; color: CanvasText; } .stage { background: none; } }
+@media (forced-colors: active) { .dialog { background: Canvas; color: CanvasText; } .stage { background: none; } .progress { color: CanvasText; } .progressNumber { color: CanvasText; } .progressTrack { background: Canvas; border: 1px solid CanvasText; height: 4px; } .progressFill { background: Highlight; } }

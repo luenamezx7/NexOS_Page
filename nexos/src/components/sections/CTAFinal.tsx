@@ -55,14 +55,14 @@ export function CTAFinal() {
     <span id="manifesto" className={styles.ctaAnchor} aria-hidden="true" />
     <div className={`${styles.container} ${styles.finalCta}`}>
       <div className={styles.ctaLayout}>
-          <BlurReveal as="h2" id="cta-title" inView speedReveal={3}>{t('Sua próxima ideia. Vamos colocar no ar?')}</BlurReveal>
+           <BlurReveal as="h2" id="cta-title" inView speedReveal={3}>{t('Vamos conectar seu negócio?')}</BlurReveal>
       </div>
       <div className={styles.ctaVisual} data-cta-visual>
         <div className={styles.ctaImageMotion} data-cta-parallax>
           <Image src={animatedBrand} alt={t('Mascote 3D da ezway, flutuando com olhos em forma de estrelas')} fill sizes="(max-width: 767px) 100vw, 45vw" className={styles.ctaBrandImage} loading="lazy" />
         </div>
       </div>
-      <div className={styles.ctaBottom}><ScrollReveal as="p">{t('Um projeto digital, uma placa conectada ou uma ideia que ainda está tomando forma.')}</ScrollReveal><ScrollReveal className={styles.ctaActions} delay={.1}>
+       <div className={styles.ctaBottom}><ScrollReveal as="p">{t('Conte onde sua placa será usada e o que seu cliente precisa encontrar. Alinhamos com você o produto, a personalização e os serviços digitais que fizerem sentido.')}</ScrollReveal><ScrollReveal className={styles.ctaActions} delay={.1}>
         <a href="#contact" className="btn-primary-nex">{t('Agendar conversa')} <ArrowUpRight size={18} aria-hidden="true" /></a>
         <a href={whatsapp} target="_blank" rel="noopener noreferrer" className={styles.textLink}>{t('Conversar com a ezway no WhatsApp')} <ArrowUpRight size={16} aria-hidden="true" /></a>
         <a href="mailto:nexosperformance@gmail.com" className={styles.textLink}>{t('Prefiro conversar por e-mail')} <ArrowUpRight size={16} aria-hidden="true" /></a>

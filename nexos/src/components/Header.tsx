@@ -15,10 +15,10 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import styles from './Header.module.css';
 
 const SOLUTIONS = [
+  { label: 'Placa NFC + QR Code', href: '/placa-nfc' },
+  { label: 'Cardápios Digitais', href: '/cardapio-digital' },
   { label: 'Sites e Portfólios', href: '/criacao-de-sites' },
   { label: 'Landing Pages', href: '/landing-pages' },
-  { label: 'Cardápios Digitais', href: '/cardapio-digital' },
-  { label: 'Placa NFC', href: '/placa-nfc' },
 ];
 const NAV_ITEMS = [
   { label: 'Como funciona', href: '#delivery-process' },
@@ -78,7 +78,7 @@ export function Header() {
             <DropdownMenuTrigger className={styles.navLink}>{t('Soluções')} <ChevronDown size={13} aria-hidden="true" /></DropdownMenuTrigger>
             <DropdownMenuContent className={styles.popup} sideOffset={14}>
               <DropdownMenuGroup>
-                <DropdownMenuItem render={<Link href="/#services" />} className={styles.menuItem}>{t('Explorar soluções')} <ArrowUpRight size={15} aria-hidden="true" /></DropdownMenuItem>
+                 <DropdownMenuItem render={<Link href="/#showcase" />} className={styles.menuItem}>{t('Conhecer a Placa NFC')} <ArrowUpRight size={15} aria-hidden="true" /></DropdownMenuItem>
                 {SOLUTIONS.map(item => <DropdownMenuItem key={item.href} render={<Link href={item.href} />} className={styles.menuItem}>{t(item.label)}</DropdownMenuItem>)}
               </DropdownMenuGroup>
             </DropdownMenuContent>
@@ -103,7 +103,8 @@ export function Header() {
       <div className={styles.mobilePanel}>
          <div className={styles.mobileHeading}><span id="mobile-menu-title">{t('Explore a ezway')}</span><button type="button" className={styles.closeButton} aria-label={t('Fechar menu')} onClick={closeMenu}><X size={22} /></button></div>
           <nav aria-label={t('Navegação móvel')} className={styles.mobileNav}>
-           <a href="#services" onClick={event => { event.preventDefault(); navigate('#services'); }}>{t('Soluções')}</a>
+            <a href="#showcase" onClick={event => { event.preventDefault(); navigate('#showcase'); }}>{t('Conhecer a Placa NFC')}</a>
+            <a href="#services" onClick={event => { event.preventDefault(); navigate('#services'); }}>{t('Serviços digitais')}</a>
            {NAV_ITEMS.map(item => <a key={item.href} href={item.href} onClick={event => { event.preventDefault(); navigate(item.href); }}>{t(item.label)}</a>)}
            <details ref={servicesRef} className={styles.mobileSolutions}>
              <summary>{t('Serviços')} <ChevronDown size={17} aria-hidden="true" /></summary>

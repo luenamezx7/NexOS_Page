@@ -21,7 +21,7 @@
 .productGrid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
 .kicker { margin-bottom: 16px; color: var(--text-tertiary); font: 500 14px/1.6 var(--font-sans); }
 .heading { font-size: var(--type-section); font-weight: 730; font-stretch: 95%; letter-spacing: -0.04em; line-height: 1.1; text-wrap: balance; }
-.accent { background: var(--visor-text-gradient); background-clip: text; -webkit-background-clip: text; color: transparent; }
+.accent { color: var(--pink-text); }
 .lead { max-width: 52ch; margin-top: 24px; font-size: var(--type-lead); font-weight: 450; line-height: 1.65; color: var(--commerce-muted); text-wrap: pretty; }
 .productCopy { max-width: 56ch; margin-top: 18px; font-size: var(--type-body); line-height: 1.75; color: var(--commerce-muted); text-wrap: pretty; }
 .productIntro, .purchase { position: relative; isolation: isolate; }

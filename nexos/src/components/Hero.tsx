@@ -16,10 +16,10 @@ import { useLocale } from '@/lib/locale';
 import { SITE_PALETTE } from '@/lib/brand-palette';
 
 const subscribeHydration = () => () => {};
-const heroGlassWords = {
-  pt: ['IA', 'impulsionam'],
-  en: ['AI-powered', 'forward'],
-  es: ['IA', 'potencian'],
+const heroAccentWords = {
+  pt: ['conectado.', 'aproximação.'],
+  en: ['connected.', 'tap.'],
+  es: ['conectado.', 'acercamiento.'],
 } as const;
 
 export const Hero = forwardRef<HTMLElement, { className?: string }>(function Hero({ className = '' }, ref) {
@@ -43,14 +43,13 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
       <motion.div className="hero-container" data-hero-scroll style={reduce ? undefined : { scale, y, opacity }}>
         <motion.div className="hero-copy" initial={false} animate={showHero ? 'show' : 'hidden'}
           variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { duration: reduce ? 0 : .6 } } }}>
-          <ScrollReveal as="p" preset="label" className="hero-eyebrow"><span aria-hidden="true" /> {t('Sites e soluções digitais')}</ScrollReveal>
-          <BlurReveal as="h1" id="hero-title" key={`${showHero}-${locale}`} className="hero-heading" speedReveal={3} speedSegment={.8} glassWords={heroGlassWords[locale]}>{t('Soluções com IA que impulsionam seu negócio')}</BlurReveal>
-          <ScrollReveal as="p" delay={.12} className="hero-description">{t('Sites, landing pages e cardápios com identidade. Experiências NFC e QR Code que conectam sua marca ao mundo real.')}</ScrollReveal>
-          <ScrollReveal className="hero-actions" delay={.2}>
-             <ButtonWithIcon href="#contact" onClick={event => { event.preventDefault(); scrollToSection('#contact'); }}>{t('Agendar conversa')}</ButtonWithIcon>
-            <a href="#showcase" onClick={event => { event.preventDefault(); scrollToSection('#showcase'); }} className="hero-text-link">{t('Conhecer a Placa NFC')} <ArrowUpRight size={17} aria-hidden="true" /></a>
-          </ScrollReveal>
-          <a href="#easychat" onClick={event => { event.preventDefault(); scrollToSection('#easychat'); }} className="hero-easychat-link">{t('Conheça o EasyChat, nosso projeto de assistente administrativo com IA')} <ArrowUpRight size={14} aria-hidden="true" /></a>
+           <ScrollReveal as="p" preset="label" className="hero-eyebrow"><span aria-hidden="true" /> {t('Placa Inteligente NFC + QR Code')}</ScrollReveal>
+            <BlurReveal as="h1" id="hero-title" key={`${showHero}-${locale}`} className="hero-heading" speedReveal={3} speedSegment={.8} accentWords={heroAccentWords[locale]}>{t('Seu negócio conectado. A uma aproximação.')}</BlurReveal>
+           <ScrollReveal as="p" delay={.12} className="hero-description">{t('Placas NFC e QR Code que levam seu cliente ao seu cardápio, site ou canal de contato. E soluções digitais para apresentar tudo o que sua marca oferece.')}</ScrollReveal>
+           <ScrollReveal className="hero-actions" delay={.2}>
+              <ButtonWithIcon href="#showcase" onClick={event => { event.preventDefault(); scrollToSection('#showcase'); }}>{t('Conhecer a Placa NFC')}</ButtonWithIcon>
+             <a href="#contact" onClick={event => { event.preventDefault(); scrollToSection('#contact'); }} className="hero-text-link">{t('Conversar sobre meu negócio')} <ArrowUpRight size={17} aria-hidden="true" /></a>
+           </ScrollReveal>
         </motion.div>
       </motion.div>
       <HeroBrandStrip active={showHero} />

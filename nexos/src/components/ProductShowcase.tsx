@@ -32,19 +32,19 @@ export function ProductShowcase({ className = '' }: { className?: string }) {
         <div className={styles.container}>
            <ScrollReveal preset="label" className={styles.sectionNav} aria-label={t('Explore as soluções')}>
             <span className={styles.currentSection}><Nfc size={16} aria-hidden="true" /> Produto físico</span>
-          </ScrollReveal>
-          <div className={styles.productGrid}>
-            <div className={styles.productIntro}>
+           </ScrollReveal>
+           <div className={styles.productGrid}>
+             <figure className={styles.productVisual}>
+               <ScrollReveal preset="image"><PlateFan /></ScrollReveal>
+                <figcaption className={styles.photoCaption}><span><Nfc size={16} aria-hidden="true" /> {t('Aproxime')}</span><span><QrCode size={16} aria-hidden="true" /> {t('Ou escaneie')}</span></figcaption>
+             </figure>
+             <div className={styles.productIntro}>
                <p className={styles.kicker}>{t('Placa Inteligente ezway')}</p>
               <ScrollReveal as="h2" preset="title" id="showcase-title" className={styles.heading}>Seu próximo contato.<br /><span className={styles.accent}>A uma aproximação.</span></ScrollReveal>
               <ScrollReveal as="p" className={styles.lead} delay={.06}>Do balcão para o digital. Sua marca, seu link e duas formas de conectar: NFC e QR Code.</ScrollReveal>
-               <ScrollReveal as="p" className={styles.productCopy}>Cardápio, WhatsApp ou portfólio ao alcance de quem já está no seu espaço. O cliente aproxima o celular ou escaneia o código.</ScrollReveal>
-               <ScrollReveal as="p" className={styles.productCopy}>Ideal para mesas, balcões e recepções. A identidade da placa é alinhada com você.</ScrollReveal>
+               <ScrollReveal as="p" className={styles.productCopy}>{t('Configure o endereço que seu cliente vai abrir: seu cardápio, site, portfólio ou canal de contato. Aproxime um celular compatível com NFC ou escaneie o QR Code.')}</ScrollReveal>
+               <ScrollReveal as="p" className={styles.productCopy}>{t('Ideal para mesas, balcões e recepções. Alinhamos com você a identidade da placa e o endereço de destino.')}</ScrollReveal>
             </div>
-            <figure className={styles.productVisual}>
-              <ScrollReveal preset="image"><PlateFan /></ScrollReveal>
-               <figcaption className={styles.photoCaption}><span><Nfc size={16} aria-hidden="true" /> {t('Aproxime')}</span><span><QrCode size={16} aria-hidden="true" /> {t('Ou escaneie')}</span></figcaption>
-            </figure>
             <ScrollReveal preset="card" className={styles.purchase}>
               <div className={styles.selectionRow}>
                 <div>

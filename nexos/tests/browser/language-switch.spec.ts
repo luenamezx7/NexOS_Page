@@ -72,7 +72,7 @@ test('keeps the language switch accessible without horizontal overflow', async (
   }
 });
 
-test('renders complete glass letters and pink wordmarks in all three languages', async ({ page }) => {
+test('renders solid pink accents, CTAs and wordmarks in all three languages', async ({ page }) => {
   await page.goto('/');
   const intro = page.locator('dialog[data-presentation]');
   if (await intro.isVisible()) {
@@ -85,21 +85,23 @@ test('renders complete glass letters and pink wordmarks in all three languages',
   await expect(page.getByRole('banner').locator('[data-brand-way]')).toHaveCSS('color', 'rgb(255, 22, 141)');
 
   for (const [words, language, next] of [
-    [['IA', 'impulsionam'], 'Português', 'English'],
-    [['AI-powered', 'forward'], 'English', 'Español'],
-    [['IA', 'potencian'], 'Español', null],
+    [['conectado.', 'aproximação.'], 'Português', 'English'],
+    [['connected.', 'tap.'], 'English', 'Español'],
+    [['conectado.', 'acercamiento.'], 'Español', null],
   ] as const) {
-    await expect(page.locator('#hero [data-glass-word]')).toHaveCount(2);
+    await expect(page.locator('#hero [data-accent-word]')).toHaveCount(2);
     for (const word of words) {
-      const accent = page.locator('#hero').locator(`[data-reveal-word="${word}"][data-glass-word]`);
+      const accent = page.locator('#hero').locator(`[data-reveal-word="${word}"][data-accent-word]`);
       await expect(accent).toHaveCSS('background-image', 'none');
       await expect(accent).toHaveCSS('border-top-width', '0px');
       for (const letter of await accent.locator('[data-blur-letter]').all()) {
-        await expect(letter).toHaveCSS('background-clip', 'text');
-        await expect(letter).toHaveCSS('-webkit-text-fill-color', 'rgba(0, 0, 0, 0)');
-        await expect(letter).toHaveCSS('background-size', 'auto');
+        await expect(letter).toHaveCSS('color', 'rgb(255, 139, 195)');
+        await expect(letter).toHaveCSS('background-image', 'none');
+        await expect(letter).toHaveCSS('text-shadow', 'none');
       }
     }
+    await expect(page.getByRole('banner').locator('a[href="#contact"]')).toHaveCSS('background-color', 'rgb(244, 110, 170)');
+    await expect(page.locator('#hero a[href="#showcase"]')).toHaveCSS('background-color', 'rgb(244, 110, 170)');
     if (next) {
       const label = language === 'Português' ? 'Selecionar idioma' : 'Select language';
       await page.getByRole('banner').getByRole('button', { name: `${label}: ${language}` }).click();
