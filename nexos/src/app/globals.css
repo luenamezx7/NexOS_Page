@@ -46,10 +46,11 @@
   --palette-border: #2c253c;
   --palette-action: #7c3aed;
   --palette-action-hover: #6d28d9;
-  /* CTA color follows the scroll progress line; dark text keeps AA contrast. */
-  --palette-cta: #ff168d;
-  --palette-cta-hover: #ff42bf;
-  --palette-cta-ink: var(--palette-bg);
+  --palette-cta: var(--palette-action);
+  --palette-cta-hover: var(--palette-action-hover);
+  --palette-cta-ink: var(--palette-ink);
+  /* The ezway wordmark is artwork, not an interface action. */
+  --brand-wordmark-accent: #ff168d;
   --palette-highlight: #c4b5fd;
   --palette-ink: #f5f3ff;
   --palette-muted: #aba6ba;
@@ -224,6 +225,15 @@
     inset 1px 0 0 #ffffff12,
     0 20px 56px -20px #000000b3,
     0 4px 18px -8px #34064e80;
+  /* Reusable dark glass: one blurred layer per surface, never over the artwork. */
+  --glass-panel: linear-gradient(160deg, rgb(196 181 253 / 8%), transparent 44%), rgb(21 18 31 / 76%);
+  --glass-control: linear-gradient(155deg, rgb(196 181 253 / 11%), transparent 55%), rgb(21 18 31 / 82%);
+  --glass-line: rgb(196 181 253 / 32%);
+  --glass-line-hover: rgb(196 181 253 / 50%);
+  --glass-shadow: inset 0 1px 0 rgb(245 243 255 / 17%), 0 12px 30px -23px rgb(0 0 0 / 90%);
+  --glass-filter: blur(10px) saturate(125%);
+  --glass-solid: #201b2c;
+  --cta-volume: inset 0 1px 0 rgb(245 243 255 / 38%), inset 0 -2px 0 rgb(30 9 76 / 32%), 0 8px 20px -14px rgb(124 58 237 / 72%);
   --commerce-buy: var(--palette-action);
   --commerce-buy-hover: var(--palette-action-hover);
   --nex-gradient-accent: var(--visor-gradient);
@@ -1469,7 +1479,7 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
   --primary: var(--palette-action); --primary-foreground: var(--palette-ink); --secondary: var(--palette-surface);
   --accent: var(--palette-border); --accent-foreground: var(--palette-ink); --muted: var(--palette-surface);
   --display-rose: var(--palette-highlight); --display-purple: var(--palette-highlight);
-  --header-glass-background: color-mix(in srgb, var(--palette-surface) 94%, transparent); --header-glass-border: var(--palette-border);
+  --header-glass-background: linear-gradient(150deg, rgb(245 243 255 / 9%), transparent 48%), rgb(21 18 31 / 72%); --header-glass-border: var(--glass-line);
   --ambient-blue: color-mix(in srgb, var(--palette-highlight) 7%, transparent); --ambient-violet: color-mix(in srgb, var(--palette-action) 12%, transparent); --electric-blue: var(--palette-highlight);
   --action-glass-border: var(--palette-border); --action-glass-background: transparent;
   --detail-accent: var(--palette-action); --detail-ink: var(--palette-ink); --detail-text: var(--palette-highlight);
@@ -1484,12 +1494,12 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
 .background-paths { position: absolute; inset: 0; overflow: hidden; pointer-events: none; opacity: .55; mask-image: linear-gradient(90deg, transparent 12%, #000 65%); }
 .background-paths svg { width: 100%; height: 100%; }
 .landing-hero .background-paths { opacity: .3; mask-image: linear-gradient(to bottom, #000, #0006 24%, transparent 48%); }
-:is(.landing-page, .service-page) :is(.primary-action, .btn-primary-nex) { background: var(--palette-cta); color: var(--palette-cta-ink); border-color: var(--palette-cta); box-shadow: none; }
+:is(.landing-page, .service-page) :is(.primary-action, .btn-primary-nex) { background: var(--palette-cta); color: var(--palette-cta-ink); border-color: var(--palette-cta); box-shadow: var(--cta-volume); }
 :is(.landing-page, .service-page) :is(.primary-action, .btn-primary-nex)::before { display: none; }
-:is(.landing-page, .service-page) :is(.primary-action, .btn-primary-nex):is(:hover, :focus-visible, :active):not(:disabled):not([aria-disabled='true']) { background: var(--palette-cta-hover); color: var(--palette-cta-ink); border-color: var(--palette-cta-hover); box-shadow: 0 0 24px color-mix(in srgb, var(--palette-cta) 20%, transparent); }
+:is(.landing-page, .service-page) :is(.primary-action, .btn-primary-nex):is(:hover, :focus-visible, :active):not(:disabled):not([aria-disabled='true']) { background: var(--palette-cta-hover); color: var(--palette-cta-ink); border-color: var(--palette-cta-hover); box-shadow: var(--cta-volume); }
 :is(.landing-page, .service-page) :is(.primary-action, .btn-primary-nex) :is(.metallic-content, svg) { color: inherit; }
-.site-shell :is(.btn-primary-nex, .btn-primary-glow, .primary-action) { background: var(--palette-cta); color: var(--palette-cta-ink); border-color: var(--palette-cta); box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
-.site-shell :is(.btn-primary-nex, .btn-primary-glow, .primary-action):is(:hover, :focus-visible, :active):not(:disabled):not([aria-disabled='true']) { background: var(--palette-cta-hover); color: var(--palette-cta-ink); border-color: var(--palette-cta-hover); box-shadow: 0 0 24px color-mix(in srgb, var(--palette-cta) 20%, transparent); }
+.site-shell :is(.btn-primary-nex, .btn-primary-glow, .primary-action) { background: var(--palette-cta); color: var(--palette-cta-ink); border-color: var(--palette-cta); box-shadow: var(--cta-volume); -webkit-backdrop-filter: none; backdrop-filter: none; }
+.site-shell :is(.btn-primary-nex, .btn-primary-glow, .primary-action):is(:hover, :focus-visible, :active):not(:disabled):not([aria-disabled='true']) { background: var(--palette-cta-hover); color: var(--palette-cta-ink); border-color: var(--palette-cta-hover); box-shadow: var(--cta-volume); }
 .site-shell :is(.btn-primary-nex, .btn-primary-glow, .primary-action)::before { display: none; }
 .site-shell :is(.btn-secondary-nex, .action-glass) { background: transparent; color: var(--palette-highlight); border-color: var(--palette-border); box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
 .site-shell :is(.btn-secondary-nex, .action-glass):is(:hover, :focus-visible, :active):not(:disabled):not([aria-disabled='true']) { background: var(--palette-surface); color: var(--palette-highlight); border-color: var(--palette-highlight); box-shadow: none; }

@@ -5,7 +5,7 @@ export const SITE_PALETTE = {
   border: '#2c253c',
   action: '#7c3aed',
   actionHover: '#6d28d9',
-  cta: '#ff168d',
+  cta: '#7c3aed',
   highlight: '#c4b5fd',
   ink: '#f5f3ff',
   muted: '#aba6ba',

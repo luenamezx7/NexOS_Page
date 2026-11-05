@@ -23,6 +23,7 @@
 .phoneReply { margin-top: 14px; font-size: 13px; font-weight: 600; }
 .phoneChips { display: flex; flex-wrap: wrap; gap: 7px; }
 .phoneChips span { padding: 7px 9px; border: 1px solid var(--palette-border); border-radius: 999px; background: color-mix(in srgb, var(--palette-action) 12%, var(--palette-surface)); }
+:global(.dark) .phoneChips span { border-color: var(--glass-line); background: var(--glass-control); box-shadow: inset 0 1px 0 rgb(245 243 255 / 14%); }
 .phoneInput { margin-top: auto; padding: 10px; border: 1px solid var(--palette-border); border-radius: 10px; color: var(--palette-muted); }
 .mockup figcaption { color: var(--text-tertiary); font-size: 13px; line-height: 1.6; text-align: center; }
 @media (max-width: 767px) { .container { padding: 64px 24px; } .top { margin-bottom: 36px; } .layout { grid-template-columns: 1fr; gap: 40px; } .device { width: min(100%, 248px); } .name { margin-bottom: 28px; } }

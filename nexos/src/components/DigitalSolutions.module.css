@@ -38,6 +38,9 @@
 .menuPreview ul { margin-top: 12px; list-style: none; }
 .menuPreview li { display: flex; align-items: center; gap: 8px; min-height: 40px; font-size: 13px; }
 .menuPreview li > span { color: #6b5577; font-size: 12px; }
+/* Glass belongs to the outer frames; the sample site, landing and menu retain their own art direction. */
+:global(.dark) :is(.website, .landing, .menu) { border-color: var(--glass-line); background: var(--glass-panel); box-shadow: var(--glass-shadow); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); transition: border-color 200ms ease; }
+@media (hover: hover) { :global(.dark) :is(.website, .landing, .menu):hover { border-color: var(--glass-line-hover); } }
 .commercial { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 24px; margin-top: 40px; padding-top: 32px; }
 .commercial h3 { font-size: 23px; font-weight: 600; }
 .commercial p { margin-top: 12px; max-width: 55ch; font-size: 14px; line-height: 1.7; color: var(--text-secondary); }
@@ -47,3 +50,8 @@
 @media (max-width: 767px) { .container { padding: 64px 24px; } .previews { grid-template-columns: 1fr; } .website { grid-column: auto; } .sitePreview { margin-inline: 16px; min-height: 280px; } .sitePreview > p { padding-top: 120px; } .previewNav { padding: 20px 16px; } .serviceCaption { padding: 20px; } .menu { grid-template-columns: 1fr 1fr; padding: 20px; gap: 12px; } .menuCopy h3 { font-size: 18px; } .menuCopy p { font-size: 12px; } .menuPreview { padding: 20px 10px 12px; } .menuPreview > p { font-size: 21px; } }
 @media (max-width: 389px) { .menu { grid-template-columns: 1fr; gap: 24px; } }
 @media (prefers-reduced-motion: reduce) { .serviceCaption > a { transition: none; } }
+@media (prefers-reduced-motion: reduce) { :global(.dark) :is(.website, .landing, .menu) { transition: none; } }
+@media (max-width: 767px) { :global(.dark) :is(.website, .landing, .menu) { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--glass-solid); } }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { :global(.dark) :is(.website, .landing, .menu) { background: var(--glass-solid); } }
+@media (prefers-reduced-transparency: reduce) { :global(.dark) :is(.website, .landing, .menu) { background: var(--glass-solid); -webkit-backdrop-filter: none; backdrop-filter: none; } }
+@media (forced-colors: active) { :global(.dark) :is(.website, .landing, .menu) { background: Canvas; border-color: CanvasText; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; } }

@@ -10,5 +10,5 @@
   white-space: nowrap;
   color: var(--color-ink);
 }
-.way { color: var(--palette-cta); }
+.way { color: var(--brand-wordmark-accent); }
 @media (forced-colors: active) { .wordmark, .way { color: CanvasText; } }

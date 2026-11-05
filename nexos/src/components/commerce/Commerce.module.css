@@ -67,6 +67,12 @@
 .tabs button { min-height: 44px; padding: 8px 16px; border: 1px solid transparent; border-radius: 999px; font-size: 14px; font-weight: 500; white-space: nowrap; color: var(--commerce-muted); }
 .tabs button[aria-selected="true"] { color: var(--detail-ink); background: var(--detail-accent); border-color: var(--detail-accent); }
 .tabs button:hover:not([aria-selected="true"]) { color: var(--detail-text); }
+/* Keep the plate artwork and QR icons unfiltered; only the stage and controls use glass. */
+:global(.dark) .plateStage { border-color: var(--glass-line); background: radial-gradient(ellipse at 50% 36%, rgb(124 58 237 / 12%), transparent 67%), var(--glass-panel); box-shadow: var(--glass-shadow); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); }
+:global(.dark) .quantity, :global(.dark) .tabs button:not([aria-selected="true"]) { border-color: var(--glass-line); background: var(--glass-control); box-shadow: var(--glass-shadow); }
+:global(.dark) .quantity button:hover:not(:disabled) { background: rgb(196 181 253 / 13%); }
+:global(.dark) .tabs button[aria-selected="true"] { background: var(--palette-action); border-color: var(--palette-action); color: var(--palette-ink); box-shadow: var(--cta-volume); }
+@media (hover: hover) { :global(.dark) .tabs button:not([aria-selected="true"]):hover { border-color: var(--glass-line-hover); } }
 .detailGrid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; padding-block: 8px 24px; min-height: 232px; }
 .detailGrid h3 { font-size: var(--type-subheading); font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; }
 .detailGrid p { max-width: 56ch; margin-top: 16px; font-size: var(--type-body); line-height: 1.75; color: var(--commerce-muted); }
@@ -142,3 +148,7 @@
 @media (max-width: 479px) { .fanCard { padding: 12px; } .studyCode svg { width: 14px; height: 14px; } .studyQr { width: 36px; height: 36px; } .studyName { font-size: 8px; } .stageTop, .stageFoot { padding-inline: 16px; } .studyDisclaimer { padding-inline: 16px; } }
 @media (prefers-reduced-motion: reduce) { .serviceCard { transition: none; translate: none; } }
 @media (forced-colors: active) { .accent { background: none; color: CanvasText; } }
+@media (max-width: 767px) { :global(.dark) .plateStage { -webkit-backdrop-filter: none; backdrop-filter: none; } }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { :global(.dark) .plateStage, :global(.dark) .quantity, :global(.dark) .tabs button:not([aria-selected="true"]) { background: var(--glass-solid); } }
+@media (prefers-reduced-transparency: reduce) { :global(.dark) .plateStage, :global(.dark) .quantity, :global(.dark) .tabs button:not([aria-selected="true"]) { background: var(--glass-solid); -webkit-backdrop-filter: none; backdrop-filter: none; } }
+@media (forced-colors: active) { :global(.dark) .plateStage, :global(.dark) .quantity, :global(.dark) .tabs button { border-color: CanvasText; background: Canvas; box-shadow: none; } :global(.dark) .tabs button[aria-selected="true"] { background: Highlight; color: HighlightText; } }
