@@ -1,6 +1,7 @@
-.button { position: relative; display: inline-flex; align-items: center; min-height: 52px; width: fit-content; max-width: 100%; overflow: hidden; padding: 8px 56px 8px 24px; border-radius: 999px; background: var(--palette-cta); color: var(--palette-cta-ink); font: 600 14px/1.25 var(--font-sans); text-decoration: none; white-space: nowrap; transition: padding 400ms var(--ease-fluid), background 200ms ease; }
+.button { position: relative; display: inline-flex; align-items: center; min-height: 52px; width: fit-content; max-width: 100%; overflow: hidden; padding: 8px 56px 8px 24px; border-radius: 999px; background: var(--palette-cta); color: var(--palette-cta-ink); font: 600 14px/1.25 var(--font-sans); text-decoration: none; white-space: nowrap; transition: padding 400ms var(--ease-fluid), background 200ms ease, box-shadow 200ms ease; }
 .label { position: relative; z-index: 1; }
 .icon { position: absolute; right: 4px; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--palette-bg); color: var(--palette-cta); transition: right 400ms var(--ease-fluid), transform 400ms var(--ease-fluid); }
 .button:focus-visible { outline: 2px solid var(--palette-highlight); outline-offset: 4px; }
-@media (hover: hover) { .button:hover { padding-left: 56px; padding-right: 24px; background: var(--palette-cta-hover); } .button:hover .icon { right: calc(100% - 48px); transform: rotate(45deg); } }
+@media (hover: hover) { .button:hover { padding-left: 56px; padding-right: 24px; background: var(--palette-cta-hover); box-shadow: var(--glow-lime); } .button:hover .icon { right: calc(100% - 48px); transform: rotate(45deg); } }
+.button:active { background: var(--lime-600); }
 @media (prefers-reduced-motion: reduce) { .button, .icon { transition: none; } }

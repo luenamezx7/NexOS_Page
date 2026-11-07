@@ -1,8 +1,6 @@
 .section { position: relative; isolation: isolate; overflow: hidden; scroll-margin-top: 100px; background: transparent; }
 .container { width: min(100%, 1280px); margin: auto; padding: clamp(72px, 9vw, 128px) 40px; }
 .top { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 56px; font: 13px/1.5 var(--font-sans); color: var(--text-tertiary); }
-.status { display: inline-flex; gap: 8px; align-items: center; letter-spacing: .02em; }
-.status i { width: 6px; height: 6px; background: var(--detail-accent); border-radius: 50%; }
 .layout { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 7vw, 100px); align-items: center; }
 .copy { min-width: 0; }
 .name { font: 600 clamp(46px, 5.6vw, 80px)/1 var(--font-display); letter-spacing: -.055em; margin-bottom: 36px; }
@@ -17,14 +15,29 @@
 .mockup { display: flex; flex-direction: column; align-items: center; gap: 24px; min-width: 0; margin: 0; }
 .device { width: min(100%, 272px); height: auto; filter: drop-shadow(0 24px 28px color-mix(in srgb, var(--visor-plum) 18%, transparent)); }
 .phonePreview { position: relative; width: min(100%, 272px); }
-.phoneScreen { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 15px; min-width: 0; padding: 58px 13px 17px; pointer-events: none; background: radial-gradient(ellipse at 85% 35%, color-mix(in srgb, var(--palette-action) 14%, transparent), transparent 60%), var(--palette-surface); color: var(--palette-ink); font: 10px/1.4 var(--font-sans); }
-.phoneBrand { font-weight: 700; color: var(--palette-highlight); }
-.phoneBubble { align-self: flex-end; max-width: 82%; padding: 10px; border-radius: 12px 12px 4px 12px; background: #34164d; }
-.phoneReply { margin-top: 14px; font-size: 13px; font-weight: 600; }
-.phoneChips { display: flex; flex-wrap: wrap; gap: 7px; }
-.phoneChips span { padding: 7px 9px; border: 1px solid var(--palette-border); border-radius: 999px; background: color-mix(in srgb, var(--palette-action) 12%, var(--palette-surface)); }
-:global(.dark) .phoneChips span { border-color: var(--glass-line); background: var(--glass-control); box-shadow: inset 0 1px 0 rgb(245 243 255 / 14%); }
-.phoneInput { margin-top: auto; padding: 10px; border: 1px solid var(--palette-border); border-radius: 10px; color: var(--palette-muted); }
+.phoneScreen { position: absolute; inset: 0; display: flex; flex-direction: column; min-width: 0; pointer-events: none; background: #0b141a; color: #e9edef; font: 10px/1.4 var(--font-sans); }
+.chatHeader { display: flex; align-items: center; gap: 7px; min-height: 80px; padding: 31px 10px 8px; background: #202c33; color: #d9e2e5; }
+.avatar { display: grid; place-items: center; flex: 0 0 26px; height: 26px; border-radius: 50%; background: #075e54; color: #fff; font-size: 13px; font-weight: 700; }
+.contact { display: grid; flex: 1; min-width: 0; line-height: 1.2; }
+.contact strong { font-size: 11px; }
+.contact small { margin-top: 2px; color: #aebdc2; font-size: 9px; }
+.chatMessages { display: flex; flex: 1; flex-direction: column; align-items: flex-start; gap: 9px; overflow: hidden; padding: 12px 10px; background-color: #0b141a; background-image: radial-gradient(#28404755 .75px, transparent .75px); background-size: 15px 15px; }
+.dateLabel { align-self: center; padding: 4px 9px; border-radius: 6px; background: #202c33; color: #cad6d9; font-size: 8px; }
+.message { display: flex; flex-direction: column; max-width: 88%; padding: 7px 8px 4px; border-radius: 8px; font-size: 10px; line-height: 1.35; overflow-wrap: anywhere; box-shadow: 0 1px 2px #0003; }
+.outgoing { align-self: flex-end; border-top-right-radius: 2px; background: #005c4b; }
+.incoming { border-top-left-radius: 2px; background: #202c33; }
+.messageMeta { display: flex; align-items: center; align-self: flex-end; gap: 2px; margin-top: 3px; color: #b8cccb; font-size: 8px; line-height: 1; }
+.messageMeta svg { color: #87c4e3; }
+.attachment { display: flex; align-items: center; gap: 6px; padding: 6px; border-radius: 5px; background: #34434b; }
+.documentIcon { display: grid; place-items: center; flex: 0 0 24px; height: 28px; border-radius: 3px; background: #b44242; }
+.attachment strong, .attachment small { display: block; }
+.attachment strong { font-size: 9px; }
+.attachment small { margin-top: 2px; color: #becbd0; font-size: 8px; }
+.attachmentCaption { margin-top: 5px; }
+.chatCompose { display: flex; align-items: center; gap: 5px; padding: 7px 7px 12px; background: #0b141a; }
+.composeField { display: flex; align-items: center; flex: 1; gap: 7px; min-width: 0; padding: 7px 9px; border-radius: 18px; background: #202c33; color: #aebdc2; }
+.composeField > span { flex: 1; }
+.composeMic { display: grid; place-items: center; flex: 0 0 28px; height: 28px; border-radius: 50%; background: #00a884; color: #fff; }
 .mockup figcaption { color: var(--text-tertiary); font-size: 13px; line-height: 1.6; text-align: center; }
 @media (max-width: 767px) { .container { padding: 64px 24px; } .top { margin-bottom: 36px; } .layout { grid-template-columns: 1fr; gap: 40px; } .device { width: min(100%, 248px); } .name { margin-bottom: 28px; } }
 @media (forced-colors: active) { .device { filter: none; } }

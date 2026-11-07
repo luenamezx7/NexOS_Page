@@ -30,10 +30,20 @@
 .form label { display: grid; gap: 8px; font-size: 15px; font-weight: 650; }
 .form input, .form textarea { width: 100%; min-height: 44px; background: var(--color-canvas); border-color: var(--surface-line); color: var(--color-ink); }
 .full, .error { grid-column: 1 / -1; }
-.error { color: #e65464; font-size: 15px; }
+.error { color: var(--error); font-size: 15px; }
 .submit:disabled { opacity: .6; cursor: not-allowed; }
 .success { padding: 32px; border: 1px solid var(--surface-line); border-radius: 22px; background: var(--surface-raised); }
 .success h3 { font-size: 24px; }.success p { margin-block: 16px; }.success button { min-height: 44px; text-decoration: underline; }
+.privacyNote { color: var(--text-secondary); font-size: 13px; line-height: 1.6; }
+.stepCount { color: var(--detail-text); font-size: 14px; font-weight: 650; }
+.form h3 { font: 700 clamp(20px, 2.5vw, 28px)/1.25 var(--font-display); }
+.form h3:focus { outline: none; }
+.quizOptions { display: grid; gap: 10px; }
+.quizOptions button { min-height: 48px; padding: 12px 16px; border: 1px solid var(--surface-line); border-radius: 12px; background: var(--color-canvas); color: var(--color-ink); text-align: left; }
+.quizOptions button[aria-pressed='true'] { border-color: var(--detail-accent); background: color-mix(in srgb, var(--detail-accent) 18%, var(--color-canvas)); }
+.quizOptions button:focus-visible, .back:focus-visible { outline: 2px solid var(--detail-accent); outline-offset: 2px; }
+.quizActions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.back { min-height: 44px; padding: 10px 14px; color: var(--detail-text); }
 .floating { position: fixed; z-index: 39; right: max(22px, env(safe-area-inset-right)); bottom: max(28px, env(safe-area-inset-bottom)); display: grid; place-items: center; width: 52px; height: 52px; border: 1px solid var(--palette-cta); border-radius: 50%; background: var(--palette-cta); color: var(--palette-cta-ink); box-shadow: var(--cta-volume); }
 .floating:hover { border-color: var(--palette-cta-hover); background: var(--palette-cta-hover); }
 @media(max-width: 767px) {

@@ -21,10 +21,10 @@ const SOLUTIONS = [
   { label: 'Landing Pages', href: '/landing-pages' },
 ];
 const NAV_ITEMS = [
-  { label: 'Como funciona', href: '#delivery-process' },
+  { label: 'Placas', href: '#showcase' },
+  { label: 'Destinos digitais', href: '#services' },
+  { label: 'WhatsApp', href: '#plate-management' },
   { label: 'EasyChat', href: '#easychat' },
-  { label: 'Planos', href: '#plans' },
-  { label: 'Sobre', href: '#testimonials' },
 ];
 
 export function Header() {
@@ -103,9 +103,7 @@ export function Header() {
       <div className={styles.mobilePanel}>
          <div className={styles.mobileHeading}><span id="mobile-menu-title">{t('Explore a ezway')}</span><button type="button" className={styles.closeButton} aria-label={t('Fechar menu')} onClick={closeMenu}><X size={22} /></button></div>
           <nav aria-label={t('Navegação móvel')} className={styles.mobileNav}>
-            <a href="#showcase" onClick={event => { event.preventDefault(); navigate('#showcase'); }}>{t('Conhecer a Placa NFC')}</a>
-            <a href="#services" onClick={event => { event.preventDefault(); navigate('#services'); }}>{t('Serviços digitais')}</a>
-           {NAV_ITEMS.map(item => <a key={item.href} href={item.href} onClick={event => { event.preventDefault(); navigate(item.href); }}>{t(item.label)}</a>)}
+            {NAV_ITEMS.map(item => <a key={item.href} href={item.href} onClick={event => { event.preventDefault(); navigate(item.href); }}>{t(item.label)}</a>)}
            <details ref={servicesRef} className={styles.mobileSolutions}>
              <summary>{t('Serviços')} <ChevronDown size={17} aria-hidden="true" /></summary>
              <div>{SOLUTIONS.map(item => <Link key={item.href} href={item.href} onClick={closeMenu}>{t(item.label)}</Link>)}</div>

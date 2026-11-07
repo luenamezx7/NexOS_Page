@@ -9,7 +9,7 @@ export function siteUrl(path = '/'): string {
 
 export function pageMetadata(path: string, title: string, description: string): Metadata {
   const socialTitle = path === '/'
-    ? `${config.brand.fullName} | ${title}`
+    ? title
     : `${title} | ${config.brand.name}`;
   return {
     title: { absolute: socialTitle },

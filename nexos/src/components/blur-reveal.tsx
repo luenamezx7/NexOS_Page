@@ -43,6 +43,8 @@ export function BlurReveal({
 
   const stagger = 0.03 / speedReveal
   const baseDuration = 0.3 / speedSegment
+  const words = children.split(" ")
+  let letterOffset = 0
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -93,34 +95,39 @@ export function BlurReveal({
         >
           <span className="sr-only">{children}</span>
           {children &&
-            children.split(" ").map((word, wordIndex, wordsArray) => (
-              <span key={`word-${wordIndex}`} data-reveal-word={word} data-accent-word={accentWords?.includes(word) ? '' : undefined} className="inline-block whitespace-nowrap" aria-hidden="true">
-                {word.split("").map((char, charIndex) => (
-                  <motion.span
-                    key={`char-${wordIndex}-${charIndex}`}
-                    variants={reduce ? undefined : itemVariants}
-                    data-blur-letter
-                    className="inline-block"
-                    style={{
-                      ...(letterSpacing ? { marginRight: letterSpacing } : {}),
-                      '--word-gradient-width': `${word.length * 100}%`,
-                      '--word-gradient-position': `${charIndex / Math.max(word.length - 1, 1) * 100}%`,
-                    } as React.CSSProperties}
-                  >
-                    {char}
-                  </motion.span>
-                ))}
-                {wordIndex < wordsArray.length - 1 && (
-                  <motion.span
-                    key={`space-${wordIndex}`}
-                    variants={reduce ? undefined : itemVariants}
-                    className="inline-block"
-                  >
-                    &nbsp;
-                  </motion.span>
-                )}
-              </span>
-            ))}
+            words.map((word, wordIndex, wordsArray) => {
+              const start = letterOffset
+              letterOffset += word.length + 1
+              return (
+                <span key={`word-${wordIndex}`} data-reveal-word={word} data-accent-word={accentWords?.includes(word) ? '' : undefined} className="inline-block whitespace-nowrap" aria-hidden="true">
+                  {word.split("").map((char, charIndex) => (
+                    <motion.span
+                      key={`char-${wordIndex}-${charIndex}`}
+                      variants={reduce ? undefined : itemVariants}
+                      data-blur-letter
+                      className="inline-block"
+                      style={{
+                        ...(letterSpacing ? { marginRight: letterSpacing } : {}),
+                        '--word-gradient-width': `${word.length * 100}%`,
+                        '--word-gradient-position': `${charIndex / Math.max(word.length - 1, 1) * 100}%`,
+                        '--heading-letter-color': `color-mix(in srgb, var(--text-primary) ${Math.round((1 - (start + charIndex) / Math.max(children.length - 1, 1)) * 100)}%, var(--lime-400))`,
+                      } as React.CSSProperties}
+                    >
+                      {char}
+                    </motion.span>
+                  ))}
+                  {wordIndex < wordsArray.length - 1 && (
+                    <motion.span
+                      key={`space-${wordIndex}`}
+                      variants={reduce ? undefined : itemVariants}
+                      className="inline-block"
+                    >
+                      &nbsp;
+                    </motion.span>
+                  )}
+                </span>
+              )
+            })}
         </MotionTag>
       )}
     </AnimatePresence>

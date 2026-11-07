@@ -1,7 +1,6 @@
 'use client';
 
 import { forwardRef, useImperativeHandle, useRef, useSyncExternalStore } from 'react';
-import { ArrowUpRight } from 'lucide-react';
 import ButtonWithIcon from './ui/button-witn-icon';
 import GhostFibers from './GhostFibers';
 import { BlurReveal } from './blur-reveal';
@@ -45,10 +44,9 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
           variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { duration: reduce ? 0 : .6 } } }}>
            <ScrollReveal as="p" preset="label" className="hero-eyebrow"><span aria-hidden="true" /> {t('Placa Inteligente NFC + QR Code')}</ScrollReveal>
             <BlurReveal as="h1" id="hero-title" key={`${showHero}-${locale}`} className="hero-heading" speedReveal={3} speedSegment={.8} accentWords={heroAccentWords[locale]}>{t('Seu negócio conectado. A uma aproximação.')}</BlurReveal>
-           <ScrollReveal as="p" delay={.12} className="hero-description">{t('Placas NFC e QR Code que levam seu cliente ao seu cardápio, site ou canal de contato. E soluções digitais para apresentar tudo o que sua marca oferece.')}</ScrollReveal>
+            <ScrollReveal as="p" delay={.12} className="hero-description">{t('Na mesa, no balcão ou na recepção, seu cliente aproxima o celular da placa ou escaneia o QR Code e abre seu cardápio, site ou contato.')}</ScrollReveal>
            <ScrollReveal className="hero-actions" delay={.2}>
               <ButtonWithIcon href="#showcase" onClick={event => { event.preventDefault(); scrollToSection('#showcase'); }}>{t('Conhecer a Placa NFC')}</ButtonWithIcon>
-             <a href="#contact" onClick={event => { event.preventDefault(); scrollToSection('#contact'); }} className="hero-text-link">{t('Conversar sobre meu negócio')} <ArrowUpRight size={17} aria-hidden="true" /></a>
            </ScrollReveal>
         </motion.div>
       </motion.div>

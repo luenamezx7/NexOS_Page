@@ -10,7 +10,7 @@ export const config: SiteConfig = {
     name: 'ezway',
     fullName: 'ezway',
     alternateNames: [],
-    tagline: 'Serviços Digitais de Escala',
+    tagline: 'Performance e Escala para pequenos e grandes negócios',
     logo: 'EZ',
     },
   
@@ -63,8 +63,8 @@ export const config: SiteConfig = {
   },
   whatsapp,
   meta: {
-    title: 'Placa Inteligente NFC + QR Code e Soluções Digitais',
-    description: 'Conecte seu negócio do balcão ao digital com a Placa Inteligente NFC + QR Code da ezway. Use seu endereço ou desenvolva um site, cardápio digital ou landing page à parte.',
+    title: 'EZway - Performance e Escala',
+    description: 'Performance e Escala para pequenos e grandes negócios. A ezway cria placas NFC + QR Code, cardápios digitais e sites para aproximar seus clientes do seu negócio.',
     ogImage: '/og',
   },
 };

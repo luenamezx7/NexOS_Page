@@ -6,13 +6,19 @@ import { getAdminAccess } from '@/lib/auth/session';
 import { deniedJson, privateJson } from '@/lib/auth/http';
 import { notionHealth } from '@/lib/admin-health';
 import { isSameOrigin, readJsonBody, RequestError } from '@/lib/request-security';
+import { LEAD_QUESTIONS } from '@/lib/lead-quiz';
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Nome é obrigatório').max(100),
   email: z.string().email('E-mail inválido').max(200),
-  company: z.string().max(100).optional().default(''),
-  service: z.string().max(100).optional().default(''),
-  message: z.string().min(5, 'Mensagem é obrigatória').max(5000),
+  phone: z.string().regex(/^\+?[\d\s().-]{10,25}$/, 'Telefone inválido').refine(value => value.replace(/\D/g, '').length >= 10, 'Telefone inválido'),
+  answers: z.array(z.object({ id: z.string(), choice: z.number().int() })).length(LEAD_QUESTIONS.length).superRefine((answers, context) => {
+    answers.forEach((answer, index) => {
+      if (answer.id !== LEAD_QUESTIONS[index].id || answer.choice < 0 || answer.choice >= LEAD_QUESTIONS[index].options.length) {
+        context.addIssue({ code: 'custom', message: 'Respostas inválidas', path: [index] });
+      }
+    });
+  }),
   turnstileToken: z.string().nullish(),
 });
 
@@ -22,18 +28,6 @@ function getNotionClient(): Client | null {
   const token = process.env.NOTION_TOKEN;
   if (!token) return null;
   return new Client({ auth: token });
-}
-
-function getServiceLabel(serviceId: string): string {
-  // maps internal service id to display label, fallback to id itself
-  const map: Record<string, string> = {
-    dev: 'Desenvolvimento ezway',
-    placa: 'Placa NFC + QR Code',
-    design: 'Product Design & Branding',
-    strategy: 'Estratégia & Discovery',
-  };
-  if (!serviceId) return 'Não informado';
-  return map[serviceId] ?? serviceId;
 }
 
 export async function GET() {
@@ -87,15 +81,15 @@ if (!token || !rawDatabaseId) {
       return NextResponse.json({ error: 'Falha ao inicializar Notion' }, { status: 503, headers: { 'Cache-Control': 'private, no-store' } });
     }
 
-    const serviceLabel = getServiceLabel(data.service);
+    const summary = [`Telefone: ${data.phone}`, ...data.answers.map((answer, index) => `${index + 1}. ${LEAD_QUESTIONS[index].title} ${LEAD_QUESTIONS[index].options[answer.choice]}`)].join('\n');
     const databaseId = rawDatabaseId.replace(/-/g, '').replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, '$1-$2-$3-$4-$5');
 
     const properties = {
       Nome: { title: [{ text: { content: data.name } }] },
       Email: { email: data.email },
-      Companhia: { rich_text: [{ text: { content: data.company || '-' } }] },
-      Serviço: { rich_text: [{ text: { content: serviceLabel } }] },
-      Mensagem: { rich_text: (data.message.match(/[\s\S]{1,2000}/g) ?? []).map(content => ({ text: { content } })) },
+       Companhia: { rich_text: [{ text: { content: '-' } }] },
+       Serviço: { rich_text: [{ text: { content: 'Quiz de diagnóstico' } }] },
+       Mensagem: { rich_text: (summary.match(/[\s\S]{1,2000}/g) ?? []).map(content => ({ text: { content } })) },
     } as unknown as Record<string, never>;
 
     // tenta database_id primeiro, fallback para data_source_id (novo modelo Notion)

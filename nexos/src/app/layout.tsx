@@ -8,19 +8,20 @@ import { config } from '@/config';
 import { organizationData, pageMetadata, SITE_URL } from '@/lib/seo';
 import { geist, syne } from '@/lib/site-fonts';
 import { LocaleProvider } from '@/lib/locale';
+import { RouteLoadingProgress } from '@/components/RouteLoadingProgress';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   applicationName: config.brand.fullName,
   icons: {
     icon: [
-      { url: '/favicon.png?v=3', type: 'image/png', sizes: '192x192' },
+       { url: '/favicon.png?v=4', type: 'image/png', sizes: '192x192' },
     ],
-    shortcut: '/favicon.png?v=3',
-    apple: { url: '/favicon.png?v=3', type: 'image/png', sizes: '192x192' },
+    shortcut: '/favicon.png?v=4',
+    apple: { url: '/favicon.png?v=4', type: 'image/png', sizes: '192x192' },
   },
   title: {
-    default: `${config.brand.fullName} | ${config.meta.title}`,
+    default: config.meta.title,
     template: `%s | ${config.brand.name}`,
   },
   description: config.meta.description,
@@ -44,7 +45,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#000000',
+  themeColor: '#07050d',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
@@ -67,7 +68,7 @@ export default function RootLayout({
         <noscript>
           <style>{`[data-reveal], .landing-page [style*="opacity"], .service-page [style*="opacity"] { opacity: 1 !important; transform: none !important; filter: none !important; } .landing-hero a[href^="#"] { pointer-events: auto !important; } .presentation-replay { display: none !important; }`}</style>
         </noscript>
-          <LocaleProvider><SmoothScrollProvider>
+          <LocaleProvider><RouteLoadingProgress /><SmoothScrollProvider>
             <SiteAtmosphere />
             <div className="site-shell"><CookieConsentProvider>{children}</CookieConsentProvider></div>
           </SmoothScrollProvider></LocaleProvider>

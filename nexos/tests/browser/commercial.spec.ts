@@ -16,15 +16,17 @@ test('service detail CTAs lead directly to the commercial team', async ({ page }
   }
 });
 
-test('landing offers have no public prices and quantity is sent to commercial', async ({ page }) => {
+test('landing offers have no public prices and the chosen use is sent to commercial', async ({ page }) => {
   await page.goto('/#showcase');
-  await expect(page.getByRole('button', { name: 'Aumentar quantidade' })).toBeEnabled();
+  const presentation = page.locator('dialog[data-presentation]');
+  if (await presentation.isVisible()) await presentation.getByRole('button', { name: 'Pular apresentação' }).click();
   await expect(page.locator('main')).not.toContainText(/R\$|por mês|por unidade|desconto aplicado/);
   await expect(page.getByTestId('plate-total')).toHaveCount(0);
-  await expect(page.locator('#services')).toContainText('Valores e condições são definidos com o comercial');
-  await page.getByRole('button', { name: 'Aumentar quantidade' }).click();
-  const href = await page.locator('#showcase').getByRole('link', { name: 'Personalizar minha placa', exact: true }).getAttribute('href');
-  expect(new URL(href!).searchParams.get('text')).toContain('2 Placas Inteligentes ezway');
+  await expect(page.locator('#services')).toContainText('Escopo, valores e condições são alinhados com o comercial');
+  await expect(page.getByRole('group', { name: 'Quantidade de placas' })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Ver placa Instagram' }).click();
+  const href = await page.locator('#showcase').getByRole('link', { name: 'Entender mais', exact: true }).first().getAttribute('href');
+  expect(new URL(href!).searchParams.get('text')).toContain('Instagram');
 });
 
 for (const theme of ['light', 'dark']) {

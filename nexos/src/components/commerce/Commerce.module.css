@@ -19,6 +19,9 @@
 .currentSection { font-weight: 600; }
 .currentSection svg { color: var(--detail-text); }
 .productGrid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
+.productGrid .productIntro { max-width: 780px; }
+.productGrid .productVisual { width: 100%; }
+.productGrid .purchase { max-width: 640px; width: 100%; margin-inline: auto; }
 .kicker { margin-bottom: 16px; color: var(--text-tertiary); font: 500 14px/1.6 var(--font-sans); }
 .heading { font-size: var(--type-section); font-weight: 730; font-stretch: 95%; letter-spacing: -0.04em; line-height: 1.1; text-wrap: balance; }
 .accent { color: var(--pink-text); }
@@ -131,6 +134,9 @@
   .lead { font-size: 18px; }
   .servicesHeader { margin-bottom: 48px; }
 }
+.productGrid { grid-template-columns: minmax(0, 1fr); }
+.productGrid .productIntro, .productGrid .productVisual, .productGrid .purchase { grid-column: 1; grid-row: auto; position: static; }
+.productGrid .productVisual { display: block; }
 @media (min-width: 1024px) {
   .servicesGrid { grid-template-columns: 1.7fr 1fr; align-items: stretch; }
   .servicesGrid .featured { grid-column: auto; }

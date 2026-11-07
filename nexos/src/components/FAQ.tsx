@@ -48,7 +48,7 @@ const FAQ_ITEMS: FAQItem[] = [
   {
     id: '07',
     question: 'O que é o EasyChat?',
-    answer: 'É um projeto de assistente administrativo com IA. As funcionalidades previstas incluem gerar documentos, organizar notas fiscais, converter arquivos, configurar lembretes e oferecer apoio básico em finanças. Ainda em desenvolvimento, sem data de disponibilidade definida.',
+     answer: 'O EasyChat reúne documentos, notas fiscais, arquivos e lembretes em uma conversa, com revisão antes de compartilhar um contrato. Fale com a equipe para entender o funcionamento e a disponibilidade para o seu negócio.',
   },
   {
     id: '08',
@@ -122,7 +122,6 @@ export function FAQ({ className = '' }: FAQProps) {
             </a>
           </span>
         </p>
-        <a href="#contact" className={styles.textLink}>{t('Agendar conversa')}</a>
       </div>
     </section>
   );

@@ -18,14 +18,18 @@ export function CTAFinal() {
     const section = sectionRef.current;
     const visual = section?.querySelector<HTMLElement>('[data-cta-visual]');
     const image = section?.querySelector<HTMLElement>('[data-cta-parallax]');
-    if (!section || !visual || !image || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+     if (!section || !visual || !image || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     let disposed = false;
     let cleanup = () => {};
     void Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(([{ gsap }, { ScrollTrigger }]) => {
       if (disposed) return;
       gsap.registerPlugin(ScrollTrigger);
       const context = gsap.context(() => {
-        gsap.fromTo(visual, { yPercent: 6 }, { yPercent: -6, ease: 'none', scrollTrigger: { trigger: section, start: 'top bottom', end: 'bottom top', scrub: true } });
+         if (matchMedia('(min-width: 768px)').matches) {
+           gsap.fromTo(visual, { yPercent: 6 }, { yPercent: -6, ease: 'none', scrollTrigger: { trigger: section, start: 'top bottom', end: 'bottom top', scrub: true } });
+         } else {
+           gsap.fromTo(image, { y: 16, opacity: .7 }, { y: 0, opacity: 1, duration: .7, ease: 'power2.out', immediateRender: false, scrollTrigger: { trigger: visual, start: 'top 92%', once: true } });
+         }
       }, section);
       let leave = () => {};
       let move: (event: PointerEvent) => void = () => {};
@@ -63,9 +67,7 @@ export function CTAFinal() {
         </div>
       </div>
        <div className={styles.ctaBottom}><ScrollReveal as="p">{t('Conte onde sua placa será usada e o que seu cliente precisa encontrar. Alinhamos com você o produto, a personalização e os serviços digitais que fizerem sentido.')}</ScrollReveal><ScrollReveal className={styles.ctaActions} delay={.1}>
-        <a href="#contact" className="btn-primary-nex">{t('Agendar conversa')} <ArrowUpRight size={18} aria-hidden="true" /></a>
-        <a href={whatsapp} target="_blank" rel="noopener noreferrer" className={styles.textLink}>{t('Conversar com a ezway no WhatsApp')} <ArrowUpRight size={16} aria-hidden="true" /></a>
-        <a href="mailto:nexosperformance@gmail.com" className={styles.textLink}>{t('Prefiro conversar por e-mail')} <ArrowUpRight size={16} aria-hidden="true" /></a>
+         <a href={whatsapp} target="_blank" rel="noopener noreferrer" className={styles.textLink}>{t('Conversar com a ezway no WhatsApp')} <ArrowUpRight size={16} aria-hidden="true" /></a>
       </ScrollReveal></div>
     </div>
   </section>;

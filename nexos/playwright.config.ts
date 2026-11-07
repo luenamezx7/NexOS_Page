@@ -3,7 +3,7 @@ import { defineConfig } from '@playwright/test';
 export default defineConfig({
   testDir: './tests/browser',
   workers: 1,
-  use: { baseURL: 'http://localhost:3100', viewport: { width: 1366, height: 768 }, screenshot: 'only-on-failure' },
+  use: { baseURL: 'http://localhost:3100', viewport: { width: 1366, height: 768 }, screenshot: 'only-on-failure', channel: process.env.PLAYWRIGHT_CHANNEL || undefined },
   webServer: {
     command: 'node --use-system-ca node_modules/next/dist/bin/next start -p 3100',
     url: 'http://localhost:3100/admin-dashboard-su/secure-entry',

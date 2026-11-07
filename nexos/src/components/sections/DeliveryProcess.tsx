@@ -55,7 +55,7 @@ export function DeliveryProcess() {
           <span className={styles.stepEnd} aria-hidden="true">{i === 3 ? <Check size={16} /> : <ArrowUpRight size={16} />}</span>
         </li>)}
        </ol>
-       <ScrollReveal className={styles.processFoot}><span>{t('Escopo e prazos são alinhados para cada pedido.')}</span><a href="#cta-final">{t('Vamos alinhar o seu?')} <ArrowUpRight size={16} aria-hidden="true" /></a></ScrollReveal>
+        <ScrollReveal className={styles.processFoot}><span>{t('Escopo e prazos são alinhados para cada pedido.')}</span></ScrollReveal>
       </div>
     </div>
   </section>;

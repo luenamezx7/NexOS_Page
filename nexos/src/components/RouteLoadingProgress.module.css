@@ -1,0 +1,8 @@
+.track { position: fixed; z-index: 56; inset: env(safe-area-inset-top, 0px) 0 auto; height: 3px; pointer-events: none; opacity: 0; background: rgb(9 9 15 / 32%); transition: opacity 180ms ease; }
+.track[data-route-loading='loading'], .track[data-route-loading='complete'] { opacity: 1; }
+.fill { display: block; width: 100%; height: 100%; background: #fff; box-shadow: 0 0 6px rgb(0 0 0 / 30%); transform: scaleX(0); transform-origin: left center; }
+.track[data-route-loading='loading'] .fill { animation: route-loading 2.4s cubic-bezier(.12, .65, .2, 1) forwards; }
+.track[data-route-loading='complete'] .fill { transform: scaleX(1); transition: transform 240ms ease-out; }
+@keyframes route-loading { from { transform: scaleX(0); } to { transform: scaleX(.9); } }
+@media (prefers-reduced-motion: reduce) { .track { transition: none; } .track[data-route-loading='loading'] .fill { animation: none; transform: scaleX(.7); } .track[data-route-loading='complete'] .fill { transition: none; } }
+@media (forced-colors: active) { .track { background: Canvas; } .fill { background: CanvasText; box-shadow: none; } }

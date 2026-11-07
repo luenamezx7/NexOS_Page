@@ -25,7 +25,7 @@ export function Plans() {
          <p className={styles.price}>{t('A partir de')} <strong>{landingEvidence.plans[plan.name].startingPrice}</strong></p>
          <ul>{landingEvidence.plans[plan.name].inclusions.map(item => <li key={item}>{t(item)}</li>)}</ul>
          <a href="#contact" className={styles.planAction}>{t('Agendar conversa')} <ArrowUpRight size={18} aria-hidden="true" /></a>
-       </ScrollReveal>)}</div> : <div className={styles.planPending}><p>{t('Os formatos Start, Pro e Sob medida estão em definição. Ainda não há preços ou inclusões publicados.')}</p><a href="#contact" className={styles.planAction}>{t('Agendar conversa')} <ArrowUpRight size={18} aria-hidden="true" /></a></div>}
+         </ScrollReveal>)}</div> : <div className={styles.planPending}><p>{t('Cada projeto tem objetivos próprios. Converse com a equipe para definir escopo, investimento e condições para o seu negócio.')}</p></div>}
     </div>
   </section>;
 }

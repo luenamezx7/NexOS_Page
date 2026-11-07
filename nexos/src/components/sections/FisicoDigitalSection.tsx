@@ -1,38 +1,16 @@
 'use client';
 
-import { ArrowUpRight, Braces, Fingerprint, Layers, Nfc, ScanLine } from 'lucide-react';
-import styles from './Sections.module.css';
-import { ScrollFloat, ScrollReveal } from '../ScrollReveal';
 import { useLocale } from '@/lib/locale';
+import { HighlightedText } from '../highlighted-text';
+import styles from './Sections.module.css';
 
-const FEATURES = [
-  { icon: Layers, label: 'Design', title: 'Uma identidade. Em cada detalhe.', body: 'Sua marca orienta a experiência, da primeira tela ao ponto de contato físico.' },
-  { icon: Braces, label: 'Desenvolvimento', title: 'Ideia boa precisa funcionar.', body: 'Sites, cardápios e landing pages construídos em torno do que seu negócio precisa.' },
-  { icon: Nfc, label: 'NFC e QR Code', title: 'Do presencial para o digital.', body: 'NFC e QR Code levam o cliente do balcão ao seu próximo contato.' },
-];
-
+/** A short bridge between the hero and the product choices. */
 export function FisicoDigitalSection() {
   const { t } = useLocale();
-  return <section id="fisico-digital" aria-labelledby="fisico-title" className={styles.section}>
+  return <section id="fisico-digital" aria-labelledby="fisico-title" className={`${styles.section} ${styles.productBridge}`}>
     <div className={styles.container}>
-      <div className={styles.brandGrid}>
-        <header>
-          <ScrollReveal as="h2" preset="title" id="fisico-title" className={styles.heading}>{t('Tecnologia com')}<br /><span>{t('ponto de contato.')}</span></ScrollReveal>
-           <ScrollReveal as="p" delay={.06} className={styles.lead}>{t('Do balcão à tela do celular, cada contato pode levar seu cliente a conhecer melhor sua marca, consultar informações ou começar uma conversa.')}</ScrollReveal>
-          <ScrollReveal delay={.12}><a href="#showcase" className={styles.textLink}>{t('Explore essa conexão')} <ArrowUpRight size={18} aria-hidden="true" /></a></ScrollReveal>
-        </header>
-        <ScrollReveal preset="card" delay={.12}><ScrollFloat className={styles.connection}>
-          <div className={styles.connectionAura} aria-hidden="true" />
-           <span className={styles.connectionLabel}>{t('Do físico ao digital')}</span>
-          <div className={styles.connectionNodes} aria-hidden="true"><Fingerprint /><i /><Nfc /><i /><ScanLine /></div>
-           <div className={styles.connectionLabels}><span>{t('Sua marca')}</span><span>{t('Um gesto')}</span><span>{t('Seu digital')}</span></div>
-           <span className={styles.connectionStatus}><i aria-hidden="true" /> {t('Aproxime ou escaneie')}</span>
-        </ScrollFloat></ScrollReveal>
-      </div>
-      <div className={styles.featureGrid}>{FEATURES.map(({ icon: Icon, label, title, body }, index) => <ScrollReveal as="article" key={label} delay={index * .08}>
-         <div className={styles.featureTop}><span>{t(label)}</span><Icon size={21} strokeWidth={1.6} aria-hidden="true" /></div>
-         <h3>{t(title)}</h3><p>{t(body)}</p>
-      </ScrollReveal>)}</div>
+       <h2 id="fisico-title">{t('Seu cardápio')} <HighlightedText inView from="left" delay={.12}>{t('já está na mesa.')}</HighlightedText></h2>
+      <p>{t('O cliente aproxima o celular da placa ou escaneia o QR Code para ver os pratos e os preços.')}</p>
     </div>
   </section>;
 }

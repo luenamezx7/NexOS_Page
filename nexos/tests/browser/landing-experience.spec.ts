@@ -12,14 +12,15 @@ async function openLanding(page: Page, theme: 'light' | 'dark' | 'system' = 'dar
   await page.goto(skipIntro ? '/#hero' : '/');
   if (skipIntro) {
     await expect(page.locator('#hero-title')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Aumentar quantidade' })).toBeEnabled();
+    await expect(page.locator('#showcase [data-plate-option]')).toHaveCount(4);
   }
 }
 
-test('plate has commercial contact without the obsolete quiz', async ({ page }) => {
+test('plate has commercial contact and the diagnostic quiz appears in the contact section', async ({ page }) => {
   await openLanding(page);
   await expect(page.getByRole('complementary', { name: 'Descubra como usar sua placa' })).toHaveCount(0);
-  await expect(page.locator('#showcase').getByRole('link', { name: 'Personalizar minha placa' })).toHaveAttribute('href', /^https:\/\/wa.me\//);
+  await expect(page.locator('#showcase').getByRole('link', { name: 'Entender mais' })).toHaveAttribute('href', /^https:\/\/wa.me\//);
+  await expect(page.locator('#contact').getByRole('button', { name: 'Começar quiz' })).toBeVisible();
 });
 
 test('services show all cards without filters and lead to the commercial team', async ({ page }) => {
@@ -27,7 +28,7 @@ test('services show all cards without filters and lead to the commercial team', 
   const services = page.locator('#services');
   await expect(services.getByRole('heading', { name: 'Desenvolvimento ezway' })).toBeVisible();
   await expect(services.getByRole('link', { name: 'Falar com o comercial' })).toHaveAttribute('href', /^https:\/\/wa.me\//);
-  await expect(services.getByRole('article')).toHaveCount(3);
+  await expect(services.getByRole('article')).toHaveCount(2);
   await expect(services.getByRole('radio')).toHaveCount(0);
 });
 
@@ -131,32 +132,34 @@ test('mobile hero prioritizes the title and two actions beside the ezway lockup'
   }
 });
 
-test('new section order and contact form work without publishing unverified claims', async ({ page }) => {
+test('the current journey and diagnostic quiz submit the lead once', async ({ page }) => {
   await page.route('**/api/security/config', route => route.fulfill({ json: { required: false, configured: false, siteKey: '' } }));
   await page.route('**/api/contact', route => route.fulfill({ json: { ok: true } }));
   await openLanding(page);
-  const order = await page.evaluate(() => ['hero', 'proof', 'fisico-digital', 'services', 'showcase', 'delivery-process', 'mascot-solutions', 'plans', 'easychat', 'testimonials', 'faq', 'contact', 'cta-final'].map(id => document.getElementById(id)?.getBoundingClientRect().top ?? -1));
+  const order = await page.evaluate(() => ['hero', 'fisico-digital', 'showcase', 'services', 'plate-management', 'easychat', 'delivery-process', 'mascot-solutions', 'proof', 'plans', 'testimonials', 'faq', 'contact', 'cta-final'].map(id => document.getElementById(id)?.getBoundingClientRect().top ?? -1));
   expect(order.every((top, index) => index === 0 || top > order[index - 1])).toBe(true);
   await expect(page.locator('#proof')).toContainText('Clientes fundadores');
   await expect(page.locator('#proof li')).toHaveCount(0);
   await expect(page.locator('#plans article')).toHaveCount(0);
-  await expect(page.locator('#plans')).toContainText('Start, Pro e Sob medida estão em definição');
+  await expect(page.locator('#plans')).toContainText('Cada projeto tem objetivos próprios');
   await expect(page.locator('#plans').getByRole('link', { name: 'Agendar conversa' })).toHaveAttribute('href', '#contact');
   await expect(page.locator('#plans')).not.toContainText('A partir de');
   await expect(page.locator('#mascot-solutions article, #mascot-solutions blockquote')).toHaveCount(0);
   await expect(page.locator('#testimonials')).not.toContainText('Quem está por trás da ezway');
   await expect(page.locator('footer')).not.toContainText('LinkedIn');
   await expect(page.locator('main')).not.toContainText('[PLACEHOLDER]');
-  await page.locator('#hero').getByRole('link', { name: 'Agendar conversa' }).click();
+  await page.locator('#hero').getByRole('link', { name: 'Conversar sobre meu negócio' }).click();
   await expect(page.locator('#contact')).toBeInViewport();
   const form = page.locator('#contact form');
   await form.getByLabel('Nome').fill('Teste Contato');
   await form.getByLabel('E-mail').fill('teste@example.com');
-  await form.getByLabel('Empresa').fill('Empresa Teste');
-  await form.getByLabel('Segmento').fill('Varejo');
-  await form.getByLabel('O que você precisa?').fill('Gostaria de conversar sobre um site.');
-  await form.getByRole('button', { name: 'Agendar conversa' }).click();
-  await expect(page.locator('#contact').getByRole('status')).toContainText('Mensagem enviada');
+  await form.getByLabel('Telefone').fill('11999999999');
+  await form.getByRole('button', { name: 'Começar quiz' }).click();
+  for (let index = 0; index < 8; index++) {
+    await page.locator('#contact [role="group"] button').first().click();
+    await page.locator('#contact').getByRole('button', { name: index === 7 ? 'Enviar respostas' : 'Próxima pergunta' }).click();
+  }
+  await expect(page.locator('#contact').getByRole('status')).toContainText('Respostas enviadas');
 });
 
 for (const theme of ['dark'] as const) {

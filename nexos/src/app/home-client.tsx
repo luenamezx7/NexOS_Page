@@ -8,7 +8,8 @@ import { ScrollProgress } from '@/components/ScrollProgress';
 import { SectionBackground } from '@/components/sections/SectionBackground';
 import { LandingPageBlur } from '@/components/sections/LandingPageBlur';
 import { ProofStrip } from '@/components/sections/ProofStrip';
-import { FloatingWhatsApp } from '@/components/sections/FloatingWhatsApp';
+import { PlateManagement } from '@/components/sections/PlateManagement';
+import { HomepageJourneyMotion } from '@/components/sections/HomepageJourneyMotion';
 import BrandEntrance from '@/components/BrandEntrance';
 import { useLocale } from '@/lib/locale';
 
@@ -32,6 +33,7 @@ const FisicoDigitalSection = dynamic(() => import('@/components/sections/FisicoD
 export default function HomeClient() {
   const { t } = useLocale();
   const [entrance, setEntrance] = useState({ visible: true, key: 0 });
+  const [selectedPlateUse, setSelectedPlateUse] = useState<string>();
   const entranceGeneration = useRef(0);
   const heroRef = useRef<HTMLElement>(null);
   const focusRaf = useRef(0);
@@ -60,6 +62,7 @@ export default function HomeClient() {
 
   return (
     <main className="landing-page w-full max-w-full overflow-x-clip bg-canvas text-ink">
+      <HomepageJourneyMotion />
       {entrance.visible && <BrandEntrance key={entrance.key} onComplete={handleEntranceComplete} />}
       <div>
          <a href="#main-content" className="skip-link">{t('Pular para o conteúdo')}</a>
@@ -68,27 +71,24 @@ export default function HomeClient() {
         <div className="relative">
           <div id="main-content" tabIndex={-1} className="relative">
             <Hero ref={heroRef} />
-            <ProofStrip />
-            <SectionBackground index={0} scene="waves" experience="studio">
-              <FisicoDigitalSection />
-            </SectionBackground>
-            <SectionBackground index={1} scene="product" experience="nfc">
-              <PlacaNFCSection />
-            </SectionBackground>
-            <SectionBackground index={2} experience="solutions">
-              <Services />
-            </SectionBackground>
-            <SectionBackground index={3} scene="waves" experience="process">
-              <DeliveryProcess />
-            </SectionBackground>
-            <SectionBackground index={4} experience="applications">
-              <MascotSolutions />
-            </SectionBackground>
-            <SectionBackground index={5} experience="plans"><Plans /></SectionBackground>
-            <SectionBackground index={6} experience="easychat">
-              <EasyChat />
-            </SectionBackground>
-            <SectionBackground index={7} experience="about">
+             <SectionBackground index={0} scene="product" experience="nfc">
+               <FisicoDigitalSection />
+               <PlacaNFCSection onSelectUse={setSelectedPlateUse} />
+             </SectionBackground>
+             <SectionBackground index={1} experience="solutions">
+               <Services selectedUse={selectedPlateUse} />
+             </SectionBackground>
+             <SectionBackground index={2} experience="plate-management"><PlateManagement /></SectionBackground>
+             <SectionBackground index={3} experience="easychat"><EasyChat /></SectionBackground>
+             <SectionBackground index={4} scene="waves" experience="process">
+               <DeliveryProcess />
+             </SectionBackground>
+             <SectionBackground index={5} experience="applications">
+               <MascotSolutions />
+             </SectionBackground>
+             <ProofStrip />
+             <SectionBackground index={6} experience="plans"><Plans /></SectionBackground>
+             <SectionBackground index={7} experience="about">
               <AboutUs />
             </SectionBackground>
             <SectionBackground index={8} experience="contact">
@@ -103,7 +103,6 @@ export default function HomeClient() {
         </div>
       </div>
       <LandingPageBlur />
-      <FloatingWhatsApp />
     </main>
   );
 }
