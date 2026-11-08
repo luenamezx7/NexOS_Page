@@ -1,0 +1,17 @@
+.stack { max-width: 920px; margin: auto; }
+.track { position: relative; height: min(65vw, 520px); min-height: 390px; margin: 0; padding: 0; list-style: none; perspective: 1200px; }
+.card { position: absolute; inset: 0; width: min(100%, 570px); margin: auto; overflow: hidden; border: 1px solid var(--glass-line); border-radius: 24px; background: var(--surface-raised); box-shadow: 0 24px 60px -30px #0009; transform: translate(calc(var(--stack-offset) * 34px), calc(var(--stack-distance) * 15px)) scale(calc(1 - var(--stack-distance) * .055)); opacity: .45; z-index: var(--stack-order); transition: transform .45s ease, opacity .45s ease; pointer-events: none; }
+.card[data-active='true'] { opacity: 1; pointer-events: auto; }
+.image { position: relative; height: 68%; background: var(--surface-inset); }
+.image img { object-fit: cover; }
+.cardText { padding: 18px 24px; }
+.cardText > span { color: var(--detail-text); font: 600 11px var(--font-mono); }
+.cardText h3 { margin-top: 6px; font: 700 clamp(22px, 3vw, 30px)/1.15 var(--font-display); }
+.cardText p { margin-top: 6px; color: var(--text-secondary); font-size: 14px; line-height: 1.45; }
+.controls { display: flex; align-items: center; justify-content: center; gap: 22px; margin-top: 18px; }
+.controls button { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--surface-line); border-radius: 50%; }
+.controls button:disabled { opacity: .35; cursor: not-allowed; }
+.controls button:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
+.controls span { font: 600 12px var(--font-mono); }
+@media (max-width: 767px) { .track { display: flex; gap: 16px; height: auto; min-height: 0; margin-inline: -24px; padding: 8px 24px 18px; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-inline: contain; scrollbar-width: none; perspective: none; } .card { position: relative; inset: auto; flex: 0 0 min(82vw, 360px); height: 390px; margin: 0; scroll-snap-align: center; transform: none; opacity: 1; pointer-events: auto; } .image { height: 60%; } }
+@media (prefers-reduced-motion: reduce) { .card { transition: none; } }

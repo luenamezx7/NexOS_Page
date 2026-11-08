@@ -60,3 +60,59 @@
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { :global(.dark) :is(.website, .landing, .menu) { background: var(--glass-solid); } }
 @media (prefers-reduced-transparency: reduce) { :global(.dark) :is(.website, .landing, .menu) { background: var(--glass-solid); -webkit-backdrop-filter: none; backdrop-filter: none; } }
 @media (forced-colors: active) { :global(.dark) :is(.website, .landing, .menu) { background: Canvas; border-color: CanvasText; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; } }
+
+/* Three-scene product journey. Natural document scroll drives a sticky desktop stage. */
+.journey { scroll-margin-top: 100px; }
+.journeyContainer { max-width: 1280px; margin: auto; padding: clamp(72px, 8vw, 120px) 40px; }
+.journeyHeader { max-width: 850px; }
+.journeyKicker, .stepNumber { color: var(--detail-text); font: 600 12px/1.6 var(--font-sans); letter-spacing: .12em; text-transform: uppercase; }
+.journeyHeader h2 { margin-top: 18px; font-size: var(--type-section); line-height: 1.1; letter-spacing: -.045em; }
+.journeyHeader p { max-width: 56ch; margin-top: 24px; color: var(--text-secondary); font-size: var(--type-lead); line-height: 1.5; }
+.journeyHeader small { display: block; margin-top: 16px; color: var(--text-secondary); }
+.journeyGrid { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: clamp(30px, 6vw, 90px); margin-top: 44px; }
+.steps { min-width: 0; }
+.step { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; min-height: 75svh; padding: 40px 0; border-bottom: 1px solid var(--surface-line); }
+.step:last-child { border-bottom: 0; }
+.step h3 { max-width: 13ch; margin-top: 16px; font: 700 clamp(32px, 4vw, 58px)/1.09 var(--font-display); letter-spacing: -.045em; }
+.step p { max-width: 38ch; margin-top: 20px; color: var(--text-secondary); font-size: 17px; line-height: 1.6; }
+.step a { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; margin-top: 24px; color: var(--detail-text); font-weight: 650; text-underline-offset: 5px; }
+.step a:hover { text-decoration: underline; }
+.step a:focus-visible, .categories button:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
+.stage { position: sticky; top: max(100px, calc((100svh - min(70svh, 620px)) / 2)); align-self: start; height: min(70svh, 620px); min-width: 0; }
+.stageScene { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; transform: translateY(22px) scale(.96); pointer-events: none; transition: opacity .5s ease, transform .65s ease; }
+.stageScene[data-active='true'] { opacity: 1; transform: none; pointer-events: auto; }
+.mobileVisual { display: none; }
+.demoPhone { width: min(100%, 390px); overflow: hidden; border: 7px solid #201a28; border-radius: 30px; background: #fdfaf4; color: #2c231d; box-shadow: 0 35px 90px -35px #0008; }
+.menuHero { position: relative; min-height: 210px; display: flex; align-items: flex-end; padding: 20px; isolation: isolate; color: #fff; }
+.menuHero img { z-index: -2; object-fit: cover; }
+.menuHero::before { content: ''; position: absolute; z-index: -1; inset: 0; background: linear-gradient(transparent 10%, #1c130fc9); }
+.menuHero > span { font: 700 28px/1 var(--font-display); letter-spacing: -.05em; }
+.menuHero small { display: block; margin-top: 8px; font: 500 10px var(--font-sans); letter-spacing: .14em; }
+.menuBody { padding: 22px; }
+.menuBody > p { font-size: 14px; line-height: 1.5; }
+.menuBody .categories { margin-top: 18px; gap: 8px; }
+.menuBody .categories button { padding-inline: 14px; border: 1px solid #d3c9bb; border-radius: 100px; color: #2c231d; }
+.menuBody .categories button[aria-pressed='true'] { background: #425a39; border-color: #425a39; color: white; }
+.menuBody ul { padding: 0; margin: 20px 0 16px; }
+.menuBody li { border-bottom: 1px solid #e7dfd3; }
+.menuBody li span { color: #75846c; }
+.menuBody li strong { margin-left: auto; font-size: 12px; }
+.menuBody > small { color: #685e55; font-size: 10px; }
+.portfolioDemo { width: min(100%, 600px); padding: 18px; border: 1px solid #ded9d1; border-radius: 13px; background: #f6f3ed; color: #272c2b; box-shadow: 0 35px 90px -35px #0007; }
+.portfolioTop { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding-bottom: 16px; font-size: 11px; }
+.portfolioTop strong { font: 700 23px var(--font-display); letter-spacing: -.06em; }
+.portfolioTop strong span { color: #9a7049; }
+.portfolioImage { position: relative; height: clamp(170px, 33vw, 310px); overflow: hidden; }
+.portfolioImage img { object-fit: cover; }
+.portfolioBottom { display: grid; gap: 8px; padding: 18px 6px 4px; }
+.portfolioBottom small { font-size: 10px; letter-spacing: .12em; }
+.portfolioBottom strong { font: 700 clamp(24px, 3vw, 40px)/1 var(--font-display); letter-spacing: -.04em; }
+.portfolioBottom span { font-size: 12px; }
+.ezwayDemo { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 18px; width: 100%; min-height: 350px; padding: clamp(24px, 5vw, 56px); border: 1px solid var(--glass-line); border-radius: 24px; background: radial-gradient(circle at 80% 20%, color-mix(in srgb, var(--purple-400) 25%, transparent), transparent 50%), var(--surface-raised); box-shadow: var(--surface-shadow); }
+.ezwayDemo > svg { color: var(--lime-400); }
+.ezwayDemo strong { font: 750 clamp(40px, 5vw, 70px)/1 var(--font-display); letter-spacing: -.06em; }
+.ezwayDemo strong span { color: var(--lime-400); }
+.ezwayDemo p { max-width: 26ch; font: 600 clamp(20px, 2.3vw, 30px)/1.2 var(--font-display); }
+.ezwayDemo > span { color: var(--text-secondary); font-size: 13px; }
+@media (max-width: 767px) { .journeyContainer { padding: 64px 24px; } .journeyGrid { display: block; margin-top: 24px; } .step { min-height: 0; padding: 54px 0; } .step h3 { font-size: clamp(34px, 9vw, 46px); } .step p { font-size: 16px; } .stage { display: none; } .mobileVisual { display: grid; width: 100%; place-items: center; margin-top: 30px; } .demoPhone { width: min(100%, 350px); } .portfolioImage { height: 210px; } .ezwayDemo { min-height: 280px; } }
+@media (prefers-reduced-motion: reduce) { .journeyGrid { display: block; } .step { min-height: 0; } .mobileVisual { display: grid; place-items: center; margin-top: 30px; } .stage { display: none; } }

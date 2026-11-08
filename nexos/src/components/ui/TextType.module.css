@@ -1,0 +1,5 @@
+.root { display: inline-block; position: relative; min-height: 1em; min-width: 11ch; text-align: center; white-space: nowrap; vertical-align: baseline; }
+.word { background: var(--gradient-heading); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+.cursor { display: inline-block; width: max(2px, .035em); height: .8em; margin-left: .06em; vertical-align: -.06em; border-radius: 2px; background: var(--lime-400); }
+@media (max-width: 767px) { .root { display: block; min-width: 0; font-size: clamp(34px, 9vw, 54px); } }
+@media (forced-colors: active) { .word { background: none; color: CanvasText; -webkit-text-fill-color: CanvasText; } .cursor { background: CanvasText; } }

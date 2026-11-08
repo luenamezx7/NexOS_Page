@@ -14,34 +14,34 @@ export function AboutUs() {
     <section id="testimonials" aria-labelledby="about-title" className={styles.section}>
       <div className={styles.container}>
         <ScrollReveal preset="label" className={styles.sectionNav}>
-          <span>Sobre Nós</span>
+          <span>{t('Sobre nós')}</span>
         </ScrollReveal>
 
         <div className={styles.layout}>
           <div className={styles.story}>
             <ScrollReveal as="h2" preset="title" id="about-title" className={styles.heading}>
-              Design e tecnologia.<br /><span>Negócios mais próximos.</span>
+              {t('Mais pontos de contato.')}<br /><span>{t('Menos caminhos perdidos.')}</span>
             </ScrollReveal>
             <ScrollReveal as="p" delay={.08} className={styles.lead}>
-              Somos a ezway. Unimos design, desenvolvimento e estratégia para criar experiências digitais que fazem sentido para o seu negócio.
+              {t('A ezway ajuda pequenos negócios a transformar interesse em contato. Criamos os caminhos entre quem procura e quem vende.')}
             </ScrollReveal>
             <div className={styles.body}>
               <ScrollReveal as="p">
-                Criamos sites, landing pages e cardápios digitais com identidade própria, navegação clara e atenção ao desempenho. Tudo começa por entender sua marca, seu público e o que você quer comunicar.
+                {t('Fazemos placas NFC, cardápios, sites e páginas para que o cliente encontre informações e saiba como falar com você.')}
               </ScrollReveal>
               <ScrollReveal as="p">
-                Com nossas placas NFC e QR Code, conectamos essa presença ao atendimento presencial. Um gesto leva seu cliente ao seu cardápio, portfólio ou canal de contato.
+                {t('Na mesa, no balcão ou na internet, conectamos diferentes pontos da jornada: descoberta, atendimento e venda.')}
               </ScrollReveal>
             </div>
 
             <div className={styles.principles}>
               <ScrollReveal>
-                <h3>Clareza em cada etapa.</h3>
-                <p>Escopo alinhado e comunicação direta. Você acompanha o caminho da ideia à entrega.</p>
+                 <h3>{t('Sem complicar.')}</h3>
+                 <p>{t('Você conta o problema. A gente define com você o que faz sentido criar.')}</p>
               </ScrollReveal>
               <ScrollReveal delay={.08}>
-                <h3>Sua marca, de ponta a ponta.</h3>
-                <p>Do visual à interação, cada escolha ajuda a tornar sua presença mais coerente e fácil de usar.</p>
+                 <h3>{t('Do primeiro toque ao contato.')}</h3>
+                 <p>{t('A placa leva ao destino certo. O digital mostra o que você oferece.')}</p>
               </ScrollReveal>
             </div>
 

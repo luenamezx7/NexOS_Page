@@ -66,7 +66,7 @@ export function CTAFinal() {
           <Image src={animatedBrand} alt={t('Mascote 3D da ezway, flutuando com olhos em forma de estrelas')} fill sizes="(max-width: 767px) 100vw, 45vw" className={styles.ctaBrandImage} loading="lazy" />
         </div>
       </div>
-       <div className={styles.ctaBottom}><ScrollReveal as="p">{t('Conte onde sua placa será usada e o que seu cliente precisa encontrar. Alinhamos com você o produto, a personalização e os serviços digitais que fizerem sentido.')}</ScrollReveal><ScrollReveal className={styles.ctaActions} delay={.1}>
+        <div className={styles.ctaBottom}><ScrollReveal as="p">{t('Conte o que seu cliente precisa encontrar. Vamos definir juntos a placa e o destino digital.')}</ScrollReveal><ScrollReveal className={styles.ctaActions} delay={.1}>
          <a href={whatsapp} target="_blank" rel="noopener noreferrer" className={styles.textLink}>{t('Conversar com a ezway no WhatsApp')} <ArrowUpRight size={16} aria-hidden="true" /></a>
       </ScrollReveal></div>
     </div>

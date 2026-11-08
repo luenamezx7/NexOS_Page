@@ -14,7 +14,7 @@ export const dynamic = 'force-dynamic';
 export default async function PortalAcessoPage({
   searchParams,
 }: {
-  searchParams: Promise<{ confirmation?: string | string[]; callbackUrl?: string | string[]; mfa?: string | string[]; verified?: string | string[] }>;
+  searchParams: Promise<{ confirmation?: string | string[]; callbackUrl?: string | string[]; mfa?: string | string[]; verified?: string | string[]; mode?: string | string[] }>;
 }) {
   const access = await getUserAccess();
   const params = await searchParams;
@@ -27,6 +27,7 @@ export default async function PortalAcessoPage({
       socialProviders={enabledSocialProviders()}
       socialAuthMode={socialAuthMode()}
       initialStep={params.mfa === 'required' ? 'totp' : 'credentials'}
+      initialMode={params.mode === 'signup' ? 'signup' : 'login'}
       verified={params.verified === '1'}
     />
   );

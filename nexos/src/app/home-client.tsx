@@ -12,10 +12,10 @@ import { PlateManagement } from '@/components/sections/PlateManagement';
 import { HomepageJourneyMotion } from '@/components/sections/HomepageJourneyMotion';
 import BrandEntrance from '@/components/BrandEntrance';
 import { useLocale } from '@/lib/locale';
+import { TextScrollAnimation } from '@/components/ui/text-scroll-animation';
 
 const Services = dynamic(() => import('@/components/Services').then(m => m.Services));
 const AboutUs = dynamic(() => import('@/components/AboutUs').then(m => m.AboutUs));
-const Plans = dynamic(() => import('@/components/sections/Plans').then(m => m.Plans));
 const ContactForm = dynamic(() => import('@/components/sections/ContactForm').then(m => m.ContactForm));
 const FAQ = dynamic(() => import('@/components/FAQ').then(m => m.FAQ));
 const MascotSolutions = dynamic(() => import('@/components/sections/MascotSolutions').then(m => m.MascotSolutions));
@@ -75,11 +75,12 @@ export default function HomeClient() {
                <FisicoDigitalSection />
                <PlacaNFCSection onSelectUse={setSelectedPlateUse} />
              </SectionBackground>
-             <SectionBackground index={1} experience="solutions">
-               <Services selectedUse={selectedPlateUse} />
+              <SectionBackground index={1} experience="solutions">
+                <TextScrollAnimation text={t('Da placa ao próximo passo')} />
+                <Services selectedUse={selectedPlateUse} />
              </SectionBackground>
              <SectionBackground index={2} experience="plate-management"><PlateManagement /></SectionBackground>
-             <SectionBackground index={3} experience="easychat"><EasyChat /></SectionBackground>
+              <SectionBackground index={3} experience="easychat"><TextScrollAnimation text={t('Menos tarefas. Mais negócio.')} /><EasyChat /></SectionBackground>
              <SectionBackground index={4} scene="waves" experience="process">
                <DeliveryProcess />
              </SectionBackground>
@@ -87,8 +88,7 @@ export default function HomeClient() {
                <MascotSolutions />
              </SectionBackground>
              <ProofStrip />
-             <SectionBackground index={6} experience="plans"><Plans /></SectionBackground>
-             <SectionBackground index={7} experience="about">
+              <SectionBackground index={7} experience="about">
               <AboutUs />
             </SectionBackground>
             <SectionBackground index={8} experience="contact">

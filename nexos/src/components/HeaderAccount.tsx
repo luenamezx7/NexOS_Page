@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { IdCard, LogIn, LogOut, RefreshCw, ShieldCheck } from 'lucide-react';
+import { IdCard, LogOut, RefreshCw, ShieldCheck } from 'lucide-react';
 import { authClient, signOutAccount } from '@/lib/auth/client';
 import { ProfileOrb } from './ProfileOrb';
 import { Skeleton } from './ui/skeleton';
@@ -29,7 +29,7 @@ export function HeaderAccount({ expanded = false, onNavigate }: { expanded?: boo
   const avatar = <ProfileOrb className={styles.avatar} />;
 
   return <div className={expanded ? styles.expandedAccount : styles.accountSlot} data-account-state={state}>
-    {isPending ? <span role="status" aria-label={t('Verificando sua sessão')}><Skeleton className={styles.accountSkeleton} /></span> : error ? <button type="button" className={styles.accountLink} onClick={() => void refetch()} title="Não foi possível verificar a sessão. Tentar novamente."><RefreshCw size={20} aria-hidden="true" /><span className={styles.accountLabel}>{t('Verificar conta')}</span></button> : !user ? <Link href="/portal/acesso" prefetch={false} className={styles.accountLink} onClick={onNavigate}><LogIn size={20} aria-hidden="true" /><span className={styles.accountLabel}>{t('Entrar na conta')}</span></Link> : expanded ? <>
+    {isPending ? <span role="status" aria-label={t('Verificando sua sessão')}><Skeleton className={styles.accountSkeleton} /></span> : error ? <button type="button" className={styles.accountLink} onClick={() => void refetch()} title="Não foi possível verificar a sessão. Tentar novamente."><RefreshCw size={20} aria-hidden="true" /><span className={styles.accountLabel}>{t('Verificar conta')}</span></button> : !user ? <div className={styles.guestActions}><Link href="/portal/acesso" prefetch={false} className={styles.accountLink} onClick={onNavigate}>{t('Entrar')}</Link><Link href="/portal/acesso?mode=signup" prefetch={false} className={styles.signupLink} onClick={onNavigate}>{t('Criar conta')}</Link></div> : expanded ? <>
       <div className={styles.userRow}>{avatar}<span>{user.name || 'Sua conta'}</span></div>
       <Link href="/conta" onClick={onNavigate}>{t('Minha conta')}</Link>
       <Link href="/portal/seguranca" onClick={onNavigate}>{t('Segurança da conta')}</Link>

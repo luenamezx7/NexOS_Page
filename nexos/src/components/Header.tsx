@@ -11,6 +11,7 @@ import { LanguageSwitch } from './LanguageSwitch';
 import { useLocale } from '@/lib/locale';
 import { useSectionScroll } from './SmoothScrollProvider';
 import { useScrollLock } from './useScrollLock';
+import { commercialHref } from '@/lib/commercial';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
 import styles from './Header.module.css';
 
@@ -88,7 +89,7 @@ export function Header() {
         <div className={styles.actions}>
           <HeaderAccount />
           <LanguageSwitch />
-          <a className={styles.contactAction} href="#contact" onClick={event => { event.preventDefault(); navigate('#contact'); }}>{t('Agendar conversa')}</a>
+           <a className={styles.contactAction} href={commercialHref('Olá! Quero conversar sobre as soluções da ezway.')} target="_blank" rel="noopener noreferrer">{t('Conversar no WhatsApp')}</a>
            <button ref={triggerRef} type="button" className={styles.menuButton} aria-label={t('Abrir menu')} aria-expanded={mobileOpen} aria-controls="mobile-navigation" onClick={() => setMobileOpen(true)}><ListViewIcon isActive={mobileOpen} /></button>
         </div>
       </div>
@@ -108,7 +109,7 @@ export function Header() {
              <summary>{t('Serviços')} <ChevronDown size={17} aria-hidden="true" /></summary>
              <div>{SOLUTIONS.map(item => <Link key={item.href} href={item.href} onClick={closeMenu}>{t(item.label)}</Link>)}</div>
            </details>
-           <a className={styles.mobileContactAction} href="#contact" onClick={event => { event.preventDefault(); navigate('#contact'); }}>{t('Agendar conversa')} <ArrowUpRight size={18} aria-hidden="true" /></a>
+            <a className={styles.mobileContactAction} href={commercialHref('Olá! Quero conversar sobre as soluções da ezway.')} target="_blank" rel="noopener noreferrer" onClick={closeMenu}>{t('Conversar no WhatsApp')} <ArrowUpRight size={18} aria-hidden="true" /></a>
          </nav>
          <HeaderAccount expanded onNavigate={closeMenu} />
       </div>

@@ -14,25 +14,6 @@ interface HighlightedTextProps {
   once?: boolean;
 }
 
-const fromVariants = {
-  left: {
-    hidden: { x: "-100%" },
-    visible: { x: "0%" },
-  },
-  right: {
-    hidden: { x: "100%" },
-    visible: { x: "0%" },
-  },
-  top: {
-    hidden: { y: "-100%" },
-    visible: { y: "0%" },
-  },
-  bottom: {
-    hidden: { y: "100%" },
-    visible: { y: "0%" },
-  },
-};
-
 export function HighlightedText({
   children,
   className,
@@ -41,14 +22,15 @@ export function HighlightedText({
   inView = false,
   once = true,
 }: HighlightedTextProps) {
-  const variants = fromVariants[from];
   const reduceMotion = useReducedMotion();
+  const vertical = from === 'top' || from === 'bottom';
+  const origin = from === 'right' ? 'right' : from === 'bottom' ? 'bottom' : from === 'top' ? 'top' : 'left';
 
   return (
     <motion.span
       data-highlighted-text
       className={cn(
-        "relative inline-flex overflow-hidden align-baseline",
+        "relative inline align-baseline",
         className,
       )}
       initial={reduceMotion ? false : 'hidden'}
@@ -60,7 +42,7 @@ export function HighlightedText({
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-0 rounded-sm"
         style={{ background: 'color-mix(in srgb, var(--pink-soft) 32%, transparent)' }}
-        variants={variants}
+        variants={{ hidden: { [vertical ? 'scaleY' : 'scaleX']: 0, transformOrigin: origin }, visible: { [vertical ? 'scaleY' : 'scaleX']: 1, transformOrigin: origin } }}
         transition={{
           type: 'spring',
           damping: 30,
@@ -68,7 +50,7 @@ export function HighlightedText({
           delay: reduceMotion ? 0 : delay,
         }}
       />
-      <span className="relative z-10 px-[0.15em] text-inherit">
+      <span className="relative z-10 px-[0.15em] text-inherit" data-highlight-ink>
         {children}
       </span>
     </motion.span>

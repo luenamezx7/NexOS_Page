@@ -35,14 +35,14 @@ export function ProductShowcase({ className = '', onSelectUse }: { className?: s
               <div className={styles.productIntro}>
                  <div className={styles.kicker}><GlowingBadge variant="neutral">{t('Placa Inteligente ezway')}</GlowingBadge></div>
                   <ScrollReveal as="h2" preset="title" id="showcase-title" className={styles.heading}>{t('O que seu cliente vai abrir')} <HighlightedText inView from="bottom" delay={.1}>{t('na placa?')}</HighlightedText></ScrollReveal>
-                 <ScrollReveal as="p" className={styles.lead} delay={.06}>{t('Escolha o destino: cardápio para consultar à mesa, Instagram para conhecer a marca, WhatsApp para conversar ou Google para encontrar seu endereço.')}</ScrollReveal>
+                  <ScrollReveal as="p" className={styles.lead} delay={.06}>{t('A placa abre o destino que você escolher: cardápio, portfólio, WhatsApp ou endereço no Google.')}</ScrollReveal>
               </div>
               <div className={styles.productVisual}><PlateChooser onSelect={name => { setSelectedUse(name); onSelectUse?.(name); }} /></div>
              <ScrollReveal preset="card" className={styles.purchase}>
               <div className={styles.selectionRow}>
                 <div>
                     <h3 className={styles.commercialHeading}>{t('Quer uma placa no seu espaço?')}</h3>
-                    <p className={styles.commercialNote}>{t('Conte onde vai usá-la. A equipe combina com você o destino, a personalização, os valores e o frete.')}</p>
+                     <p className={styles.commercialNote}>{t('Conte onde vai usá-la. Definimos com você o link, a personalização e o valor.')}</p>
                 </div>
               </div>
                    <a href={plateCommercialHref(selectedUse)} target="_blank" rel="noopener noreferrer" className={`${styles.buyButton} btn-primary-nex`}><MetallicSurface /><span className="metallic-content inline-flex items-center gap-2">{t('Conversar sobre minha placa')} <ArrowUpRight size={16} aria-hidden="true" /></span></a>

@@ -5,8 +5,11 @@
 .navLink { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 8px 10px; font: 500 13px/1 var(--font-sans); color: var(--text-secondary); white-space: nowrap; transition: color 200ms; }
 .navLink:hover, .navLink[data-popup-open] { color: var(--detail-text); }
 .actions { display: flex; justify-content: flex-end; align-items: center; gap: 12px; min-width: 0; }
-.accountSlot { display: flex; min-width: 44px; min-height: 44px; justify-content: flex-end; align-items: center; }
-.accountLink { display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 44px; height: 44px; flex: 0 0 auto; border: 1px solid var(--glass-line); border-radius: 12px; background: var(--glass-control); font: 500 13px/1.4 var(--font-sans); color: var(--text-secondary); transition: color 200ms, border-color 200ms; white-space: nowrap; }
+.accountSlot { display: flex; min-height: 44px; justify-content: flex-end; align-items: center; }
+.guestActions { display: flex; align-items: center; gap: 8px; }
+.accountLink { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 44px; padding: 0 12px; flex: 0 0 auto; border: 1px solid var(--glass-line); border-radius: 12px; background: var(--glass-control); font: 600 13px/1.4 var(--font-sans); color: var(--lime-400); transition: color 200ms, border-color 200ms; white-space: nowrap; }
+.signupLink { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 12px; border: 1px solid var(--lime-400); border-radius: 12px; background: color-mix(in srgb, var(--lime-400) 15%, transparent); color: var(--color-ink); font: 600 13px/1.4 var(--font-sans); white-space: nowrap; }
+.signupLink:hover, .signupLink:focus-visible { background: color-mix(in srgb, var(--lime-400) 26%, transparent); }
 .accountLabel { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .contactAction, .mobileContactAction { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 16px; border-radius: 12px; background: var(--palette-cta); color: var(--palette-cta-ink); font: 700 13px/1.2 var(--font-sans); white-space: nowrap; box-shadow: var(--cta-volume); transition: background-color 180ms, box-shadow 180ms, transform 180ms; }
 .contactAction:hover, .mobileContactAction:hover { background: var(--palette-cta-hover); box-shadow: var(--cta-volume); transform: translateY(-2px); }
@@ -44,6 +47,8 @@
 .mobileNav > .mobileContactAction { min-height: 44px; margin-top: 12px; padding-inline: 14px; font: 700 14px/1.2 var(--font-sans); }
 .expandedAccount { display: flex; flex-direction: column; gap: 4px; padding-top: 8px; margin-top: 12px; border-top: 1px solid var(--border); font-size: 14px; }
 .expandedAccount .accountLink { justify-content: flex-start; gap: 10px; width: 100%; height: auto; padding-inline: 8px; border: 0; background: transparent; }
+.expandedAccount .guestActions { display: grid; gap: 6px; margin-top: 10px; }
+.expandedAccount .guestActions a { justify-content: center; width: 100%; }
 .expandedAccount > :is(a, button) { min-height: 44px; display: flex; align-items: center; text-align: left; }
 .expandedAccount .accountLabel { position: static; width: auto; height: auto; margin: 0; overflow: visible; clip-path: none; white-space: normal; }
 .userRow { display: flex; align-items: center; gap: 12px; padding-bottom: 12px; }
@@ -54,9 +59,7 @@
   .desktopNav { display: none; }
   .menuButton { display: grid; }
   .contactAction { display: none; }
-  .accountSlot { min-width: 44px; }
-  .accountSlot .accountLink { width: 44px; justify-content: center; padding: 0; }
-  .accountSlot .accountLabel { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .accountSlot .accountLink { justify-content: center; }
   .actions { gap: 4px; }
 }
 @media (max-width: 767px) {

@@ -9,15 +9,18 @@
 .option:nth-child(4) .plate { animation-delay: -1.2s; }
 .plateButton:focus-visible { outline: 3px solid var(--pink-soft); outline-offset: 6px; }
 .plateMotion { display: block; }
-@media (hover: hover) { .plateButton:hover .plate { transform: translateY(-5px) rotate(0deg) scale(1.025); } }
+@media (hover: hover) { .plateButton:hover .plate { transform: translateY(-4px) rotate(0deg) scale(1.012); } .plateButton:hover .plate::before { opacity: 1; } .plateButton:hover .plateImage { filter: drop-shadow(0 9px 13px rgb(53 120 34 / 18%)) drop-shadow(0 0 3px rgb(182 255 59 / 24%)); } }
+.plateButton:focus-visible .plate::before { opacity: 1; }
+.plateButton:focus-visible .plateImage { filter: drop-shadow(0 0 4px rgb(182 255 59 / 28%)); }
 .plateButton:active .plate { transform: translateY(-1px) rotate(0deg) scale(.985); transition-duration: 180ms; }
-.plate { position: relative; width: 100%; aspect-ratio: 1; transform: rotate(var(--plate-tilt, 0deg)); filter: drop-shadow(0 16px 18px #714da943); transition: transform 550ms var(--ease-fluid); animation: plateFloat 8s ease-in-out infinite; }
+.plate { position: relative; isolation: isolate; width: 100%; aspect-ratio: 1; transform: rotate(var(--plate-tilt, 0deg)); transition: transform 550ms var(--ease-fluid); animation: plateFloat 8s ease-in-out infinite; }
+.plate::before { content: ''; position: absolute; z-index: -1; inset: 19% 12%; border-radius: 50%; background: radial-gradient(ellipse, rgb(130 204 63 / 24%), rgb(130 204 63 / 7%) 52%, transparent 75%); filter: blur(17px); opacity: 0; pointer-events: none; transition: opacity 350ms ease; }
 .option:nth-child(1) { --plate-tilt: -2deg; }
 .option:nth-child(2) { --plate-tilt: 2deg; }
 .option:nth-child(3) { --plate-tilt: -1.5deg; }
 .option:nth-child(4) { --plate-tilt: 2.5deg; }
 @keyframes plateFloat { 0%, 100% { translate: 0 0; } 50% { translate: 0 -3px; } }
-.plateImage { display: block; width: 100%; height: 100%; object-fit: contain; }
+.plateImage { display: block; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 16px 18px #714da943); transition: filter 350ms ease; }
 /* Match the QR cutout in the 1000 × 1000 SVG artwork. */
 .qrArea { position: absolute; top: 63.6%; left: 61%; display: grid; place-items: center; width: 19.2%; aspect-ratio: 1; border-radius: 2px; background: #fff; }
 .qrArea img { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
@@ -46,5 +49,5 @@
 @media (max-width: 850px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 16px; } .option:nth-child(2) { margin-top: 26px; } .option:nth-child(3) { margin-top: -8px; } .option:nth-child(4) { margin-top: 18px; } }
 @media (max-width: 600px) { .grid { gap: 18px 8px; padding-bottom: 40px; } .option:nth-child(2) { margin-top: 18px; } .option:nth-child(3) { margin-top: -6px; } .option:nth-child(4) { margin-top: 12px; } .caption { padding: 8px 7px 0; } .caption h3 { font-size: 17px; } .caption p { font-size: 12px; } .plate { animation: none; } .dialogContent { grid-template-columns: 1fr; padding: 56px 20px 28px; gap: 22px; } .detailPlate { width: min(100%, 290px); } .detailCopy { gap: 12px; } .detailCopy h2 { font-size: 30px; } .detailCopy .detailCaption { font-size: 17px; } }
 @media (max-width: 359px) { .grid { gap: 20px 9px; } }
-@media (prefers-reduced-motion: reduce) { .plate { animation: none; transition: none; } .plateButton:hover .plate, .plateButton:active .plate { transform: none; } .dialog[open]::backdrop { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .plate, .plate::before, .plateImage { animation: none; transition: none; } .plateButton:hover .plate, .plateButton:active .plate { transform: none; } .dialog[open]::backdrop { animation: none; } }
 @media (forced-colors: active) { .dialog { background: Canvas; color: CanvasText; border-color: CanvasText; box-shadow: none; } .dialog::backdrop { background: Canvas; backdrop-filter: none; } .qrArea { forced-color-adjust: none; } }

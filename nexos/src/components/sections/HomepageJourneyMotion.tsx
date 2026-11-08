@@ -43,7 +43,7 @@ export function HomepageJourneyMotion() {
             });
           }
         }
-        for (const id of ['services', 'plate-management', 'easychat']) {
+         for (const id of ['plate-management', 'easychat']) {
           const visual = root.querySelector<HTMLElement>(`#${id} [data-journey-visual]`);
           if (!visual) continue;
           gsap.fromTo(visual, { y: desktop ? 32 : 16, opacity: .65 }, {

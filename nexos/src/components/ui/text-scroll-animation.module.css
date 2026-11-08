@@ -1,0 +1,4 @@
+.bridge { display: grid; place-items: center; min-height: clamp(180px, 35vh, 330px); padding: 48px 24px; overflow: clip; text-align: center; }
+.bridge p { max-width: 22ch; font: 700 clamp(28px, 5vw, 64px)/1.15 var(--font-display); letter-spacing: -.045em; color: var(--color-ink); }
+.character { display: inline-block; white-space: pre; color: var(--lime-400); }
+@media (max-width: 767px), (prefers-reduced-motion: reduce) { .bridge { min-height: 150px; padding-block: 36px; } .bridge p { font-size: clamp(26px, 8vw, 40px); } }

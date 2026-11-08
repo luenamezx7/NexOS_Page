@@ -49,7 +49,7 @@ test('use case is preserved without a quantity field and demo QR codes have uniq
   await detail.getByRole('button', { name: 'Fechar detalhes da placa' }).click();
   expect(new URL((await showcase.getByRole('link', { name: 'Conversar sobre minha placa' }).getAttribute('href'))!).searchParams.get('text')).toContain('Instagram');
   await expect(page.locator('#services')).toContainText('Você escolheu: Instagram');
-  await expect(page.locator('#services [data-relevant="true"]')).toHaveCount(1);
+   await expect(page.locator('#services [data-services-step]')).toHaveCount(3);
   await expect(showcase.locator('[data-plate-option] [data-demo-qr] img')).toHaveCount(4);
   const qrs = await showcase.locator('[data-plate-option] [data-demo-qr] img').evaluateAll(images => images.map(image => (image as HTMLImageElement).src));
   expect(new Set(qrs).size).toBe(4);
@@ -76,7 +76,7 @@ test('direct showcase link, reverse scroll and orientation keep four choices in 
 test('core journey precedes secondary sections and reduced motion leaves every plate in place', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await openHome(page);
-  const order = await page.locator('#main-content').evaluate(root => ['hero', 'fisico-digital', 'showcase', 'services', 'plate-management', 'easychat', 'delivery-process', 'proof', 'plans', 'contact'].map(id => root.querySelector(`#${id}`)?.getBoundingClientRect().top));
+  const order = await page.locator('#main-content').evaluate(root => ['hero', 'fisico-digital', 'showcase', 'services', 'plate-management', 'easychat', 'delivery-process', 'proof', 'contact'].map(id => root.querySelector(`#${id}`)?.getBoundingClientRect().top));
   expect(order.every((top, i) => top !== undefined && (i === 0 || top > order[i - 1]!))).toBe(true);
   await page.locator('#showcase').scrollIntoViewIfNeeded();
   await expect(page.locator('#showcase [data-plate-motion]').first()).toHaveCSS('transform', 'none');

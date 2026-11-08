@@ -1074,12 +1074,13 @@ select.field-input option {
 
 /* Shared font roles; the landing keeps its own visual atmosphere. */
 .landing-page {
+  --gradient-heading: linear-gradient(90deg, var(--color-ink) 0%, var(--color-ink) 13%, #317a38 68%, #245c33 100%);
   --landing-line: color-mix(in srgb, var(--color-ink) 14%, transparent);
   --landing-muted: var(--text-secondary);
   --landing-accent: var(--display-rose);
   --landing-edge-tint: #fdf6ec25;
 }
-.dark .landing-page { --landing-accent: var(--purple-400); --landing-edge-tint: #07050d25; }
+.dark .landing-page { --landing-accent: var(--purple-400); --landing-edge-tint: #07050d25; --gradient-heading: linear-gradient(90deg, var(--text-primary) 0%, var(--text-primary) 13%, var(--lime-300) 68%, var(--lime-400) 100%); }
 .landing-page :where(h1, h2, h3), .service-page :where(h1, h2, h3) { font-family: var(--font-display); text-wrap: balance; overflow-wrap: break-word; }
 /* One continuous ramp across each marketing title, even when the text wraps. */
 :is(.landing-page, .service-page) :is(h1, h2):not([data-blur-reveal]):not(.sr-only) {
@@ -1092,6 +1093,14 @@ select.field-input option {
 :is(.landing-page, .service-page) :is(h1, h2):not([data-blur-reveal]) :where(span, a) {
   -webkit-text-fill-color: transparent;
 }
+/* A positioned highlight paints on its own layer: the parent's clipped gradient
+   cannot paint through it on narrow lines. Give the foreground its own ink. */
+:is(.landing-page, .service-page) :is(h1, h2) [data-highlight-ink] {
+  background: var(--gradient-heading);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 /* BlurReveal renders each glyph separately, so each letter samples the same title-wide ramp. */
 :is(.landing-page, .service-page) :is(h1, h2)[data-blur-reveal] [data-blur-letter] {
   color: var(--heading-letter-color);
@@ -1101,6 +1110,7 @@ select.field-input option {
   :is(.landing-page, .service-page) :is(h1, h2):not([data-blur-reveal]):not(.sr-only) { background-image: none; color: CanvasText; -webkit-text-fill-color: CanvasText; }
   :is(.landing-page, .service-page) :is(h1, h2):not([data-blur-reveal]) :where(span, a),
   :is(.landing-page, .service-page) :is(h1, h2)[data-blur-reveal] [data-blur-letter] { color: CanvasText; -webkit-text-fill-color: CanvasText; }
+  :is(.landing-page, .service-page) :is(h1, h2) [data-highlight-ink] { background: none; color: CanvasText; -webkit-text-fill-color: CanvasText; }
 }
 .landing-page footer { background: var(--color-canvas); }
 .landing-page .btn-primary-nex, .landing-page .btn-primary-glow { font-family: var(--font-sans); letter-spacing: 0; font-weight: 600; }
@@ -1162,6 +1172,7 @@ select.field-input option {
 .hero-eyebrow { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 28px; color: var(--landing-muted); font: 500 14px/1.6 var(--font-sans); }
 .hero-eyebrow > span { width: 6px; height: 6px; border-radius: 50%; background: var(--detail-accent); }
 .hero-heading { max-width: 24ch; margin-inline: auto; font-family: var(--font-display); font-size: clamp(48px, 5.9vw, 84px); font-weight: 650; line-height: 1.07; letter-spacing: -.055em; text-wrap: balance; }
+.hero-title-line { display: block; }
 .hero-description { max-width: 49ch; margin: 28px auto 0; font-size: 17px; line-height: 1.7; color: var(--landing-muted); text-wrap: pretty; }
 .hero-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px 28px; margin-top: 32px; }
 .hero-easychat-link { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; margin-top: 18px; padding: 8px 16px; border: 1px solid var(--palette-border); border-radius: 999px; background: transparent; color: var(--palette-highlight); font-size: 13px; line-height: 1.5; text-decoration: none; }

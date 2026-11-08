@@ -6,7 +6,8 @@
   width: 100%;
   background: var(--section-ground);
 }
-.scene[data-tone="alternate"] { --section-ground: #f4edf8; }
+.scene[data-tone="alternate"] { --section-ground: #f4edf8; --gradient-heading: linear-gradient(90deg, var(--color-ink) 0%, var(--color-ink) 13%, var(--purple-600) 68%, var(--purple-700) 100%); }
+:global(.dark) .scene[data-tone="alternate"] { --gradient-heading: linear-gradient(90deg, var(--text-primary) 0%, var(--text-primary) 13%, var(--purple-300) 68%, var(--purple-400) 100%); }
 .scene[data-scene="product"] { --section-ground: #f0e9f5; }
 :global(.dark) .scene { --section-ground: var(--bg-base); }
 :global(.dark) .scene[data-tone="alternate"] { --section-ground: var(--bg-surface); }

@@ -36,13 +36,14 @@ interface LoginFormProps {
   socialProviders?: ('google' | 'github')[];
   socialAuthMode?: 'direct' | 'supabase';
   initialStep?: 'credentials' | 'totp';
+  initialMode?: 'login' | 'signup';
   verified?: boolean;
 }
 function needsTwoFactor(data: unknown): boolean {
   return !!data && typeof data === 'object' && (data as { twoFactorRedirect?: unknown }).twoFactorRedirect === true;
 }
 
-export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, socialProviders = [], socialAuthMode = 'direct', initialStep = 'credentials', verified }: LoginFormProps) {
+export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, socialProviders = [], socialAuthMode = 'direct', initialStep = 'credentials', initialMode = 'login', verified }: LoginFormProps) {
   const userFlow = audience === 'user';
   const busyRef = useRef(false);
   const destination = sanitizeCallbackPath(callbackUrl) ?? (userFlow ? '/conta' : '/dashboard');
@@ -50,7 +51,7 @@ export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(confirmationError ? 'Não foi possível concluir o acesso. O link expirou, já foi usado ou a autorização foi cancelada. Tente novamente.' : '');
   const [message, setMessage] = useState(verified ? 'E-mail confirmado. Entre para continuar.' : '');
-  const [mode, setMode] = useState<Mode>('login');
+  const [mode, setMode] = useState<Mode>(audience === 'user' ? initialMode : 'login');
   const [step, setStep] = useState(initialStep);
   const [backup, setBackup] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
