@@ -625,4 +625,6 @@ export const es: Record<string, string> = {
   'Picanha na brasa': 'Picaña a la brasa', 'Costela da casa': 'Costillas de la casa', 'Legumes na brasa': 'Verduras a la brasa',
   'Ampliar imagem': 'Ampliar imagen', 'Cardápio ilustrativo de cafeteria': 'Menú ilustrativo de cafetería', 'Cardápio ilustrativo de restaurante': 'Menú ilustrativo de restaurante',
   'Portfólio ilustrativo de arquitetura': 'Portafolio ilustrativo de arquitectura', 'Portfólio ilustrativo de imobiliária': 'Portafolio ilustrativo de inmobiliaria', 'Portfólio ilustrativo de fotografia': 'Portafolio ilustrativo de fotografía',
+  'Sites para seu negócio, cardápios ou vídeos com IA?': '¿Sitios web para tu negocio, menús o vídeos con IA?',
+  'Site ilustrativo de arquitetura': 'Sitio ilustrativo de arquitectura',
 };

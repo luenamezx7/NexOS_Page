@@ -56,9 +56,9 @@ export function Services({ className = '' }: { className?: string; selectedUse?:
         }
 
         const timeline = gsap.timeline({ scrollTrigger: { ...trigger, scrub: true } });
-        timeline.fromTo(device, { y: 32, scale: .96 }, { y: -32, scale: 1, ease: 'none', duration: 1 }, 0)
-          .fromTo(slides[0], { xPercent: 0 }, { xPercent: -100, ease: 'none', duration: 1 }, 0)
-          .fromTo(slides[1], { xPercent: 100 }, { xPercent: 0, ease: 'none', duration: 1 }, 0);
+        timeline.fromTo(device, { y: 32 }, { y: -18, ease: 'none', duration: 1 }, 0)
+          .fromTo(slides[0], { xPercent: 0 }, { xPercent: -100, ease: 'none', duration: .44 }, .28)
+          .fromTo(slides[1], { xPercent: 100 }, { xPercent: 0, ease: 'none', duration: .44 }, .28);
         requestAnimationFrame(() => ScrollTrigger.refresh());
         return () => { timeline.scrollTrigger?.kill(); timeline.kill(); setMotionReady(false); setArtworkFocus(false); };
       });
@@ -71,14 +71,14 @@ export function Services({ className = '' }: { className?: string; selectedUse?:
     <div className={styles.journeyContainer}>
       <div className={styles.journeyGrid} data-services-journey data-motion-ready={motionReady}>
         <div className={styles.stage} data-journey-visual>
-          <h2 id="services-title" className={styles.journeyTitle}>{t('Sites para seu negócio, cardápios ou vídeos com IA?')}</h2>
           <div className={styles.macbook}>
             <div className={styles.macbookMotion} data-macbook-motion>
+              <h2 id="services-title" className={styles.journeyTitle}>{t('Sites para seu negócio, cardápios ou vídeos com IA?')}</h2>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img className={styles.macbookFrame} src="/mackbook_1.svg" alt="" width={2180} height={1324} draggable={false} aria-hidden="true" />
               <div className={styles.macbookScreen} data-macbook-screen>
                 {artworks.map((artwork, index) => <div key={artwork.alt} className={styles.macbookSlide} data-macbook-slide data-active={index === active} aria-hidden={index !== active}>
-                  <Image src={artwork.image} alt={t(artwork.alt)} fill sizes="(max-width: 767px) 80vw, 720px" placeholder="blur" style={{ objectFit: 'contain' }} />
+                  <Image src={artwork.image} alt={t(artwork.alt)} fill sizes="(max-width: 767px) 80vw, 720px" quality={90} loading="eager" style={{ objectFit: 'cover' }} />
                 </div>)}
               </div>
             </div>

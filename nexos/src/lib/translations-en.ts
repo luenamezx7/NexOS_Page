@@ -625,4 +625,6 @@ export const en: Record<string, string> = {
   'Picanha na brasa': 'Grilled picanha', 'Costela da casa': 'House ribs', 'Legumes na brasa': 'Grilled vegetables',
   'Ampliar imagem': 'Enlarge image', 'Cardápio ilustrativo de cafeteria': 'Illustrative coffee shop menu', 'Cardápio ilustrativo de restaurante': 'Illustrative restaurant menu',
   'Portfólio ilustrativo de arquitetura': 'Illustrative architecture portfolio', 'Portfólio ilustrativo de imobiliária': 'Illustrative real estate portfolio', 'Portfólio ilustrativo de fotografia': 'Illustrative photography portfolio',
+  'Sites para seu negócio, cardápios ou vídeos com IA?': 'Websites for your business, menus or AI videos?',
+  'Site ilustrativo de arquitetura': 'Illustrative architecture website',
 };

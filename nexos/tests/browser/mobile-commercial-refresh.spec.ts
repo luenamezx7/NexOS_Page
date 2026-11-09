@@ -18,13 +18,13 @@ async function showServiceStep(page: import('@playwright/test').Page, index: num
   await expect(grid).toHaveAttribute('data-motion-ready', 'true');
   await grid.evaluate((element, step) => {
     const top = element.getBoundingClientRect().top + window.scrollY;
-    window.scrollTo({ top: top + (element.clientHeight - innerHeight) * step / 2 + (step === 2 ? -2 : 2), behavior: 'instant' });
+    window.scrollTo({ top: top + (element.clientHeight - innerHeight) * (step ? .95 : .05), behavior: 'instant' });
   }, index);
-  await expect(page.locator('#services [data-services-step]').nth(index)).toHaveAttribute('data-active', 'true');
+  await expect(page.locator('#services [data-macbook-slide]').nth(index)).toHaveAttribute('data-active', 'true');
 }
 
 for (const width of [320, 360, 390, 430]) {
-  test(`${width}px: the typing word, animated bridge and sample controls stay within the viewport`, async ({ page }) => {
+  test(`${width}px: the typing word, animated bridge and MacBook stay within the viewport`, async ({ page }) => {
     await page.setViewportSize({ width, height: 740 });
     await openHome(page);
     const heading = page.locator('#hero-title');
@@ -44,62 +44,35 @@ for (const width of [320, 360, 390, 430]) {
     const secondBridge = page.getByLabel('Menos tarefas. Mais negócio.');
     await secondBridge.scrollIntoViewIfNeeded();
     await expect.poll(() => secondBridge.locator('p').evaluate(element => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
-    const first = page.locator('#services [data-services-step]').first();
     await showServiceStep(page, 0);
-    await expect(first.getByRole('img', { name: 'Cardápio ilustrativo de cafeteria' })).toBeVisible();
-    await first.getByRole('button', { name: 'Próxima amostra' }).click();
-    await expect(first.getByRole('img', { name: 'Cardápio ilustrativo de restaurante' })).toBeVisible();
+    await expect(page.locator('#services-title')).toBeVisible();
+    await expect(page.locator('#services [data-macbook-slide]').first().getByRole('img', { name: 'Site ilustrativo de arquitetura' })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   });
 }
 
-test('digital destinations contain only menu, portfolio and AI video', async ({ page }) => {
+test('the section contains only its title and the two supplied images', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openHome(page);
-  await expect(page.locator('#services [data-services-step] h3')).toHaveText(['Cardápio?', 'Portfólio?', 'Vídeos com IA?']);
-  await expect(page.locator('#services [data-services-step]')).toHaveCount(3);
-  await showServiceStep(page, 2);
-  await expect(page.locator('#services [data-services-step]').last()).toContainText('Roteiro visual');
-  await expect(page.locator('#services img[src*="ezway1"]')).toHaveCount(0);
+  await expect(page.locator('#services-title')).toHaveText('Sites para seu negócio, cardápios ou vídeos com IA?');
+  await expect(page.locator('#services h3, #services p, #services a, #services button')).toHaveCount(0);
+  await expect(page.locator('#services [data-macbook-slide]')).toHaveCount(2);
+  await showServiceStep(page, 1);
+  await expect(page.locator('#services [data-macbook-slide]').last().getByRole('img', { name: 'Cardápio ilustrativo de cafeteria' })).toBeVisible();
 });
 
-test('showcase displays only the five remaining original images without cropping or image links', async ({ page }) => {
+test('the MacBook loads only imgg1 and imgg2 at high quality', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openHome(page);
   const services = page.locator('#services');
-  const menu = services.locator('[data-services-step]').first();
-  await showServiceStep(page, 0);
-  const menuImages = menu.locator('[class*="sampleSlide"] [class*="fullArtwork"] img');
-  await expect(menuImages).toHaveCount(2);
-  await expect(menuImages.nth(0)).toHaveAttribute('src', /cardapiocafe1.*\.png/);
-  await expect(menuImages.nth(1)).toHaveAttribute('src', /cardapiorest1.*\.png/);
-  await expect.poll(() => menuImages.nth(0).evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
-  await menu.getByRole('button', { name: 'Próxima amostra' }).click();
-  await expect(menu.getByRole('img', { name: 'Cardápio ilustrativo de restaurante' })).toBeVisible();
-  await expect.poll(() => menuImages.nth(1).evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
-
-  const portfolio = services.locator('[data-services-step]').nth(1);
-  await showServiceStep(page, 1);
-  const samples = portfolio.locator('[class*="sampleSlide"]');
-  for (const [index, filename] of ['imgstudio', 'imgimobiliaria1', 'imgstudio2'].entries()) {
-    await expect(samples.nth(index).locator('img')).toHaveAttribute('src', new RegExp(filename));
+  const images = services.locator('[data-macbook-slide] img');
+  await expect(images).toHaveCount(2);
+  for (const [index, filename] of ['imgg1', 'imgg2'].entries()) {
+    await expect(images.nth(index)).toHaveAttribute('src', new RegExp(`${filename}.*\.png`));
+    await expect(images.nth(index)).toHaveCSS('object-fit', 'cover');
+    await expect.poll(() => images.nth(index).evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
   }
-  await portfolio.getByRole('button', { name: 'Próxima amostra' }).click();
-  await expect(portfolio.locator('[class*="sampleControls"] > span')).toHaveText('2 / 3');
-  await portfolio.getByRole('button', { name: 'Próxima amostra' }).click();
-  await expect(portfolio.getByRole('img', { name: 'Portfólio ilustrativo de fotografia' })).toBeVisible();
-  await expect.poll(() => samples.nth(2).locator('img').evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
-
-  for (const image of [menuImages.nth(0), menuImages.nth(1), ...[0, 1, 2].map(index => samples.nth(index).locator('img'))]) {
-    expect(await image.evaluate(element => {
-      const img = element as HTMLImageElement;
-      const rect = img.getBoundingClientRect();
-      const sourceRatio = Number(img.getAttribute('width')) / Number(img.getAttribute('height'));
-      return Math.abs(rect.width / rect.height - sourceRatio) < .01 && getComputedStyle(img).objectFit !== 'cover' && !img.closest('a');
-    })).toBe(true);
-  }
-  await expect(services.locator('[data-services-step] img')).toHaveCount(5);
-  await expect(services.locator('[class*="macbook"] img')).toHaveAttribute('src', '/mackbook_1.svg');
+  await expect(services.locator('img[class*="macbookFrame"]')).toHaveAttribute('src', '/mackbook_1.svg');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 

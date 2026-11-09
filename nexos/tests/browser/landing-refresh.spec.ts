@@ -21,8 +21,8 @@ for (const width of [320, 390]) {
     await heading.scrollIntoViewIfNeeded();
     await expect(heading).toBeVisible();
     expect(await heading.evaluate(element => getComputedStyle(element).backgroundImage)).toContain('gradient');
-    await expect(page.locator('#services [data-services-step]')).toHaveCount(3);
-    await expect(page.locator('#services [data-services-step]').first().getByRole('img', { name: 'Cardápio ilustrativo de cafeteria' })).toHaveCount(1);
+    await expect(page.locator('#services [data-macbook-slide]')).toHaveCount(2);
+    await expect(page.locator('#services [data-macbook-slide]').first().getByRole('img', { name: 'Site ilustrativo de arquitetura' })).toHaveCount(1);
     const next = page.locator('#mascot-solutions button[aria-label="Próximo cartão"]');
     await next.scrollIntoViewIfNeeded();
     await next.click();
@@ -48,11 +48,14 @@ test('plate hover lights its backdrop without filtering the QR code', async ({ p
   await expect(plate.locator('[data-demo-qr]')).toHaveCSS('filter', 'none');
 });
 
-test('reduced motion keeps a complete hero word and all three destinations', async ({ page }) => {
+test('reduced motion keeps a complete hero word and both MacBook illustrations', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await openHome(page);
   await expect(page.locator('[data-typing-word]')).toHaveText('conectado');
-  await expect(page.locator('#services [data-services-step] [class*="mobileVisual"]')).toHaveCount(3);
-  await expect(page.locator('#services [data-services-step]')).toHaveCount(3);
+  await expect(page.locator('#services [data-macbook-slide]')).toHaveCount(2);
+  const grid = page.locator('#services [data-services-journey]');
+  await expect(grid).toHaveAttribute('data-motion-ready', 'true');
+  await grid.evaluate(element => scrollTo({ top: element.getBoundingClientRect().top + scrollY + (element.clientHeight - innerHeight) * .9, behavior: 'instant' }));
+  await expect(grid.locator('[data-macbook-slide]').last()).toHaveAttribute('data-active', 'true');
 });
