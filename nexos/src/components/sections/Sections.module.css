@@ -1,14 +1,14 @@
 .scene {
-  --section-ground: #faf7fc;
+  --section-ground: #ffffff;
   --color-canvas: var(--section-ground);
   position: relative;
   isolation: isolate;
   width: 100%;
   background: var(--section-ground);
 }
-.scene[data-tone="alternate"] { --section-ground: #f4edf8; --gradient-heading: linear-gradient(90deg, var(--color-ink) 0%, var(--color-ink) 13%, var(--purple-600) 68%, var(--purple-700) 100%); }
+.scene[data-tone="alternate"] { --section-ground: #f3f6f1; --gradient-heading: linear-gradient(90deg, var(--color-ink) 0%, var(--color-ink) 13%, var(--purple-600) 68%, var(--purple-700) 100%); }
 :global(.dark) .scene[data-tone="alternate"] { --gradient-heading: linear-gradient(90deg, var(--text-primary) 0%, var(--text-primary) 13%, var(--purple-300) 68%, var(--purple-400) 100%); }
-.scene[data-scene="product"] { --section-ground: #f0e9f5; }
+.scene[data-scene="product"] { --section-ground: #eff5e8; }
 :global(.dark) .scene { --section-ground: var(--bg-base); }
 :global(.dark) .scene[data-tone="alternate"] { --section-ground: var(--bg-surface); }
 :global(.dark) .scene[data-scene="product"] { --section-ground: var(--bg-base); }
@@ -113,8 +113,8 @@
 .channels { display: grid; gap: 22px; margin-block: 30px; }
 .channelLabel { display: flex; justify-content: space-between; font: 12px var(--font-mono); margin-bottom: 9px; }
 .barTrack { height: 8px; background: var(--surface-inset); border-radius: 6px; overflow: hidden; }
-.barTrack > div { height: 100%; background: linear-gradient(90deg, #8144d2, var(--landing-accent)); transform-origin: left; border-radius: inherit; }
-.channels > div:nth-child(2) .barTrack > div { background: linear-gradient(90deg, #446ad4, var(--electric-blue)); }
+.barTrack > div { height: 100%; background: linear-gradient(90deg, #639d1c, var(--landing-accent)); transform-origin: left; border-radius: inherit; }
+.channels > div:nth-child(2) .barTrack > div { background: linear-gradient(90deg, #94e01f, var(--electric-blue)); }
 .channels > div:nth-child(2) .barTrack > div { opacity: .65; }
 .channels > div:nth-child(3) .barTrack > div { opacity: .4; }
 .channelPanel .demoNote { margin-top: auto; }
@@ -123,7 +123,8 @@
 .timeline { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; list-style: none; margin-top: 56px; }
 .timeline { position: relative; }
 .timeline .stepMarker { z-index: 1; }
-.timeline li { position: relative; min-width: 0; padding: 0 24px 32px 0; }
+.timeline li { position: relative; min-width: 0; padding: 0 24px 32px 0; opacity: .25; filter: blur(2px); transform: scale(.97); transition: opacity .4s ease, filter .4s ease, transform .4s ease; }
+.timeline li[data-active='true'] { opacity: 1; filter: none; transform: none; }
 .timeline li::before { content: ''; position: absolute; top: 22px; left: 0; right: 0; height: 1px; background: color-mix(in srgb, var(--color-ink) 24%, var(--color-canvas)); }
 .timeline li:last-child::before { right: calc(100% - 44px); }
 .stepMarker { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid color-mix(in srgb, var(--color-ink) 32%, var(--color-canvas)); border-radius: 50%; background: color-mix(in srgb, var(--color-ink) 12%, var(--color-canvas)); color: color-mix(in srgb, var(--color-ink) 65%, var(--color-canvas)); font: 600 13px var(--font-sans); margin-bottom: 32px; transition: background-color .35s ease, border-color .35s ease, color .35s ease, box-shadow .35s ease, transform .35s ease; }
@@ -143,8 +144,7 @@
   .processStage { position: sticky; top: 76px; display: flex; flex-direction: column; justify-content: center; min-height: calc(100svh - 76px); padding-block: 20px; }
   .processStage .splitHeader { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: end; gap: 40px; margin-bottom: 0; }
   .processStage .timeline { margin-top: 20px; }
-  .processStage .timeline li { padding-bottom: 20px; opacity: .78; transition: opacity .35s ease, border-color .35s ease; }
-  .processStage .timeline li[data-active='true'] { opacity: 1; }
+  .processStage .timeline li { padding-bottom: 20px; }
   .processStage .stepMarker { margin-bottom: 20px; }
   .processStage .timeline p { margin-top: 10px; }
   .processStage .stepEnd { margin-top: 14px; }
@@ -161,7 +161,7 @@
 .brandCta .textLink { color: var(--palette-highlight); }
 .ctaVisual { position: relative; isolation: isolate; grid-column: 2; grid-row: 1 / span 2; width: 100%; aspect-ratio: 1 / 1.08; }
 .ctaVisual::before { position: absolute; z-index: -1; inset: 4% -7% 5%; border-radius: 50%; background: radial-gradient(ellipse at 52% 42%, color-mix(in srgb, var(--palette-ink) 63%, transparent) 0%, color-mix(in srgb, var(--palette-highlight) 46%, transparent) 29%, color-mix(in srgb, var(--palette-action) 18%, transparent) 55%, transparent 74%); filter: blur(28px); content: ''; }
-.ctaVisual::after { position: absolute; z-index: -1; inset: auto 14% 0; height: 16%; border-radius: 50%; background: #48355255; filter: blur(30px); content: ''; }
+.ctaVisual::after { position: absolute; z-index: -1; inset: auto 14% 0; height: 16%; border-radius: 50%; background: #10161055; filter: blur(30px); content: ''; }
 .ctaImageMotion { position: absolute; inset: -14px; }
 .ctaBrandImage { object-fit: contain; object-position: center; filter: drop-shadow(0 14px 20px #0009) drop-shadow(0 0 30px color-mix(in srgb, var(--palette-highlight) 24%, transparent)); }
 .ctaAnchor { position: absolute; top: 0; }
@@ -227,7 +227,7 @@
   .brandCta .ctaActions { width: 100%; }
   .ctaActions :global(.btn-primary-nex) { width: 100%; padding-inline: 16px; gap: 12px; font-size: 12px; }
 }
-@media (prefers-reduced-motion: reduce) { .chartPanel, .channelPanel, .connection, .timeline li, .stepMarker, .stepEnd { transition: none; } .connectionAura, .connection .connectionNodes svg { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .chartPanel, .channelPanel, .connection, .timeline li, .stepMarker, .stepEnd { transition: none; } .timeline li { opacity: 1; filter: none; transform: none; } .connectionAura, .connection .connectionNodes svg { animation: none; } }
 @media (forced-colors: active) { .scene[data-section-panel] { background: Canvas; border-color: CanvasText; box-shadow: none; } .scene::before, .scenery { display: none; } }
 @media (forced-colors: active) { .stepMarker { background: Canvas; color: CanvasText; border-color: CanvasText; } .timeline li[data-active='true'] .stepMarker { background: Highlight; color: HighlightText; border-color: Highlight; box-shadow: none; } }
 @media (prefers-reduced-motion: reduce) { .textLink svg { transition: none; } }

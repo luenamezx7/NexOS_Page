@@ -35,7 +35,6 @@ export function ProductShowcase({ className = '', onSelectUse }: { className?: s
               <div className={styles.productIntro}>
                  <div className={styles.kicker}><GlowingBadge variant="neutral">{t('Placa Inteligente ezway')}</GlowingBadge></div>
                   <ScrollReveal as="h2" preset="title" id="showcase-title" className={styles.heading}>{t('O que seu cliente vai abrir')} <HighlightedText inView from="bottom" delay={.1}>{t('na placa?')}</HighlightedText></ScrollReveal>
-                  <ScrollReveal as="p" className={styles.lead} delay={.06}>{t('A placa abre o destino que você escolher: cardápio, portfólio, WhatsApp ou endereço no Google.')}</ScrollReveal>
               </div>
               <div className={styles.productVisual}><PlateChooser onSelect={name => { setSelectedUse(name); onSelectUse?.(name); }} /></div>
              <ScrollReveal preset="card" className={styles.purchase}>

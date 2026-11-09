@@ -1,16 +1,16 @@
 /** Shared color values for server-rendered artwork and canvas effects. CSS theme tokens mirror these. */
 export const SITE_PALETTE = {
-  background: '#07050d',
-  surface: '#0e0a1a',
-  card: '#161027',
-  elevated: '#1f1737',
-  border: '#2a2045',
-  action: '#7c3aed',
-  actionHover: '#8b5cf6',
+  background: '#050606',
+  surface: '#0d0f0d',
+  card: '#151815',
+  elevated: '#202420',
+  border: '#343b32',
+  action: '#94e01f',
+  actionHover: '#b6ff3b',
   cta: '#b6ff3b',
-  highlight: '#c4a8ff',
-  ink: '#f5f3ff',
-  muted: '#b8b0d0',
+  highlight: '#c8ff66',
+  ink: '#f7faf6',
+  muted: '#bac4b7',
 } as const;
 
 export const VISOR_PALETTE = {
@@ -35,6 +35,6 @@ export const WAVES_PALETTE = [VISOR_PALETTE.plum, VISOR_PALETTE.violet, VISOR_PA
 
 /** Subtle theme ramps for decorative effects. */
 export const GRAINIENT_PALETTES = {
-  light: [SITE_PALETTE.background, '#2e1065', '#5b21b6', VISOR_PALETTE.violet, SITE_PALETTE.highlight],
-  dark: [SITE_PALETTE.background, '#2e1065', '#5b21b6', VISOR_PALETTE.violet, SITE_PALETTE.highlight],
+  light: [SITE_PALETTE.background, '#202420', '#343b32', VISOR_PALETTE.violet, SITE_PALETTE.highlight],
+  dark: [SITE_PALETTE.background, '#202420', '#343b32', VISOR_PALETTE.violet, SITE_PALETTE.highlight],
 };

@@ -634,7 +634,7 @@ const applyMat3 = (m: number[], v: number[]) => [
 ];
 
 const GhostFibers = ({
-  glowColor = '#8b5cf6',
+  glowColor = '#ffffff',
   lineColor,
   secondaryColor,
   gradient = 'depth',
@@ -780,9 +780,9 @@ const GhostFibers = ({
       height: 1,
       fit: 1,
       colorKey: '',
-      glow: [0.55, 0.36, 0.96],
-      line: [1, 0.85, 0.98],
-      secondary: [0.44, 0.29, 0.77],
+      glow: [1, 1, 1],
+      line: [1, 1, 1],
+      secondary: [1, 1, 1],
       pointer: { x: 0, y: 0, inside: false },
       hover: { x: 0, y: 0, presence: 0, placed: false },
       look: { x: 0, y: 0, vx: 0, vy: 0 },
@@ -810,7 +810,7 @@ const GhostFibers = ({
       const key = `${s.glowColor}|${s.lineColor}|${s.secondaryColor}|${s.lightMode}`;
       if (key === state.colorKey) return;
       state.colorKey = key;
-      state.glow = toRgb(s.glowColor, [0.55, 0.36, 0.96]);
+      state.glow = toRgb(s.glowColor, [1, 1, 1]);
       state.secondary = s.secondaryColor ? toRgb(s.secondaryColor, state.glow) : state.glow.map(c => c * 0.8);
       if (s.lineColor) state.line = toRgb(s.lineColor, state.glow);
       else state.line = s.lightMode ? state.glow : state.glow.map(c => c + (1 - c) * 0.72);

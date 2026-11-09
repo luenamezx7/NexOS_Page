@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "skills": {
+    "craftwork-assets": {
+      "agents": [
+        "cursor"
+      ],
+      "paths": {
+        "cursor": "/Users/henriqueemanuel/Desktop/projetos/PROJETO - TTR/NexOS/NexOS/nexos/.agents/skills/craftwork-assets"
+      },
+      "modes": {
+        "cursor": "symlink"
+      },
+      "canonicalPath": "/Users/henriqueemanuel/Desktop/projetos/PROJETO - TTR/NexOS/NexOS/nexos/.agents/skills/craftwork-assets"
+    }
+  }
+}

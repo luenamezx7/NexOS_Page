@@ -58,7 +58,7 @@ export function Globe() {
           width: width * dpr, height: width * dpr, devicePixelRatio: dpr,
           phi: interaction.current.phi, theta: .18, dark: 1, diffuse: 1.8,
           mapSamples: 10000, mapBrightness: 5, mapBaseBrightness: .03,
-          baseColor: [.18, .045, .27], markerColor: [.85, .94, .44], glowColor: [.3, .045, .5], markers: [],
+           baseColor: [.07, .11, .06], markerColor: [.78, 1, .4], glowColor: [.36, .58, .14], markers: [],
         });
         setStatus('ready'); sync();
       } catch { if (!disposed) setStatus('unavailable'); }

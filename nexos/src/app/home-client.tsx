@@ -28,7 +28,6 @@ const EasyChat = dynamic(() => import('@/components/sections/EasyChat').then(m =
 const DeliveryProcess = dynamic(() => import('@/components/sections/DeliveryProcess').then(m => m.DeliveryProcess));
 const PlacaNFCSection = dynamic(() => import('@/components/sections/PlacaNFCSection').then(m => m.PlacaNFCSection));
 const CTAFinal = dynamic(() => import('@/components/sections/CTAFinal').then(m => m.CTAFinal));
-const FisicoDigitalSection = dynamic(() => import('@/components/sections/FisicoDigitalSection').then(m => m.FisicoDigitalSection));
 
 export default function HomeClient() {
   const { t } = useLocale();
@@ -72,8 +71,7 @@ export default function HomeClient() {
           <div id="main-content" tabIndex={-1} className="relative">
             <Hero ref={heroRef} />
              <SectionBackground index={0} scene="product" experience="nfc">
-               <FisicoDigitalSection />
-               <PlacaNFCSection onSelectUse={setSelectedPlateUse} />
+                <PlacaNFCSection onSelectUse={setSelectedPlateUse} />
              </SectionBackground>
               <SectionBackground index={1} experience="solutions">
                 <TextScrollAnimation text={t('Da placa ao próximo passo')} />

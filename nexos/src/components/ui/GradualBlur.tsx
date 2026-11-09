@@ -86,7 +86,7 @@ export default function GradualBlur({
   saturation = 1,
   tint = 'transparent',
   bloom = 0,
-  bloomColor = 'var(--visor-lilac, #e873f8)',
+  bloomColor = 'var(--visor-lilac, #c8ff66)',
   autoHide = false,
   container,
   hoverIntensity = 1,

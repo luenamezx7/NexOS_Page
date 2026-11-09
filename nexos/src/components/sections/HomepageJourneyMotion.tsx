@@ -43,7 +43,9 @@ export function HomepageJourneyMotion() {
             });
           }
         }
-         for (const id of ['plate-management', 'easychat']) {
+         // EasyChat moves through PhoneScrollHero's integer top offsets instead:
+         // transforming its ancestor would rasterize and soften the live chat text.
+         for (const id of ['plate-management']) {
           const visual = root.querySelector<HTMLElement>(`#${id} [data-journey-visual]`);
           if (!visual) continue;
           gsap.fromTo(visual, { y: desktop ? 32 : 16, opacity: .65 }, {

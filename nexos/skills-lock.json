@@ -1,17 +1,86 @@
 {
   "version": 1,
   "skills": {
+    "copy-editing": {
+      "source": "coreyhaines31/marketingskills",
+      "sourceType": "github",
+      "skillPath": "skills/copy-editing/SKILL.md",
+      "computedHash": "2c98bcf29c1adeac0dc5772a53a97d3b4c0320fd03accfb03a204c84d9a2799b"
+    },
+    "copywriting": {
+      "source": "coreyhaines31/marketingskills",
+      "sourceType": "github",
+      "skillPath": "skills/copywriting/SKILL.md",
+      "computedHash": "fa83931a47fad42131875374585cab98c9fcf2c3299543bb5bae8828cf06ea08"
+    },
+    "diagram-design": {
+      "source": "craftwork.design",
+      "sourceUrl": "https://craftwork.design/skills/diagram-design",
+      "sourceType": "well-known",
+      "computedHash": "349a79088dbdafdfb7443144589eb3cbe3587bd95e18e48f236b3884eeb10dde",
+      "wellKnownDigest": "sha256:c1387c5ef4996a46b492e3e9d9fcc6668e0b1f39b21733045ce8fa2aee6ef2d0"
+    },
+    "emil-design-eng": {
+      "source": "emilkowalski/skill",
+      "sourceType": "github",
+      "skillPath": "skills/emil-design-eng/SKILL.md",
+      "computedHash": "2483020b5bbaab030d6b3463bfba49c8d9c2cd8dea4d9fba836dbd471f1fb706"
+    },
+    "frontend-slides": {
+      "source": "craftwork.design",
+      "sourceUrl": "https://craftwork.design/skills/frontend-slides",
+      "sourceType": "well-known",
+      "computedHash": "9e32b2e7f7acf44d4144884ca1a3d97fc36e02540b62389940e1cb0c333414f2",
+      "wellKnownDigest": "sha256:58bda4c0aa94cc450cd55f56fb72d7fda7fc81671bbb7da58d92897d1207c2a4"
+    },
+    "gsap-scrolltrigger": {
+      "source": "greensock/gsap-skills",
+      "sourceType": "github",
+      "skillPath": "skills/gsap-scrolltrigger/SKILL.md",
+      "computedHash": "1cdc5647693783cb7a662d84a5de434c88a051ed56b4d33597c9b5782b5973e6"
+    },
+    "humanizer": {
+      "source": "hannsxpeter/humanizer",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "bc2a81b9c2698d887915786897c5eff5f8101baa15f592071e01c1f6235b906b"
+    },
     "migrate-radix-to-base": {
       "source": "shadcn/ui",
       "sourceType": "github",
       "skillPath": "skills/migrate-radix-to-base/SKILL.md",
       "computedHash": "4fdc31bf287f674ba6bf91a648120f7b34cd7ef370f998f2cc116fed067789c5"
     },
+    "motion-design": {
+      "source": "LottieFiles/motion-design-skill",
+      "sourceType": "github",
+      "skillPath": "skills/motion-design/SKILL.md",
+      "computedHash": "9fcf9130cc46ee8fd1d8e09a9263347a9d76efbcbfa46591cc4cefaf19bbb453"
+    },
+    "product-marketing": {
+      "source": "coreyhaines31/marketingskills",
+      "sourceType": "github",
+      "skillPath": "skills/product-marketing/SKILL.md",
+      "computedHash": "d051a45340cc15c633c008e5e8896dce61f5746830104f2624e7d20fdf5beb48"
+    },
+    "refactoring-ui": {
+      "source": "craftwork.design",
+      "sourceUrl": "https://craftwork.design/skills/refactoring-ui",
+      "sourceType": "well-known",
+      "computedHash": "75a97f7e2ad68749e78d5ef21b4aad7f3ff1e1b17da3e67cfe846a791ec3cc5e",
+      "wellKnownDigest": "sha256:c1d9a4d0919b4f81148d3931dec338916bd781383aaf433df3be8f8fa960cbdf"
+    },
     "shadcn": {
       "source": "shadcn/ui",
       "sourceType": "github",
       "skillPath": "skills/shadcn/SKILL.md",
       "computedHash": "d04e43ec01e921558b93bb8046c14a42a22556689a2827243df900825a4e1604"
+    },
+    "shader-dev": {
+      "source": "MiniMax-AI/skills",
+      "sourceType": "github",
+      "skillPath": "skills/shader-dev/SKILL.md",
+      "computedHash": "169d2cc594e0962e37f1cc58aef6d2efcf78f3408627bd909383d8724a133cd9"
     },
     "supabase": {
       "source": "supabase/agent-skills",
@@ -24,6 +93,20 @@
       "sourceType": "github",
       "skillPath": "skills/supabase-postgres-best-practices/SKILL.md",
       "computedHash": "128fac78002d916c8ca908245d398e634f540d8bcf20915b2b2359aeb18eba59"
+    },
+    "threejs-scroll-worlds": {
+      "source": "craftwork.design",
+      "sourceUrl": "https://craftwork.design/skills/threejs-scroll-worlds",
+      "sourceType": "well-known",
+      "computedHash": "8b09cc4c398cdad45d767bac14a359c0a88af216746424a9ec586fb3bcd897d1",
+      "wellKnownDigest": "sha256:d81e3a4a18ad60faa8ee66c6be2eb4bab5ef962938a850657a53c3e8e08c09fd"
+    },
+    "web-design-guidelines": {
+      "source": "craftwork.design",
+      "sourceUrl": "https://craftwork.design/skills/web-design-guidelines",
+      "sourceType": "well-known",
+      "computedHash": "b1754ea373d87361bea3b6eef7786a919985f40918f7c50fb46dd53176ce1b26",
+      "wellKnownDigest": "sha256:26a7446ca9c95ddc4f5e34a8c1827b16a527b77cffcff689d397c3dcdaac1adc"
     }
   }
 }

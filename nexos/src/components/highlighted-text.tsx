@@ -8,6 +8,7 @@ type From = "left" | "right" | "top" | "bottom";
 interface HighlightedTextProps {
   children: React.ReactNode;
   className?: string;
+  multiline?: boolean;
   from?: From;
   delay?: number;
   inView?: boolean;
@@ -17,6 +18,7 @@ interface HighlightedTextProps {
 export function HighlightedText({
   children,
   className,
+  multiline = false,
   from = "bottom",
   delay = 0,
   inView = false,
@@ -25,6 +27,25 @@ export function HighlightedText({
   const reduceMotion = useReducedMotion();
   const vertical = from === 'top' || from === 'bottom';
   const origin = from === 'right' ? 'right' : from === 'bottom' ? 'bottom' : from === 'top' ? 'top' : 'left';
+
+  if (multiline) return (
+    <motion.span
+      data-highlighted-text
+      className={cn('relative inline align-baseline', className)}
+      initial={reduceMotion ? false : 'hidden'}
+      whileInView={inView && !reduceMotion ? 'visible' : undefined}
+      animate={inView && !reduceMotion ? undefined : 'visible'}
+      viewport={{ once }}
+    >
+      <motion.span
+        data-highlight-ink
+        className="relative px-[0.15em] text-inherit [box-decoration-break:clone] [-webkit-box-decoration-break:clone]"
+        style={{ backgroundImage: 'linear-gradient(color-mix(in srgb, var(--pink-soft) 32%, transparent), color-mix(in srgb, var(--pink-soft) 32%, transparent))', backgroundRepeat: 'no-repeat' }}
+        variants={{ hidden: { backgroundSize: '0% 100%' }, visible: { backgroundSize: '100% 100%' } }}
+        transition={{ duration: .65, ease: 'easeOut', delay: reduceMotion ? 0 : delay }}
+      >{children}</motion.span>
+    </motion.span>
+  );
 
   return (
     <motion.span

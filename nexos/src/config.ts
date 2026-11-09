@@ -33,7 +33,7 @@ export const config: SiteConfig = {
       id: 'placa',
       title: 'Placa Inteligente NFC + QR Code',
       description: 'Placa discreta para contato rápido. Aproxime o NFC ou escaneie o QR Code e abra seu link instantaneamente.',
-      features: ['NFC e QR Code na mesma placa', 'Instalação simplificada', 'Link personalizável', 'Garantia estendida'],
+      features: ['NFC e QR Code na mesma placa', 'Instalação simplificada', 'Link personalizável'],
       ctaText: 'Adquirir Placa',
     },
   ],

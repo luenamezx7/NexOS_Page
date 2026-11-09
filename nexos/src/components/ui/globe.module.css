@@ -5,8 +5,8 @@
 .canvas:active { cursor: grabbing; }
 .canvas:focus-visible { outline: 2px solid var(--ring); outline-offset: -24px; }
 .globe[data-globe-state='ready'] .canvas { opacity: 1; }
-.fallback { position: absolute; inset: 12%; border: 1px solid #c47bff40; border-radius: 50%; background: radial-gradient(circle at 30% 25%, #3d155c, #170b21 60%, #000); overflow: hidden; }
-.fallback span { position: absolute; inset: 0 22%; border: 1px solid #c47bff24; border-radius: 50%; }
+.fallback { position: absolute; inset: 12%; border: 1px solid #c8ff6640; border-radius: 50%; background: radial-gradient(circle at 30% 25%, #243b16, #0d0f0d 60%, #000); overflow: hidden; }
+.fallback span { position: absolute; inset: 0 22%; border: 1px solid #c8ff6624; border-radius: 50%; }
 .fallback span:nth-child(2) { inset: 22% 0; }
 .fallback span:nth-child(3) { inset: 42% 0; }
 .globe[data-globe-state='ready'] .fallback { display: none; }

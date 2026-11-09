@@ -22,7 +22,7 @@ for (const width of [320, 390]) {
     await expect(heading).toBeVisible();
     expect(await heading.evaluate(element => getComputedStyle(element).backgroundImage)).toContain('gradient');
     await expect(page.locator('#services [data-services-step]')).toHaveCount(3);
-    await expect(page.locator('#services [data-services-step]').first().getByText('grão & casa')).toBeVisible();
+    await expect(page.locator('#services [data-services-step]').first().getByRole('img', { name: 'Cardápio ilustrativo de cafeteria' })).toHaveCount(1);
     const next = page.locator('#mascot-solutions button[aria-label="Próximo cartão"]');
     await next.scrollIntoViewIfNeeded();
     await next.click();
@@ -48,7 +48,7 @@ test('plate hover lights its backdrop without filtering the QR code', async ({ p
   await expect(plate.locator('[data-demo-qr]')).toHaveCSS('filter', 'none');
 });
 
-test('reduced motion keeps a complete hero word and all three examples', async ({ page }) => {
+test('reduced motion keeps a complete hero word and all three destinations', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await openHome(page);

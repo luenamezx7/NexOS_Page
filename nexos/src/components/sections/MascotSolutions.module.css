@@ -5,24 +5,24 @@
 .track { display: flex; gap: 14px; margin: 0; padding: 0 0 12px; list-style: none; }
 .track li { flex: 0 0 clamp(280px, 32vw, 370px); scroll-snap-align: start; min-width: 0; }
 .track figure { margin: 0; }
-.scene { position: relative; isolation: isolate; display: flex; align-items: flex-end; justify-content: flex-end; width: 100%; aspect-ratio: 1610 / 977; overflow: hidden; padding: 20px; border: 1px solid var(--glass-line); border-radius: 16px; background: radial-gradient(ellipse at 26% 58%, rgb(124 58 237 / 27%), transparent 57%), linear-gradient(135deg, #201a31, #100e19 72%); }
+.scene { position: relative; isolation: isolate; display: flex; align-items: flex-end; justify-content: flex-end; width: 100%; aspect-ratio: 1610 / 977; overflow: hidden; padding: 20px; border: 1px solid var(--glass-line); border-radius: 16px; background: radial-gradient(ellipse at 26% 58%, rgb(148 224 31 / 27%), transparent 57%), linear-gradient(135deg, #202420, #0d0f0d 72%); }
 .scene::before { content: ''; position: absolute; inset: auto 0 0; height: 40%; background: linear-gradient(transparent, rgb(9 9 15 / 60%)); pointer-events: none; }
-.scene[data-scene='site'] { background: radial-gradient(ellipse at 70% 25%, rgb(196 181 253 / 19%), transparent 57%), linear-gradient(135deg, #181827, #100e19); }
-.scene[data-scene='menu'] { background: radial-gradient(ellipse at 30% 26%, rgb(124 58 237 / 25%), transparent 57%), linear-gradient(135deg, #271b30, #100e19); }
-.scene[data-scene='team'] { background: radial-gradient(ellipse at 72% 38%, rgb(196 181 253 / 22%), transparent 57%), linear-gradient(135deg, #1c1a32, #100e19); }
+.scene[data-scene='site'] { background: radial-gradient(ellipse at 70% 25%, rgb(200 255 102 / 19%), transparent 57%), linear-gradient(135deg, #151815, #0d0f0d); }
+.scene[data-scene='menu'] { background: radial-gradient(ellipse at 30% 26%, rgb(148 224 31 / 25%), transparent 57%), linear-gradient(135deg, #202820, #0d0f0d); }
+.scene[data-scene='team'] { background: radial-gradient(ellipse at 72% 38%, rgb(200 255 102 / 22%), transparent 57%), linear-gradient(135deg, #202420, #0d0f0d); }
 .sceneIndex { position: absolute; top: 20px; left: 20px; color: var(--palette-highlight); font: 11px var(--font-mono); }
 .mascot { position: absolute; left: 9%; bottom: 8%; width: 44%; filter: drop-shadow(0 12px 16px rgb(0 0 0 / 50%)); }
 .mascot img { display: block; width: 100%; height: auto; }
 .sceneCard { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; width: 55%; min-height: 78%; padding: 14px; border: 1px solid var(--glass-line); border-radius: 14px; background: rgb(21 18 31 / 87%); box-shadow: var(--glass-shadow); color: var(--palette-ink); }
 .sceneCard > svg { color: var(--palette-highlight); }
-.sceneMockup { display: grid; place-items: center; width: 100%; min-height: 46px; padding: 4px; border-radius: 8px; background: rgb(124 58 237 / 12%); }
+.sceneMockup { display: grid; place-items: center; width: 100%; min-height: 46px; padding: 4px; border-radius: 8px; background: rgb(148 224 31 / 12%); }
 .miniPlate { display: flex; align-items: center; justify-content: space-between; width: 80%; padding: 5px 8px; border: 1px solid var(--palette-highlight); border-radius: 4px; color: var(--palette-ink); font-size: 10px; font-weight: 700; }
-.miniSite { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 2px; width: 85%; min-height: 36px; padding: 4px; border-radius: 4px; background: #f5f3ff; color: #20182b; }
-.miniSite i { width: 3px; height: 3px; border-radius: 50%; background: #7c3aed; }
+.miniSite { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 2px; width: 85%; min-height: 36px; padding: 4px; border-radius: 4px; background: #f7faf6; color: #111411; }
+.miniSite i { width: 3px; height: 3px; border-radius: 50%; background: #94e01f; }
 .miniSite strong { flex: 0 0 100%; font-size: 10px; line-height: 1; }
-.miniSite span { width: 80%; height: 5px; border-radius: 3px; background: #c4b5fd; }
+.miniSite span { width: 80%; height: 5px; border-radius: 3px; background: #c8ff66; }
 .miniMenu, .miniChat { display: grid; gap: 4px; width: 80%; }
-.miniMenu i { height: 7px; border-radius: 5px; background: linear-gradient(90deg, var(--palette-highlight) 17%, #f5f3ff 17%, #f5f3ff 70%, transparent 70%); }
+.miniMenu i { height: 7px; border-radius: 5px; background: linear-gradient(90deg, var(--palette-highlight) 17%, #f7faf6 17%, #f7faf6 70%, transparent 70%); }
 .miniChat i { width: 75%; height: 7px; border-radius: 5px; background: var(--palette-highlight); }
 .miniChat i:nth-child(2) { justify-self: end; background: var(--palette-action); }
 .sceneCard > span:not(.sceneSignal) { margin-top: auto; color: var(--palette-muted); font-size: 11px; }

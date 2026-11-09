@@ -23,14 +23,14 @@ export function AboutUs() {
               {t('Mais pontos de contato.')}<br /><span>{t('Menos caminhos perdidos.')}</span>
             </ScrollReveal>
             <ScrollReveal as="p" delay={.08} className={styles.lead}>
-              {t('A ezway ajuda pequenos negócios a transformar interesse em contato. Criamos os caminhos entre quem procura e quem vende.')}
+              {t('A ezway nasceu para aproximar negócios e clientes. Um interesse que começa na mesa, no balcão ou na recepção precisa encontrar um caminho simples para continuar.')}
             </ScrollReveal>
             <div className={styles.body}>
               <ScrollReveal as="p">
-                {t('Fazemos placas NFC, cardápios, sites e páginas para que o cliente encontre informações e saiba como falar com você.')}
+                {t('A placa leva ao link que você escolher: cardápio, portfólio, Instagram, WhatsApp ou perfil no Google. Se esse destino ainda não existe, também podemos criar a parte digital.')}
               </ScrollReveal>
               <ScrollReveal as="p">
-                {t('Na mesa, no balcão ou na internet, conectamos diferentes pontos da jornada: descoberta, atendimento e venda.')}
+                {t('O produto físico e a presença digital trabalham juntos. Seu cliente encontra o que procura e sabe como dar o próximo passo.')}
               </ScrollReveal>
             </div>
 

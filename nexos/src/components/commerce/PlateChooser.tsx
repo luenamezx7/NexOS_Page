@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { ArrowUpRight, X } from 'lucide-react';
 import { gsap } from 'gsap';
+import { motion, useMotionValue, useReducedMotion, useSpring } from 'motion/react';
 import { PLATE_USES, type PlateUse } from '@/lib/plate-uses';
 import { plateCommercialHref } from '@/lib/commercial';
 import { useScrollLock } from '../useScrollLock';
@@ -22,6 +23,26 @@ function PlateFace({ plate, qr, large = false }: { plate: PlateUse; qr?: string;
     <Image src={PLATE_IMAGES[plate.id]} alt="" width={1000} height={1000} unoptimized className={styles.plateImage} sizes={large ? '(max-width: 600px) 290px, 350px' : '(max-width: 850px) 45vw, 24vw'} />
     {/* Each SVG includes a decorative QR; place its working destination over it. */}
     <div className={styles.qrArea} data-demo-qr>{qr ? <Image src={qr} alt="" width={320} height={320} unoptimized /> : null}</div>
+  </div>;
+}
+
+function TiltingPlate({ plate, qr }: { plate: PlateUse; qr?: string }) {
+  const reduced = useReducedMotion();
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const size = useMotionValue(1);
+  const rotateX = useSpring(x, { stiffness: 220, damping: 26 });
+  const rotateY = useSpring(y, { stiffness: 220, damping: 26 });
+  const scale = useSpring(size, { stiffness: 220, damping: 26 });
+  const reset = () => { x.set(0); y.set(0); size.set(1); };
+  return <div className={styles.detailPlate} onPointerMove={event => {
+    if (reduced || event.pointerType === 'touch' || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    const bounds = event.currentTarget.getBoundingClientRect();
+    x.set((.5 - (event.clientY - bounds.top) / bounds.height) * 32);
+    y.set(((event.clientX - bounds.left) / bounds.width - .5) * 32);
+    size.set(1.035);
+  }} onPointerLeave={reset} onPointerCancel={reset}>
+    <motion.div className={styles.tiltPlate} style={reduced ? undefined : { rotateX, rotateY, scale }}><PlateFace plate={plate} qr={qr} large /></motion.div>
   </div>;
 }
 
@@ -49,7 +70,7 @@ export function PlateChooser({ onSelect }: { onSelect?: (name: string) => void }
     const content = dialog.querySelector<HTMLElement>('[data-plate-dialog-content]');
     if (selected) {
       dialog.showModal();
-      dialog.querySelector<HTMLButtonElement>('button[data-close-plate]')?.focus();
+       dialog.querySelector<HTMLButtonElement>('button[data-close-plate]')?.focus({ preventScroll: true });
       if (content && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
         gsap.fromTo(content, { autoAlpha: 0, y: 20, scale: .98 }, { autoAlpha: 1, y: 0, scale: 1, duration: .55, ease: 'power3.out', clearProps: 'all' });
       }
@@ -83,10 +104,10 @@ export function PlateChooser({ onSelect }: { onSelect?: (name: string) => void }
       </article>)}
     </div>
     <p className={styles.disclaimer}>{t('Nesta vitrine, os QR codes levam aos canais da ezway. Na sua placa, o destino e a personalização são definidos com você.')}</p>
-    <dialog ref={dialogRef} className={styles.dialog} aria-labelledby="plate-dialog-title" aria-describedby="plate-dialog-description" data-lenis-prevent onCancel={event => { event.preventDefault(); close(); }} onClose={() => { if (selected) { setSelected(null); triggerRef.current?.focus({ preventScroll: true }); } }} onClick={event => { if (event.target === event.currentTarget) close(); }}>
+     <dialog ref={dialogRef} className={styles.dialog} tabIndex={-1} autoFocus aria-labelledby="plate-dialog-title" aria-describedby="plate-dialog-description" data-lenis-prevent onCancel={event => { event.preventDefault(); close(); }} onClose={() => { if (selected) { setSelected(null); triggerRef.current?.focus({ preventScroll: true }); } }} onClick={event => { if (event.target === event.currentTarget) close(); }}>
       {selected && <div className={styles.dialogContent} data-plate-dialog-content>
         <button type="button" data-close-plate className={styles.close} aria-label={t('Fechar detalhes da placa')} onClick={close}><X size={22} /></button>
-        <div className={styles.detailPlate}><PlateFace plate={selected} qr={qrs[selected.id]} large /></div>
+         <TiltingPlate plate={selected} qr={qrs[selected.id]} />
         <div className={styles.detailCopy}>
           <span className={styles.detailLabel}>{t('PLACA INTELIGENTE · NFC + QR')}</span>
           <h2 id="plate-dialog-title">{t(selected.name)}</h2>
