@@ -8,7 +8,11 @@ interface EmailLayoutProps {
 export function EmailLayout({ children, preheader }: EmailLayoutProps) {
   return (
     <Html lang="pt-BR">
-      <Head />
+      <Head>
+        {/* Email HTML has its own head, independent of the Next.js document. */}
+        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&display=swap" />
+      </Head>
       <body style={styles.body}>
         <div style={styles.preheader}>{preheader}</div>
         <table role="presentation" style={styles.wrapper}>
@@ -44,7 +48,7 @@ const styles = {
     margin: 0,
     padding: 0,
     backgroundColor: '#0a0a0a',
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+    fontFamily: '"Google Sans", Arial, sans-serif',
     color: '#fdf6ec',
     lineHeight: 1.6,
   },
@@ -73,6 +77,7 @@ const styles = {
     textAlign: 'center' as const,
   },
   logo: {
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
     display: 'inline-block',
     width: '48px',
     height: '48px',

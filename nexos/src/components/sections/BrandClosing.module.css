@@ -15,11 +15,15 @@
 @media (hover: hover) { .socialButton:hover { box-shadow: var(--action-hover-shadow); } }
 .socialButton:focus-visible { outline: 2px solid var(--ring); outline-offset: 4px; }
 
-.closing { position: relative; isolation: isolate; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; min-height: clamp(320px, 46vw, 640px); overflow: hidden; padding: 80px 32px 72px; background: var(--color-canvas); }
-.closingLight { position: absolute; z-index: -1; inset: 0; background: radial-gradient(ellipse 55% 85% at 50% 100%, var(--atmosphere-violet), transparent 85%), radial-gradient(ellipse 35% 65% at 50% 50%, var(--ambient-violet), transparent 90%); pointer-events: none; }
-:global(.dark) .closingLight { display: none; }
-.wordmarkFrame { width: min(82%, 1120px); container-type: inline-size; }
-.closingCaption { margin-top: 40px; color: var(--text-tertiary); font: 14px/1.7 var(--font-sans); text-align: center; }
+.closing { position: relative; z-index: 31; isolation: isolate; width: 100%; height: clamp(260px, 32vw, 450px); overflow: hidden; background: #050606; }
+.closingCaption { position: absolute; top: clamp(64px, 8vw, 104px); left: 0; width: 100%; margin: 0; color: #bac4b7; font: 14px/1.7 var(--font-sans); text-align: center; }
+.wordmarkCrop { position: absolute; right: 0; bottom: 0; left: 0; transform: translateY(20%); }
+.wordmarkLink { display: block; width: min(88%, 1200px); margin-inline: auto; border-radius: 8px; text-decoration: none; cursor: pointer; }
+.wordmarkLink:focus-visible { outline: 2px solid #dcefd7; outline-offset: 6px; }
+.wordmarkFrame { width: 100%; container-type: inline-size; }
+:global(.landing-page) :global(#brand-closing) h2.gradientWordmark { background: linear-gradient(180deg, #fff 0%, #dedfde 42%, #8b918c 74%, #161a17 100%); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; font-size: 30cqi; transition: filter 200ms ease; }
+.wordmarkLink:hover .gradientWordmark { filter: brightness(1.14); }
+:global(.landing-page) :global(#brand-closing) h2.gradientWordmark span { color: inherit; -webkit-text-fill-color: inherit; }
 @media (max-width: 767px) {
   .socialSection { padding: 0 24px 40px; }
   .socialInner { padding-top: 28px; gap: 24px; }
@@ -28,9 +32,9 @@
   .socialIcon svg { width: 23px; height: 23px; }
   .socialInner > :last-child { width: 100%; }
   .socialButton { width: 100%; }
-  .closing { padding: 64px 20px 52px; min-height: 300px; }
-  .wordmarkFrame { width: 100%; }
-  .closingCaption { margin-top: 28px; }
+  .closing { height: 240px; }
+  .wordmarkLink { width: calc(100% - 24px); }
+  .closingCaption { top: 56px; }
 }
-@media (prefers-reduced-motion: reduce) { .socialButton, .socialButton svg { transition: none; } .socialButton:hover svg { transform: none; } }
-@media (forced-colors: active) { .closingLight { display: none; } }
+@media (prefers-reduced-motion: reduce) { .socialButton, .socialButton svg, .gradientWordmark { transition: none; } .socialButton:hover svg { transform: none; } }
+@media (forced-colors: active) { :global(.landing-page) :global(#brand-closing) h2.gradientWordmark { background: none; color: CanvasText; -webkit-text-fill-color: CanvasText; } }

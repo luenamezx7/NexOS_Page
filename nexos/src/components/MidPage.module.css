@@ -78,6 +78,8 @@
 
 /* Footer */
 .footerSection { --mid-surface: color-mix(in srgb, var(--color-ink) 3%, var(--color-canvas)); --mid-line: color-mix(in srgb, var(--color-ink) 14%, transparent); --mid-muted: var(--text-secondary); --mid-accent: var(--display-rose); position: relative; isolation: isolate; overflow: hidden; background: var(--color-canvas); color: var(--color-ink); }
+.footerSection { --color-canvas: #101310; --color-ink: #f6f8f3; --text-secondary: #b8c2b5; --text-tertiary: #b8c2b5; --surface-line: #475047; background: #101310; border-radius: 28px 28px 0 0; color-scheme: dark; }
+:global(.landing-page) .footerSection { background: #101310; }
 .footerSection > :global([data-brand-veil]) { opacity: .8; }
 :global(.dark) .footerSection { --mid-accent: var(--display-rose); }
 .footerInner { position: relative; z-index: 1; width: 100%; max-width: 1280px; margin-inline: auto; padding: 48px 24px 24px; }

@@ -16,12 +16,12 @@
    ============================================================ */
 
 @theme {
-  --font-display: 'Avenir Next', 'Helvetica Neue', var(--font-syne), ui-sans-serif, system-ui, sans-serif;
-  --font-heavy: 'Avenir Next', 'Helvetica Neue', var(--font-syne), ui-sans-serif, system-ui, sans-serif;
-  --font-dirty: "Dirtyline", "Space Grotesk", sans-serif;
-  --font-old-english: "Old English", serif;
-  --font-sans: 'Avenir Next', 'Helvetica Neue', var(--font-geist), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "Martian Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-display: var(--font-google-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-heavy: var(--font-google-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-dirty: var(--font-google-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-old-english: var(--font-google-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-google-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-google-sans), ui-sans-serif, system-ui, sans-serif;
 
   /* Neutral surfaces shared across both themes. */
   --color-canvas: #ffffff;
@@ -346,7 +346,7 @@
   font-style: normal;
   font-display: swap;
 }
-.font-old-english { font-family: "Old English", serif !important; }
+.font-old-english { font-family: var(--font-sans) !important; }
 
 @font-face {
   font-family: "Dirtyline";
@@ -355,7 +355,7 @@
   font-style: normal;
   font-display: swap;
 }
-.font-dirty { font-family: var(--font-dirty) !important; }
+.font-dirty { font-family: var(--font-sans) !important; }
 
 @font-face {
   font-family: "Satoshi";
@@ -459,8 +459,8 @@ body {
 }
 
 ::selection {
-  background: var(--nex-pink);
-  color: var(--primary-foreground);
+  background: #dcefd7;
+  color: #1f3021;
 }
 
 ::-webkit-scrollbar {
@@ -1102,9 +1102,8 @@ select.field-input option {
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-/* The EasyChat highlight spans multiple lines: paint the ink above, not through, its cloned marker strokes. */
+/* EasyChat uses solid ink so its secondary line can stay quietly grey. */
 .landing-page #easychat-title { background-image: none; color: var(--color-ink); -webkit-text-fill-color: var(--color-ink); }
-.landing-page #easychat-title [data-highlight-ink] { background-clip: border-box; -webkit-background-clip: border-box; color: var(--color-ink); -webkit-text-fill-color: var(--color-ink); }
 /* BlurReveal renders each glyph separately, so each letter samples the same title-wide ramp. */
 :is(.landing-page, .service-page) :is(h1, h2)[data-blur-reveal] [data-blur-letter] {
   color: var(--heading-letter-color);
@@ -1531,6 +1530,8 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
   [data-hero-scroll] { transform: none !important; opacity: 1 !important; }
 }
 @media (forced-colors: active) { .brand-veil { display: none; } }
+/* Reserve room for the quiz invitation without covering the Hero's main action. */
+@media (max-width: 767px) and (min-height: 760px) { .landing-page .hero-container { padding-bottom: clamp(216px, 26svh, 246px); } }
 
 /* Site palette: dark canvas, neutral panels and ezway green actions.
    Layers: scenery 0, content 1, lower edge 30, upper edge 40, header/menus 50,

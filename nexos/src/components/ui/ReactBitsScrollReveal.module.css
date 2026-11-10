@@ -1,0 +1,4 @@
+.reveal { margin: 0; }
+.text { display: block; font: 650 clamp(30px, 5vw, 64px)/1.18 var(--font-display); letter-spacing: -.045em; text-wrap: balance; }
+.word, .piece { display: inline-block; }
+@media (prefers-reduced-motion: reduce) { .piece { opacity: 1 !important; transform: none !important; filter: none !important; } }

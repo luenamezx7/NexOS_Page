@@ -6,7 +6,7 @@ import { SiteAtmosphere } from '@/components/SiteAtmosphere';
 import { JsonLd } from '@/components/JsonLd';
 import { config } from '@/config';
 import { organizationData, pageMetadata, SITE_URL } from '@/lib/seo';
-import { geist, syne } from '@/lib/site-fonts';
+import { googleSans } from '@/lib/site-fonts';
 import { LocaleProvider } from '@/lib/locale';
 import { RouteLoadingProgress } from '@/components/RouteLoadingProgress';
 
@@ -58,9 +58,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR" className={`${geist.variable} ${syne.variable} font-sans dark`}>
+    <html lang="pt-BR" className={`${googleSans.variable} font-sans dark`}>
       <head>
-        <link rel="preload" href="/fonts/martian-mono-variable.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <meta name="color-scheme" content="dark" />
       </head>
       <body className="min-h-screen min-h-dvh w-full max-w-full overflow-x-clip antialiased">

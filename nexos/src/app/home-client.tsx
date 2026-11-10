@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { Header } from '@/components/Header';
 import { Hero } from '@/components/Hero';
+import { HeroBrandStrip } from '@/components/HeroBrandStrip';
 import { ScrollProgress } from '@/components/ScrollProgress';
 import { SectionBackground } from '@/components/sections/SectionBackground';
 import { LandingPageBlur } from '@/components/sections/LandingPageBlur';
@@ -12,7 +13,9 @@ import { PlateManagement } from '@/components/sections/PlateManagement';
 import { HomepageJourneyMotion } from '@/components/sections/HomepageJourneyMotion';
 import BrandEntrance from '@/components/BrandEntrance';
 import { useLocale } from '@/lib/locale';
-import { TextScrollAnimation } from '@/components/ui/text-scroll-animation';
+import { TransitionGuide } from '@/components/sections/TransitionGuide';
+import { RealEstateVideo } from '@/components/sections/RealEstateVideo';
+import styles from './HomePanels.module.css';
 
 const Services = dynamic(() => import('@/components/Services').then(m => m.Services));
 const AboutUs = dynamic(() => import('@/components/AboutUs').then(m => m.AboutUs));
@@ -69,16 +72,20 @@ export default function HomeClient() {
         <ScrollProgress />
         <div className="relative">
           <div id="main-content" tabIndex={-1} className="relative">
-            <Hero ref={heroRef} />
-             <SectionBackground index={0} scene="product" experience="nfc">
-                <PlacaNFCSection onSelectUse={setSelectedPlateUse} />
-             </SectionBackground>
-              <SectionBackground index={1} experience="solutions">
-                <TextScrollAnimation text={t('Da placa ao próximo passo')} />
-                <Services selectedUse={selectedPlateUse} />
-             </SectionBackground>
-             <SectionBackground index={2} experience="plate-management"><PlateManagement /></SectionBackground>
-              <SectionBackground index={3} experience="easychat"><TextScrollAnimation text={t('Menos tarefas. Mais negócio.')} /><EasyChat /></SectionBackground>
+              <Hero ref={heroRef} />
+              <ContactForm />
+              <HeroBrandStrip />
+              <SectionBackground index={0} scene="product" experience="nfc">
+                 <PlacaNFCSection onSelectUse={setSelectedPlateUse} />
+              </SectionBackground>
+               <TransitionGuide text={t('Da placa ao próximo passo')} afterProduct />
+               <SectionBackground index={1} experience="solutions">
+                  <Services selectedUse={selectedPlateUse} />
+               </SectionBackground>
+               <SectionBackground index={1} experience="real-estate-video"><RealEstateVideo /></SectionBackground>
+               <SectionBackground index={2} experience="plate-management"><PlateManagement /></SectionBackground>
+              <TransitionGuide text={t('Menos tarefas. Mais negócio.')} />
+               <SectionBackground index={3} experience="easychat"><EasyChat /></SectionBackground>
              <SectionBackground index={4} scene="waves" experience="process">
                <DeliveryProcess />
              </SectionBackground>
@@ -89,10 +96,10 @@ export default function HomeClient() {
               <SectionBackground index={7} experience="about">
               <AboutUs />
             </SectionBackground>
-            <SectionBackground index={8} experience="contact">
-              <FAQ />
-              <ContactForm />
-              <CTAFinal />
+               <SectionBackground index={8} experience="contact">
+               <FAQ />
+               <div className={styles.quizReturn}><p>{t('Quer descobrir uma sugestão para o seu negócio?')}</p><a href="#contact">{t('Responder ao quiz')}</a></div>
+               <CTAFinal />
               <SocialInvite />
             </SectionBackground>
           </div>

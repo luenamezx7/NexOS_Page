@@ -7,7 +7,6 @@ import { ScrollReveal } from '../ScrollReveal';
 import { Iphone } from '../ui/iphone';
 import { PhoneScrollHero } from '../ui/phone-scroll-hero';
 import { GlowingBadge } from '../unlumen-ui/primitives/glowing-badge';
-import { HighlightedText } from '../highlighted-text';
 import { ArrowLeft, Bell, CheckCheck, FileText, Files, Mic, MoreVertical, Paperclip, PenLine, Phone, ReceiptText, Smile } from 'lucide-react';
 import styles from './EasyChat.module.css';
 import { useLocale } from '@/lib/locale';
@@ -33,7 +32,7 @@ export function EasyChat() {
   return <section id="easychat" aria-labelledby="easychat-title" className={styles.section}>
     <div className={styles.container}>
       <div className={styles.top}><span>{t('Assistente administrativo com IA')}</span><GlowingBadge variant="neutral" pulse={false} className={styles.statusBadge}>{t('Em desenvolvimento')}</GlowingBadge></div>
-      <PhoneScrollHero titleComponent={<div className={styles.intro}><p className={styles.name}>{easychat.name}</p><h2 id="easychat-title" className={styles.heading}>{t('Menos tarefas.')} <HighlightedText inView multiline from="bottom">{t('Mais tempo para o negócio.')}</HighlightedText></h2></div>}>
+      <PhoneScrollHero titleComponent={<div className={styles.intro}><p className={styles.name}>{easychat.name}</p><h2 id="easychat-title" className={styles.heading}>{t('Menos tarefas.')} <span className={styles.secondaryLine}>{t('Mais tempo para o negócio.')}</span></h2></div>}>
         <figure className={styles.mockup} data-journey-visual>
           <div ref={conversationRef} className={styles.phonePreview} role="img" aria-label={t('Conversa no EasyChat com documento para revisão')}>
             <Iphone className={styles.device} aria-hidden="true">

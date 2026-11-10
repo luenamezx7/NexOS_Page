@@ -10,7 +10,6 @@ import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-r
 import { usePresentationActive, usePresentationRevealing } from '@/lib/use-presentation-active';
 import { ScrollReveal } from './ScrollReveal';
 import { useSectionScroll } from './SmoothScrollProvider';
-import { HeroBrandStrip } from './HeroBrandStrip';
 import { useLocale } from '@/lib/locale';
 
 const subscribeHydration = () => () => {};
@@ -54,7 +53,6 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
            </ScrollReveal>
         </motion.div>
       </motion.div>
-      <HeroBrandStrip active={showHero} />
     </section>
   );
 });

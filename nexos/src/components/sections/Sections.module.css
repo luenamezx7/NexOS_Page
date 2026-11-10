@@ -37,6 +37,9 @@
 :global(.dark) .scene[data-home-experience="easychat"] .scenery { background: none; }
 :global(.dark) .scene[data-home-experience="nfc"] .fieldImage { display: none; }
 .section { scroll-margin-top: 100px; }
+/* Full-bleed product panel: both edges are visible against the page between sections. */
+.scene[data-home-experience='nfc'] { --section-ground: #101310; --color-canvas: #101310; --color-ink: #f6f8f3; --text-secondary: #b8c2b5; --text-tertiary: #b8c2b5; --surface-base: #1c221d; --surface-raised: #242a24; --surface-inset: #151a15; --surface-line: #475047; --detail-text: #c6f78c; --palette-ink: #f6f8f3; color: #f6f8f3; color-scheme: dark; border-radius: 28px; margin-bottom: 24px; }
+:global(.dark) .scene[data-home-experience='nfc'] { --section-ground: #101310; }
 .productBridge .container { display: flex; flex-wrap: wrap; align-items: baseline; gap: 16px 28px; padding-block: clamp(28px, 4vw, 48px) 12px; }
 .productBridge h2 { font: 700 clamp(20px, 2.8vw, 34px)/1.15 var(--font-display); letter-spacing: -.035em; }
 .productBridge h2 span { color: var(--pink-text); }

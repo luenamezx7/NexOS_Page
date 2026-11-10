@@ -1,6 +1,6 @@
 'use client';
 
-import { useSyncExternalStore } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 import GradualBlur from '../ui/GradualBlur';
 import { usePresentationActive } from '@/lib/use-presentation-active';
 
@@ -13,7 +13,17 @@ const subscribe = (callback: () => void) => {
 export function LandingPageBlur() {
   const entryOpen = usePresentationActive();
   const mobile = useSyncExternalStore(subscribe, () => matchMedia('(max-width: 767px)').matches, () => false);
-  if (entryOpen) return null;
+  const [quizVisible, setQuizVisible] = useState(false);
+
+  useEffect(() => {
+    const quiz = document.getElementById('contact');
+    if (!quiz) return;
+    const observer = new IntersectionObserver(([entry]) => setQuizVisible(entry.isIntersecting));
+    observer.observe(quiz);
+    return () => observer.disconnect();
+  }, []);
+
+  if (entryOpen || quizVisible) return null;
   return <>
     <GradualBlur target="page" position="top" height={mobile ? 'clamp(48px, 9svh, 72px)' : 'clamp(72px, 12svh, 120px)'} strength={mobile ? 1.5 : 3}
       layers={mobile ? 2 : 4} curve="linear" exponential

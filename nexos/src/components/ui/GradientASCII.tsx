@@ -17,7 +17,7 @@ const ATLAS_COLUMNS = 16;
 const FONT_SCALE = 0.78;
 const DEFAULT_COLORS = HERO_PALETTES.dark;
 const DEFAULT_CHARACTERS = ' =+xX0S8#@';
-const DEFAULT_FONT = '"Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
+const DEFAULT_FONT = '"Google Sans", Arial, sans-serif';
 const SHAPES = { horizon: 0, pinch: 1, rise: 2, eclipse: 3 };
 const CLICK_EFFECTS = { none: 0, wave: 1, burst: 2 };
 

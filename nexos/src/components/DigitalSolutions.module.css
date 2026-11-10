@@ -61,59 +61,48 @@
 @media (prefers-reduced-transparency: reduce) { :global(.dark) :is(.website, .landing, .menu) { background: var(--glass-solid); -webkit-backdrop-filter: none; backdrop-filter: none; } }
 @media (forced-colors: active) { :global(.dark) :is(.website, .landing, .menu) { background: Canvas; border-color: CanvasText; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; } }
 
-/* The laptop is sticky; the two supplied illustrations travel inside its screen. */
-.journey { scroll-margin-top: 100px; }
-.journeyContainer { max-width: 1280px; margin: auto; }
-.journeyGrid { margin: 0; }
-.stage {
-  --device-width: min(900px, calc(100cqw - 24px));
-  --device-bottom: clamp(18px, 4svh, 36px);
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  width: 100%;
-  height: 100svh;
-  container-type: inline-size;
-}
-.journeyTitle {
-  position: absolute;
-  bottom: calc(100% + 28px);
-  left: 50%;
-  width: min(24ch, calc(100cqw - 32px));
-  margin: 0;
-  color: var(--color-ink);
-  font: 650 clamp(32px, 4vw, 56px)/1.12 var(--font-display);
-  letter-spacing: -.045em;
-  text-align: center;
-  text-wrap: balance;
-  transform: translateX(-50%);
-}
-.macbook { position: absolute; bottom: var(--device-bottom); left: 50%; width: var(--device-width); transform: translateX(-50%); }
-.macbookMotion { position: relative; transform-origin: 50% 65%; }
+/* Four illustrated digital solutions travel on a reversible, scroll-linked arc. */
+.journey { position: relative; scroll-margin-top: 100px; }
+.stage { position: sticky; top: 0; height: 100svh; min-height: 500px; overflow: hidden; isolation: isolate; }
+.journeyTitle { position: absolute; top: clamp(96px, 11svh, 116px); left: 50%; z-index: 20; width: min(24ch, calc(100% - 40px)); transform: translateX(-50%); color: var(--color-ink); font: 650 clamp(28px, 4vw, 50px)/1.12 var(--font-display); letter-spacing: -.04em; text-align: center; text-wrap: balance; }
+.arc { position: absolute; inset: 0; pointer-events: none; }
+.deviceSlot { position: absolute; left: 50%; top: 46%; width: min(650px, 58vw); transform-origin: center; pointer-events: none; will-change: transform, opacity; transition: transform 280ms cubic-bezier(.22, 1, .36, 1), opacity 240ms ease; }
+.deviceSlot[data-active='true'] { filter: drop-shadow(0 12px 18px rgb(0 0 0 / 12%)); }
+.device { position: relative; width: 100%; }
 .macbookFrame { display: block; width: 100%; height: auto; }
-.macbookScreen {
-  position: absolute;
-  inset: calc(3.474% - 1px) calc(10.0917% - 1px) calc(11.255% - 1px);
-  overflow: hidden;
-  border-radius: 5px 5px 0 0;
-  background: var(--bg-surface);
-  isolation: isolate;
-}
-.macbookScreen::after { position: absolute; top: 0; left: 50%; z-index: 2; width: 13.45%; height: 3.45%; border-radius: 0 0 6px 6px; background: #000; transform: translateX(-50%); pointer-events: none; content: ''; }
-.macbookSlide { position: absolute; inset: 0; background: #f7f5f0; }
-.macbookSlide:first-child { z-index: 1; }
-.macbookSlide img { display: block; }
+.macbookScreen { position: absolute; inset: calc(3.474% - 1px) calc(10.0917% - 1px) calc(11.255% - 1px); border-radius: 5px 5px 0 0; overflow: hidden; background: #f7f5f0; isolation: isolate; }
+.notch { position: absolute; top: 0; left: 50%; z-index: 3; width: 13.45%; height: 3.45%; border-radius: 0 0 6px 6px; background: #000; transform: translateX(-50%); }
+.screenImage { object-fit: cover; object-position: top center; }
+.demoScreen { height: 100%; background: #f6f4ee; color: #202721; font-family: var(--font-sans); }
+.demoNav { display: flex; align-items: center; justify-content: space-between; gap: 10px; height: 12%; padding-inline: 4%; font-size: clamp(8px, 1.05vw, 14px); }
+.demoNav span:first-child { font-weight: 800; font-size: 1.35em; }
+.demoPhoto { position: relative; height: 61%; overflow: hidden; }
+.demoCopy { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 2% 4%; }
+.demoCopy strong { font: 600 clamp(13px, 2.4vw, 32px)/1.1 var(--font-display); }
+.demoCopy span { font-size: clamp(8px, 1vw, 13px); }
+.demoLanding { background: #e9e3d7; color: #283329; }
+.arcBottom { position: absolute; z-index: 20; bottom: clamp(45px, 8svh, 82px); left: 50%; width: min(520px, calc(100% - 40px)); transform: translateX(-50%); text-align: center; }
+.arcCaption { margin-inline: auto; }
+.arcCaption > span { font-size: 12px; color: var(--text-secondary); }
+.arcCaption h3 { margin-top: 8px; font: 650 clamp(22px, 2.5vw, 30px)/1.2 var(--font-display); }
+.arcCaption p { margin: 8px auto 0; max-width: 44ch; color: var(--text-secondary); font-size: 15px; line-height: 1.45; }
+.staticCaption { display: none; }
 .steps { margin-top: -100svh; pointer-events: none; }
 .steps > div { height: 100svh; }
 @media (max-width: 767px) {
-  .stage { --device-width: min(100cqw, 560px); --device-bottom: clamp(96px, 20svh, 170px); }
-  .journeyTitle { bottom: calc(100% + 20px); font-size: clamp(25px, 7.3vw, 34px); }
+  .stage { min-height: 530px; }
+  .journeyTitle { top: 100px; font-size: clamp(25px, 7vw, 36px); }
+  .deviceSlot { width: min(600px, 94vw); top: 45%; }
+  .arcBottom { bottom: 9svh; }
+  .arcCaption p { max-width: 31ch; font-size: 13px; }
 }
-@media (max-height: 640px) {
-  .stage { --device-width: min(100cqw, calc((100svh - 190px) * 1.646)); --device-bottom: 24px; }
-  .journeyTitle { bottom: calc(100% + 14px); }
-}
+@media (max-height: 640px) { .journeyTitle { top: 78px; font-size: clamp(23px, 4vw, 36px); } .deviceSlot { width: min(600px, 94vw, 70svh); top: 43%; } .arcBottom { bottom: 4svh; } .arcCaption p { display: none; } }
 @media (prefers-reduced-motion: reduce) {
-  .macbookSlide { visibility: hidden; }
-  .macbookSlide[data-active='true'] { visibility: visible; transform: none; }
+  .steps, .arcBottom { display: none; }
+  .stage { position: relative; height: auto; min-height: 0; overflow: visible; padding: 96px 24px; }
+  .journeyTitle { position: static; width: min(100%, 30ch); margin: 0 auto 56px; transform: none; }
+  .arc { position: static; display: grid; gap: 32px; max-width: 720px; margin: auto; }
+  .deviceSlot { position: static; width: 100%; opacity: 1 !important; transform: none !important; transition: none; will-change: auto; }
+  .staticCaption { display: grid; gap: 4px; margin: 12px 0 0; font-size: 18px; font-weight: 650; }
+  .staticCaption span { color: var(--text-secondary); font-size: 14px; font-weight: 400; }
 }

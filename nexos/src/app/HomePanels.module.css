@@ -1,0 +1,6 @@
+.quizReturn { display: flex; align-items: center; justify-content: space-between; gap: 24px; max-width: 1200px; margin: 40px auto 80px; padding: 28px 32px; border-radius: 18px; background: var(--surface-raised); color: var(--color-ink); }
+.quizReturn p { font: 600 clamp(20px, 2.4vw, 30px)/1.25 var(--font-display); }
+.quizReturn a { display: inline-flex; flex: none; align-items: center; justify-content: center; min-height: 48px; padding: 12px 20px; border-radius: 12px; background: var(--palette-cta); color: var(--palette-cta-ink); font-weight: 700; transition: background-color .2s ease, transform .2s ease; }
+.quizReturn a:hover { background: var(--palette-cta-hover); transform: translateY(-2px); }
+.quizReturn a:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
+@media (max-width: 767px) { .quizReturn { margin: 24px 24px 64px; padding: 24px; align-items: flex-start; flex-direction: column; } }
