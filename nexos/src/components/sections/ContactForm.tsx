@@ -22,7 +22,7 @@ export function ContactForm() {
   const [contactOpen, setContactOpen] = useState(false);
   const headingRef = useRef<HTMLHeadingElement>(null);
 
-  useEffect(() => { if (step > 0 || contactOpen) headingRef.current?.focus(); }, [step, contactOpen]);
+  useEffect(() => { if (step > 0 || contactOpen) headingRef.current?.focus({ preventScroll: true }); }, [step, contactOpen]);
 
   const complete = step === LEAD_QUESTIONS.length;
   const recommendation = complete ? QUIZ_SOLUTIONS[recommendQuizSolution(answers)] : null;

@@ -6,7 +6,7 @@
   width: 100%;
   background: var(--section-ground);
 }
-.scene[data-tone="alternate"] { --section-ground: #f3f6f1; --gradient-heading: linear-gradient(90deg, var(--color-ink) 0%, var(--color-ink) 13%, var(--purple-600) 68%, var(--purple-700) 100%); }
+.scene[data-tone="alternate"] { --section-ground: #f7f4f7; --gradient-heading: var(--gradient-brand); }
 :global(.dark) .scene[data-tone="alternate"] { --gradient-heading: linear-gradient(90deg, var(--text-primary) 0%, var(--text-primary) 13%, var(--purple-300) 68%, var(--purple-400) 100%); }
 .scene[data-scene="product"] { --section-ground: #eff5e8; }
 :global(.dark) .scene { --section-ground: var(--bg-base); }
@@ -38,8 +38,8 @@
 :global(.dark) .scene[data-home-experience="nfc"] .fieldImage { display: none; }
 .section { scroll-margin-top: 100px; }
 /* Full-bleed product panel: both edges are visible against the page between sections. */
-.scene[data-home-experience='nfc'] { --section-ground: #101310; --color-canvas: #101310; --color-ink: #f6f8f3; --text-secondary: #b8c2b5; --text-tertiary: #b8c2b5; --surface-base: #1c221d; --surface-raised: #242a24; --surface-inset: #151a15; --surface-line: #475047; --detail-text: #c6f78c; --palette-ink: #f6f8f3; color: #f6f8f3; color-scheme: dark; border-radius: 28px; margin-bottom: 24px; }
-:global(.dark) .scene[data-home-experience='nfc'] { --section-ground: #101310; }
+.scene[data-home-experience='nfc'] { --section-ground: var(--bg-surface); --color-canvas: var(--bg-surface); --color-ink: var(--palette-ink); --text-secondary: var(--palette-muted); --text-tertiary: var(--palette-muted); --surface-base: var(--bg-card); --surface-raised: var(--bg-elevated); --surface-inset: var(--palette-bg); --surface-line: var(--palette-border); --detail-text: var(--palette-highlight); color: var(--palette-ink); color-scheme: dark; border-radius: 32px; margin-bottom: 24px; }
+:global(.dark) .scene[data-home-experience='nfc'] { --section-ground: var(--bg-surface); }
 .productBridge .container { display: flex; flex-wrap: wrap; align-items: baseline; gap: 16px 28px; padding-block: clamp(28px, 4vw, 48px) 12px; }
 .productBridge h2 { font: 700 clamp(20px, 2.8vw, 34px)/1.15 var(--font-display); letter-spacing: -.035em; }
 .productBridge h2 span { color: var(--pink-text); }
@@ -116,8 +116,8 @@
 .channels { display: grid; gap: 22px; margin-block: 30px; }
 .channelLabel { display: flex; justify-content: space-between; font: 12px var(--font-mono); margin-bottom: 9px; }
 .barTrack { height: 8px; background: var(--surface-inset); border-radius: 6px; overflow: hidden; }
-.barTrack > div { height: 100%; background: linear-gradient(90deg, #639d1c, var(--landing-accent)); transform-origin: left; border-radius: inherit; }
-.channels > div:nth-child(2) .barTrack > div { background: linear-gradient(90deg, #94e01f, var(--electric-blue)); }
+.barTrack > div { height: 100%; background: linear-gradient(90deg, #ad125d, var(--landing-accent)); transform-origin: left; border-radius: inherit; }
+.channels > div:nth-child(2) .barTrack > div { background: linear-gradient(90deg, #e6197d, var(--electric-blue)); }
 .channels > div:nth-child(2) .barTrack > div { opacity: .65; }
 .channels > div:nth-child(3) .barTrack > div { opacity: .4; }
 .channelPanel .demoNote { margin-top: auto; }

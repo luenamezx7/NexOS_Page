@@ -37,7 +37,7 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
 
   return (
     <section ref={sectionRef} id="hero" tabIndex={-1} aria-labelledby="hero-title" data-home-experience="hero" data-managed-section-links data-nav-ready={navigationReady} className={cn('landing-hero oceanic-surface', className)}>
-      {showHero && <div className="hero-fibers" aria-hidden="true"><GhostFibers glowColor="#ffffff" secondaryColor="#ffffff" lineColor="#ffffff" layers={2} threads={48} density={0.7} particles={0.22} sparkle={0.35} glow={0.7} brightness={1.1} speed={0.24} flow={0.18} dpr={1.25} mouseInteraction pulseOnClick intro={false} paused={reduce} /></div>}
+      {showHero && <div className="hero-fibers" aria-hidden="true"><GhostFibers glowColor="#ffaad8" secondaryColor="#ffffff" lineColor="#ff67b4" layers={2} threads={32} density={0.7} particles={0.12} sparkle={0.25} glow={0.65} brightness={1.1} speed={0.24} flow={0.18} dpr={1} mouseInteraction pulseOnClick intro={false} paused={reduce} /></div>}
       <motion.div className="hero-container" data-hero-scroll style={reduce ? undefined : { scale, y, opacity }}>
         <motion.div className="hero-copy" initial={false} animate={showHero ? 'show' : 'hidden'}
           variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { duration: reduce ? 0 : .6 } } }}>

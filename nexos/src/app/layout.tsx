@@ -15,10 +15,10 @@ export const metadata: Metadata = {
   applicationName: config.brand.fullName,
   icons: {
     icon: [
-       { url: '/favicon.png?v=4', type: 'image/png', sizes: '192x192' },
+       { url: '/favicon.png?v=5', type: 'image/png', sizes: '192x192' },
     ],
-    shortcut: '/favicon.png?v=4',
-    apple: { url: '/favicon.png?v=4', type: 'image/png', sizes: '192x192' },
+    shortcut: '/favicon.png?v=5',
+    apple: { url: '/favicon.png?v=5', type: 'image/png', sizes: '192x192' },
   },
   title: {
     default: config.meta.title,

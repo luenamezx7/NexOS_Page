@@ -15,7 +15,7 @@
 @media (hover: hover) { .socialButton:hover { box-shadow: var(--action-hover-shadow); } }
 .socialButton:focus-visible { outline: 2px solid var(--ring); outline-offset: 4px; }
 
-.closing { position: relative; z-index: 31; isolation: isolate; width: 100%; height: clamp(260px, 32vw, 450px); overflow: hidden; background: #050606; }
+.closing { position: relative; z-index: 31; isolation: isolate; width: 100%; height: clamp(260px, 32vw, 450px); overflow: hidden; background: var(--bg-base); }
 .closingCaption { position: absolute; top: clamp(64px, 8vw, 104px); left: 0; width: 100%; margin: 0; color: #bac4b7; font: 14px/1.7 var(--font-sans); text-align: center; }
 .wordmarkCrop { position: absolute; right: 0; bottom: 0; left: 0; transform: translateY(20%); }
 .wordmarkLink { display: block; width: min(88%, 1200px); margin-inline: auto; border-radius: 8px; text-decoration: none; cursor: pointer; }

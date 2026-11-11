@@ -19,7 +19,8 @@ export function PhoneScrollHero({ titleComponent, children, className }: { title
       const phone = phoneRef.current;
       const title = titleRef.current;
       const mm = gsap.matchMedia();
-      mm.add('(prefers-reduced-motion: no-preference)', () => {
+      // Mobile keeps the phone in native flow; per-frame top updates contend with touch scroll.
+      mm.add('(min-width: 768px) and (prefers-reduced-motion: no-preference)', () => {
         const timeline = gsap.timeline({ scrollTrigger: { trigger: section, start: 'top bottom', end: 'bottom top', scrub: .35 } });
         timeline.fromTo(title, { top: -12, opacity: .75 }, {
           top: 12, opacity: 1, ease: 'none', modifiers: { top: value => `${Math.round(parseFloat(value))}px` },

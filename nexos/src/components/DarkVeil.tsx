@@ -89,7 +89,7 @@ function link(gl: WebGL2RenderingContext, fragmentSource: string): VeilProgram |
 
 /** React Bits DarkVeil, with typed props and a visibility-aware, resize-safe renderer. */
 export function DarkVeil({
-  color = '#94e01f', speed = 0.5, scale = 1, rotation = 0, flow = 1, warp = 0,
+  color = '#e6197d', speed = 0.5, scale = 1, rotation = 0, flow = 1, warp = 0,
   variation = 0, brightness = 1, sheen = 0, glow = 0.4, grain = 0.03,
   quality = 0.5, mouseInteraction = true, mouseStrength = 1, intro = true,
   fade = 0, opacity = 1, lightMode = false, paused = false, dpr, className, ...rest
