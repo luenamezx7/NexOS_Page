@@ -79,7 +79,8 @@
 /* Footer */
 .footerSection { --mid-surface: color-mix(in srgb, var(--color-ink) 3%, var(--color-canvas)); --mid-line: color-mix(in srgb, var(--color-ink) 14%, transparent); --mid-muted: var(--text-secondary); --mid-accent: var(--display-rose); position: relative; isolation: isolate; overflow: hidden; background: var(--color-canvas); color: var(--color-ink); }
 .footerSection { --color-canvas: var(--bg-surface); --color-ink: var(--palette-ink); --text-secondary: var(--palette-muted); --text-tertiary: var(--palette-muted); --surface-line: var(--palette-border); background: var(--bg-surface); border-radius: 32px 32px 0 0; color-scheme: dark; }
-:global(.landing-page) .footerSection { background: var(--bg-surface); }
+:global(.landing-page) .footerSection { background: transparent; }
+:global(.landing-page) .footerSection::before { content: ''; position: absolute; inset: 0; z-index: 0; border-radius: inherit; background: var(--bg-surface); mask-image: linear-gradient(to bottom, #000 calc(100% - 120px), transparent 100%); pointer-events: none; }
 .footerSection > :global([data-brand-veil]) { opacity: .8; }
 :global(.dark) .footerSection { --mid-accent: var(--display-rose); }
 .footerInner { position: relative; z-index: 1; width: 100%; max-width: 1280px; margin-inline: auto; padding: 48px 24px 24px; }
@@ -110,6 +111,7 @@
   .bentoCard, .pillarRow { padding-inline: 16px; }
   .terminalBar { padding-inline: 12px; }
 }
+@media (max-width: 767px) { .footerSection { border-radius: 24px 24px 0 0; } }
 @media (min-width: 640px) {
   .bentoGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .pillarRow { grid-template-columns: auto minmax(0, 1fr); padding: 24px; align-items: start; }

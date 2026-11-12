@@ -1,11 +1,11 @@
 'use client';
 
-import { forwardRef, useImperativeHandle, useRef, useSyncExternalStore } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useSyncExternalStore } from 'react';
 import ButtonWithIcon from './ui/button-witn-icon';
 import GhostFibers from './GhostFibers';
 import { TextType } from './ui/TextType';
 import { cn } from '@/lib/utils';
-import { motion, useScroll, useTransform } from 'motion/react';
+import { motion } from 'motion/react';
 import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { usePresentationActive, usePresentationRevealing } from '@/lib/use-presentation-active';
 import { ScrollReveal } from './ScrollReveal';
@@ -30,15 +30,32 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
   const showHero = !entryOpen || revealing;
   const sectionRef = useRef<HTMLElement>(null);
   useImperativeHandle(ref, () => sectionRef.current!);
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end start'] });
-  const scale = useTransform(scrollYProgress, [0, 1], [1, .975]);
-  const y = useTransform(scrollYProgress, [0, 1], [0, -28]);
-  const opacity = useTransform(scrollYProgress, [0, .85, 1], [1, .55, .25]);
+  useEffect(() => {
+    const hero = sectionRef.current;
+    if (!hero) return;
+    // Safari toolbar expansion changes the visible height during a touch gesture.
+    // Keep the hero/quiz boundary at its initial small-viewport position; only
+    // recalculate when the viewport width (or orientation) actually changes.
+    let width = window.innerWidth;
+    const measure = () => {
+      hero.style.removeProperty('--hero-stable-height');
+      hero.style.setProperty('--hero-stable-height', getComputedStyle(hero).minHeight);
+    };
+    if (width < 768) measure();
+    const onResize = () => {
+      if (window.innerWidth === width) return;
+      width = window.innerWidth;
+      if (width < 768) measure();
+      else hero.style.removeProperty('--hero-stable-height');
+    };
+    window.addEventListener('resize', onResize);
+    return () => { window.removeEventListener('resize', onResize); hero.style.removeProperty('--hero-stable-height'); };
+  }, []);
 
   return (
     <section ref={sectionRef} id="hero" tabIndex={-1} aria-labelledby="hero-title" data-home-experience="hero" data-managed-section-links data-nav-ready={navigationReady} className={cn('landing-hero oceanic-surface', className)}>
-      {showHero && <div className="hero-fibers" aria-hidden="true"><GhostFibers glowColor="#ffaad8" secondaryColor="#ffffff" lineColor="#ff67b4" layers={2} threads={32} density={0.7} particles={0.12} sparkle={0.25} glow={0.65} brightness={1.1} speed={0.24} flow={0.18} dpr={1} mouseInteraction pulseOnClick intro={false} paused={reduce} /></div>}
-      <motion.div className="hero-container" data-hero-scroll style={reduce ? undefined : { scale, y, opacity }}>
+      {showHero && <div className="hero-fibers" aria-hidden="true"><GhostFibers glowColor="#ffffff" secondaryColor="#d9d5dc" lineColor="#ffffff" layers={2} threads={32} density={0.7} particles={0.12} sparkle={0.25} glow={0.65} brightness={1.1} speed={0.24} flow={0.18} dpr={1} mouseInteraction pulseOnClick intro={false} paused={reduce} /></div>}
+      <motion.div className="hero-container" data-hero-scroll>
         <motion.div className="hero-copy" initial={false} animate={showHero ? 'show' : 'hidden'}
           variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { duration: reduce ? 0 : .6 } } }}>
            <ScrollReveal as="p" preset="label" className="hero-eyebrow"><span aria-hidden="true" /> {t('Placa Inteligente NFC + QR Code')}</ScrollReveal>

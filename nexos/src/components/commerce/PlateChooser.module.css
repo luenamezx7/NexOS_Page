@@ -9,9 +9,9 @@
 .option:nth-child(4) .plate { animation-delay: -1.2s; }
 .plateButton:focus-visible { outline: 3px solid var(--pink-soft); outline-offset: 6px; }
 .plateMotion { display: block; }
-@media (hover: hover) { .plateButton:hover .plate { transform: translateY(-4px) rotate(0deg) scale(1.012); } .plateButton:hover .plate::before { opacity: 1; } .plateButton:hover .plateImage { filter: drop-shadow(0 9px 13px rgb(53 120 34 / 18%)) drop-shadow(0 0 3px rgb(255 63 159 / 24%)); } }
+@media (hover: hover) { .plateButton:hover .plate { transform: translateY(-4px) rotate(0deg) scale(1.012); } .plateButton:hover .plate::before { opacity: 1; } .plateButton:hover .plateImage { filter: drop-shadow(0 9px 13px rgb(0 0 0 / 20%)) drop-shadow(0 0 3px rgb(255 255 255 / 24%)); } }
 .plateButton:focus-visible .plate::before { opacity: 1; }
-.plateButton:focus-visible .plateImage { filter: drop-shadow(0 0 4px rgb(255 63 159 / 28%)); }
+.plateButton:focus-visible .plateImage { filter: drop-shadow(0 0 4px rgb(255 255 255 / 28%)); }
 .plateButton:active .plate { transform: translateY(-1px) rotate(0deg) scale(.985); transition-duration: 180ms; }
 .plate { position: relative; isolation: isolate; width: 100%; aspect-ratio: 1; transform: rotate(var(--plate-tilt, 0deg)); transition: transform 550ms var(--ease-fluid); animation: plateFloat 8s ease-in-out infinite; }
 .plate::before { content: ''; position: absolute; z-index: -1; inset: 19% 12%; border-radius: 50%; background: radial-gradient(ellipse, rgb(130 204 63 / 24%), rgb(130 204 63 / 7%) 52%, transparent 75%); filter: blur(17px); opacity: 0; pointer-events: none; transition: opacity 350ms ease; }

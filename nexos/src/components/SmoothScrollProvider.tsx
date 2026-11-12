@@ -13,7 +13,7 @@ const ScrollContext = createContext<ScrollContextValue>({ isScrolling: false, le
 export function useScrollContext() { return useContext(ScrollContext); }
 export function useSectionScroll() { return useScrollContext().scrollToSection; }
 
-/** One navigation controller for links, section buttons, native scroll and Lenis. */
+/** One navigation controller for links, section buttons and scroll. */
 export function SmoothScrollProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [lenis, setLenis] = useState<Lenis | null>(null);
@@ -33,7 +33,10 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     cancelNavigationRef.current?.();
     let cancelled = false;
     let raf = 0;
-    const immediate = options.immediate || matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Native smooth scrolling can keep animating after a touch/wheel interruption,
+    // pulling the page back to the anchor. On touch/native scroll, land directly;
+    // keep the interruptible Lenis animation only where Lenis owns the scroll.
+    const immediate = options.immediate || !lenis || matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (options.history !== 'none' && window.location.hash !== `#${id}`) {
       history.pushState(history.state, '', `#${encodeURIComponent(id)}`);
     }
@@ -46,7 +49,6 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     cancelNavigationRef.current = cancel;
     const finish = () => {
       if (cancelled || !target.isConnected) return;
-      // Resize once after travel so late-loaded sections cannot leave a stale limit.
       lenis?.resize();
       const y = sectionScrollPosition(target);
       if (lenis) lenis.scrollTo(y, { immediate: true });
@@ -80,6 +82,8 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
   }, [lenis]);
 
   useEffect(() => {
+    // Keep the existing desktop smooth-scroll/ScrollTrigger integration.
+    // Touch devices continue to use the browser's compositor-driven scrolling.
     const media = matchMedia('(min-width: 768px) and (pointer: fine) and (prefers-reduced-motion: no-preference)');
     let disposed = false, instance: Lenis | null = null, raf = 0, scrolling = false, generation = 0;
     let timeout: ReturnType<typeof setTimeout> | undefined;
@@ -98,14 +102,11 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     async function setup() {
       stop();
       if (pathname !== '/' || !media.matches || disposed) return;
-      // Native scrolling remains compositor-driven on limited CPUs/GPUs;
-      // the page's visual animations still run and stay visibility-aware.
       const deviceMemory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory;
       if ((deviceMemory !== undefined && deviceMemory <= 4) || (navigator.hardwareConcurrency > 0 && navigator.hardwareConcurrency <= 4)) return;
       const current = generation;
       const { default: Lenis } = await import('lenis');
       if (disposed || !media.matches || current !== generation) return;
-      // Anchor handling belongs to the shared controller, never two scroll systems.
       instance = new Lenis({ duration: 1, lerp: 0.07, wheelMultiplier: 0.9, infinite: false, anchors: false });
       setLenis(instance);
       const { ScrollTrigger } = await import('gsap/ScrollTrigger');
@@ -120,7 +121,6 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     }
     function visibility() {
       cancelAnimationFrame(raf); raf = 0;
-      // Preserve the controller and any modal lock when returning to this tab.
       if (!document.hidden && instance) {
         instance.resize();
         raf = requestAnimationFrame(frame);
@@ -161,8 +161,7 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     };
     const restoreHash = () => {
       cancelAnimationFrame(restoreRaf);
-      // Back/forward can happen before Lenis calls the previous trip's onComplete.
-      // Stop that trip before measuring or restoring the new history destination.
+      // Stop any previous trip before restoring the new history destination.
       cancelNavigationRef.current?.();
       cancelNavigationRef.current = null;
       if (!location.hash || document.querySelector(PRESENTATION_SELECTOR)) return;

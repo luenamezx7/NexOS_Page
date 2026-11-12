@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useInView, useReducedMotion } from 'motion/react';
 import { easychat } from '@/config/easychat';
 import { ScrollReveal } from '../ScrollReveal';
-import { Iphone } from '../ui/iphone';
+import { HighlightedText } from '../highlighted-text';
+import { Iphone15Pro } from '../ui/iphone-15-pro';
 import { PhoneScrollHero } from '../ui/phone-scroll-hero';
 import { GlowingBadge } from '../unlumen-ui/primitives/glowing-badge';
 import { ArrowLeft, Bell, CheckCheck, FileText, Files, Mic, MoreVertical, Paperclip, PenLine, Phone, ReceiptText, Smile } from 'lucide-react';
@@ -31,11 +32,11 @@ export function EasyChat() {
   ];
   return <section id="easychat" aria-labelledby="easychat-title" className={styles.section}>
     <div className={styles.container}>
-      <div className={styles.top}><span>{t('Assistente administrativo com IA')}</span><GlowingBadge variant="neutral" pulse={false} className={styles.statusBadge}>{t('Em desenvolvimento')}</GlowingBadge></div>
-      <PhoneScrollHero titleComponent={<div className={styles.intro}><p className={styles.name}>{easychat.name}</p><h2 id="easychat-title" className={styles.heading}>{t('Menos tarefas.')} <span className={styles.secondaryLine}>{t('Mais tempo para o negócio.')}</span></h2></div>}>
+      <div className={styles.top}><span>{t('Assistente administrativo com IA')}</span><GlowingBadge variant="neutral" className={styles.statusBadge} dotColor="#ff3f9f" glowColor="rgb(255 63 159 / 28%)">{t('Em desenvolvimento')}</GlowingBadge></div>
+      <PhoneScrollHero titleComponent={<div className={styles.intro}><p className={styles.name}>{easychat.name}</p><h2 id="easychat-title" className={styles.heading}>{t('Menos tarefas.')} <span className={styles.secondaryLine}><HighlightedText inView from="bottom" delay={.12}>{t('Mais tempo para o negócio.')}</HighlightedText></span></h2></div>}>
         <figure className={styles.mockup} data-journey-visual>
           <div ref={conversationRef} className={styles.phonePreview} role="img" aria-label={t('Conversa no EasyChat com documento para revisão')}>
-            <Iphone className={styles.device} aria-hidden="true">
+            <Iphone15Pro className={styles.device}>
               <div className={styles.phoneScreen}>
                 <div className={styles.chatHeader}><ArrowLeft size={15} aria-hidden="true" /><span className={styles.avatar} aria-hidden="true">E</span><span className={styles.contact}><strong>EasyChat</strong><small>{t('Em desenvolvimento')}</small></span><Phone size={15} aria-hidden="true" /><MoreVertical size={16} aria-hidden="true" /></div>
                 <div className={styles.chatMessages}>
@@ -47,7 +48,7 @@ export function EasyChat() {
                 </div>
                 <div className={styles.chatCompose}><span className={styles.composeField}><Smile size={16} aria-hidden="true" /><span>{t('Mensagem')}</span><Paperclip size={16} aria-hidden="true" /></span><span className={styles.composeMic}><Mic size={16} aria-hidden="true" /></span></div>
               </div>
-            </Iphone>
+            </Iphone15Pro>
           </div>
           <figcaption>{t('Documentos sob seu controle, direto na conversa.')}</figcaption>
         </figure>

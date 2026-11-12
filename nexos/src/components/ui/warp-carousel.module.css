@@ -1,0 +1,9 @@
+.surface { --warp-stage: 720px; --warp-unit: 1px; position: relative; isolation: isolate; width: 100%; background: transparent; }
+/* The ring: a 3D space where the cards sit on the Warp Carousel geometry. */
+.ring { position: absolute; inset: 0; perspective: calc(734.103 * var(--warp-unit)); perspective-origin: 50% 46%; transform-style: preserve-3d; }
+/* The lens flare at the left and right edges, from the reference stage. */
+.lens { position: absolute; inset: 0; z-index: 11; pointer-events: none; background: linear-gradient(90deg, var(--bg-base), transparent 13%, transparent 87%, var(--bg-base)); opacity: .62; }
+/* The soft glow bands the reference paints above and below the ring. */
+.bands { position: absolute; inset: 0; z-index: 12; pointer-events: none; background: radial-gradient(ellipse 42% 5% at 50% 5%, rgb(255 63 159 / 14%), transparent 95%), radial-gradient(ellipse 38% 5% at 50% 94%, rgb(255 63 159 / 11%), transparent 95%); }
+@media (max-width: 767px) { .surface { --warp-stage: 420px; } .lens { opacity: .3; } .bands { opacity: .8; } }
+@media (forced-colors: active) { .lens, .bands { display: none; } }

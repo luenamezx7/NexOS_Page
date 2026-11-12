@@ -61,14 +61,16 @@
 @media (prefers-reduced-transparency: reduce) { :global(.dark) :is(.website, .landing, .menu) { background: var(--glass-solid); -webkit-backdrop-filter: none; backdrop-filter: none; } }
 @media (forced-colors: active) { :global(.dark) :is(.website, .landing, .menu) { background: Canvas; border-color: CanvasText; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; } }
 
-/* Four illustrated digital solutions travel on a reversible, scroll-linked arc. */
+/* Four illustrated digital solutions travel on the Warp Carousel ring, reversibly. */
 .journey { position: relative; scroll-margin-top: 100px; }
-.stage { position: sticky; top: 0; height: 100svh; min-height: 500px; overflow: hidden; isolation: isolate; }
+/* The stage keeps the sticky position: the ring root only sets the surface. */
+.journey .stage { position: sticky; top: 0; width: calc(100% - 32px); height: var(--journey-viewport-height, 100svh); min-height: 500px; margin-inline: auto; overflow: hidden; border-radius: 32px; }
 .journeyTitle { position: absolute; top: clamp(96px, 11svh, 116px); left: 50%; z-index: 20; width: min(24ch, calc(100% - 40px)); transform: translateX(-50%); color: var(--color-ink); font: 650 clamp(28px, 4vw, 50px)/1.12 var(--font-display); letter-spacing: -.04em; text-align: center; text-wrap: balance; }
-.arc { position: absolute; inset: 0; pointer-events: none; }
-.deviceSlot { position: absolute; left: 50%; top: 46%; width: min(650px, 58vw); transform-origin: center; pointer-events: none; will-change: transform, opacity; transition: transform 280ms cubic-bezier(.22, 1, .36, 1), opacity 240ms ease; }
-.deviceSlot[data-active='true'] { filter: drop-shadow(0 12px 18px rgb(0 0 0 / 12%)); }
-.device { position: relative; width: 100%; }
+.deviceSlot { position: absolute; left: 50%; top: 46%; width: min(650px, 58vw); transform-origin: center; pointer-events: none; will-change: transform, opacity; }
+.deviceSlot::before { content: ''; position: absolute; inset: 4% 6% 18%; z-index: -1; pointer-events: none; border-radius: 40%; background: radial-gradient(ellipse, rgb(231 160 204 / 17%), transparent 71%); opacity: 0; transition: opacity 300ms ease; }
+.deviceSlot[data-active='true']::before { opacity: 1; }
+.device { position: relative; width: 100%; transform-style: preserve-3d; }
+.device::after { content: ''; position: absolute; inset: 2% 4% 10%; pointer-events: none; border-radius: 12px; background: linear-gradient(100deg, transparent 25%, rgb(255 255 255 / 8%) 49%, transparent 69%); opacity: .55; }
 .macbookFrame { display: block; width: 100%; height: auto; }
 .macbookScreen { position: absolute; inset: calc(3.474% - 1px) calc(10.0917% - 1px) calc(11.255% - 1px); border-radius: 5px 5px 0 0; overflow: hidden; background: #f7f5f0; isolation: isolate; }
 .notch { position: absolute; top: 0; left: 50%; z-index: 3; width: 13.45%; height: 3.45%; border-radius: 0 0 6px 6px; background: #000; transform: translateX(-50%); }
@@ -87,21 +89,23 @@
 .arcCaption h3 { margin-top: 8px; font: 650 clamp(22px, 2.5vw, 30px)/1.2 var(--font-display); }
 .arcCaption p { margin: 8px auto 0; max-width: 44ch; color: var(--text-secondary); font-size: 15px; line-height: 1.45; }
 .staticCaption { display: none; }
-.steps { margin-top: -100svh; pointer-events: none; }
-.steps > div { height: 100svh; }
+.steps { margin-top: calc(-1 * var(--journey-viewport-height, 100svh)); pointer-events: none; }
+.steps > div { height: var(--journey-viewport-height, 100svh); }
 @media (max-width: 767px) {
-  .stage { min-height: 530px; }
+  .journey .stage { width: calc(100% - 24px); min-height: 530px; border-radius: 24px; }
+  .deviceSlot { will-change: auto; }
   .journeyTitle { top: 100px; font-size: clamp(25px, 7vw, 36px); }
   .deviceSlot { width: min(600px, 94vw); top: 45%; }
-  .arcBottom { bottom: 9svh; }
+  .arcBottom { bottom: calc(var(--journey-viewport-height, 100svh) * .09); }
   .arcCaption p { max-width: 31ch; font-size: 13px; }
 }
 @media (max-height: 640px) { .journeyTitle { top: 78px; font-size: clamp(23px, 4vw, 36px); } .deviceSlot { width: min(600px, 94vw, 70svh); top: 43%; } .arcBottom { bottom: 4svh; } .arcCaption p { display: none; } }
 @media (prefers-reduced-motion: reduce) {
+  .deviceSlot::before { transition: none; }
   .steps, .arcBottom { display: none; }
-  .stage { position: relative; height: auto; min-height: 0; overflow: visible; padding: 96px 24px; }
+  .journey .stage { position: relative; height: auto; min-height: 0; overflow: visible; padding: 96px 24px; }
   .journeyTitle { position: static; width: min(100%, 30ch); margin: 0 auto 56px; transform: none; }
-  .arc { position: static; display: grid; gap: 32px; max-width: 720px; margin: auto; }
+  :global([data-warp-ring]) { position: static; inset: auto; display: grid; gap: 32px; max-width: 720px; margin: auto; perspective: none; }
   .deviceSlot { position: static; width: 100%; opacity: 1 !important; transform: none !important; transition: none; will-change: auto; }
   .staticCaption { display: grid; gap: 4px; margin: 12px 0 0; font-size: 18px; font-weight: 650; }
   .staticCaption span { color: var(--text-secondary); font-size: 14px; font-weight: 400; }

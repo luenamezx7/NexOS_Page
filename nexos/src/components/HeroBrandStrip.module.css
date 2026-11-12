@@ -1,7 +1,8 @@
-.strip { position: relative; z-index: 1; width: 100%; min-width: 0; align-self: end; background: color-mix(in srgb, var(--color-canvas) 88%, transparent); color: var(--color-ink); }
+.strip { position: relative; z-index: 1; width: 100%; min-width: 0; align-self: end; background: var(--bg-base); color: var(--color-ink); }
+:global([data-home-experience='nfc']) .strip { background: transparent; }
 .viewport { padding-block: 24px; }
 .item { display: inline-flex; flex-shrink: 0; align-items: center; gap: 16px; margin-inline: 28px; white-space: nowrap; font: 500 14px/1.4 var(--font-sans); }
-.spark { width: 5px; height: 5px; flex-shrink: 0; border-radius: 50%; background: var(--detail-accent); }
+.spark { width: 5px; height: 5px; flex-shrink: 0; border-radius: 50%; background: var(--palette-ink); }
 .strip[data-running='false'] [data-marquee-track], .strip:focus-within [data-marquee-track] { animation-play-state: paused !important; }
 .control { position: absolute; top: 50%; right: 8px; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--color-canvas); color: var(--landing-muted); transform: translateY(-50%); }
 .control:hover { color: var(--color-ink); }

@@ -57,6 +57,7 @@ export function CTAFinal() {
 
   return <section ref={sectionRef} id="cta-final" aria-labelledby="cta-title" className={`${styles.section} ${styles.brandCta}`}>
     <span id="manifesto" className={styles.ctaAnchor} aria-hidden="true" />
+    <span id="contact" className={styles.ctaAnchor} aria-hidden="true" />
     <div className={`${styles.container} ${styles.finalCta}`}>
       <div className={styles.ctaLayout}>
            <BlurReveal as="h2" id="cta-title" inView speedReveal={3}>{t('Vamos conectar seu negócio?')}</BlurReveal>

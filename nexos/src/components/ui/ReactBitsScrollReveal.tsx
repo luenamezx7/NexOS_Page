@@ -92,7 +92,7 @@ export default function ReactBitsScrollReveal({
               effect === 'scale' ? `scale(${(.35 + .65 * reveal).toFixed(4)})` : '';
           piece.style.opacity = t >= 1 ? '' : String(baseOpacity + (1 - baseOpacity) * fade);
           piece.style.transform = [lift ? `translateY(${lift.toFixed(2)}px)` : '', motion].filter(Boolean).join(' ');
-          piece.style.filter = enableBlur && t < 1 ? `blur(${(blurStrength * (1 - clamp01(reveal))).toFixed(2)}px)` : '';
+          if (enableBlur) piece.style.filter = t < 1 ? `blur(${(blurStrength * (1 - clamp01(reveal))).toFixed(2)}px)` : '';
           if (highlightColor) {
             const glow = t <= 0 || t >= 1 ? 0 : t < .35 ? smooth(t / .35) : 1 - smooth((t - .35) / .65);
             piece.style.color = glow > .002 ? `color-mix(in srgb, ${highlightColor} ${(glow * 100).toFixed(1)}%, currentColor)` : '';

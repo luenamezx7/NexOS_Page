@@ -1,12 +1,12 @@
 .mark { display: inline-flex; align-items: center; color: var(--color-ink); white-space: nowrap; }
-.lockup { display: inline-flex; align-items: center; gap: 0; white-space: nowrap; }
+.lockup { display: inline-flex; align-items: center; gap: 0; white-space: nowrap; line-height: 1; }
 .wordmark, .way { display: block; font-family: 'Avenir Next', 'Helvetica Neue', Arial, sans-serif; font-size: 34px; line-height: 1; font-synthesis: none; letter-spacing: -.045em; font-weight: 700; }
 .wordmark { color: var(--color-ink); }
 .way { color: var(--brand-wordmark-accent); }
-.mascot { display: block; width: 42px; height: 42px; flex-shrink: 0; object-fit: contain; margin-right: 5px; background: transparent; transition: scale 180ms ease; }
+.mascot { display: block; width: 36px; height: 36px; flex-shrink: 0; object-fit: contain; margin-right: 7px; background: transparent; transition: scale 180ms ease; }
 :global(.dark) .mascot { filter: invert(1); }
 @media (hover: hover) and (pointer: fine) { .mark:hover .mascot { scale: 1.05; } }
 @media (prefers-reduced-motion: reduce) { .mascot { transition: none; } .mark:hover .mascot { scale: none; } }
-@media (max-width: 767px) { .wordmark, .way { font-size: 25px; } .mascot { width: 33px; height: 33px; margin-right: 4px; } }
-@media (max-width: 359px) { .wordmark, .way { font-size: 20px; } .mascot { width: 28px; height: 28px; margin-right: 3px; } }
+@media (max-width: 767px) { .wordmark, .way { font-size: 25px; } .mascot { width: 27px; height: 27px; margin-right: 5px; } }
+@media (max-width: 359px) { .wordmark, .way { font-size: 20px; } .mascot { width: 22px; height: 22px; margin-right: 4px; } }
 @media (forced-colors: active) { .way { color: CanvasText; } }

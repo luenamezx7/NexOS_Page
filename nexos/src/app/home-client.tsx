@@ -5,9 +5,8 @@ import dynamic from 'next/dynamic';
 import { Header } from '@/components/Header';
 import { Hero } from '@/components/Hero';
 import { HeroBrandStrip } from '@/components/HeroBrandStrip';
-import { ScrollProgress } from '@/components/ScrollProgress';
+import { HeroNfcBridge } from '@/components/HeroNfcBridge';
 import { SectionBackground } from '@/components/sections/SectionBackground';
-import { LandingPageBlur } from '@/components/sections/LandingPageBlur';
 import { ProofStrip } from '@/components/sections/ProofStrip';
 import { PlateManagement } from '@/components/sections/PlateManagement';
 import { HomepageJourneyMotion } from '@/components/sections/HomepageJourneyMotion';
@@ -15,11 +14,9 @@ import BrandEntrance from '@/components/BrandEntrance';
 import { useLocale } from '@/lib/locale';
 import { TransitionGuide } from '@/components/sections/TransitionGuide';
 import { RealEstateVideo } from '@/components/sections/RealEstateVideo';
-import styles from './HomePanels.module.css';
 
 const Services = dynamic(() => import('@/components/Services').then(m => m.Services));
 const AboutUs = dynamic(() => import('@/components/AboutUs').then(m => m.AboutUs));
-const ContactForm = dynamic(() => import('@/components/sections/ContactForm').then(m => m.ContactForm));
 const FAQ = dynamic(() => import('@/components/FAQ').then(m => m.FAQ));
 const MascotSolutions = dynamic(() => import('@/components/sections/MascotSolutions').then(m => m.MascotSolutions));
 const Footer = dynamic(() => import('@/components/Footer').then(m => m.Footer));
@@ -69,14 +66,13 @@ export default function HomeClient() {
       <div>
          <a href="#main-content" className="skip-link">{t('Pular para o conteúdo')}</a>
         <Header />
-        <ScrollProgress />
         <div className="relative">
           <div id="main-content" tabIndex={-1} className="relative">
-              <Hero ref={heroRef} />
-              <ContactForm />
-              <HeroBrandStrip />
-              <SectionBackground index={0} scene="product" experience="nfc">
-                 <PlacaNFCSection onSelectUse={setSelectedPlateUse} />
+               <Hero ref={heroRef} />
+               <HeroNfcBridge />
+               <SectionBackground index={0} scene="product" experience="nfc">
+                  <HeroBrandStrip />
+                  <PlacaNFCSection onSelectUse={setSelectedPlateUse} />
               </SectionBackground>
                <TransitionGuide text={t('Da placa ao próximo passo')} afterProduct />
                <SectionBackground index={1} experience="solutions">
@@ -97,17 +93,15 @@ export default function HomeClient() {
               <AboutUs />
             </SectionBackground>
                <SectionBackground index={8} experience="contact">
-               <FAQ />
-               <div className={styles.quizReturn}><p>{t('Quer descobrir uma sugestão para o seu negócio?')}</p><a href="#contact">{t('Responder ao quiz')}</a></div>
-               <CTAFinal />
-              <SocialInvite />
-            </SectionBackground>
+                <FAQ />
+                 <CTAFinal />
+             </SectionBackground>
+             <SocialInvite />
           </div>
-          <Footer onViewPresentation={replayPresentation} />
+           <div className="footer-transition"><Footer onViewPresentation={replayPresentation} /></div>
           <BrandClosing />
         </div>
       </div>
-      <LandingPageBlur />
     </main>
   );
 }

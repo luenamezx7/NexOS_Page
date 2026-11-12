@@ -8,7 +8,7 @@ export const SITE_PALETTE = {
   action: '#e6197d',
   actionHover: '#ff3f9f',
   cta: '#ff3f9f',
-  highlight: '#ffaad8',
+  highlight: '#fbf7fa',
   ink: '#fbf7fa',
   muted: '#c9bbc9',
 } as const;

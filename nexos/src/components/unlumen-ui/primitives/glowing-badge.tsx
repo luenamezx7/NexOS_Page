@@ -10,6 +10,10 @@ export interface GlowingBadgeProps extends HTMLAttributes<HTMLSpanElement> {
   variant?: GlowingBadgeVariant;
   pulse?: boolean;
   dot?: boolean;
+  /** Inline color for the status dot; it wins over the variant's utility class. */
+  dotColor?: string;
+  /** Inline color for the blurred glow behind the badge. */
+  glowColor?: string;
 }
 
 const variantStyles: Record<GlowingBadgeVariant, { badge: string; glow: string; dot: string }> = {
@@ -21,20 +25,23 @@ const variantStyles: Record<GlowingBadgeVariant, { badge: string; glow: string; 
   info: { badge: 'bg-blue-500 text-blue-100', glow: 'bg-blue-500', dot: 'bg-blue-200' },
 };
 
-export function GlowingBadge({ variant = 'default', pulse = true, dot = true, children, className, ...props }: GlowingBadgeProps) {
+export function GlowingBadge({ variant = 'default', pulse = true, dot = true, dotColor, glowColor, children, className, ...props }: GlowingBadgeProps) {
   const reduceMotion = useReducedMotion();
   const styles = variantStyles[variant];
+  const dotStyle = dotColor ? { backgroundColor: dotColor } : undefined;
+  const glowStyle = glowColor ? { backgroundColor: glowColor } : undefined;
 
   return <span className="relative inline-flex">
-    <span aria-hidden="true" className={cn('pointer-events-none absolute inset-0 rounded-full opacity-60 blur-md', styles.glow)} />
+    <span aria-hidden="true" className={cn('pointer-events-none absolute inset-0 rounded-full opacity-60 blur-md', styles.glow)} style={glowStyle} />
     <span className={cn('relative inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium', styles.badge, className)} {...props}>
       {dot && <span aria-hidden="true" className="relative flex size-1.5 shrink-0">
         {pulse && <motion.span
           className={cn('absolute inline-flex size-full rounded-full opacity-75 motion-reduce:hidden', styles.dot)}
+          style={dotStyle}
           animate={reduceMotion ? undefined : { scale: [1, 2.5, 1], opacity: [0.75, 0, 0.75] }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
         />}
-        <span className={cn('relative inline-flex size-1.5 rounded-full', styles.dot)} />
+        <span className={cn('relative inline-flex size-1.5 rounded-full', styles.dot)} style={dotStyle} />
       </span>}
       {children}
     </span>

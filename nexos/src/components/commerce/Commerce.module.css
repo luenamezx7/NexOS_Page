@@ -71,7 +71,7 @@
 .tabs button[aria-selected="true"] { color: var(--detail-ink); background: var(--detail-accent); border-color: var(--detail-accent); }
 .tabs button:hover:not([aria-selected="true"]) { color: var(--detail-text); }
 /* Keep the plate artwork and QR icons unfiltered; only the stage and controls use glass. */
-:global(.dark) .plateStage { border-color: var(--glass-line); background: radial-gradient(ellipse at 50% 36%, rgb(230 25 125 / 12%), transparent 67%), var(--glass-panel); box-shadow: var(--glass-shadow); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); }
+:global(.dark) .plateStage { border-color: var(--glass-line); background: radial-gradient(ellipse at 50% 36%, rgb(255 255 255 / 8%), transparent 67%), var(--glass-panel); box-shadow: var(--glass-shadow); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); }
 :global(.dark) .quantity, :global(.dark) .tabs button:not([aria-selected="true"]) { border-color: var(--glass-line); background: var(--glass-control); box-shadow: var(--glass-shadow); }
 :global(.dark) .quantity button:hover:not(:disabled) { background: rgb(255 170 216 / 13%); }
 :global(.dark) .tabs button[aria-selected="true"] { background: var(--palette-action); border-color: var(--palette-action); color: var(--palette-ink); box-shadow: var(--cta-volume); }

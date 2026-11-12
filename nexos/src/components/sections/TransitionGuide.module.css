@@ -1,7 +1,4 @@
-.guide { display: grid; place-items: center; min-height: 52svh; padding: clamp(96px, 13svh, 160px) 24px; text-align: center; background: linear-gradient(#fff, #f3f6f1); color: var(--color-ink); }
-.guide[data-after-product='true'] { background: linear-gradient(#eff5e8, #f3f6f1); }
-:global(.dark) .guide { background: linear-gradient(var(--bg-base), var(--bg-surface)); }
-:global(.dark) .guide[data-after-product='true'] { background: var(--bg-surface); }
+.guide { --color-ink: #f8f7f8; display: grid; place-items: center; min-height: 52svh; padding: clamp(96px, 13svh, 160px) 24px; text-align: center; background: var(--bg-base); color: var(--color-ink); }
 .title { max-width: 22ch; }
 /* Marketing headings use transparent gradient-clipped ink globally. The reveal
    paints individual words, so its heading and pieces need solid foreground ink. */

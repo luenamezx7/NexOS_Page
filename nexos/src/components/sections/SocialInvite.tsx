@@ -21,7 +21,7 @@ export function SocialInvite() {
          <div><p className={styles.socialLabel}>@{handle}</p><h2 id="instagram-title">{t('Visite nosso Instagram.')}</h2><p>{t('Projetos e bastidores da ezway.')}</p></div>
       </ScrollReveal>
       <ScrollReveal delay={.08}>
-         <a href={instagram.href} target="_blank" rel="noopener noreferrer" className={`${styles.socialButton} action-glass`}>{t('Visitar Instagram')} <ArrowUpRight size={18} aria-hidden="true" /></a>
+         <a href={instagram.href} target="_blank" rel="noopener noreferrer" className={styles.socialButton}>{t('Visitar Instagram')} <ArrowUpRight size={18} aria-hidden="true" /></a>
       </ScrollReveal>
     </div>
   </section>;

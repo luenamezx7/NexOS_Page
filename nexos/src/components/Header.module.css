@@ -1,4 +1,4 @@
-.header { position: fixed; top: max(16px, env(safe-area-inset-top)); inset-inline: 20px; z-index: 50; max-width: var(--page-width); margin-inline: auto; border: 1px solid var(--header-glass-border); border-radius: 16px; background: var(--header-glass-background); color: var(--color-ink); box-shadow: var(--header-glass-shadow); -webkit-backdrop-filter: var(--header-glass-filter); backdrop-filter: var(--header-glass-filter); }
+.header { position: fixed; top: max(16px, env(safe-area-inset-top)); inset-inline: 20px; z-index: 50; max-width: var(--page-width); margin-inline: auto; border: 1px solid var(--header-glass-border); border-radius: 30px; background: var(--header-glass-background); color: var(--color-ink); box-shadow: var(--header-glass-shadow); -webkit-backdrop-filter: var(--header-glass-filter); backdrop-filter: var(--header-glass-filter); }
 .bar { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 16px; min-height: 64px; padding: 8px 20px; }
 .brand { display: flex; align-items: center; width: fit-content; }
 .desktopNav { display: flex; align-items: center; justify-content: center; gap: 6px; min-width: 0; }
@@ -7,11 +7,11 @@
 .actions { display: flex; justify-content: flex-end; align-items: center; gap: 12px; min-width: max-content; }
 .accountSlot { display: flex; min-height: 44px; justify-content: flex-end; align-items: center; }
 .guestActions { display: flex; align-items: center; gap: 8px; }
-.accountLink { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 44px; padding: 0 12px; flex: 0 0 auto; border: 1px solid var(--glass-line); border-radius: 12px; background: var(--glass-control); font: 600 13px/1.4 var(--font-sans); color: var(--lime-400); transition: color 200ms, border-color 200ms; white-space: nowrap; }
-.signupLink { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 12px; border: 1px solid var(--lime-400); border-radius: 12px; background: color-mix(in srgb, var(--lime-400) 15%, transparent); color: var(--color-ink); font: 600 13px/1.4 var(--font-sans); white-space: nowrap; }
+.accountLink { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 44px; padding: 0 12px; flex: 0 0 auto; border: 1px solid var(--glass-line); border-radius: 16px; background: var(--glass-control); font: 600 13px/1.4 var(--font-sans); color: var(--color-ink); transition: color 200ms, border-color 200ms; white-space: nowrap; }
+.signupLink { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 12px; border: 1px solid var(--palette-border); border-radius: 16px; background: var(--glass-control); color: var(--color-ink); font: 600 13px/1.4 var(--font-sans); white-space: nowrap; }
 .signupLink:hover, .signupLink:focus-visible { background: color-mix(in srgb, var(--lime-400) 26%, transparent); }
 .accountLabel { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.contactAction, .mobileContactAction { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 16px; border-radius: 12px; background: var(--palette-cta); color: var(--palette-cta-ink); font: 700 13px/1.2 var(--font-sans); white-space: nowrap; box-shadow: var(--cta-volume); transition: background-color 180ms, box-shadow 180ms, transform 180ms; }
+.contactAction, .mobileContactAction { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 16px; border-radius: 18px; background: var(--palette-cta); color: var(--palette-cta-ink); font: 700 13px/1.2 var(--font-sans); white-space: nowrap; box-shadow: var(--cta-volume); transition: background-color 180ms, box-shadow 180ms, transform 180ms; }
 .contactAction:hover, .mobileContactAction:hover { background: var(--palette-cta-hover); box-shadow: var(--cta-volume); transform: translateY(-2px); }
 .mobileContactAction { margin-top: 16px; justify-content: space-between; }
 .accountLink:hover { color: var(--color-ink); border-color: var(--glass-line-hover); }
@@ -29,7 +29,7 @@
 .accountError { padding: 10px 12px; font-size: 12px; color: var(--foreground); }
 .mobileDialog { position: fixed; inset: 0; width: 100%; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 8px; border: 0; background: transparent; color: var(--foreground); }
 .mobileDialog::backdrop { background: #000a; backdrop-filter: blur(8px); }
-.mobilePanel { width: min(100%, 360px); max-height: calc(100dvh - 16px); overflow-y: auto; overscroll-behavior: contain; margin-left: auto; padding: 8px 18px 16px; border-radius: 14px; border: 1px solid var(--border); background: var(--popover); box-shadow: 0 24px 80px #0005; animation: menu-enter 240ms var(--ease-fluid); }
+.mobilePanel { width: min(100%, 360px); max-height: calc(100dvh - 16px); overflow-y: auto; overscroll-behavior: contain; margin-left: auto; padding: 8px 18px 16px; border-radius: 28px; border: 1px solid var(--border); background: var(--popover); box-shadow: 0 24px 80px #0005; animation: menu-enter 240ms var(--ease-fluid); }
 .mobileHeading { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 4px 0 12px; border-bottom: 1px solid var(--border); background: var(--popover); font: 600 11px/1.4 var(--font-sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted-foreground); }
 .closeButton { display: grid; place-items: center; width: 44px; height: 44px; color: var(--foreground); }
 .mobileNav { display: flex; flex-direction: column; padding-top: 8px; }
@@ -63,7 +63,7 @@
   .actions { gap: 4px; }
 }
 @media (max-width: 767px) {
-  .header { inset-inline: 12px; border-radius: 14px; }
+  .header { inset-inline: 12px; border-radius: 26px; }
   .bar { min-height: 60px; padding: 6px 12px; }
   .actions .accountSlot { display: none; }
   .mobilePanel { padding: 8px 16px 16px; }

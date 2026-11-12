@@ -1,33 +1,33 @@
-.socialSection { width: min(100%, 1280px); margin-inline: auto; padding: 0 40px 56px; scroll-margin-top: 104px; }
-.socialInner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 28px; padding-top: 36px; }
-.socialCopy { display: flex; align-items: center; gap: 22px; min-width: 0; }
+.socialSection { --color-ink: #17171a; --text-secondary: #4b4b52; --text-tertiary: #626269; --surface-line: #dedee2; --surface-base: #f2f2f4; --palette-highlight: #242428; width: 100%; padding: 72px 24px 88px; scroll-margin-top: 104px; background: #f8f8fa; color: var(--color-ink); color-scheme: light; text-align: center; }
+.socialInner { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 28px; max-width: 1160px; margin-inline: auto; }
+.socialCopy { display: flex; flex-direction: column; align-items: center; gap: 16px; min-width: 0; }
 .socialIcon { position: relative; display: grid; place-items: center; width: 58px; height: 58px; flex-shrink: 0; border: 1px solid var(--surface-line); border-radius: 18px; background: radial-gradient(ellipse at 100% 100%, var(--ambient-violet), transparent 80%), var(--surface-base); color: var(--palette-highlight); box-shadow: inset 0 1px 0 var(--surface-edge); }
 :global(.dark) .socialIcon { background: var(--surface-base); }
 .socialIcon svg { width: 27px; height: 27px; }
 .socialLabel { color: var(--text-tertiary); font: 13px/1.6 var(--font-sans); overflow-wrap: anywhere; }
 .socialCopy h2 { margin-top: 8px; font-size: clamp(24px, 2.8vw, 34px); font-weight: 650; letter-spacing: -.035em; line-height: 1.15; }
+:global(.landing-page) .socialCopy h2:not([data-blur-reveal]):not(.sr-only) { background-image: none; background-clip: border-box; -webkit-background-clip: border-box; color: #17171a; -webkit-text-fill-color: #17171a; }
 .socialCopy h2 + p { margin-top: 10px; font-size: 14px; line-height: 1.6; color: var(--text-secondary); }
-.socialButton { display: inline-flex; align-items: center; justify-content: space-between; gap: 28px; min-height: 48px; padding: 12px 20px; border-radius: var(--radius-control); font-size: 14px; font-weight: 600; }
-.socialButton svg { color: var(--palette-highlight); transition: transform 250ms var(--ease-fluid); }
-.socialButton:hover { border-color: color-mix(in srgb, var(--primary) 35%, var(--surface-line)); }
+.socialButton { display: inline-flex; align-items: center; justify-content: center; gap: 28px; min-height: 48px; padding: 12px 20px; border-radius: var(--radius-control); background: #242428; color: #fff; font-size: 14px; font-weight: 600; transition: background-color 200ms ease, transform 200ms ease; }
+.socialButton svg { color: inherit; transition: transform 250ms var(--ease-fluid); }
+.socialButton:hover { background: #38383e; transform: translateY(-2px); }
 .socialButton:hover svg { transform: translate(2px, -2px); }
 .socialButton:is(:hover, :focus-visible) svg { color: inherit; }
-@media (hover: hover) { .socialButton:hover { box-shadow: var(--action-hover-shadow); } }
 .socialButton:focus-visible { outline: 2px solid var(--ring); outline-offset: 4px; }
 
 .closing { position: relative; z-index: 31; isolation: isolate; width: 100%; height: clamp(260px, 32vw, 450px); overflow: hidden; background: var(--bg-base); }
 .closingCaption { position: absolute; top: clamp(64px, 8vw, 104px); left: 0; width: 100%; margin: 0; color: #bac4b7; font: 14px/1.7 var(--font-sans); text-align: center; }
 .wordmarkCrop { position: absolute; right: 0; bottom: 0; left: 0; transform: translateY(20%); }
 .wordmarkLink { display: block; width: min(88%, 1200px); margin-inline: auto; border-radius: 8px; text-decoration: none; cursor: pointer; }
-.wordmarkLink:focus-visible { outline: 2px solid #dcefd7; outline-offset: 6px; }
+.wordmarkLink:focus-visible { outline: 2px solid var(--highlight-soft); outline-offset: 6px; }
 .wordmarkFrame { width: 100%; container-type: inline-size; }
 :global(.landing-page) :global(#brand-closing) h2.gradientWordmark { background: linear-gradient(180deg, #fff 0%, #dedfde 42%, #8b918c 74%, #161a17 100%); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; font-size: 30cqi; transition: filter 200ms ease; }
 .wordmarkLink:hover .gradientWordmark { filter: brightness(1.14); }
 :global(.landing-page) :global(#brand-closing) h2.gradientWordmark span { color: inherit; -webkit-text-fill-color: inherit; }
 @media (max-width: 767px) {
-  .socialSection { padding: 0 24px 40px; }
-  .socialInner { padding-top: 28px; gap: 24px; }
-  .socialCopy { gap: 14px; align-items: flex-start; }
+  .socialSection { padding: 64px 24px 72px; }
+  .socialInner { gap: 24px; }
+  .socialCopy { gap: 14px; align-items: center; }
   .socialIcon { width: 44px; height: 44px; border-radius: 14px; }
   .socialIcon svg { width: 23px; height: 23px; }
   .socialInner > :last-child { width: 100%; }

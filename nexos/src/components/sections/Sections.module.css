@@ -7,7 +7,7 @@
   background: var(--section-ground);
 }
 .scene[data-tone="alternate"] { --section-ground: #f7f4f7; --gradient-heading: var(--gradient-brand); }
-:global(.dark) .scene[data-tone="alternate"] { --gradient-heading: linear-gradient(90deg, var(--text-primary) 0%, var(--text-primary) 13%, var(--purple-300) 68%, var(--purple-400) 100%); }
+:global(.dark) .scene[data-tone="alternate"] { --gradient-heading: linear-gradient(105deg, #ffffff, #d9d5dc); }
 .scene[data-scene="product"] { --section-ground: #eff5e8; }
 :global(.dark) .scene { --section-ground: var(--bg-base); }
 :global(.dark) .scene[data-tone="alternate"] { --section-ground: var(--bg-surface); }
@@ -31,15 +31,49 @@
 .scene[data-scene="product"] .scenery { background: radial-gradient(ellipse at 12% 22%, rgba(var(--brand-accent-rgb), .16), transparent 45%), radial-gradient(ellipse at 95% 85%, rgba(var(--brand-secondary-rgb), .1), transparent 38%); }
 :global(.dark) .scene[data-scene="product"] .scenery { background: none; }
 /* Product sections keep the same dark canvas without extra saturated halos. */
-:global(.dark) .scene[data-home-experience="nfc"],
-:global(.dark) .scene[data-home-experience="easychat"] { --section-ground: var(--bg-surface); }
-:global(.dark) .scene[data-home-experience="nfc"] .scenery,
-:global(.dark) .scene[data-home-experience="easychat"] .scenery { background: none; }
+:global(.dark) .scene[data-home-experience="nfc"] { --section-ground: var(--bg-surface); }
+:global(.dark) .scene[data-home-experience="nfc"] .scenery { background: none; }
 :global(.dark) .scene[data-home-experience="nfc"] .fieldImage { display: none; }
 .section { scroll-margin-top: 100px; }
 /* Full-bleed product panel: both edges are visible against the page between sections. */
-.scene[data-home-experience='nfc'] { --section-ground: var(--bg-surface); --color-canvas: var(--bg-surface); --color-ink: var(--palette-ink); --text-secondary: var(--palette-muted); --text-tertiary: var(--palette-muted); --surface-base: var(--bg-card); --surface-raised: var(--bg-elevated); --surface-inset: var(--palette-bg); --surface-line: var(--palette-border); --detail-text: var(--palette-highlight); color: var(--palette-ink); color-scheme: dark; border-radius: 32px; margin-bottom: 24px; }
+.scene[data-home-experience='nfc'] { --section-ground: var(--bg-surface); --color-canvas: var(--bg-surface); --color-ink: var(--palette-ink); --text-secondary: var(--palette-muted); --text-tertiary: var(--palette-muted); --surface-base: var(--bg-card); --surface-raised: var(--bg-elevated); --surface-inset: var(--palette-bg); --surface-line: var(--palette-border); --detail-text: var(--palette-ink); width: calc(100% - 32px); margin: 0 auto 24px; padding-top: 184px; overflow: clip; background: transparent; color: var(--palette-ink); color-scheme: dark; border-radius: 32px; }
+.scene[data-home-experience='nfc']::before { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: var(--bg-surface); mask-image: linear-gradient(to bottom, #000 calc(100% - 120px), transparent 100%); pointer-events: none; }
 :global(.dark) .scene[data-home-experience='nfc'] { --section-ground: var(--bg-surface); }
+.scene[data-home-experience='solutions'],
+:global(.dark) .scene[data-home-experience='solutions'] { --section-ground: var(--bg-base); }
+/* Light chapters are scoped: dark product mockups and the final CTA keep their own palette. */
+.scene:is([data-home-experience='real-estate-video'], [data-home-experience='applications'], [data-home-experience='about'], [data-home-experience='easychat']),
+:global(.dark) .scene:is([data-home-experience='real-estate-video'], [data-home-experience='applications'], [data-home-experience='about'], [data-home-experience='easychat']) {
+  --section-ground: #f8f8fa;
+  --color-ink: #17171a;
+  --text-secondary: #494950;
+  --text-tertiary: #626269;
+  --landing-muted: #494950;
+  --surface-base: #f1f1f3;
+  --surface-raised: #ffffff;
+  --surface-inset: #ededf0;
+  --surface-line: #d9d9df;
+  --landing-line: #d9d9df;
+  --glass-line: #d9d9df;
+  --ambient-blue: transparent;
+  --ambient-violet: rgb(255 63 159 / 5%);
+  --palette-bg: #ffffff;
+  --palette-surface: #f1f1f3;
+  --palette-border: #d9d9df;
+  --palette-ink: #17171a;
+  --palette-highlight: #17171a;
+  --palette-muted: #494950;
+  --visor-violet: #a8175f;
+  --visor-plum: #b9b9c0;
+  --visor-lilac: #d9d9df;
+  --detail-text: #a8175f;
+  --display-rose: #a8175f;
+  --gradient-heading: linear-gradient(105deg, #17171a, #45454c);
+  --ring: #a8175f;
+  color: var(--color-ink);
+  color-scheme: light;
+}
+@media (max-width: 767px) { .scene[data-home-experience='nfc'] { width: calc(100% - 24px); margin-bottom: 20px; padding-top: 176px; border-radius: 24px; } }
 .productBridge .container { display: flex; flex-wrap: wrap; align-items: baseline; gap: 16px 28px; padding-block: clamp(28px, 4vw, 48px) 12px; }
 .productBridge h2 { font: 700 clamp(20px, 2.8vw, 34px)/1.15 var(--font-display); letter-spacing: -.035em; }
 .productBridge h2 span { color: var(--pink-text); }
