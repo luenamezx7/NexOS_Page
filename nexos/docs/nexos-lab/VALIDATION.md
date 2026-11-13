@@ -1,5 +1,45 @@
 # Validação de retomada — 12/11/2026
 
+## Publicação autorizada — ajustes posteriores
+
+Deploy de produção concluído (Ready) em https://nexoslab.online.
+Versão: https://nexos-bha4ddeuj-nex-os2.vercel.app.
+
+- Hero: reprodução mobile com autoplay nativo sem som e inline, recuperação com
+  toque direto e botão acompanhando o estado real. Poster permanece no bloqueio.
+- Linha de carregamento superior verde; placas em baralho com Instagram à frente,
+  brilho rosa interno e halo branco discreto, sem estrela.
+- MacBooks com superfície clara. Cantos superiores arredondados apenas nos blocos
+  pretos que seguem branco; cantos inferiores retos.
+- CTA com retrato branco, fade e grain estático, sem parallax ou movimento do mouse.
+- Vídeo do hero também no slot demonstrativo, com controles visíveis; apoio atualizado
+  para “Vídeos profissionais e imersivos com IA.” e traduções correspondentes.
+- Build e lint dos componentes alterados passaram. Chrome e WebKit com emulação
+  de iPhone passaram em autoplay, bloqueio simulado, recuperação com um toque,
+  pausa/retomada, movimento reduzido e cor da linha superior. Sem aparelho físico.
+- Após publicar: home HTTP 200, mídia com Range HTTP 206 / 1024 bytes e conteúdo
+  atualizado confirmado no HTML de produção.
+
+Os registros abaixo documentam as etapas anteriores, inclusive antes da publicação.
+
+## Vídeo de fundo solicitado posteriormente
+
+- Hero com `gloved-hand-connecting-iphone.mp4`, cópia sem recompressão do original
+  fornecido: 1920 × 1080, 7,93 s e aproximadamente 3,4 MB.
+- Camada de escurecimento em gradiente, grain estático e recorte proporcional com
+  `object-fit: cover`; ajuste horizontal no mobile e dissolução no fundo da seção.
+- Poster extraído do próprio vídeo. Reprodução sem som, inline e em loop, com botão
+  de pausa; pausa fora da área visível e em aba oculta. Movimento reduzido mantém
+  a imagem estática sem iniciar o download do vídeo.
+- Inspeção Chrome em 390, 768 e 1440 px: sem overflow horizontal ou deformação;
+  conferidos poster e frame com aproximação do celular. Pausa, retomada e mudança
+  para movimento reduzido verificadas. Build e lint dos componentes passaram.
+- Antes desta adição, a retomada confirmou novamente tipos, build, 22 testes locais,
+  lint sem erros (30 avisos existentes) e 27/27 testes de navegador no Chrome.
+  Esses 27 resultados pertencem ao estado anterior ao vídeo.
+
+Os registros abaixo descrevem as etapas anteriores e suas respectivas composições.
+
 O refinamento local foi retomado pelo checklist existente. Alterações anteriores
 foram preservadas. Não houve deploy, alteração de WAF, rotação de segredo ou
 provisionamento de conta real nesta etapa.

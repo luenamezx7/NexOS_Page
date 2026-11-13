@@ -9,6 +9,7 @@ import { organizationData, pageMetadata, SITE_URL } from '@/lib/seo';
 import { googleSans } from '@/lib/site-fonts';
 import { LocaleProvider } from '@/lib/locale';
 import { RouteLoadingProgress } from '@/components/RouteLoadingProgress';
+import { ScrollProgress } from '@/components/ScrollProgress';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -67,7 +68,7 @@ export default function RootLayout({
         <noscript>
           <style>{`[data-reveal], .landing-page [style*="opacity"], .service-page [style*="opacity"] { opacity: 1 !important; transform: none !important; filter: none !important; } .landing-hero a[href^="#"] { pointer-events: auto !important; } .presentation-replay { display: none !important; }`}</style>
         </noscript>
-          <LocaleProvider><RouteLoadingProgress /><SmoothScrollProvider>
+          <LocaleProvider><RouteLoadingProgress /><ScrollProgress /><SmoothScrollProvider>
             <SiteAtmosphere />
             <div className="site-shell"><CookieConsentProvider>{children}</CookieConsentProvider></div>
           </SmoothScrollProvider></LocaleProvider>

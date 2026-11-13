@@ -25,6 +25,7 @@ const STATIC_CSP = [
 ].join('; ');
 
 const nextConfig: NextConfig = {
+  env: { NEXT_PUBLIC_MOTION_BUILD: process.env.VERCEL_URL || process.env.VERCEL_GIT_COMMIT_SHA || 'local' },
   turbopack: { root: process.cwd() },
   images: { formats: ['image/avif', 'image/webp'], qualities: [75, 90] },
   poweredByHeader: false,

@@ -1,3 +1,4 @@
-.track { position: fixed; z-index: 55; inset: env(safe-area-inset-top, 0px) 0 auto; height: 3px; pointer-events: none; background: color-mix(in srgb, var(--palette-cta) 14%, transparent); }
-.fill { width: 100%; height: 100%; transform: scaleX(0); transform-origin: left center; background: var(--palette-ink); box-shadow: 0 0 9px rgb(255 255 255 / 28%); }
+.track { position: fixed; z-index: 55; inset: env(safe-area-inset-top, 0px) 0 auto; height: 3px; pointer-events: none; }
+.fill { width: 100%; height: 100%; transform: scaleX(0); transform-origin: left center; background: #22c55e; box-shadow: 0 0 9px rgb(34 197 94 / 28%); }
+:global([data-route-loading='loading']) + .track, :global([data-route-loading='complete']) + .track { visibility: hidden; }
 @media (forced-colors: active) { .track { background: Canvas; } .fill { background: Highlight; box-shadow: none; } }

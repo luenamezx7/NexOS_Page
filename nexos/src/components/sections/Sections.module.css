@@ -36,14 +36,12 @@
 :global(.dark) .scene[data-home-experience="nfc"] .fieldImage { display: none; }
 .section { scroll-margin-top: 100px; }
 /* Full-bleed product panel: both edges are visible against the page between sections. */
-.scene[data-home-experience='nfc'] { --section-ground: var(--bg-surface); --color-canvas: var(--bg-surface); --color-ink: var(--palette-ink); --text-secondary: var(--palette-muted); --text-tertiary: var(--palette-muted); --surface-base: var(--bg-card); --surface-raised: var(--bg-elevated); --surface-inset: var(--palette-bg); --surface-line: var(--palette-border); --detail-text: var(--palette-ink); width: calc(100% - 32px); margin: 0 auto 24px; padding-top: 24px; overflow: clip; background: transparent; color: var(--palette-ink); color-scheme: dark; border-radius: 32px; }
+.scene[data-home-experience='nfc'] { --section-ground: var(--bg-surface); --color-canvas: var(--bg-surface); --color-ink: var(--palette-ink); --text-secondary: var(--palette-muted); --text-tertiary: var(--palette-muted); --surface-base: var(--bg-card); --surface-raised: var(--bg-elevated); --surface-inset: var(--palette-bg); --surface-line: var(--palette-border); --detail-text: var(--palette-ink); width: calc(100% - 32px); margin: 0 auto 24px; padding-top: 24px; overflow: clip; background: transparent; color: var(--palette-ink); color-scheme: dark; border-radius: 0; }
 .scene[data-home-experience='nfc']::before { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: var(--bg-surface); mask-image: linear-gradient(to bottom, transparent 0, #000 80px, #000 calc(100% - 120px), transparent 100%); pointer-events: none; }
 :global(.dark) .scene[data-home-experience='nfc'] { --section-ground: var(--bg-surface); }
-.scene[data-home-experience='solutions'],
-:global(.dark) .scene[data-home-experience='solutions'] { --section-ground: var(--bg-base); }
 /* Light chapters are scoped: dark product mockups and the final CTA keep their own palette. */
-.scene:is([data-home-experience='real-estate-video'], [data-home-experience='applications'], [data-home-experience='about'], [data-home-experience='easychat']),
-:global(.dark) .scene:is([data-home-experience='real-estate-video'], [data-home-experience='applications'], [data-home-experience='about'], [data-home-experience='easychat']) {
+.scene:is([data-home-experience='solutions'], [data-home-experience='real-estate-video'], [data-home-experience='applications'], [data-home-experience='about'], [data-home-experience='easychat']),
+:global(.dark) .scene:is([data-home-experience='solutions'], [data-home-experience='real-estate-video'], [data-home-experience='applications'], [data-home-experience='about'], [data-home-experience='easychat']) {
   --section-ground: #f8f8fa;
   --color-ink: #17171a;
   --text-secondary: #494950;
@@ -73,7 +71,7 @@
   color: var(--color-ink);
   color-scheme: light;
 }
-@media (max-width: 767px) { .scene[data-home-experience='nfc'] { width: calc(100% - 24px); margin-bottom: 20px; padding-top: 16px; border-radius: 24px; } }
+@media (max-width: 767px) { .scene[data-home-experience='nfc'] { width: calc(100% - 24px); margin-bottom: 20px; padding-top: 16px; border-radius: 0; } }
 .productBridge .container { display: flex; flex-wrap: wrap; align-items: baseline; gap: 16px 28px; padding-block: clamp(28px, 4vw, 48px) 12px; }
 .productBridge h2 { font: 700 clamp(20px, 2.8vw, 34px)/1.15 var(--font-display); letter-spacing: -.035em; }
 .productBridge h2 span { color: var(--pink-text); }
@@ -162,6 +160,7 @@
 .timeline .stepMarker { z-index: 1; }
 .timeline li { position: relative; min-width: 0; padding: 0 24px 32px 0; opacity: .25; filter: blur(2px); transform: scale(.97); transition: opacity .4s ease, filter .4s ease, transform .4s ease; }
 .timeline li[data-active='true'] { opacity: 1; filter: none; transform: none; }
+:global(.landing-page[data-motion-detail='light']) .timeline li { filter: none; }
 .timeline li::before { content: ''; position: absolute; top: 22px; left: 0; right: 0; height: 1px; background: color-mix(in srgb, var(--color-ink) 24%, var(--color-canvas)); }
 .timeline li:last-child::before { right: calc(100% - 44px); }
 .stepMarker { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid color-mix(in srgb, var(--color-ink) 32%, var(--color-canvas)); border-radius: 50%; background: color-mix(in srgb, var(--color-ink) 12%, var(--color-canvas)); color: color-mix(in srgb, var(--color-ink) 65%, var(--color-canvas)); font: 600 13px var(--font-sans); margin-bottom: 32px; transition: background-color .35s ease, border-color .35s ease, color .35s ease, box-shadow .35s ease, transform .35s ease; }
@@ -187,7 +186,7 @@
   .processStage .stepEnd { margin-top: 14px; }
 }
 .finalCta { position: relative; margin: 0 auto; width: min(100%, 1280px); padding: var(--section-space) 40px; }
-.brandCta { overflow: hidden; background: radial-gradient(ellipse at 76% 43%, color-mix(in srgb, var(--palette-highlight) 10%, transparent) 0%, transparent 56%), var(--palette-bg); color: var(--palette-ink); }
+.brandCta { overflow: hidden; background: var(--palette-bg); color: var(--palette-ink); }
 .brandCta .finalCta { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .95fr); align-items: center; column-gap: clamp(36px, 6vw, 96px); row-gap: 32px; }
 .brandCta .ctaLayout { align-self: end; }
 .brandCta .ctaLayout h2 { max-width: 12ch; color: var(--palette-ink); }
@@ -196,11 +195,12 @@
 .brandCta .ctaBottom { align-self: start; flex-direction: column; align-items: flex-start; gap: 24px; margin: 0; padding-top: 0; color: var(--palette-muted); }
 .brandCta .ctaBottom > p { color: var(--palette-muted); }
 .brandCta .textLink { color: var(--palette-highlight); }
-.ctaVisual { position: relative; isolation: isolate; grid-column: 2; grid-row: 1 / span 2; width: 100%; aspect-ratio: 1 / 1.08; }
-.ctaVisual::before { position: absolute; z-index: -1; inset: 4% -7% 5%; border-radius: 50%; background: radial-gradient(ellipse at 52% 42%, color-mix(in srgb, var(--palette-ink) 63%, transparent) 0%, color-mix(in srgb, var(--palette-highlight) 46%, transparent) 29%, color-mix(in srgb, var(--palette-action) 18%, transparent) 55%, transparent 74%); filter: blur(28px); content: ''; }
-.ctaVisual::after { position: absolute; z-index: -1; inset: auto 14% 0; height: 16%; border-radius: 50%; background: #10161055; filter: blur(30px); content: ''; }
+/* Portrait edges dissolve into the section; texture is a static tile. */
+.ctaVisual { position: relative; isolation: isolate; grid-column: 2; grid-row: 1 / span 2; width: 100%; aspect-ratio: 3 / 4; overflow: hidden; mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 72%, transparent); }
+.ctaVisual::before { position: absolute; z-index: 1; inset: 0; background: linear-gradient(90deg, var(--palette-bg), transparent 18%, transparent 82%, var(--palette-bg)); pointer-events: none; content: ''; }
+.ctaVisual::after { position: absolute; z-index: 2; inset: 0; background: url('/media/hero-grain.png') repeat; background-size: 160px 160px; opacity: .1; mix-blend-mode: soft-light; pointer-events: none; content: ''; }
 .ctaImageMotion { position: absolute; inset: -14px; }
-.ctaBrandImage { object-fit: contain; object-position: center; filter: drop-shadow(0 14px 20px #0009) drop-shadow(0 0 30px color-mix(in srgb, var(--palette-highlight) 24%, transparent)); }
+.ctaBrandImage { object-fit: cover; object-position: 50% 22%; }
 .ctaAnchor { position: absolute; top: 0; }
 .ctaLayout { display: flex; align-items: center; justify-content: space-between; gap: 32px; }
 .ctaLayout h2 { font-size: clamp(38px, 5vw, 68px); line-height: 1.08; font-stretch: 95%; font-weight: 750; letter-spacing: -.04em; }
@@ -228,7 +228,7 @@
   .finalCta { width: 100%; margin-block: 0; padding: 48px 24px; }
   .brandCta .finalCta { grid-template-columns: minmax(0, 1fr); gap: 24px; }
   .brandCta .ctaLayout h2 { max-width: 16ch; }
-  .ctaVisual { grid-column: 1; grid-row: 2; max-width: 520px; aspect-ratio: 1.2; }
+  .ctaVisual { grid-column: 1; grid-row: 2; max-width: 520px; aspect-ratio: 4 / 5; }
   .brandCta .ctaBottom { grid-row: 3; }
   .eyebrow { margin-bottom: 32px; gap: 12px; }
   .eyebrow > span:last-child { text-align: right; }

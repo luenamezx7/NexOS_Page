@@ -2,12 +2,14 @@
 
 import { useEffect } from 'react';
 import { usePresentationActive } from '@/lib/use-presentation-active';
+import { motionError, recordMotion } from '@/lib/motion-diagnostics';
 
-/** Reversible desktop scroll handoffs and short mobile entries; content stays in normal flow. */
+/** Reversible scroll handoffs on every screen; content stays in normal flow. */
 export function HomepageJourneyMotion() {
   const presenting = usePresentationActive();
   useEffect(() => {
-    if (presenting || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (presenting) { recordMotion('homepageGsap', 'waiting-presentation'); return; }
+    recordMotion('homepageGsap', 'loading');
     let disposed = false;
     let revert = () => {};
     void Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(([{ gsap }, { ScrollTrigger }]) => {
@@ -18,6 +20,7 @@ export function HomepageJourneyMotion() {
       const mm = gsap.matchMedia();
       mm.add({ desktop: '(min-width: 768px) and (prefers-reduced-motion: no-preference)', mobile: '(max-width: 767px) and (prefers-reduced-motion: no-preference)' }, context => {
         const desktop = !!context.conditions?.desktop;
+        recordMotion('homepageGsap', 'initialized', desktop ? 'desktop' : 'mobile');
         const entries = root.querySelectorAll('[data-hero-plates], #mascot-solutions-title, #real-estate-video-title, #plate-management-title');
         entries.forEach(element => gsap.fromTo(element, { opacity: .65, y: 18 }, {
           opacity: 1, y: 0, duration: .65, ease: 'power2.out', immediateRender: false,
@@ -38,12 +41,12 @@ export function HomepageJourneyMotion() {
               const caption = option.querySelector<HTMLElement>('[data-plate-caption]');
               if (!plate || !caption) return;
               gsap.fromTo(plate, { y: 18, scale: .975, opacity: .65 }, {
-                y: 0, scale: 1, opacity: 1, duration: .7, ease: 'power2.out', immediateRender: false,
-                scrollTrigger: { trigger: option, start: 'top 92%', once: true },
+                y: 0, scale: 1, opacity: 1, ease: 'none', immediateRender: false,
+                scrollTrigger: { trigger: option, start: 'top 96%', end: 'top 55%', scrub: true },
               });
               gsap.fromTo(caption, { y: 10, opacity: .7 }, {
-                y: 0, opacity: 1, duration: .6, delay: .08, ease: 'power2.out', immediateRender: false,
-                scrollTrigger: { trigger: option, start: 'top 92%', once: true },
+                y: 0, opacity: 1, ease: 'none', immediateRender: false,
+                scrollTrigger: { trigger: option, start: 'top 96%', end: 'top 55%', scrub: true },
               });
             });
           }
@@ -54,14 +57,20 @@ export function HomepageJourneyMotion() {
           const visual = root.querySelector<HTMLElement>(`#${id} [data-journey-visual]`);
           if (!visual) continue;
           gsap.fromTo(visual, { y: desktop ? 32 : 16, opacity: .65 }, {
-            y: 0, opacity: 1, ease: desktop ? 'none' : 'power2.out', duration: desktop ? undefined : .6, immediateRender: false,
-            scrollTrigger: desktop
-              ? { trigger: `#${id}`, start: 'top 90%', end: 'top 55%', scrub: .3, invalidateOnRefresh: true }
-              : { trigger: visual, start: 'top 92%', once: true },
+            y: 0, opacity: 1, ease: 'none', immediateRender: false,
+            scrollTrigger: { trigger: visual, start: 'top 90%', end: 'top 55%', scrub: desktop ? .3 : true, invalidateOnRefresh: true },
           });
         }
       }, root);
-      revert = () => mm.revert();
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) recordMotion('homepageGsap', 'blocked-reduced-motion');
+      const onMotionChange = () => {
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) recordMotion('homepageGsap', 'blocked-reduced-motion');
+      };
+      const media = matchMedia('(prefers-reduced-motion: reduce)');
+      media.addEventListener('change', onMotionChange);
+      revert = () => { media.removeEventListener('change', onMotionChange); mm.revert(); };
+    }).catch(error => {
+      if (!disposed) recordMotion('homepageGsap', 'initialization-error', motionError(error));
     });
     return () => { disposed = true; revert(); };
   }, [presenting]);

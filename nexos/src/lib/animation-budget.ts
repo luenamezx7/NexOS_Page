@@ -27,3 +27,25 @@ export function createResolutionBudget() {
     },
   };
 }
+export type MotionDetail = 'full' | 'light';
+
+/** Only visual detail changes under pressure. Transform/opacity motion stays on. */
+export function createMotionDetailBudget(initial: MotionDetail = 'full') {
+  let detail = initial;
+  let elapsed = 0, samples = 0, slow = 0, healthy = 0;
+  return {
+    sample(frameMs: number): MotionDetail {
+      if (frameMs <= 0 || frameMs > 1000) return detail;
+      elapsed += frameMs;
+      samples++;
+      if (frameMs > 34) slow++;
+      if (elapsed >= 2000) {
+        if (slow / samples > .2) { detail = 'light'; healthy = 0; }
+        else if (slow === 0 && ++healthy >= 4) { detail = 'full'; healthy = 0; }
+        else if (slow > 0) healthy = 0;
+        elapsed = samples = slow = 0;
+      }
+      return detail;
+    },
+  };
+}

@@ -14,6 +14,8 @@ import { useLocale } from '@/lib/locale';
 import { TransitionGuide } from '@/components/sections/TransitionGuide';
 import { LandingPageBlur } from '@/components/sections/LandingPageBlur';
 import { RealEstateVideo } from '@/components/sections/RealEstateVideo';
+import { MotionPerformance } from '@/components/MotionPerformance';
+import { MotionDiagnosticsLoader } from '@/components/MotionDiagnosticsLoader';
 
 const Services = dynamic(() => import('@/components/Services').then(m => m.Services));
 const AboutUs = dynamic(() => import('@/components/AboutUs').then(m => m.AboutUs));
@@ -62,6 +64,8 @@ export default function HomeClient() {
   return (
     <main className="landing-page w-full max-w-full overflow-x-clip bg-canvas text-ink">
       <HomepageJourneyMotion />
+      <MotionPerformance />
+      <MotionDiagnosticsLoader />
       <LandingPageBlur />
       {entrance.visible && <BrandEntrance key={entrance.key} onComplete={handleEntranceComplete} />}
       <div>
@@ -78,7 +82,7 @@ export default function HomeClient() {
                <SectionBackground index={1} experience="solutions">
                   <Services selectedUse={selectedPlateUse} />
                </SectionBackground>
-               <SectionBackground index={1} experience="real-estate-video"><RealEstateVideo /></SectionBackground>
+               <SectionBackground index={1} experience="real-estate-video"><RealEstateVideo videoSrc="/media/gloved-hand-connecting-iphone.mp4" posterSrc="/media/gloved-hand-connecting-iphone-poster.jpg" /></SectionBackground>
                <SectionBackground index={2} experience="plate-management"><PlateManagement /></SectionBackground>
               <TransitionGuide text={t('Menos tarefas. Mais negócio.')} />
                <SectionBackground index={3} experience="easychat"><EasyChat /></SectionBackground>

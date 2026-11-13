@@ -4,6 +4,7 @@ import { Children, cloneElement, isValidElement, useEffect, useRef, type HTMLAtt
 import { motion, useInView, useScroll, useTransform } from 'motion/react';
 import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { useLocale } from '@/lib/locale';
+import { recordMotion } from '@/lib/motion-diagnostics';
 
 function translateChildren(node: ReactNode, t: (text: string) => string): ReactNode {
   return Children.map(node, child => {
@@ -54,9 +55,11 @@ export function ScrollReveal({ children, as = 'div', preset = 'body', delay = 0,
     };
     // Read the preference directly too, before the external-store hydration update.
     if (reduce || matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window) || !element.animate) {
+      recordMotion('reveals', reduce || matchMedia('(prefers-reduced-motion: reduce)').matches ? 'blocked-reduced-motion' : 'unsupported-api');
       restore();
       return;
     }
+    recordMotion('reveals', 'enabled');
     // Text enters once; the MacBook journey and chapter transitions retain their
     // reversible ScrollTriggers without a separate scrub for every paragraph.
     const bounds = element.getBoundingClientRect();

@@ -651,7 +651,7 @@ export const en: Record<string, string> = {
   'Site ilustrativo de arquitetura': 'Illustrative architecture website',
   'Progresso do quiz': 'Quiz progress',
   'Transpareça a verdadeira qualidade do seu trabalho.': 'Let the true quality of your work show.',
-  'Vídeos realistas para imobiliárias. Seu cliente sente o espaço antes de visitar o imóvel.': 'Realistic videos for real estate agencies. Let clients experience a space before they visit.',
+  'Vídeos profissionais e imersivos com IA.': 'Professional, immersive videos with AI.',
   'Imagem ilustrativa de um ambiente interno, não uma prévia de vídeo produzido pela ezway': 'Illustrative interior photo, not a preview of a video produced by ezway',
   'Imagem ilustrativa. Vídeo demonstrativo em preparação.': 'Illustrative image. Demonstration video in preparation.',
   'Vídeo de apresentação de imóvel': 'Property presentation video',

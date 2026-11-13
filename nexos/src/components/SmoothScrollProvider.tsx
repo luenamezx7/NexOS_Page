@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import type Lenis from 'lenis';
 import { sectionScrollPosition } from '@/lib/section-position';
 import { PRESENTATION_SELECTOR } from '@/lib/use-presentation-active';
+import { motionError, recordMotion } from '@/lib/motion-diagnostics';
 
 type SectionScrollOptions = { immediate?: boolean; history?: 'push' | 'none'; focus?: boolean };
 type SectionScroll = (hash: string, options?: SectionScrollOptions) => boolean;
@@ -101,23 +102,36 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     }
     async function setup() {
       stop();
-      if (pathname !== '/' || !media.matches || disposed) return;
+      if (disposed) return;
+      if (pathname !== '/' || !media.matches) {
+        recordMotion('scroll', 'native', pathname !== '/' ? 'route' : matchMedia('(prefers-reduced-motion: reduce)').matches ? 'reduced-motion' : 'viewport-or-pointer');
+        return;
+      }
       const deviceMemory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory;
-      if ((deviceMemory !== undefined && deviceMemory <= 4) || (navigator.hardwareConcurrency > 0 && navigator.hardwareConcurrency <= 4)) return;
+      if ((deviceMemory !== undefined && deviceMemory <= 4) || (navigator.hardwareConcurrency > 0 && navigator.hardwareConcurrency <= 4)) {
+        recordMotion('scroll', 'native', 'hardware-policy: memory<=4GB or cores<=4');
+        return;
+      }
       const current = generation;
-      const { default: Lenis } = await import('lenis');
-      if (disposed || !media.matches || current !== generation) return;
-      instance = new Lenis({ duration: 1, lerp: 0.07, wheelMultiplier: 0.9, infinite: false, anchors: false });
-      setLenis(instance);
-      const { ScrollTrigger } = await import('gsap/ScrollTrigger');
-      if (disposed || current !== generation) return;
-      instance.on('scroll', () => {
-        ScrollTrigger.update();
-        if (!scrolling) { scrolling = true; setIsScrolling(true); }
-        clearTimeout(timeout);
-        timeout = setTimeout(() => { scrolling = false; setIsScrolling(false); }, 150);
-      });
-      if (!document.hidden) raf = requestAnimationFrame(frame);
+      recordMotion('scroll', 'loading-lenis');
+      try {
+        const { default: Lenis } = await import('lenis');
+        if (disposed || !media.matches || current !== generation) return;
+        instance = new Lenis({ duration: 1, lerp: 0.07, wheelMultiplier: 0.9, infinite: false, anchors: false });
+        setLenis(instance);
+        const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+        if (disposed || current !== generation) return;
+        instance.on('scroll', () => {
+          ScrollTrigger.update();
+          if (!scrolling) { scrolling = true; setIsScrolling(true); }
+          clearTimeout(timeout);
+          timeout = setTimeout(() => { scrolling = false; setIsScrolling(false); }, 150);
+        });
+        if (!document.hidden) raf = requestAnimationFrame(frame);
+        recordMotion('scroll', 'lenis-initialized');
+      } catch (error) {
+        if (!disposed && current === generation) recordMotion('scroll', 'initialization-error', motionError(error));
+      }
     }
     function visibility() {
       cancelAnimationFrame(raf); raf = 0;

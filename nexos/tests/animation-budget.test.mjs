@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createResolutionBudget } from '../src/lib/animation-budget.ts';
+import { createResolutionBudget, createMotionDetailBudget } from '../src/lib/animation-budget.ts';
 
 test('sustained slow frames reduce pixel cost without a zero-resolution state', () => {
   const budget = createResolutionBudget();
@@ -20,4 +20,21 @@ test('suspension gaps are not classified as rendering pressure', () => {
   const budget = createResolutionBudget();
   assert.equal(budget.sample(5000), .85);
   assert.equal(budget.sample(0), .85);
+});
+
+test('detail adapts after sustained pressure and recovers after four healthy windows', () => {
+  const budget = createMotionDetailBudget();
+  assert.equal(budget.sample(90), 'full');
+  let detail;
+  for (let i = 0; i < 100; i++) detail = budget.sample(50);
+  assert.equal(detail, 'light');
+  for (let i = 0; i < 700; i++) detail = budget.sample(16);
+  assert.equal(detail, 'full');
+});
+
+test('limited devices begin with light detail and suspension does not change it', () => {
+  const budget = createMotionDetailBudget('light');
+  assert.equal(budget.sample(0), 'light');
+  assert.equal(budget.sample(5000), 'light');
+  assert.equal(budget.sample(16), 'light');
 });

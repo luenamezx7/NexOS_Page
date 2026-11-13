@@ -1,34 +1,28 @@
-.grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 2vw, 24px); align-items: start; padding-block: 14px 70px; }
+.grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; align-items: stretch; padding-block: 16px 0; }
 .option { min-width: 0; }
-.option:nth-child(2) { margin-top: 38px; }
-.option:nth-child(3) { margin-top: 12px; }
-.option:nth-child(4) { margin-top: 52px; }
-.plateButton { display: block; width: 100%; margin-inline: auto; padding: 0; text-align: left; cursor: pointer; }
+.plateButton { display: flex; flex-direction: column; width: 100%; height: 100%; padding: 0; text-align: left; cursor: pointer; border-radius: 20px 20px 0 0; }
+.shelf { display: grid; place-items: center; width: 100%; padding: 8px; border-radius: 20px; background: color-mix(in srgb, var(--surface-raised) 65%, transparent); box-shadow: inset 0 1px 0 rgb(255 255 255 / 5%); }
 .option:nth-child(2) .plate { animation-delay: -2s; }
 .option:nth-child(3) .plate { animation-delay: -3.8s; }
 .option:nth-child(4) .plate { animation-delay: -1.2s; }
-.plateButton:focus-visible { outline: 3px solid var(--pink-soft); outline-offset: 6px; }
-.plateMotion { display: block; }
-@media (hover: hover) { .plateButton:hover .plate { transform: translateY(-4px) rotate(0deg) scale(1.012); } .plateButton:hover .plate::before { opacity: 1; } .plateButton:hover .plateImage { filter: drop-shadow(0 9px 13px rgb(0 0 0 / 20%)) drop-shadow(0 0 3px rgb(255 255 255 / 24%)); } }
-.plateButton:focus-visible .plate::before { opacity: 1; }
-.plateButton:focus-visible .plateImage { filter: drop-shadow(0 0 4px rgb(255 255 255 / 28%)); }
-.plateButton:active .plate { transform: translateY(-1px) rotate(0deg) scale(.985); transition-duration: 180ms; }
-.plate { position: relative; isolation: isolate; width: 100%; aspect-ratio: 1; transform: rotate(var(--plate-tilt, 0deg)); transition: transform 550ms var(--ease-fluid); animation: plateFloat 8s ease-in-out infinite; }
-.plate::before { content: ''; position: absolute; z-index: -1; inset: 19% 12%; border-radius: 50%; background: radial-gradient(ellipse, rgb(130 204 63 / 24%), rgb(130 204 63 / 7%) 52%, transparent 75%); filter: blur(17px); opacity: 0; pointer-events: none; transition: opacity 350ms ease; }
-.option:nth-child(1) { --plate-tilt: -2deg; }
-.option:nth-child(2) { --plate-tilt: 2deg; }
-.option:nth-child(3) { --plate-tilt: -1.5deg; }
-.option:nth-child(4) { --plate-tilt: 2.5deg; }
+.plateButton:focus-visible { outline: 2px solid var(--pink-soft); outline-offset: 6px; }
+.plateMotion { display: block; width: 100%; }
+@media (hover: hover) and (pointer: fine) { .plateButton:hover .plate { transform: translateY(-4px) scale(1.025); } .plateButton:hover .detailsAction svg { transform: translate(2px, -2px); } }
+.plateButton:focus-visible .detailsAction svg { transform: translate(2px, -2px); }
+.plateButton:active .plate { transform: scale(.985); transition-duration: 160ms; }
+.plate { position: relative; isolation: isolate; width: 100%; aspect-ratio: 1; transition: transform 350ms var(--ease-fluid); animation: plateFloat 8s ease-in-out infinite; animation-play-state: paused; }
+.grid[data-motion-active='true'] .plate { animation-play-state: running; }
 @keyframes plateFloat { 0%, 100% { translate: 0 0; } 50% { translate: 0 -3px; } }
-.plateImage { display: block; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 16px 18px #18241843); transition: filter 350ms ease; }
+.plateImage { display: block; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 8px 12px rgb(0 0 0 / 20%)); }
 /* Match the QR cutout in the 1000 × 1000 SVG artwork. */
 .qrArea { position: absolute; top: 63.6%; left: 61%; display: grid; place-items: center; width: 19.2%; aspect-ratio: 1; border-radius: 2px; background: #fff; }
 .qrArea img { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
-.caption { display: grid; gap: 5px; width: 100%; margin-inline: auto; padding: 10px 12px 0; }
-.caption h3 { font: 700 clamp(16px, 1.7vw, 21px)/1.18 var(--font-display); }
-.caption p { color: var(--text-secondary); font-size: 14px; line-height: 1.45; }
-.caption > span { display: flex; align-items: center; gap: 6px; margin-top: 7px; color: var(--pink-soft); font-size: 12px; }
-.disclaimer { margin: 30px 0 0; color: var(--text-secondary); font-size: 13px; line-height: 1.6; }
+.caption { display: flex; flex-direction: column; flex: 1; gap: 8px; width: 100%; padding: 24px 0 16px; border-bottom: 1px solid var(--surface-line); }
+.optionTitle { font: 600 18px/1.25 var(--font-display); letter-spacing: -.02em; }
+.optionDescription { flex: 1; color: var(--text-secondary); font-size: 14px; line-height: 1.5; }
+.detailsAction { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 16px; color: var(--pink-soft); font-size: 12px; line-height: 1.5; }
+.detailsAction svg { flex-shrink: 0; transition: transform 200ms ease; }
+.disclaimer { max-width: 76ch; margin: 24px 0 0; color: var(--text-secondary); font-size: 12px; line-height: 1.65; }
 .dialog { position: fixed; inset: 0; width: min(94vw, 940px); max-width: none; max-height: min(92dvh, 750px); margin: auto; padding: 0; overflow: auto; border: 1px solid var(--border); border-radius: 24px; background: var(--bg-elevated); color: var(--text-primary); box-shadow: 0 32px 100px #000c; }
 .dialog::backdrop { background: rgb(5 6 6 / 74%); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
 .dialog[open]::backdrop { animation: plateBackdropIn 400ms ease-out both; }
@@ -48,8 +42,7 @@
 .detailCopy .detailCaption { color: var(--purple-300); font-size: 20px; font-weight: 650; }
 .detailCopy .demoLink { display: inline-flex; align-items: center; gap: 8px; color: var(--purple-300); font-size: 14px; text-decoration: underline; text-underline-offset: 4px; }
 .detailCopy :global(.btn-primary-nex) { display: inline-flex; align-items: center; gap: 12px; min-height: 48px; padding: 11px 18px; border-radius: 12px; }
-@media (max-width: 850px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 16px; } .option:nth-child(2) { margin-top: 26px; } .option:nth-child(3) { margin-top: -8px; } .option:nth-child(4) { margin-top: 18px; } }
-@media (max-width: 600px) { .grid { gap: 18px 8px; padding-bottom: 40px; } .option:nth-child(2) { margin-top: 18px; } .option:nth-child(3) { margin-top: -6px; } .option:nth-child(4) { margin-top: 12px; } .caption { padding: 8px 7px 0; } .caption h3 { font-size: 17px; } .caption p { font-size: 12px; } .plate { animation: none; } .dialogContent { grid-template-columns: 1fr; padding: 56px 20px 28px; gap: 22px; } .detailPlate { width: min(100%, 290px); } .detailCopy { gap: 12px; } .detailCopy h2 { font-size: 30px; } .detailCopy .detailCaption { font-size: 17px; } }
-@media (max-width: 359px) { .grid { gap: 20px 9px; } }
-@media (prefers-reduced-motion: reduce) { .plate, .plate::before, .plateImage { animation: none; transition: none; } .plateButton:hover .plate, .plateButton:active .plate { transform: none; } .dialog[open]::backdrop { animation: none; } }
+@media (max-width: 1023px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 24px; } }
+@media (max-width: 600px) { .grid { gap: 32px 16px; padding-top: 8px; } .shelf { padding: 0; border-radius: 16px; } .caption { padding-top: 16px; } .optionTitle { font-size: 16px; } .optionDescription { font-size: 12px; } .detailsAction { margin-top: 8px; } .dialogContent { grid-template-columns: 1fr; padding: 56px 20px 28px; gap: 22px; } .detailPlate { width: min(100%, 290px); } .detailCopy { gap: 12px; } .detailCopy h2 { font-size: 30px; } .detailCopy .detailCaption { font-size: 17px; } }
+@media (prefers-reduced-motion: reduce) { .plate, .plateImage, .detailsAction svg { animation: none; transition: none; } .plateButton:hover .plate, .plateButton:active .plate, .plateButton .detailsAction svg { transform: none; } .dialog[open]::backdrop { animation: none; } }
 @media (forced-colors: active) { .dialog { background: Canvas; color: CanvasText; border-color: CanvasText; box-shadow: none; } .dialog::backdrop { background: Canvas; backdrop-filter: none; } .qrArea { forced-color-adjust: none; } }

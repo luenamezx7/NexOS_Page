@@ -9,7 +9,6 @@ import { plateCommercialHref } from '@/lib/commercial';
 import { DetailTabs, type DetailTab } from './commerce/DetailTabs';
 import { PlateChooser } from './commerce/PlateChooser';
 import { HighlightedText } from './highlighted-text';
-import { GlowingBadge } from './unlumen-ui/primitives/glowing-badge';
 import styles from './commerce/Commerce.module.css';
 import { useLocale } from '@/lib/locale';
 
@@ -28,12 +27,9 @@ export function ProductShowcase({ className = '', onSelectUse }: { className?: s
   return (
       <section id="showcase" aria-labelledby="showcase-title" className={`${styles.section} ${className}`}>
         <div className={styles.container}>
-           <ScrollReveal preset="label" className={styles.sectionNav} aria-label={t('Explore as soluções')}>
-             <span className={styles.currentSection}><Nfc size={16} aria-hidden="true" /> {t('Produto físico')}</span>
-           </ScrollReveal>
            <div className={styles.productGrid}>
               <div className={styles.productIntro}>
-                 <div className={styles.kicker}><GlowingBadge variant="neutral">{t('Placa Inteligente ezway')}</GlowingBadge></div>
+                 <div className={`${styles.kicker} ${styles.currentSection}`}><Nfc size={16} aria-hidden="true" />{t('Placa Inteligente ezway')}</div>
                   <ScrollReveal as="h2" preset="title" id="showcase-title" className={styles.heading}>{t('O que seu cliente vai abrir')} <HighlightedText inView from="bottom" delay={.1}>{t('na placa?')}</HighlightedText></ScrollReveal>
               </div>
               <div className={styles.productVisual}><PlateChooser onSelect={name => { setSelectedUse(name); onSelectUse?.(name); }} /></div>

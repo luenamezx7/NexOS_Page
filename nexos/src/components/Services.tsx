@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { useLocale } from '@/lib/locale';
 import { useScrollContext } from './SmoothScrollProvider';
+import { motionError, recordMotion } from '@/lib/motion-diagnostics';
 import siteArtwork from '../../design-/rebrand-nexos/nfcs/CONTEXT-AI-VIDEOS/imgg1.png';
 import menuArtwork from '../../design-/rebrand-nexos/nfcs/CONTEXT-AI-VIDEOS/imgg2.png';
 import styles from './DigitalSolutions.module.css';
@@ -45,7 +46,11 @@ export function Services({ className = '', selectedUse }: { className?: string; 
   }, []);
 
   useEffect(() => {
-    if (reducedMotion || !ref.current) return;
+    if (reducedMotion || !ref.current) {
+      recordMotion('servicesGsap', reducedMotion ? 'blocked-reduced-motion' : 'missing-root');
+      return;
+    }
+    recordMotion('servicesGsap', 'loading');
     let disposed = false;
     let cleanup = () => {};
     void import('gsap/ScrollTrigger').then(({ ScrollTrigger }) => {
@@ -99,6 +104,7 @@ export function Services({ className = '', selectedUse }: { className?: string; 
         onLeaveBack: () => { root.dataset.artworkFocus = 'false'; },
       });
       root.dataset.artworkFocus = String(trigger.isActive);
+      recordMotion('servicesGsap', 'initialized');
       const refresh = () => ScrollTrigger.refresh();
       document.fonts.ready.then(() => { if (!disposed) refresh(); });
       let viewportWidth = window.innerWidth;
@@ -111,6 +117,8 @@ export function Services({ className = '', selectedUse }: { className?: string; 
       target = position = trigger.progress;
       paint(position);
       cleanup = () => { window.removeEventListener('resize', onResize); cancelAnimationFrame(frame); trigger.kill(); delete root.dataset.artworkFocus; };
+    }).catch(error => {
+      if (!disposed) recordMotion('servicesGsap', 'initialization-error', motionError(error));
     });
     return () => { disposed = true; cleanup(); };
   }, [reducedMotion]);

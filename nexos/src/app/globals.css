@@ -1531,10 +1531,6 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
 .landing-hero[data-nav-ready='false'] a[href^='#'] { pointer-events: none; }
 .landing-page [data-section-panel] > div > section { border-top: 0; border-bottom: 0; }
 .landing-page [data-section-panel] :where(p) { text-wrap: pretty; }
-@media (max-width: 767px) {
-  [data-scroll-float] { transform: none !important; }
-  [data-hero-scroll] { transform: none !important; opacity: 1 !important; }
-}
 @media (prefers-reduced-motion: reduce) {
   [data-reveal] { opacity: 1 !important; transform: none !important; filter: none !important; }
   [data-scroll-float] { transform: none !important; }
@@ -1609,10 +1605,14 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
   .hero-actions > :first-child { width: 100%; min-width: 0; }
   .hero-text-link { width: fit-content; min-height: 44px; padding: 4px 0; justify-content: flex-start; gap: 8px; border: 0; color: var(--text-secondary); }
   .hero-easychat-link, .landing-hero [data-hero-brand-strip] { display: none; }
-  .landing-page [data-blur-letter] { filter: none !important; transform: none !important; }
+  .landing-page [data-blur-letter] { filter: none !important; }
   .hero-bottom { left: 24px; right: 24px; }
   .hero-bottom > span { display: none; }
 }
+
+/* Lower paint cost instead of disabling motion on limited or busy devices. */
+.landing-page[data-motion-detail='light'] [data-blur-letter] { filter: none !important; }
+.landing-page[data-motion-detail='light'] :is(.landing-header-blur, .landing-edge-blur) { visibility: hidden; }
 @media (max-height: 740px) and (min-width: 768px) {
   .hero-container { padding-block: 96px 224px; }
   .hero-heading { font-size: clamp(48px, 6vw, 76px); }
@@ -1632,3 +1632,19 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
 .landing-hero .hero-eyebrow, .landing-hero .hero-actions { justify-content: center; }
 .landing-hero .hero-description { font-size: 16px; margin: 28px auto 0; text-align: center; }
 @media (max-width: 767px) { .landing-hero .hero-container { gap: 32px; padding: 116px 24px 56px; } .landing-hero .hero-heading { font-size: clamp(36px, 9vw, 54px); } .landing-hero .hero-description { font-size: 15px; } }
+
+/* Round only the top of a dark chapter immediately following a light one. */
+.landing-page { --dark-section-radius: 32px; background: #f8f8fa; }
+.landing-page [data-home-experience='real-estate-video'] + [data-home-experience='plate-management'],
+.landing-page [data-home-experience='easychat'] + [data-home-experience='process'],
+.landing-page #faq + #cta-final {
+  border-radius: var(--dark-section-radius) var(--dark-section-radius) 0 0;
+  overflow: clip;
+}
+.landing-page [data-home-experience='contact'] { background: #f8f8fa; }
+/* The footer follows the white Instagram section; the closing stays flush. */
+.landing-page #main-content:has(> #instagram:last-child) + .footer-transition footer {
+  border-radius: var(--dark-section-radius) var(--dark-section-radius) 0 0;
+  overflow: clip;
+}
+@media (max-width: 767px) { .landing-page { --dark-section-radius: 24px; } }

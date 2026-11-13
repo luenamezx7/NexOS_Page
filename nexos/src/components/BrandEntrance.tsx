@@ -5,6 +5,7 @@ import { BrandWordmark } from './BrandWordmark';
 import { useScrollContext } from './SmoothScrollProvider';
 import styles from './BrandEntrance.module.css';
 import { useLocale } from '@/lib/locale';
+import { recordMotion } from '@/lib/motion-diagnostics';
 
 interface BrandEntranceProps {
   onComplete: (entered: boolean) => void;
@@ -42,6 +43,7 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
     const complete = () => {
       if (disposed || completed) return;
       completed = true;
+      recordMotion('presentation', 'completed');
       dialog.close();
       notify();
       onComplete(true);
@@ -49,6 +51,7 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
     const beginExit = () => {
       if (disposed || completed || leaving) return;
       leaving = true;
+      recordMotion('presentation', 'leaving');
       cancelAnimationFrame(progressFrame);
       setProgress(100);
       // Give the hero two paints to settle before the opaque cover starts fading.
@@ -68,6 +71,7 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
       frame = requestAnimationFrame(() => {
         setPhase('entering');
         const duration = media.matches ? 400 : 1850;
+        recordMotion('presentation', 'entering', `reducedMotion=${media.matches}; durationMs=${duration}`);
         if (!media.matches) {
           const startTime = performance.now();
           let lastProgressPaint = startTime;
@@ -89,6 +93,7 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
     completeRef.current = complete;
     dialog.close();
     dialog.showModal();
+    recordMotion('presentation', 'open');
     dialog.focus({ preventScroll: true });
     document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';

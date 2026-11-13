@@ -1,15 +1,21 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import Image from 'next/image';
 import { ArrowUpRight, X } from 'lucide-react';
 import { gsap } from 'gsap';
-import { motion, useMotionValue, useReducedMotion, useSpring } from 'motion/react';
+import { motion, useInView, useMotionValue, useReducedMotion, useSpring } from 'motion/react';
 import { PLATE_USES, type PlateUse } from '@/lib/plate-uses';
 import { plateCommercialHref } from '@/lib/commercial';
 import { useScrollLock } from '../useScrollLock';
 import { useLocale } from '@/lib/locale';
 import styles from './PlateChooser.module.css';
+import { usePresentationActive } from '@/lib/use-presentation-active';
+
+const subscribeVisibility = (callback: () => void) => {
+  document.addEventListener('visibilitychange', callback);
+  return () => document.removeEventListener('visibilitychange', callback);
+};
 
 const PLATE_IMAGES = {
   menu: '/nfcs/nfccardapio.svg',
@@ -51,6 +57,10 @@ export function PlateChooser({ onSelect }: { onSelect?: (name: string) => void }
   const [selected, setSelected] = useState<PlateUse | null>(null);
   const [qrs, setQrs] = useState<Record<string, string>>({});
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const visible = useInView(gridRef, { amount: .01 });
+  const foreground = useSyncExternalStore(subscribeVisibility, () => !document.hidden, () => false);
+  const presenting = usePresentationActive();
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const closingRef = useRef(false);
   useScrollLock(selected !== null);
@@ -95,12 +105,12 @@ export function PlateChooser({ onSelect }: { onSelect?: (name: string) => void }
   };
 
   return <>
-    <div className={styles.grid} data-plate-grid aria-label={t('Escolha sua placa pelo uso')}>
+    <div ref={gridRef} className={styles.grid} data-plate-grid data-motion-active={visible && foreground && !presenting && !selected} aria-label={t('Escolha sua placa pelo uso')}>
       {PLATE_USES.map(plate => <article key={plate.id} className={styles.option} data-plate-option={plate.id}>
-        <button type="button" className={styles.plateButton} aria-label={`${t('Ver placa')} ${t(plate.name)}`} onClick={event => { triggerRef.current = event.currentTarget; onSelect?.(plate.name); setSelected(plate); }}>
-          <span className={styles.plateMotion} data-plate-motion><PlateFace plate={plate} qr={qrs[plate.id]} /></span>
+        <button type="button" className={styles.plateButton} aria-haspopup="dialog" aria-label={`${t('Ver placa')} ${t(plate.name)}`} onClick={event => { triggerRef.current = event.currentTarget; onSelect?.(plate.name); setSelected(plate); }}>
+          <span className={styles.shelf}><span className={styles.plateMotion} data-plate-motion><PlateFace plate={plate} qr={qrs[plate.id]} /></span></span>
+          <span className={styles.caption} data-plate-caption><span className={styles.optionTitle}>{t(plate.name)}</span><span className={styles.optionDescription}>{t(plate.caption)}</span><span className={styles.detailsAction}>{t('Ver detalhes')} <ArrowUpRight size={16} aria-hidden="true" /></span></span>
         </button>
-        <div className={styles.caption} data-plate-caption><h3>{t(plate.name)}</h3><p>{t(plate.caption)}</p><span>{t('Ver detalhes')} <ArrowUpRight size={15} aria-hidden="true" /></span></div>
       </article>)}
     </div>
     <p className={styles.disclaimer}>{t('Nesta vitrine, os QR codes levam aos canais da ezway. Na sua placa, o destino e a personalização são definidos com você.')}</p>

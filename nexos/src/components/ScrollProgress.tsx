@@ -1,12 +1,14 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 import { useLocale } from '@/lib/locale';
 import styles from './ScrollProgress.module.css';
 
 export function ScrollProgress() {
   const fill = useRef<HTMLDivElement>(null);
   const { t } = useLocale();
+  const pathname = usePathname();
 
   useEffect(() => {
     let frame = 0;
@@ -31,9 +33,9 @@ export function ScrollProgress() {
       window.removeEventListener('scroll', schedule);
       window.removeEventListener('resize', schedule);
     };
-  }, []);
+  }, [pathname]);
 
-  return <div className={styles.track} role="progressbar" aria-label={t('Progresso da página')} aria-valuemin={0} aria-valuemax={100} aria-valuenow={0}>
+  return <div className={styles.track} data-scroll-progress role="progressbar" aria-label={t('Progresso da página')} aria-valuemin={0} aria-valuemax={100} aria-valuenow={0}>
     <div ref={fill} className={styles.fill} aria-hidden="true" />
   </div>;
 }
