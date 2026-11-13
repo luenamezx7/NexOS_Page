@@ -91,7 +91,7 @@ test('o controle do footer repete a nova apresentação e Escape revela o hero',
 });
 
 for (const theme of ['light', 'dark']) {
-  test(`${theme}: a entrada mobile respeita movimento reduzido e mantém o hero limpo`, async ({ page }) => {
+  test(`${theme}: a entrada mobile mantém a experiência completa mesmo com reduce no sistema`, async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.addInitScript(theme => localStorage.setItem('nexos-theme', theme), theme);

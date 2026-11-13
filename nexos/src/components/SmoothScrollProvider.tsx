@@ -1,5 +1,7 @@
 'use client';
 
+import { motionMedia } from '@/lib/motion-policy';
+
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import type Lenis from 'lenis';
@@ -37,7 +39,7 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     // Native smooth scrolling can keep animating after a touch/wheel interruption,
     // pulling the page back to the anchor. On touch/native scroll, land directly;
     // keep the interruptible Lenis animation only where Lenis owns the scroll.
-    const immediate = options.immediate || matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const immediate = options.immediate || motionMedia('(prefers-reduced-motion: reduce)').matches;
     if (options.history !== 'none' && window.location.hash !== `#${id}`) {
       history.pushState(history.state, '', `#${encodeURIComponent(id)}`);
     }
@@ -85,7 +87,7 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Keep the existing desktop smooth-scroll/ScrollTrigger integration.
     // Touch devices continue to use the browser's compositor-driven scrolling.
-    const media = matchMedia('(min-width: 768px) and (pointer: fine) and (prefers-reduced-motion: no-preference)');
+    const media = matchMedia('(min-width: 768px) and (pointer: fine)');
     let disposed = false, instance: Lenis | null = null, raf = 0, scrolling = false, generation = 0;
     let timeout: ReturnType<typeof setTimeout> | undefined;
     function stop() {
@@ -104,12 +106,7 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
       stop();
       if (disposed) return;
       if (pathname !== '/' || !media.matches) {
-        recordMotion('scroll', 'native', pathname !== '/' ? 'route' : matchMedia('(prefers-reduced-motion: reduce)').matches ? 'reduced-motion' : 'viewport-or-pointer');
-        return;
-      }
-      const deviceMemory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory;
-      if ((deviceMemory !== undefined && deviceMemory <= 4) || (navigator.hardwareConcurrency > 0 && navigator.hardwareConcurrency <= 4)) {
-        recordMotion('scroll', 'native', 'hardware-policy: memory<=4GB or cores<=4');
+        recordMotion('scroll', 'native', pathname !== '/' ? 'route' : motionMedia('(prefers-reduced-motion: reduce)').matches ? 'reduced-motion' : 'viewport-or-pointer');
         return;
       }
       const current = generation;

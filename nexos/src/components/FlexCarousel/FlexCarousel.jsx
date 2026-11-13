@@ -1,5 +1,7 @@
 'use client';
 
+import { motionMedia } from '@/lib/motion-policy';
+
 // Adapted from React Bits' JavaScript + CSS FlexCarousel.
 import { useEffect, useRef, useState } from 'react';
 import { Renderer, Program, Mesh, Triangle, Plane, Texture, RenderTarget } from 'ogl';
@@ -306,7 +308,7 @@ const FlexCarousel = ({
         depthTest: false, depthWrite: false
       })
     });
-    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const motionQuery = motionMedia('(prefers-reduced-motion: reduce)');
     let reducedMotion = motionQuery.matches;
     const anisotropy = renderer.getExtension('EXT_texture_filter_anisotropic') ? 8 : 0;
     let slots = [];

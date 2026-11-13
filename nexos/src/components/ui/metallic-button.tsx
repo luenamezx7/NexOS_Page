@@ -1,5 +1,7 @@
 'use client';
 
+import { motionMedia } from '@/lib/motion-policy';
+
 import { Sparkles } from 'lucide-react';
 import { forwardRef, useEffect, useRef, type ButtonHTMLAttributes } from 'react';
 import { cn } from '@/lib/utils';
@@ -124,7 +126,7 @@ export function MetallicSurface({ baseColor, sheenColor, bandCount = 4, edgeBlur
     if (!surface || !button) return;
     // Primary actions use the shared CSS outline finish instead of a GPU surface.
     if (button.matches('.primary-action, .btn-primary-nex, .btn-primary-glow')) return;
-    const query = matchMedia('(prefers-reduced-motion: reduce)');
+    const query = motionMedia('(prefers-reduced-motion: reduce)');
     const desktop = matchMedia('(min-width: 768px) and (pointer: fine)');
     let mount: MetallicShaderMount | null = null, visible = false, hovered = false, pressed = false;
     let idle: number | undefined;

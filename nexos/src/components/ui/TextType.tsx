@@ -1,5 +1,7 @@
 'use client';
 
+import { motionMedia } from '@/lib/motion-policy';
+
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import styles from './TextType.module.css';
@@ -20,7 +22,7 @@ export function TextType({ text, typingSpeed = 75, deletingSpeed = 45, pauseDura
   const cursor = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    const media = matchMedia('(prefers-reduced-motion: reduce)');
+    const media = motionMedia('(prefers-reduced-motion: reduce)');
     const update = () => setReduced(media.matches);
     update();
     media.addEventListener('change', update);

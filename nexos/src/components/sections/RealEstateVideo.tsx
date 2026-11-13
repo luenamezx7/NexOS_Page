@@ -1,5 +1,7 @@
 'use client';
 
+import { motionMedia } from '@/lib/motion-policy';
+
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useLocale } from '@/lib/locale';
@@ -17,7 +19,7 @@ export function RealEstateVideo({ videoSrc, posterSrc = "/ezway-demo-studio.jpg"
     if (!video) return;
     let visible = false;
     const sync = () => {
-      if (visible && !document.hidden && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      if (visible && !document.hidden && !motionMedia('(prefers-reduced-motion: reduce)').matches) {
         void video.play().catch(() => {});
       } else video.pause();
     };

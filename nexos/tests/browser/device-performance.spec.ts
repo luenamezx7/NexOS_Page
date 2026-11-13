@@ -20,7 +20,7 @@ test('limited desktop keeps scrolling and readable content under CPU pressure', 
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
   await enter(page);
-  await expect(page.locator('.landing-page')).toHaveAttribute('data-motion-detail', 'light');
+  await expect(page.locator('.landing-page')).toHaveAttribute('data-motion-detail', 'full');
   const plates = page.locator('[data-hero-plates]');
   await plates.scrollIntoViewIfNeeded();
   await expect(plates).toHaveAttribute('data-motion-active', 'true');
@@ -98,15 +98,15 @@ for (const profile of [
 
       await page.emulateMedia({ reducedMotion: 'reduce' });
       await plates.scrollIntoViewIfNeeded();
-      await expect(group).toHaveCSS('animation-name', 'none');
-      await expect(face).toHaveCSS('animation-name', 'none');
-      await expect.poll(() => phone.evaluate(element => element.style.transform || element.style.top)).toBe('');
+      await expect(group).not.toHaveCSS('animation-name', 'none');
+      await expect(face).not.toHaveCSS('animation-name', 'none');
+      await expect.poll(() => phone.evaluate(element => element.style.transform || element.style.top)).not.toBe('');
       expect(errors).toEqual([]);
     });
   });
 }
 
-test('mobile keeps entrance animations; reduced motion remains explicit', async ({ page }) => {
+test('mobile keeps entrance animations despite the system reduce preference', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await enter(page);
   const pending = page.locator('[data-reveal-state="pending"]').first();
@@ -115,6 +115,6 @@ test('mobile keeps entrance animations; reduced motion remains explicit', async 
   await target!.scrollIntoViewIfNeeded();
   await expect.poll(() => target!.getAttribute('data-reveal-state')).toBe('visible');
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await expect(page.locator('[data-reveal-state="pending"]')).toHaveCount(0);
+  await expect(page.locator('[data-reveal-state="pending"]')).not.toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

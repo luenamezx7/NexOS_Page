@@ -3,7 +3,7 @@
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import { PRESENTATION_SELECTOR } from './use-presentation-active';
 
-const DESKTOP_EFFECTS = '(min-width: 768px) and (pointer: fine) and (prefers-reduced-motion: no-preference)';
+const DESKTOP_EFFECTS = '(min-width: 0px)';
 
 function subscribe(callback: () => void) {
   const media = window.matchMedia(DESKTOP_EFFECTS);
@@ -19,7 +19,7 @@ function snapshot() {
   return window.matchMedia(DESKTOP_EFFECTS).matches && !document.querySelector(PRESENTATION_SELECTOR);
 }
 
-/** Keep optional GPU effects out of the first paint and off touch/reduced-motion devices. */
+/** Defer optional effects until the opening has finished on every device. */
 export function useDesktopEffects() {
   const desktop = useSyncExternalStore(subscribe, snapshot, () => false);
   const [ready, setReady] = useState(false);

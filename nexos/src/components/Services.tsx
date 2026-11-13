@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { useLocale } from '@/lib/locale';
 import { useScrollContext } from './SmoothScrollProvider';
+import { usePresentationActive } from '@/lib/use-presentation-active';
 import { motionError, recordMotion } from '@/lib/motion-diagnostics';
 import siteArtwork from '../../design-/rebrand-nexos/nfcs/CONTEXT-AI-VIDEOS/imgg1.png';
 import menuArtwork from '../../design-/rebrand-nexos/nfcs/CONTEXT-AI-VIDEOS/imgg2.png';
@@ -24,6 +25,7 @@ export function Services({ className = '', selectedUse }: { className?: string; 
   const screenRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   const reducedMotion = usePrefersReducedMotion();
+  const presenting = usePresentationActive();
 
   useEffect(() => {
     const root = ref.current;
@@ -46,6 +48,7 @@ export function Services({ className = '', selectedUse }: { className?: string; 
   }, []);
 
   useEffect(() => {
+    if (presenting) { recordMotion('servicesGsap', 'waiting-presentation'); return; }
     if (reducedMotion || !ref.current) {
       recordMotion('servicesGsap', reducedMotion ? 'blocked-reduced-motion' : 'missing-root');
       return;
@@ -121,7 +124,7 @@ export function Services({ className = '', selectedUse }: { className?: string; 
       if (!disposed) recordMotion('servicesGsap', 'initialization-error', motionError(error));
     });
     return () => { disposed = true; cleanup(); };
-  }, [reducedMotion]);
+  }, [reducedMotion, presenting]);
 
   return <section ref={ref} id="services" aria-labelledby="services-title" className={`${styles.journey} ${className}`}>
     <div className={`${styles.stage} ${styles.fixedStage}`} data-services-journey>

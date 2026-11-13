@@ -2,7 +2,8 @@
 
 /** Theme-aware animated ink gradient. */
 import { useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
-import { motion, useMotionValue, useAnimationFrame, useTransform, useReducedMotion } from 'motion/react';
+import { motion, useMotionValue, useAnimationFrame, useTransform } from 'motion/react';
+import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import './GradientText.css';
 
 interface GradientTextProps {

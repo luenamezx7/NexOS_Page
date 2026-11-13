@@ -1,5 +1,7 @@
 'use client';
 
+import { motionMedia } from '@/lib/motion-policy';
+
 import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
@@ -18,7 +20,7 @@ export default function ScrollableCardStack({ items, className }: { items: Stack
     const next = Math.max(0, Math.min(items.length - 1, index));
     setActive(next);
     const card = track.current?.children[next] as HTMLElement | undefined;
-    if (matchMedia('(max-width: 767px)').matches) card?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', inline: 'center', block: 'nearest' });
+    if (matchMedia('(max-width: 767px)').matches) card?.scrollIntoView({ behavior: motionMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', inline: 'center', block: 'nearest' });
   };
   return <div className={cn(styles.stack, className)} role="region" aria-roledescription="carousel" aria-label={t('Soluções ezway')}>
     <ul ref={track} className={styles.track} onScroll={event => {

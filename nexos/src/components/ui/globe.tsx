@@ -1,5 +1,7 @@
 'use client';
 
+import { motionMedia } from '@/lib/motion-policy';
+
 import { useEffect, useRef, useState } from 'react';
 import type { Globe as GlobeInstance } from 'cobe';
 import { Pause, Play, RotateCcw } from 'lucide-react';
@@ -22,7 +24,7 @@ export function Globe() {
     if (!element || !surface) return;
     let disposed = false, visible = false, frame = 0, last = 0;
     let initializing = false;
-    const preference = matchMedia('(prefers-reduced-motion: reduce)');
+    const preference = motionMedia('(prefers-reduced-motion: reduce)');
     const draw = () => renderer.current?.update({ phi: interaction.current.phi });
     const tick = (now: number) => {
       frame = 0;

@@ -14,7 +14,6 @@ import { useLocale } from '@/lib/locale';
 import { TransitionGuide } from '@/components/sections/TransitionGuide';
 import { LandingPageBlur } from '@/components/sections/LandingPageBlur';
 import { RealEstateVideo } from '@/components/sections/RealEstateVideo';
-import { MotionPerformance } from '@/components/MotionPerformance';
 import { MotionDiagnosticsLoader } from '@/components/MotionDiagnosticsLoader';
 
 const Services = dynamic(() => import('@/components/Services').then(m => m.Services));
@@ -62,9 +61,8 @@ export default function HomeClient() {
   useEffect(() => () => cancelAnimationFrame(focusRaf.current), []);
 
   return (
-    <main className="landing-page w-full max-w-full overflow-x-clip bg-canvas text-ink">
+    <main data-motion-detail="full" className="landing-page w-full max-w-full overflow-x-clip bg-canvas text-ink">
       <HomepageJourneyMotion />
-      <MotionPerformance />
       <MotionDiagnosticsLoader />
       <LandingPageBlur />
       {entrance.visible && <BrandEntrance key={entrance.key} onComplete={handleEntranceComplete} />}

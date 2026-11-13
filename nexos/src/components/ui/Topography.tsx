@@ -1,5 +1,7 @@
 'use client';
 
+import { motionMedia } from '@/lib/motion-policy';
+
 // React Bits Topography, adapted to TypeScript and this application's lifecycle.
 // The supplied elevation/contour fragment shader is preserved.
 import { useEffect, useLayoutEffect, useRef } from 'react';
@@ -214,7 +216,7 @@ export default function Topography({
       program.remove(); geometry.remove(); canvas.remove(); gl.getExtension('WEBGL_lose_context')?.loseContext(); container.dataset.motion = 'fallback'; return;
     }
     const mesh = new Mesh(gl, { geometry, program });
-    const motion = matchMedia('(prefers-reduced-motion: reduce)');
+    const motion = motionMedia('(prefers-reduced-motion: reduce)');
     const pointer = matchMedia('(pointer: fine)');
     const currentMouse = [0.5, 0.5], targetMouse = [0.5, 0.5];
     let mouseActive = 0, mouseTarget = 0, raf = 0, lastTime = 0, lastDraw = 0, time = 0;

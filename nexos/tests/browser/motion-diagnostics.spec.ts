@@ -28,18 +28,20 @@ test('normal motion reports completed intro, GSAP and real video progress', asyn
   await page.screenshot({ path: 'test-results/motion-diagnostics-panel.png' });
 });
 
-test('reduced motion names each blocking policy and leaves video source unset', async ({ page }) => {
+test('browser reduce preference keeps the full experience active', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await open(page);
-  for (const name of ['homepageGsap', 'servicesGsap', 'reveals']) {
-    await expect.poll(async () => (await report(page)).resources[name]?.status).toBe('blocked-reduced-motion');
+  for (const name of ['homepageGsap', 'servicesGsap']) {
+    await expect.poll(async () => (await report(page)).resources[name]?.status).toBe('initialized');
   }
-  await expect.poll(async () => (await report(page)).resources.heroVideo?.detail).toBe('reduced-motion');
-  expect((await report(page)).video.sourceAssigned).toBe(false);
-  expect((await report(page)).resources.scroll).toMatchObject({ status: 'native', detail: 'reduced-motion' });
+  await expect.poll(async () => (await report(page)).video?.advancedSincePreviousSample).toBe(true);
+  expect((await report(page)).environment.reducedMotion).toBe(true);
+  expect((await report(page)).motionPolicy.effectiveMotion).toBe('full');
+  expect((await report(page)).resources.scroll.status).toBe('lenis-initialized');
+  expect((await report(page)).resources.reveals.status).toBe('enabled');
 });
 
-test('limited CPU retains full opening and GSAP while explaining native scroll', async ({ page }) => {
+test('limited CPU retains full opening, GSAP and smooth scroll', async ({ page }) => {
   await page.addInitScript(() => {
     Object.defineProperty(navigator, 'hardwareConcurrency', { get: () => 2 });
     Object.defineProperty(navigator, 'deviceMemory', { get: () => 2 });
@@ -49,9 +51,14 @@ test('limited CPU retains full opening and GSAP while explaining native scroll',
   await open(page);
   await expect.poll(async () => (await report(page)).resources.homepageGsap?.status).toBe('initialized');
   const result = await report(page);
-  expect(result.resources.scroll).toMatchObject({ status: 'native', detail: 'hardware-policy: memory<=4GB or cores<=4' });
-  expect(result.resources.presentation.status).toBe('completed');
-  expect(result.history.some((entry: { resource: string; observation: { detail?: string } }) => entry.resource === 'presentation' && entry.observation.detail?.includes('durationMs=1850'))).toBe(true);
+  expect(result.resources.scroll.status).toBe('lenis-initialized');
+  expect(result.motionDetail).toBe('full');
+  expect(['completed', 'completed-before-hydration']).toContain(result.resources.presentation.status);
+  expect(result.presentation.open).toBe(false);
+  expect(result.scrollDom.stopped).toBe(false);
+  if (result.resources.presentation.status === 'completed') {
+    expect(result.history.some((entry: { resource: string; observation: { detail?: string } }) => entry.resource === 'presentation' && entry.observation.detail?.includes('durationMs=1850'))).toBe(true);
+  }
 });
 
 test('autoplay rejection is distinct from reduced motion', async ({ page }) => {
@@ -93,4 +100,25 @@ test('normal URL does not mount the diagnostics panel', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('[data-presentation]')).toHaveCount(0, { timeout: 30000 });
   await expect(page.locator('[data-motion-diagnostics]')).toHaveCount(0);
+});
+
+test('opening moves before hydration and expires without waiting for client chunks', async ({ page }) => {
+  let release!: () => void;
+  const gate = new Promise<void>(resolve => { release = resolve; });
+  await page.route(/\/_next\/static\/.*\.js(?:\?|$)/, async route => { await gate; await route.continue(); });
+  try {
+    await page.goto('/', { waitUntil: 'commit' });
+    const intro = page.locator('[data-presentation]');
+    await expect(intro).toBeVisible();
+    await expect(intro).toHaveAttribute('data-phase', 'pending');
+    const logo = intro.getByText('ezway', { exact: true }).locator('..');
+    const transform = await logo.evaluate(element => getComputedStyle(element).transform);
+    await expect.poll(() => logo.evaluate(element => getComputedStyle(element).transform)).not.toBe(transform);
+    await expect(intro).toBeHidden({ timeout: 5000 });
+    await expect(page.locator('#hero h1')).toBeVisible();
+    release();
+    await expect(intro).toHaveCount(0, { timeout: 15000 });
+    expect(await page.evaluate(() => document.querySelector('dialog:modal'))).toBeNull();
+    expect(await page.evaluate(() => document.body.style.overflow)).not.toBe('hidden');
+  } finally { release(); }
 });

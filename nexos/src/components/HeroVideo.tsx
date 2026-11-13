@@ -1,5 +1,7 @@
 'use client';
 
+import { motionMedia } from '@/lib/motion-policy';
+
 import { useEffect, useRef, useState } from 'react';
 import { Pause, Play } from 'lucide-react';
 import { useLocale } from '@/lib/locale';
@@ -29,13 +31,13 @@ export function HeroVideo({ active }: { active: boolean }) {
     video.defaultMuted = true;
     const hero = video.closest('#hero');
     const sync = () => {
-      if (active && visible && !paused && !document.hidden && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      if (active && visible && !paused && !document.hidden && !motionMedia('(prefers-reduced-motion: reduce)').matches) {
         recordMotion('heroVideo', 'play-requested');
         // Load only when the hero is visible; keep the original 1080p file intact.
         if (!video.getAttribute('src')) video.src = '/media/gloved-hand-connecting-iphone.mp4';
         void video.play().catch(error => { setPlaying(false); recordMotion('heroVideo', 'play-rejected', motionError(error)); });
       } else {
-        recordMotion('heroVideo', 'paused-by-condition', window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'reduced-motion' : !active ? 'presentation' : !visible ? 'offscreen' : paused ? 'user-paused' : 'document-hidden');
+        recordMotion('heroVideo', 'paused-by-condition', motionMedia('(prefers-reduced-motion: reduce)').matches ? 'reduced-motion' : !active ? 'presentation' : !visible ? 'offscreen' : paused ? 'user-paused' : 'document-hidden');
         video.pause();
       }
     };

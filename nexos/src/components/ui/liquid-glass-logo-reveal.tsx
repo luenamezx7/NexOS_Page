@@ -1,5 +1,7 @@
 'use client';
 
+import { motionMedia } from '@/lib/motion-policy';
+
 import { useEffect, useRef, type RefObject } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -132,7 +134,7 @@ export function LiquidGlassLogoReveal({ imageRef, className }: LiquidGlassLogoRe
     const host = hostRef.current;
     const canvas = canvasRef.current;
     const image = imageRef.current;
-    if (!host || !canvas || !image || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!host || !canvas || !image || motionMedia('(prefers-reduced-motion: reduce)').matches) return;
     let renderer: ReturnType<typeof createRenderer> = null;
     let frame = 0;
     let started = false;

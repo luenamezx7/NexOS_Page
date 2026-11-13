@@ -1,7 +1,8 @@
 'use client';
 
 import type { HTMLAttributes } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
+import { motion } from 'motion/react';
+import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { cn } from '@/lib/utils';
 
 export type GlowingBadgeVariant = 'default' | 'success' | 'warning' | 'error' | 'info' | 'neutral';
@@ -36,7 +37,7 @@ export function GlowingBadge({ variant = 'default', pulse = true, dot = true, do
     <span className={cn('relative inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium', styles.badge, className)} {...props}>
       {dot && <span aria-hidden="true" className="relative flex size-1.5 shrink-0">
         {pulse && <motion.span
-          className={cn('absolute inline-flex size-full rounded-full opacity-75 motion-reduce:hidden', styles.dot)}
+          className={cn('absolute inline-flex size-full rounded-full opacity-75', styles.dot)}
           style={dotStyle}
           animate={reduceMotion ? undefined : { scale: [1, 2.5, 1], opacity: [0.75, 0, 0.75] }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}

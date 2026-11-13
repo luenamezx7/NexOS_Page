@@ -5,7 +5,8 @@
  * Debounced, sem remount. Progress bar scaleX.
  */
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
-import { motion, useMotionValue, useReducedMotion, useTransform, type MotionValue } from 'motion/react';
+import { motion, useMotionValue, useTransform, type MotionValue } from 'motion/react';
+import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { ArrowRight } from 'lucide-react';
 import { MetallicSurface } from './ui/metallic-button';
 

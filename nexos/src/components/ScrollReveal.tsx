@@ -1,5 +1,7 @@
 'use client';
 
+import { motionMedia } from '@/lib/motion-policy';
+
 import { Children, cloneElement, isValidElement, useEffect, useRef, type HTMLAttributes, type ReactElement, type ReactNode } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'motion/react';
 import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
@@ -54,8 +56,8 @@ export function ScrollReveal({ children, as = 'div', preset = 'body', delay = 0,
       element.dataset.revealState = 'visible';
     };
     // Read the preference directly too, before the external-store hydration update.
-    if (reduce || matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window) || !element.animate) {
-      recordMotion('reveals', reduce || matchMedia('(prefers-reduced-motion: reduce)').matches ? 'blocked-reduced-motion' : 'unsupported-api');
+    if (reduce || motionMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window) || !element.animate) {
+      recordMotion('reveals', reduce || motionMedia('(prefers-reduced-motion: reduce)').matches ? 'blocked-reduced-motion' : 'unsupported-api');
       restore();
       return;
     }

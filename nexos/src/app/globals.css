@@ -1610,9 +1610,6 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
   .hero-bottom > span { display: none; }
 }
 
-/* Lower paint cost instead of disabling motion on limited or busy devices. */
-.landing-page[data-motion-detail='light'] [data-blur-letter] { filter: none !important; }
-.landing-page[data-motion-detail='light'] :is(.landing-header-blur, .landing-edge-blur) { visibility: hidden; }
 @media (max-height: 740px) and (min-width: 768px) {
   .hero-container { padding-block: 96px 224px; }
   .hero-heading { font-size: clamp(48px, 6vw, 76px); }

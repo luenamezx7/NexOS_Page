@@ -1,10 +1,13 @@
 'use client';
 
+import { motionMedia } from '@/lib/motion-policy';
+
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import Image from 'next/image';
 import { ArrowUpRight, X } from 'lucide-react';
 import { gsap } from 'gsap';
-import { motion, useInView, useMotionValue, useReducedMotion, useSpring } from 'motion/react';
+import { motion, useInView, useMotionValue, useSpring } from 'motion/react';
+import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { PLATE_USES, type PlateUse } from '@/lib/plate-uses';
 import { plateCommercialHref } from '@/lib/commercial';
 import { useScrollLock } from '../useScrollLock';
@@ -81,7 +84,7 @@ export function PlateChooser({ onSelect }: { onSelect?: (name: string) => void }
     if (selected) {
       dialog.showModal();
        dialog.querySelector<HTMLButtonElement>('button[data-close-plate]')?.focus({ preventScroll: true });
-      if (content && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      if (content && !motionMedia('(prefers-reduced-motion: reduce)').matches) {
         gsap.fromTo(content, { autoAlpha: 0, y: 20, scale: .98 }, { autoAlpha: 1, y: 0, scale: 1, duration: .55, ease: 'power3.out', clearProps: 'all' });
       }
     } else if (dialog.open) dialog.close();
@@ -99,7 +102,7 @@ export function PlateChooser({ onSelect }: { onSelect?: (name: string) => void }
       triggerRef.current?.focus({ preventScroll: true });
       closingRef.current = false;
     };
-    if (!content || matchMedia('(prefers-reduced-motion: reduce)').matches) { finish(); return; }
+    if (!content || motionMedia('(prefers-reduced-motion: reduce)').matches) { finish(); return; }
     gsap.killTweensOf(content);
     gsap.to(content, { autoAlpha: 0, y: 10, scale: .985, duration: .2, ease: 'power2.in', onComplete: finish });
   };

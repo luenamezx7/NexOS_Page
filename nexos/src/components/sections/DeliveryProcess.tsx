@@ -20,7 +20,7 @@ export function DeliveryProcess() {
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end end'] });
   const { scrollYProgress: timelineProgress } = useScroll({ target: timelineRef, offset: ['start center', 'end center'] });
   useEffect(() => {
-    const media = matchMedia('(min-width: 768px) and (min-height: 700px) and (prefers-reduced-motion: no-preference)');
+    const media = matchMedia('(min-width: 768px) and (min-height: 700px)');
     const update = () => setPinned(media.matches);
     update();
     media.addEventListener('change', update);

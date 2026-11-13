@@ -1,7 +1,8 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
+import { motion } from 'motion/react';
+import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 
 // ============================================================
 // ezway — MacBook Air 13 — Figma ORIGINAL

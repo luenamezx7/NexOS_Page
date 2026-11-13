@@ -1,5 +1,7 @@
 'use client';
 
+import { motionMedia } from '@/lib/motion-policy';
+
 import { useEffect, useRef, type HTMLAttributes } from 'react';
 import { cn } from '@/lib/utils';
 import { COMPOSITE, FIELD, QUAD_VERTEX } from './DarkVeil.shaders';
@@ -180,7 +182,7 @@ export function DarkVeil({
     };
 
     const probe = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const reduce = motionMedia('(prefers-reduced-motion: reduce)');
     const colorCache = new Map<string, number[]>();
     const toLinear = (value: string) => {
       const cached = colorCache.get(value);

@@ -1,5 +1,7 @@
 'use client';
 
+import { motionMedia } from '@/lib/motion-policy';
+
 // React Bits Grainient — JavaScript + CSS, with visibility-aware rendering.
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -364,7 +366,7 @@ const Grainient = ({
       return rgb;
     };
 
-    const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const motionPreference = motionMedia('(prefers-reduced-motion: reduce)');
     let reduce = motionPreference.matches;
     let contextLost = false;
     const view = { width: 1, height: 1, ratio: 1 };

@@ -1,9 +1,10 @@
 'use client';
 
+import { motionMedia } from '@/lib/motion-policy';
+
 import { useEffect, useRef, useState, type HTMLAttributes } from 'react';
 
 import './GhostFibers.css';
-import { createResolutionBudget } from '@/lib/animation-budget';
 
 export type GhostFibersFiberStyle = 'dots' | 'dashes' | 'lines';
 
@@ -773,7 +774,7 @@ const GhostFibers = ({
     probe.width = 1;
     probe.height = 1;
     const probeContext = probe.getContext('2d', { willReadFrequently: true });
-    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+    const reduce = motionMedia('(prefers-reduced-motion: reduce)').matches ?? false;
     const state = {
       time: 0,
       roll: 0,
@@ -794,8 +795,7 @@ const GhostFibers = ({
       pulse: { s: 0, age: 9, strength: 0, ribbon: 0 },
       camera: null as Camera | null
     };
-    const budget = createResolutionBudget();
-    let renderScale = 0.85;
+    const renderScale = 1;
     let paintedAt = 0;
     let raf = 0;
     let last = 0;
@@ -999,7 +999,7 @@ const GhostFibers = ({
 
       const blooming = s.glow > 0.001 && !s.lightMode;
       gl.bindVertexArray(vao);
-      const bloomLevels = renderScale < .7 ? 3 : BLOOM_LEVELS;
+      const bloomLevels = BLOOM_LEVELS;
       if (blooming) {
         chain.slice(0, bloomLevels).forEach((target, index) => {
           allocate(
@@ -1058,12 +1058,6 @@ const GhostFibers = ({
       if (paintedAt && now - paintedAt < interval - 1) {
         raf = requestAnimationFrame(frame);
         return;
-      }
-      const gap = last ? now - last : interval;
-      const nextScale = budget.sample(gap);
-      if (nextScale !== renderScale) {
-        renderScale = nextScale;
-        resize();
       }
       paintedAt = now;
       const s = settingsRef.current;

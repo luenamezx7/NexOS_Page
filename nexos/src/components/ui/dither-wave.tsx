@@ -1,5 +1,7 @@
 'use client';
 
+import { motionMedia } from '@/lib/motion-policy';
+
 import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { VISOR_PALETTE } from '@/lib/brand-palette';
@@ -39,7 +41,7 @@ export default function DitherWave({ width = '100%', height = '100%', speed = 0.
     const canvas = ref.current, element = wrapper.current;
     const context = canvas?.getContext('2d', { alpha: false });
     if (!canvas || !context || !element) return;
-    const motion = matchMedia('(prefers-reduced-motion: reduce)');
+    const motion = motionMedia('(prefers-reduced-motion: reduce)');
     let raf = 0, last = 0, time = 0, visible = false, disposed = false;
     let cols = 0, rows = 0, image: ImageData | undefined;
     let background: [number, number, number] = [243, 234, 217];

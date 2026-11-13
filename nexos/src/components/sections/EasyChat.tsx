@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useInView, useReducedMotion } from 'motion/react';
+import { useInView } from 'motion/react';
+import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { easychat } from '@/config/easychat';
 import { ScrollReveal } from '../ScrollReveal';
 import { HighlightedText } from '../highlighted-text';

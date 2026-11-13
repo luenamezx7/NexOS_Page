@@ -18,7 +18,7 @@ export function HomepageJourneyMotion() {
       if (!root) return;
       gsap.registerPlugin(ScrollTrigger);
       const mm = gsap.matchMedia();
-      mm.add({ desktop: '(min-width: 768px) and (prefers-reduced-motion: no-preference)', mobile: '(max-width: 767px) and (prefers-reduced-motion: no-preference)' }, context => {
+      mm.add({ desktop: '(min-width: 768px)', mobile: '(max-width: 767px)' }, context => {
         const desktop = !!context.conditions?.desktop;
         recordMotion('homepageGsap', 'initialized', desktop ? 'desktop' : 'mobile');
         const entries = root.querySelectorAll('[data-hero-plates], #mascot-solutions-title, #real-estate-video-title, #plate-management-title');
@@ -62,13 +62,7 @@ export function HomepageJourneyMotion() {
           });
         }
       }, root);
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) recordMotion('homepageGsap', 'blocked-reduced-motion');
-      const onMotionChange = () => {
-        if (matchMedia('(prefers-reduced-motion: reduce)').matches) recordMotion('homepageGsap', 'blocked-reduced-motion');
-      };
-      const media = matchMedia('(prefers-reduced-motion: reduce)');
-      media.addEventListener('change', onMotionChange);
-      revert = () => { media.removeEventListener('change', onMotionChange); mm.revert(); };
+      revert = () => mm.revert();
     }).catch(error => {
       if (!disposed) recordMotion('homepageGsap', 'initialization-error', motionError(error));
     });

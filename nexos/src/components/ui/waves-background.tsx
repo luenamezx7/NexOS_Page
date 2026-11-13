@@ -1,5 +1,7 @@
 'use client';
 
+import { motionMedia } from '@/lib/motion-policy';
+
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { WavesOptions, WavesRenderer, WavesState } from '@/lib/waves-renderer';
 
@@ -23,7 +25,7 @@ export function WavesBackground({ active, paused = false, onPaused }: { active: 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas || !active) return;
-    const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+    const reduce = motionMedia('(prefers-reduced-motion: reduce)');
     let disposed = false;
     let worker: Worker | undefined;
     let renderer: WavesRenderer | undefined;

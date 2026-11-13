@@ -61,7 +61,7 @@ export default function ReactBitsScrollReveal({
     const gap = Math.max(0, stagger);
     const mm = gsap.matchMedia();
 
-    mm.add('(prefers-reduced-motion: no-preference)', () => {
+    mm.add('(min-width: 0px)', () => {
       const order = pieces.map((_, index) => index);
       const last = pieces.map(() => -1);
       const state = { p: 0 };

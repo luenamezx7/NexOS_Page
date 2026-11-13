@@ -213,11 +213,7 @@ export function TiltedGridHero({
     `@keyframes ${orbit}{` +
     `from{transform:${turn(-sweep)}}to{transform:${turn(sweep)}}` +
     `0%,${hide}%,${100 - hide}%,100%{visibility:hidden}` +
-    `${hide + 0.001}%,${100 - hide - 0.001}%{visibility:visible}}` +
-    // Pausing rather than removing the motion keeps the band whole: every
-    // tile is already placed by its negative delay, so it freezes as a
-    // finished still.
-    `@media(prefers-reduced-motion:reduce){.${tile}{animation-play-state:paused}}`;
+    `${hide + 0.001}%,${100 - hide - 0.001}%{visibility:visible}}`;
 
   const share = aspectRatio / slices;
   const duration = columns * speed;

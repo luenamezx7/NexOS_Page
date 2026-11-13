@@ -20,7 +20,7 @@ export function PhoneScrollHero({ titleComponent, children, className }: { title
       const title = titleRef.current;
       const mm = gsap.matchMedia();
       // Desktop uses integer offsets to keep live text sharp.
-      mm.add('(min-width: 768px) and (prefers-reduced-motion: no-preference)', () => {
+      mm.add('(min-width: 768px)', () => {
         const timeline = gsap.timeline({ scrollTrigger: { trigger: section, start: 'top bottom', end: 'bottom top', scrub: .35 } });
         timeline.fromTo(title, { top: -12, opacity: .75 }, {
           top: 12, opacity: 1, ease: 'none', modifiers: { top: value => `${Math.round(parseFloat(value))}px` },
@@ -31,7 +31,7 @@ export function PhoneScrollHero({ titleComponent, children, className }: { title
       });
       // Touch devices get the same scroll response on two compositor layers,
       // without layout writes or pinning that competes with native scrolling.
-      mm.add('(max-width: 767px) and (prefers-reduced-motion: no-preference)', () => {
+      mm.add('(max-width: 767px)', () => {
         const timeline = gsap.timeline({ scrollTrigger: { trigger: section, start: 'top bottom', end: 'bottom top', scrub: true } });
         timeline.fromTo(title, { y: -8, opacity: .8 }, { y: 8, opacity: 1, ease: 'none' }, 0)
           .fromTo(phone, { y: 16 }, { y: -16, ease: 'none', modifiers: { y: value => `${Math.round(parseFloat(value))}px` } }, 0);

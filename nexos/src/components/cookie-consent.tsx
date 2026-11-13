@@ -13,7 +13,8 @@ import {
   type ReactNode,
 } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
+import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { Cookie, X, ShieldCheck } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 import { useScrollLock } from './useScrollLock';

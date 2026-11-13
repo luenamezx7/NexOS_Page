@@ -1,5 +1,7 @@
 "use client";
 
+import { motionMedia } from "@/lib/motion-policy";
+
 /**
  * Glyph Portal © 2026 Christian Katzmann. MIT.
  * Origin: UsefulPortal.astro on https://ktzm.dk → UsefulPortal.tsx → ClarityPortal.tsx.
@@ -148,7 +150,7 @@ export default function GlyphPortal({
     const buttons = Array.from(choices.querySelectorAll<HTMLButtonElement>("button"));
     const picker = section.querySelector<HTMLSelectElement>("[data-gp-select]")!;
     const root = scrollParent(section);
-    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const motion = motionMedia("(prefers-reduced-motion: reduce)");
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d", { willReadFrequently: true });
     let disposed = false, raf = 0, dirty = true, active = true, ready = false;
@@ -462,8 +464,6 @@ export default function GlyphPortal({
         ${q}:has([data-gp-content]:focus-within) [data-gp-caption],${q}:has([data-gp-content]:focus-within) [data-gp-marks]{opacity:0;}
         ${q} [data-gp-default-title]{color:inherit;font:400 clamp(32px,5vw,72px)/1.05 Georgia,serif;letter-spacing:-.035em;max-width:13ch;margin:0 0 24px;text-wrap:balance;}
         ${q} [data-gp-default-copy]{color:inherit;font:16px/1.6 var(--font-sans);max-width:36ch;margin:0;}
-        @media(prefers-reduced-motion:reduce){${q} [data-gp-pin]{position:relative!important;} ${q} [data-gp-content]{margin-top:0!important;opacity:1!important;background:var(--gp-field)!important;min-height:0;padding-block:64px;} ${q} [data-gp-caption]{opacity:1!important;}}
-        @media(prefers-reduced-motion:reduce){${q} [data-gp-hint]{display:none;}}
       `}</style>
       {/* JS reveals only measured geometry. The unmeasured poster is reserved for no-JS. */}
       <noscript><style>{`${q} [data-gp-fallback]{display:grid}${q} [data-gp-hint]{display:none}`}</style></noscript>

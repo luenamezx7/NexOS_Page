@@ -1,5 +1,7 @@
 'use client';
 
+import { motionMedia } from '@/lib/motion-policy';
+
 import { useEffect, useRef } from 'react';
 import './GradientASCII.css';
 import { HERO_PALETTES } from '@/lib/brand-palette';
@@ -585,7 +587,7 @@ const GradientASCII = ({
       return rgb;
     };
 
-    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const motionQuery = motionMedia('(prefers-reduced-motion: reduce)');
     let reduce = motionQuery.matches;
     canvas.dataset.motion = reduce ? 'static' : 'on';
     const view = { width: 1, height: 1, ratio: 1 };

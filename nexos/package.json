@@ -20,7 +20,7 @@
     "test:browser": "playwright test",
     "test:email": "node --use-system-ca --import tsx scripts/test-email.ts",
     "typecheck": "tsc --noEmit",
-    "test:unit": "node --conditions=react-server --import tsx --test tests/quiz-recommendation.test.mjs tests/animation-budget.test.mjs tests/profile-validation.test.mjs"
+    "test:unit": "node --conditions=react-server --import tsx --test tests/quiz-recommendation.test.mjs tests/full-motion-css.test.mjs tests/profile-validation.test.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

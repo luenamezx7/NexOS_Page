@@ -31,7 +31,10 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
     let frame = 0;
     let progressFrame = 0;
     const timers = new Set<ReturnType<typeof setTimeout>>();
-    const media = matchMedia('(prefers-reduced-motion: reduce)');
+    // CSS already animates the server HTML, even while client chunks are loading.
+    const cover = dialog.getAnimations().find(animation => (animation as CSSAnimation).animationName?.includes('brand-cover-lifetime'));
+    const elapsedAtHydration = Math.max(0, Number(cover?.currentTime ?? 0));
+    const coverExpired = getComputedStyle(dialog).visibility === 'hidden';
     const htmlOverflow = document.documentElement.style.overflow;
     const bodyOverflow = document.body.style.overflow;
     const notify = () => document.dispatchEvent(new Event('nexos-entry-change'));
@@ -61,37 +64,38 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
         frame = requestAnimationFrame(() => {
           if (disposed) return;
           setPhase('leaving');
-          later(complete, media.matches ? 180 : 850);
+          later(complete, Math.max(0, Math.min(850, 2700 - elapsedAtHydration)));
         });
       });
     };
     const start = () => {
       if (disposed || completed || leaving || started) return;
       started = true;
-      frame = requestAnimationFrame(() => {
-        setPhase('entering');
-        const duration = media.matches ? 400 : 1850;
-        recordMotion('presentation', 'entering', `reducedMotion=${media.matches}; durationMs=${duration}`);
-        if (!media.matches) {
-          const startTime = performance.now();
-          let lastProgressPaint = startTime;
-          const tick = (now: number) => {
-            if (disposed || leaving) return;
-            if (now - lastProgressPaint >= 80) {
-              setProgress(Math.max(0, Math.min(99, Math.floor((now - startTime) / duration * 100))));
-              lastProgressPaint = now;
-            }
-            progressFrame = requestAnimationFrame(tick);
-          };
-          progressFrame = requestAnimationFrame(tick);
+      setPhase('entering');
+      const duration = 1850;
+      recordMotion('presentation', 'entering', `effectiveMotion=full; durationMs=${duration}; elapsedBeforeHydrationMs=${Math.round(elapsedAtHydration)}`);
+      const startTime = performance.now() - elapsedAtHydration;
+      let lastProgressPaint = 0;
+      const tick = (now: number) => {
+        if (disposed || leaving) return;
+        if (now - lastProgressPaint >= 80) {
+          setProgress(Math.max(0, Math.min(99, Math.floor((now - startTime) / duration * 100))));
+          lastProgressPaint = now;
         }
-        later(beginExit, duration);
-      });
+        progressFrame = requestAnimationFrame(tick);
+      };
+      progressFrame = requestAnimationFrame(tick);
+      later(beginExit, Math.max(0, duration - elapsedAtHydration));
     };
 
     exitRef.current = beginExit;
     completeRef.current = complete;
     dialog.close();
+    if (elapsedAtHydration >= 2700 || coverExpired) {
+      recordMotion('presentation', 'completed-before-hydration');
+      onComplete(true);
+      return;
+    }
     dialog.showModal();
     recordMotion('presentation', 'open');
     dialog.focus({ preventScroll: true });
@@ -100,13 +104,8 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
     window.scrollTo({ top: 0, behavior: 'instant' });
     notify();
 
-    // Use the actual closing-logo font before the fade, with a bounded fallback.
-    const fontDeadline = later(start, 1400);
-    void document.fonts.load('700 100px "Avenir Next"', 'ezway').then(() => {
-      clearTimeout(fontDeadline);
-      timers.delete(fontDeadline);
-      start();
-    }, start);
+    // Never wait for fonts or a shader before showing movement.
+    start();
 
     return () => {
       disposed = true;
