@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation';
 import { getAdminAccess } from '@/lib/auth/session';
 import { sanitizeCallbackPath } from '@/lib/auth/callback';
-import { enabledSocialProviders, socialAuthMode } from '@/lib/auth/social';
 import { LoginForm } from '@/components/auth/LoginForm';
 
 export const metadata = { title: 'Acesso restrito | ezway', robots: { index: false, follow: false } };
@@ -21,8 +20,6 @@ export default async function SecureEntryPage({
       audience="admin"
       confirmationError={params.confirmation === 'error'}
       callbackUrl={sanitizeCallbackPath(params.callbackUrl)}
-      socialProviders={enabledSocialProviders()}
-      socialAuthMode={socialAuthMode()}
       initialStep={params.mfa === 'required' ? 'totp' : 'credentials'}
       verified={params.verified === '1'}
     />

@@ -1,5 +1,6 @@
 import 'server-only';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { RequestError } from '@/lib/request-security';
 import { getUserAccess } from '@/lib/auth/session';
 
 /**
@@ -51,7 +52,10 @@ function ownerColumn(table: OwnedTable): string {
  */
 export async function getUserScope(): Promise<UserScope | null> {
   const access = await getUserAccess();
-  if (!access.ok) return null;
+  if (!access.ok) {
+    if (access.status !== 401) throw new RequestError(access.status === 503 ? 'Serviço indisponível.' : 'Acesso negado.', access.status);
+    return null;
+  }
 
   const client = createAdminClient();
   const userId = access.userId;

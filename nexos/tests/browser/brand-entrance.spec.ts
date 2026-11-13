@@ -15,11 +15,12 @@ test('a apresentação automática usa a logo do fechamento e reaparece após F5
   await expect(dialog).toBeFocused();
   const logo = dialog.getByText('ezway', { exact: true });
   const way = logo.locator('span');
-  await expect(way).toHaveCSS('background-clip', /text/);
-  expect(await way.evaluate(el => getComputedStyle(el).animationName)).not.toBe('none');
+  // The current wordmark uses a solid accent; the surrounding frame animates.
+  expect(await way.evaluate(el => getComputedStyle(el).color)).not.toBe(await logo.evaluate(el => getComputedStyle(el).color));
   const family = await logo.evaluate(el => getComputedStyle(el).fontFamily);
   await expect(dialog).toHaveCount(0, { timeout: 10000 });
   await expect(page.locator('#hero')).toBeFocused();
+  await expect(page.locator('#hero')).toHaveCSS('outline-style', 'none');
   await expect(page.locator('#brand-closing h2')).toHaveCSS('font-family', family);
   expect(await page.evaluate(() => document.body.style.overflow)).not.toBe('hidden');
 
@@ -99,8 +100,8 @@ for (const theme of ['light', 'dark']) {
     await expect(dialog).toBeVisible();
     await expect(dialog.getByText('ezway', { exact: true }).locator('span')).toHaveCSS('animation-name', 'none');
     await expect(dialog).toHaveCount(0, { timeout: 6000 });
-    await expect(page.locator('.landing-edge-blur, .landing-header-blur')).toHaveCount(0);
-    await expect(page.locator('[data-hero-brand-strip]')).toBeHidden();
+    await expect(page.locator('.landing-edge-blur, .landing-header-blur')).toHaveCount(2);
+    await expect(page.locator('#hero [data-hero-brand-strip]')).toHaveCount(0);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.locator('#services').scrollIntoViewIfNeeded();
     await expect(page.locator('.landing-edge-blur')).toHaveCount(1);
@@ -123,7 +124,7 @@ test('sem JavaScript a apresentação não bloqueia o conteúdo', async ({ brows
     await page.goto(baseURL!);
     await expect(page.locator('[data-presentation]')).toBeHidden();
     await expect(page.locator('#hero h1')).toBeVisible();
-    await expect(page.locator('#hero a[href="#contact"]')).toBeVisible();
+    await expect(page.locator('#hero a[href="#showcase"]')).toBeVisible();
   } finally {
     await context.close();
   }

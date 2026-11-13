@@ -1,0 +1,24 @@
+{
+  "environment": "Chrome desktop, viewport emulation, no CPU throttling; programmatic bidirectional scroll; not physical iPhone",
+  "samples": [
+    {
+      "width": 390,
+      "longTaskCount": 0,
+      "longTaskTotalMs": 0,
+      "cls": 0.0062680096549540985,
+      "rafP95Ms": 16.799999999999272,
+      "frames": 178,
+      "overflow": false
+    },
+    {
+      "width": 1280,
+      "longTaskCount": 0,
+      "longTaskTotalMs": 0,
+      "cls": 0.007487129020690916,
+      "rafP95Ms": 16.700000000000728,
+      "frames": 174,
+      "overflow": false
+    }
+  ],
+  "baseline": "Previous CPU6x background 30 FPS; refined home 29.6 FPS under same emulation. No pre-change long-task/CLS trace available."
+}

@@ -2,7 +2,7 @@
 
 import { forwardRef, useEffect, useImperativeHandle, useRef, useSyncExternalStore } from 'react';
 import ButtonWithIcon from './ui/button-witn-icon';
-import GhostFibers from './GhostFibers';
+import { HeroPlates } from './HeroPlates';
 import { TextType } from './ui/TextType';
 import { cn } from '@/lib/utils';
 import { motion } from 'motion/react';
@@ -54,7 +54,6 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
 
   return (
     <section ref={sectionRef} id="hero" tabIndex={-1} aria-labelledby="hero-title" data-home-experience="hero" data-managed-section-links data-nav-ready={navigationReady} className={cn('landing-hero oceanic-surface', className)}>
-      {showHero && <div className="hero-fibers" aria-hidden="true"><GhostFibers glowColor="#ffffff" secondaryColor="#d9d5dc" lineColor="#ffffff" layers={2} threads={32} density={0.7} particles={0.12} sparkle={0.25} glow={0.65} brightness={1.1} speed={0.24} flow={0.18} dpr={1} mouseInteraction pulseOnClick intro={false} paused={reduce} /></div>}
       <motion.div className="hero-container" data-hero-scroll>
         <motion.div className="hero-copy" initial={false} animate={showHero ? 'show' : 'hidden'}
           variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { duration: reduce ? 0 : .6 } } }}>
@@ -69,6 +68,7 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
               <ButtonWithIcon href="#showcase" onClick={event => { event.preventDefault(); scrollToSection('#showcase'); }}>{t('Conhecer a Placa NFC')}</ButtonWithIcon>
            </ScrollReveal>
         </motion.div>
+        <HeroPlates />
       </motion.div>
     </section>
   );

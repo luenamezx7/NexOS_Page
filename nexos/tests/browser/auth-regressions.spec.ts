@@ -1,16 +1,4 @@
-import { test, expect, type Page } from '@playwright/test';
-
-async function mockCaptcha(page: Page) {
-  await page.route('**/api/security/config', route => route.fulfill({ json: { required: true, configured: true, siteKey: 'test-public-key' } }));
-  await page.addInitScript(() => {
-    let sequence = 0;
-    Object.assign(window, { turnstile: {
-      render: (_element: HTMLElement, options: { callback: (token: string) => void }) => {
-        const token = `test-token-${++sequence}`; queueMicrotask(() => options.callback(token)); return token;
-      }, remove: () => {}, reset: () => {},
-    } });
-  });
-}
+import { test, expect } from '@playwright/test';
 
 test('www preserves callback path and query', async ({ request }) => {
   const response = await request.get('/portal/acesso?callbackUrl=%2Fconta', { headers: { Host: 'www.nexoslab.online' }, maxRedirects: 0 });
@@ -18,53 +6,30 @@ test('www preserves callback path and query', async ({ request }) => {
   expect(response.headers().location).toBe('https://nexoslab.online/portal/acesso?callbackUrl=%2Fconta');
 });
 
-test('signup and verification resend use fresh CAPTCHA headers', async ({ page }) => {
-  await mockCaptcha(page);
-  const tokens: string[] = [];
-  for (const endpoint of ['sign-up/email', 'send-verification-email']) {
-    await page.route(`**/api/auth/${endpoint}`, route => {
-      tokens.push(route.request().headers()['x-captcha-response']);
-      return route.fulfill({ json: { status: true, user: { email: 'customer@example.test' } } });
-    });
+test('public registration and social options stay absent, including the old signup URL', async ({ page }) => {
+  for (const url of ['/portal/acesso', '/portal/acesso?mode=signup', '/admin-dashboard-su/secure-entry']) {
+    await page.goto(url);
+    await expect(page.getByRole('button', { name: 'Entrar', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Criar.*conta|Google|GitHub/i })).toHaveCount(0);
+    await expect(page.getByRole('link', { name: /Criar.*conta/i })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Esqueceu a senha?' })).toBeVisible();
   }
-  await page.goto('/portal/acesso');
-  await page.getByRole('button', { name: 'Criar uma conta', exact: true }).click();
-  await page.getByLabel('Nome', { exact: true }).fill('Cliente Teste');
-  await page.getByLabel('E-mail', { exact: true }).fill('customer@example.test');
-  await page.getByLabel('Senha', { exact: true }).fill('Test-Password-12345!');
-  await page.getByLabel('Confirmar senha', { exact: true }).fill('Test-Password-12345!');
-  await page.getByRole('button', { name: 'Criar conta', exact: true }).click();
-  await page.getByRole('button', { name: 'Reenviar e-mail de confirmação' }).click();
-  await expect.poll(() => tokens.length).toBe(2);
-  expect(tokens[0]).toBeTruthy(); expect(tokens[1]).not.toBe(tokens[0]);
 });
 
 test('repeated callback parameters do not crash either login page', async ({ page }) => {
   await page.route('**/api/security/config', route => route.fulfill({ json: { required: false, configured: false, siteKey: '' } }));
   for (const entry of ['/portal/acesso', '/admin-dashboard-su/secure-entry']) {
     expect((await page.goto(`${entry}?callbackUrl=/conta&callbackUrl=/dashboard`))?.status()).toBe(200);
-    await expect(page.getByRole('button', { name: 'Entrar', exact: true })).toBeVisible();
+    await expect(page.locator('button[type="submit"]')).toBeVisible();
   }
 });
 
-test('cancelled OAuth preserves the destination and displays an error', async ({ page }) => {
-  let callback = '';
-  await page.route('**/api/auth/sign-in/social', route => {
-    callback = route.request().postDataJSON().errorCallbackURL;
-    return route.fulfill({ status: 400, json: { code: 'OAUTH_FAILED' } });
-  });
-  await page.goto('/portal/acesso?callbackUrl=%2F%3Forigem%3Dmenu%23services');
-  await page.getByRole('button', { name: 'GitHub', exact: true }).click();
-  expect(new URL(callback, 'http://localhost:3100').searchParams.get('callbackUrl')).toBe('/?origem=menu#services');
-  await expect(page.getByRole('alert').filter({ hasText: 'Não foi possível iniciar' })).toBeVisible();
-});
-
-test('unavailable CAPTCHA config blocks password login but leaves social available', async ({ page }) => {
+test('unavailable CAPTCHA config blocks password login', async ({ page }) => {
   await page.route('**/api/security/config', route => route.fulfill({ status: 503, json: {} }));
   await page.goto('/portal/acesso');
   await expect(page.locator('[data-slot="alert"]')).toContainText('Verificação indisponível');
-  await expect(page.getByRole('button', { name: 'Entrar', exact: true })).toBeDisabled();
-  await expect(page.getByRole('button', { name: 'GitHub', exact: true })).toBeEnabled();
+  await expect(page.locator('button[type="submit"]')).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'GitHub', exact: true })).toHaveCount(0);
 });
 
 test('reset validates token errors and does not require a session', async ({ page }) => {
@@ -81,24 +46,4 @@ test('anonymous APIs and internal email worker fail closed', async ({ request })
   expect((await request.get('/api/account/profile')).status()).toBe(401);
   expect((await request.get('/api/internal/email-outbox')).status()).toBe(401);
   expect((await request.post('/api/account/profile', { headers: { Origin: 'https://attacker.example' }, data: {} })).status()).toBe(403);
-});
-
-test('Google and GitHub icons and OAuth actions remain available in create-account mode', async ({ page }) => {
-  const attempts: { provider: string; callbackURL: string }[] = [];
-  await page.route('**/api/auth/sign-in/social', route => {
-    attempts.push(route.request().postDataJSON());
-    return route.fulfill({ status: 400, json: { code: 'OAUTH_FAILED' } });
-  });
-  await page.goto('/portal/acesso?callbackUrl=%2Fconta');
-  for (const mode of ['login', 'signup']) {
-    if (mode === 'signup') await page.getByRole('button', { name: 'Criar uma conta', exact: true }).click();
-    for (const provider of ['google', 'github']) {
-      const button = page.getByRole('button', { name: provider === 'google' ? 'Google' : 'GitHub', exact: true });
-      await expect(button.locator(`[data-provider-icon="${provider}"]`)).toBeVisible();
-      await button.click();
-      await expect(page.locator('[data-slot="alert"]')).toContainText('Não foi possível iniciar');
-    }
-  }
-  expect(attempts.map(attempt => attempt.provider)).toEqual(['google', 'github', 'google', 'github']);
-  expect(attempts.every(attempt => attempt.callbackURL === '/conta')).toBe(true);
 });

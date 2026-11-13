@@ -1,5 +1,6 @@
 import 'server-only';
 import { Pool } from 'pg';
+import { SUPABASE_CA } from './supabase-ca';
 
 /**
  * Pool PostgreSQL do Better Auth.
@@ -36,17 +37,27 @@ function connectionString(): string {
   return url;
 }
 
+function secureConnectionString(): string {
+  const url = new URL(connectionString());
+  // pg lets URI SSL parameters override the explicit ssl object.
+  for (const key of ['sslmode', 'sslcert', 'sslkey', 'sslrootcert', 'ssl', 'uselibpqcompat']) url.searchParams.delete(key);
+  return url.toString();
+}
+
 /** Cria (ou reaproveita, em dev) o pool. Chamado pelo Kysely na 1ª consulta. */
 export function createPool(): Pool {
   if (!globalForPool.__nexosPgPool) {
     globalForPool.__nexosPgPool = new Pool({
-      connectionString: connectionString(),
+      connectionString: secureConnectionString(),
       // Serverless: uma função = poucas requisições concorrentes.
       max: Number(process.env.DATABASE_POOL_MAX ?? 2),
       idleTimeoutMillis: 10_000,
       connectionTimeoutMillis: 10_000,
-      // O pooler do Supabase termina TLS com certificado próprio.
-      ssl: process.env.DATABASE_SSL === 'false' ? undefined : { rejectUnauthorized: false },
+      // Verify the peer even when the URI contains a legacy sslmode=require.
+      ssl: process.env.DATABASE_SSL === 'false' ? false : {
+        rejectUnauthorized: true,
+        ca: process.env.DATABASE_SSL_CA?.replace(/\\n/g, '\n') || SUPABASE_CA,
+      },
     });
   }
   return globalForPool.__nexosPgPool;

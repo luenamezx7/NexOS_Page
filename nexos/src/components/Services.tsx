@@ -4,10 +4,10 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { useLocale } from '@/lib/locale';
+import { useScrollContext } from './SmoothScrollProvider';
 import siteArtwork from '../../design-/rebrand-nexos/nfcs/CONTEXT-AI-VIDEOS/imgg1.png';
 import menuArtwork from '../../design-/rebrand-nexos/nfcs/CONTEXT-AI-VIDEOS/imgg2.png';
 import styles from './DigitalSolutions.module.css';
-import { WarpCarousel, type WarpCarouselHandle } from './ui/warp-carousel';
 
 const examples = [
   { id: 'menu', title: 'Cardápio digital', description: 'Itens e informações que o cliente pode consultar no próprio celular.', image: menuArtwork },
@@ -18,8 +18,9 @@ const examples = [
 
 export function Services({ className = '', selectedUse }: { className?: string; selectedUse?: string }) {
   const { t } = useLocale();
+  const { lenis } = useScrollContext();
   const ref = useRef<HTMLElement>(null);
-  const ringRef = useRef<WarpCarouselHandle>(null);
+  const screenRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   const reducedMotion = usePrefersReducedMotion();
 
@@ -57,8 +58,16 @@ export function Services({ className = '', selectedUse }: { className?: string; 
       let position = 0;
       let frame = 0;
       let lastTime = 0;
+      const slides = [...(screenRef.current?.querySelectorAll<HTMLElement>('[data-macbook-slide]') ?? [])];
       const paint = (progress: number) => {
-        ringRef.current?.paint(progress * (count - 1));
+        const position = progress * (count - 1);
+        slides.forEach((slide, index) => {
+          const delta = index - position;
+          const opacity = Math.max(0, 1 - Math.abs(delta));
+          // Crossfade only the screen; camera, chassis and crop never change.
+          slide.style.opacity = String(opacity);
+          slide.style.transform = `translate3d(${Math.max(-12, Math.min(12, delta * 12))}px, 0, 0)`;
+        });
         const focus = Math.round(progress * (count - 1));
         setActive(current => (focus === current ? current : focus));
       };
@@ -107,29 +116,39 @@ export function Services({ className = '', selectedUse }: { className?: string; 
   }, [reducedMotion]);
 
   return <section ref={ref} id="services" aria-labelledby="services-title" className={`${styles.journey} ${className}`}>
-    <WarpCarousel className={styles.stage} ariaLabel={t('Demonstrações de soluções digitais')} ringRef={ringRef}
-      cards={examples.map((example, index) => <div key={example.id} className={styles.deviceSlot} data-arc-device data-warp-card={index} data-active={active === index} aria-hidden={reducedMotion ? undefined : active !== index}>
+    <div className={`${styles.stage} ${styles.fixedStage}`} data-services-journey>
+      <h2 id="services-title" className={styles.journeyTitle}>{t('Sites, cardápios e páginas para o seu negócio.')}</h2>
+      <div className={styles.fixedDevice} data-macbook-chassis>
         <div className={styles.device}>
-          {/* Device frame exported from the existing Figma asset. */}
+          {/* Original chassis remains fixed while the screen contents change. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className={styles.macbookFrame} src="/mackbook_1.svg" alt="" width={2180} height={1324} draggable={false} />
-          <div className={styles.macbookScreen}>
-            {index < 2 ? <Image src={example.image} alt="" fill sizes="(max-width: 767px) 90vw, 720px" quality={85} className={styles.screenImage} /> :
-              <div className={`${styles.demoScreen} ${index === 3 ? styles.demoLanding : ''}`}>
-                <div className={styles.demoNav}><span>{index === 2 ? 'atelier espaço' : 'grão & casa'}</span><span>{index === 2 ? 'Estúdio  /  Projetos  /  Contato' : 'Cafés  /  Sobre  /  Contato'}</span></div>
-                <div className={styles.demoPhoto}><Image src={example.image} alt="" fill sizes="(max-width: 767px) 90vw, 720px" className={styles.screenImage} /></div>
-                <div className={styles.demoCopy}><strong>{index === 2 ? 'Espaços feitos para viver.' : 'Uma pausa para o seu dia.'}</strong><span>{index === 2 ? 'Arquitetura e interiores' : 'Café de bairro'}</span></div>
-              </div>}
+          <div ref={screenRef} className={styles.macbookScreen}>
+            {examples.map((example, index) => <div key={example.id} className={styles.screenSlide} data-macbook-slide data-active={active === index} aria-hidden={active !== index}>
+              {index < 2 ? <Image src={example.image} alt={t(example.title)} fill sizes="(max-width: 767px) 90vw, 720px" quality={90} className={styles.screenImage} /> :
+                <div className={`${styles.demoScreen} ${index === 3 ? styles.demoLanding : ''}`}>
+                  <div className={styles.demoNav}><span>{index === 2 ? 'atelier espaço' : 'grão & casa'}</span><span>{index === 2 ? 'Estúdio  /  Projetos  /  Contato' : 'Cafés  /  Sobre  /  Contato'}</span></div>
+                  <div className={styles.demoPhoto}><Image src={example.image} alt={t(example.title)} fill sizes="(max-width: 767px) 90vw, 720px" quality={90} className={styles.screenImage} /></div>
+                  <div className={styles.demoCopy}><strong>{index === 2 ? 'Espaços feitos para viver.' : 'Uma pausa para o seu dia.'}</strong><span>{index === 2 ? 'Arquitetura e interiores' : 'Café de bairro'}</span></div>
+                </div>}
+            </div>)}
             <div className={styles.notch} aria-hidden="true" />
           </div>
         </div>
-        <p className={styles.staticCaption}>{t(example.title)}<span>{t(example.description)}</span></p>
-      </div>)}>
-      <h2 id="services-title" className={styles.journeyTitle}>{t('Sites, cardápios e páginas para o seu negócio.')}</h2>
+      </div>
       <div className={styles.arcBottom}>
         <div className={styles.arcCaption} aria-live="polite"><span>{t('Exemplo ilustrativo')} {String(active + 1).padStart(2, '0')} / 04</span><h3>{t(examples[active].title)}</h3><p>{t(examples[active].description)}</p></div>
+        <div className={styles.exampleLinks}>{examples.map((example, index) => <button key={example.id} type="button" aria-label={`${t('Ver exemplo')}: ${t(example.title)}`} aria-pressed={active === index} onClick={() => {
+          const root = ref.current;
+          if (!root) return;
+          const distance = Math.max(0, root.offsetHeight - innerHeight);
+          if (reducedMotion) { setActive(index); return; }
+          const top = root.getBoundingClientRect().top + scrollY + distance * index / 3;
+          if (lenis) lenis.scrollTo(top, { duration: .65 });
+          else window.scrollTo({ top, behavior: 'smooth' });
+        }}>{index + 1}</button>)}</div>
       </div>
-    </WarpCarousel>
+    </div>
     <div className={styles.steps} aria-hidden="true">{examples.map(example => <div key={example.id} />)}</div>
     {selectedUse ? <p className="sr-only">{t('Solução selecionada')}: {t(selectedUse)}</p> : null}
   </section>;

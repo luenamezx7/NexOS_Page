@@ -25,11 +25,11 @@ export function LandingPageBlur() {
 
   if (entryOpen || quizVisible) return null;
   return <>
-    <GradualBlur target="page" position="top" height={mobile ? 'clamp(48px, 9svh, 72px)' : 'clamp(72px, 12svh, 120px)'} strength={mobile ? 1.5 : 3}
-      layers={mobile ? 2 : 4} curve="linear" exponential
+    <GradualBlur target="page" position="top" height={mobile ? '48px' : '88px'} strength={mobile ? .5 : 1}
+      layers={mobile ? 1 : 2} curve="linear" exponential
       zIndex={40} className="landing-header-blur" />
-    <GradualBlur target="page" position="bottom" height={mobile ? 'clamp(56px, 10svh, 84px)' : 'clamp(96px, 18svh, 160px)'} strength={mobile ? 1.8 : 4}
-      layers={mobile ? 2 : 4} curve="linear" exponential autoHide={!mobile}
+    <GradualBlur target="page" position="bottom" height={mobile ? '32px' : '56px'} strength={mobile ? .5 : 1}
+      layers={mobile ? 1 : 2} curve="linear" exponential
       zIndex={30} className="landing-edge-blur" />
   </>;
 }

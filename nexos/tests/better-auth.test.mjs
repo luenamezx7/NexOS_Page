@@ -1,7 +1,7 @@
 import test, { before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createHash, randomBytes } from 'node:crypto';
+import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { createServer } from 'node:http';
 import { chromium } from '@playwright/test';
 import { exportJWK, generateKeyPair, SignJWT } from 'jose';
@@ -9,6 +9,8 @@ import pg from 'pg';
 import nextEnv from '@next/env';
 import { createOTP } from '@better-auth/utils/otp';
 import { base32 } from '@better-auth/utils/base32';
+import { consumeLimit } from '../src/lib/rate-limit.ts';
+import { createPool } from '../src/lib/auth/db.ts';
 import { createAuth } from '../src/lib/auth/instance.ts';
 
 nextEnv.loadEnvConfig(process.cwd());
@@ -16,7 +18,7 @@ const schema = `nexos_auth_test_${randomBytes(8).toString('hex')}`;
 const SITE = 'http://localhost:3199';
 const PASSWORD = 'Test-Password-12345!';
 const messages = [];
-const dbOptions = { connectionString: process.env.DATABASE_URL, ssl: process.env.DATABASE_SSL === 'false' ? false : { rejectUnauthorized: false }, connectionTimeoutMillis: 10000 };
+const dbOptions = { ...createPool().options, connectionTimeoutMillis: 10000 };
 let admin, pool, auth, authOptions, accountId, ip = 10;
 
 class Jar {
@@ -58,7 +60,7 @@ before(async () => {
   await pool.query(`create table "${schema}".welcome_email_log (user_id uuid references "${schema}"."user"(id), template text, sent_at timestamptz default now())`);
   await pool.query(readFileSync('supabase/migrations/20261001152936_auth_methods_and_email_outbox.sql', 'utf8').replaceAll('public.', `"${schema}".`));
   const capture = kind => async params => { messages.push({ kind, ...params }); };
-  authOptions = { pool, siteURL: SITE, secret: randomBytes(48).toString('hex'), captchaEnabled: false, notifications: false,
+  authOptions = { allowLegacyAuth: true, pool, siteURL: SITE, secret: randomBytes(48).toString('hex'), captchaEnabled: false, notifications: false,
     socialProviders: {
       github: { clientId: 'integration-github-id', clientSecret: 'integration-github-secret' },
       google: { clientId: 'integration-google-id', clientSecret: 'integration-google-secret', prompt: 'select_account' },
@@ -250,7 +252,7 @@ test('WebAuthn real no Chromium cadastra, autentica, exige TOTP e recusa replay'
   await new Promise((resolve, reject) => { server.once('error', reject); server.listen(3199, resolve); });
   let browser;
   try {
-    browser = await chromium.launch();
+    browser = await chromium.launch({ channel: process.env.PLAYWRIGHT_CHANNEL || undefined });
     const page = await browser.newPage();
     const cdp = await page.context().newCDPSession(page);
     await cdp.send('WebAuthn.enable');
@@ -442,4 +444,56 @@ test('OAuth Supabase recusa cookie ausente, expiração, cancelamento e identida
     assert.match((await call('/supabase/callback?code=test', undefined, jar)).headers.get('location'), /confirmation=error/);
     assert.equal(await (await call('/get-session', undefined, jar)).json(), null);
   }
+});
+
+test('production policy rejects public signup and direct/social callbacks', async () => {
+  const restricted = createAuth({ ...authOptions, allowLegacyAuth: false });
+  for (const [path, body] of [
+    ['/sign-up/email', { email: 'closed@example.test', password: PASSWORD, name: 'Closed' }],
+    ['/sign-in/social', { provider: 'google', callbackURL: '/conta' }],
+    ['/callback/google?code=unused&state=unused', undefined],
+  ]) {
+    const response = await request(path, body, new Jar(), { auth: restricted });
+    assert.equal(response.status, 403, path);
+  }
+});
+
+test('verified OAuth-only member recovers a password without losing identity', async () => {
+  const restricted = createAuth({ ...authOptions, allowLegacyAuth: false });
+  const email = 'oauth-recovery@example.test';
+  const created = await request('/sign-up/email', { email, name: 'Existing member', password: PASSWORD });
+  const id = (await created.json()).user.id;
+  await pool.query('update "user" set "emailVerified" = true where id = $1', [id]);
+  await pool.query('delete from account where "userId" = $1 and "providerId" = $2', [id, 'credential']);
+  await pool.query('insert into account (id, "accountId", "providerId", "userId", "createdAt", "updatedAt") values ($1,$2,$3,$4,now(),now())', [randomUUID(), 'legacy-github-member', 'github', id]);
+  await request('/request-password-reset', { email, redirectTo: `${SITE}/portal/redefinir` }, new Jar(), { auth: restricted });
+  const token = new URL(lastMail('reset').url).pathname.split('/').at(-1);
+  assert.equal((await request('/reset-password', { token, newPassword: PASSWORD }, new Jar(), { auth: restricted })).status, 200);
+  const jar = new Jar();
+  assert.equal((await request('/sign-in/email', { email, password: PASSWORD }, jar, { auth: restricted })).status, 200);
+  const session = await (await request('/get-session', undefined, jar, { auth: restricted })).json();
+  assert.equal(session.user.id, id);
+  const links = await pool.query('select count(*)::int as count from account where "userId" = $1 and "providerId" = $2', [id, 'github']);
+  assert.equal(links.rows[0].count, 1);
+});
+
+test('distributed rate limits atomically enforce bursts and recover after expiry', async () => {
+  const scoped = { query: (sql, values) => pool.query(sql.replaceAll('public."rateLimit"', `"${schema}"."rateLimit"`), values) };
+  const identity = randomBytes(12).toString('hex');
+  const outcomes = await Promise.all(Array.from({ length: 12 }, () => consumeLimit('integration', identity, 3, 60, scoped)));
+  assert.equal(outcomes.filter(result => result.allowed).length, 3);
+  assert.ok(outcomes.filter(result => !result.allowed).every(result => result.retryAfter > 0 && result.retryAfter <= 60));
+  await pool.query('update "rateLimit" set "lastRequest" = $1 where key like $2', [Date.now() - 61000, 'nexos:integration:%']);
+  assert.equal((await consumeLimit('integration', identity, 3, 60, scoped)).allowed, true);
+});
+
+test('operator provisioning stays server-only and preserves mailbox verification', async () => {
+  const operator = createAuth({ ...authOptions, allowLegacyAuth: false, allowServerProvisioning: true });
+  const email = 'provisioned@example.test';
+  const result = await operator.api.createUser({ body: { email, name: 'Provisioned member', password: PASSWORD, role: 'user' } });
+  assert.equal(result.user.emailVerified, false);
+  await operator.api.sendVerificationEmail({ body: { email, callbackURL: '/portal/acesso?verified=1' } });
+  assert.equal(lastMail('verification').to, email);
+  const rejected = await request('/admin/create-user', { email: 'blocked-provision@example.test', name: 'Blocked', password: PASSWORD }, new Jar(), { auth: operator });
+  assert.ok([401, 403].includes(rejected.status));
 });

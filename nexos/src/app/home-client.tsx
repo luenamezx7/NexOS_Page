@@ -5,7 +5,6 @@ import dynamic from 'next/dynamic';
 import { Header } from '@/components/Header';
 import { Hero } from '@/components/Hero';
 import { HeroBrandStrip } from '@/components/HeroBrandStrip';
-import { HeroNfcBridge } from '@/components/HeroNfcBridge';
 import { SectionBackground } from '@/components/sections/SectionBackground';
 import { ProofStrip } from '@/components/sections/ProofStrip';
 import { PlateManagement } from '@/components/sections/PlateManagement';
@@ -13,6 +12,7 @@ import { HomepageJourneyMotion } from '@/components/sections/HomepageJourneyMoti
 import BrandEntrance from '@/components/BrandEntrance';
 import { useLocale } from '@/lib/locale';
 import { TransitionGuide } from '@/components/sections/TransitionGuide';
+import { LandingPageBlur } from '@/components/sections/LandingPageBlur';
 import { RealEstateVideo } from '@/components/sections/RealEstateVideo';
 
 const Services = dynamic(() => import('@/components/Services').then(m => m.Services));
@@ -62,6 +62,7 @@ export default function HomeClient() {
   return (
     <main className="landing-page w-full max-w-full overflow-x-clip bg-canvas text-ink">
       <HomepageJourneyMotion />
+      <LandingPageBlur />
       {entrance.visible && <BrandEntrance key={entrance.key} onComplete={handleEntranceComplete} />}
       <div>
          <a href="#main-content" className="skip-link">{t('Pular para o conteúdo')}</a>
@@ -69,7 +70,6 @@ export default function HomeClient() {
         <div className="relative">
           <div id="main-content" tabIndex={-1} className="relative">
                <Hero ref={heroRef} />
-               <HeroNfcBridge />
                <SectionBackground index={0} scene="product" experience="nfc">
                   <HeroBrandStrip />
                   <PlacaNFCSection onSelectUse={setSelectedPlateUse} />

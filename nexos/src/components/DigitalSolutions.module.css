@@ -110,3 +110,14 @@
   .staticCaption { display: grid; gap: 4px; margin: 12px 0 0; font-size: 18px; font-weight: 650; }
   .staticCaption span { color: var(--text-secondary); font-size: 14px; font-weight: 400; }
 }
+
+/* Shared chassis: keep its camera and crop stable during screen transitions. */
+.fixedStage { perspective: 1200px; }
+.fixedDevice { position: absolute; left: 50%; top: 47%; width: min(720px, 66vw); transform: translate(-50%, -50%) rotateX(5deg) rotateY(-7deg) rotateZ(-1deg); }
+.screenSlide { position: absolute; inset: 0; opacity: 0; }
+.screenSlide:first-child { opacity: 1; }
+.exampleLinks { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
+.exampleLinks button { width: 44px; height: 44px; border: 1px solid var(--surface-line); border-radius: 50%; }
+.exampleLinks button[aria-pressed='true'] { background: var(--palette-cta); color: #080609; border-color: var(--palette-cta); }
+@media (max-width: 767px) { .fixedDevice { width: 94%; top: 45%; } }
+@media (prefers-reduced-motion: reduce) { .fixedDevice { position: relative; left: auto; top: auto; width: min(100%, 720px); margin: auto; transform: none; } .screenSlide { opacity: 0 !important; transform: none !important; } .screenSlide[data-active='true'] { opacity: 1 !important; } .fixedStage .arcBottom { display: block; position: static; width: 100%; margin-top: 32px; transform: none; } }

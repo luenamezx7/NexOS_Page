@@ -1,3 +1,4 @@
+import { pruneRateLimits } from '@/lib/rate-limit';
 import { timingSafeEqual } from 'node:crypto';
 import { retryNotifications } from '@/lib/emails/notifications';
 
@@ -12,5 +13,6 @@ export async function GET(request: Request) {
     return Response.json({ ok: false }, { status: 401 });
   }
   await retryNotifications();
+  await pruneRateLimits();
   return Response.json({ ok: true }, { headers: { 'Cache-Control': 'no-store' } });
 }

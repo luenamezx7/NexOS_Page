@@ -63,7 +63,7 @@ const nextConfig: NextConfig = {
       },
       {
         // Fontes e assets de marca não mudam sem troca de nome: cache longo imutável.
-        source: '/:path*\\.(svg|png|jpe?g|webp|avif|otf|ttf|woff2?)$',
+        source: '/:path*\\.(svg|png|jpe?g|webp|avif|mp4|webm|otf|ttf|woff2?)$',
         headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
       },
       {

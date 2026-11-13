@@ -12,3 +12,10 @@
   width: 100%;
   height: 100%;
 }
+
+/* A compositor-driven ribbon remains alive when WebGL is unavailable/lost. */
+.ghost-fibers-fallback { position: absolute; inset: -3%; width: 106%; height: 106%; color: #e1dce9; animation: fiber-drift 12s ease-in-out infinite alternate; }
+.ghost-fibers-container[data-render-state='animated'] .ghost-fibers-fallback { display: none; }
+.ghost-fibers-container[data-render-state='fallback'] .ghost-fibers-canvas { visibility: hidden; }
+@keyframes fiber-drift { to { transform: translate3d(2%, -2%, 0) rotate(2deg); } }
+@media (prefers-reduced-motion: reduce) { .ghost-fibers-fallback { animation: none; } }

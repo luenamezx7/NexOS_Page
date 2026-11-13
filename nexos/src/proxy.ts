@@ -12,19 +12,6 @@ function getNonce(): string {
   return randomBytes(16).toString('base64url');
 }
 
-// ── Rate limit app-level (fallback ao WAF Cloudflare) ──
-const WINDOW_MS = 60_000;
-const MAX_REQ = 60;
-const buckets = new Map<string, number[]>();
-
-function getIp(req: NextRequest): string {
-  const cfIp = req.headers.get('cf-connecting-ip');
-  if (cfIp) return cfIp;
-  const forwarded = req.headers.get('x-forwarded-for');
-  if (forwarded) return forwarded.split(',')[0].trim();
-  return 'unknown';
-}
-
 export async function proxy(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
   // Filtro otimista: os RSC/handlers validam a sessão no banco.
@@ -55,36 +42,16 @@ export async function proxy(req: NextRequest) {
   req.headers.set('x-nonce', nonce);
   req.headers.set('Content-Security-Policy', csp);
 
-  // Rate-limit para APIs sensíveis
-  if (req.nextUrl.pathname.startsWith('/api/contact')) {
-    const ip = getIp(req);
-    const now = Date.now();
-    if (buckets.size >= 5000) {
-      for (const [key, times] of buckets) if (times.every(t => now - t >= WINDOW_MS)) buckets.delete(key);
-      if (buckets.size >= 5000 && !buckets.has(ip)) return NextResponse.json({ error: 'Muitas requisições.' }, { status: 429 });
-    }
-    const arr = buckets.get(ip) ?? [];
-    const valid = arr.filter((t) => now - t < WINDOW_MS);
-    if (valid.length >= MAX_REQ) {
-      return NextResponse.json({ error: 'Muitas requisições. Tente em 1 min.' }, { status: 429 });
-    }
-    valid.push(now);
-    buckets.set(ip, valid);
-    if (buckets.size > 5000) {
-      for (const [key, times] of buckets) {
-        if (times.every(t => now - t >= WINDOW_MS)) buckets.delete(key);
-      }
-    }
-  }
-
   const response = NextResponse.next({ request: req });
   response.headers.set('Content-Security-Policy', csp);
+  // HTML carries a fresh CSP nonce: never replay it through a shared cache.
+  // Static fonts/images/video bypass this proxy and retain their asset cache.
   response.headers.set('Cache-Control', 'private, no-store');
   return response;
 }
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico|woff|woff2|ttf|otf|mp4|webm)$).*)',
   ],
 };

@@ -1,4 +1,5 @@
 import 'server-only';
+import { consumeLimit } from '@/lib/rate-limit';
 import { randomUUID } from 'node:crypto';
 import { betterAuth } from 'better-auth';
 import { APIError, createAuthMiddleware, getSessionFromCtx } from 'better-auth/api';
@@ -40,6 +41,10 @@ const CAPTCHA_PATHS = ['/sign-in/email', '/sign-up/email', '/request-password-re
 /** Injeção explícita somente para testes isolados; getAuth usa o ambiente real. */
 export interface AuthTestOptions {
   pool?: Pool;
+  /** Explicit fixture escape hatch; never set by getAuth(). */
+  allowLegacyAuth?: boolean;
+  /** Local operator CLI only; HTTP requests never receive this exemption. */
+  allowServerProvisioning?: boolean;
   siteURL?: string;
   secret?: string;
   notifications?: boolean;
@@ -60,13 +65,13 @@ export function createAuth(test: AuthTestOptions = {}) {
   const turnstileSecret = process.env.TURNSTILE_SECRET_KEY?.trim();
   const notifications = test.notifications !== false;
   const mail = test.mail ?? { verification: sendVerificationEmail, reset: sendResetPasswordEmail, magic: sendMagicLinkEmail };
-  const broker = test.supabaseOAuth ?? (test.pool ? null : supabaseOAuthConfig());
+  const broker = test.allowLegacyAuth ? (test.supabaseOAuth ?? (test.pool ? null : supabaseOAuthConfig())) : null;
   return betterAuth({
     appName: 'ezway',
     database: new PostgresDialect({ pool: test.pool ?? (async () => createPool()) }),
     secret, baseURL: site, basePath: '/api/auth', trustedOrigins: [site],
     emailAndPassword: {
-      enabled: true, minPasswordLength: 12, maxPasswordLength: 256,
+      enabled: true, disableSignUp: !test.allowLegacyAuth, minPasswordLength: 12, maxPasswordLength: 256,
       requireEmailVerification: true, revokeSessionsOnPasswordReset: true, autoSignIn: false,
       password: { verify: verifyMigratedPassword },
       sendResetPassword: async ({ user, url }) => mail.reset({ to: user.email, url, name: user.name }),
@@ -87,10 +92,23 @@ export function createAuth(test: AuthTestOptions = {}) {
         }
       },
     },
-    socialProviders: test.socialProviders ?? socialProviders(),
+    socialProviders: test.allowLegacyAuth ? (test.socialProviders ?? socialProviders()) : {},
     session: { expiresIn: 604800, updateAge: 86400, cookieCache: { enabled: false } },
     hooks: {
       before: createAuthMiddleware(async ctx => {
+        if (!test.allowLegacyAuth && (ctx.path.startsWith('/sign-up') || ctx.path === '/sign-in/social' || ctx.path.startsWith('/sign-in/supabase') || ctx.path.startsWith('/callback/') || ctx.path.startsWith('/supabase/callback') || ctx.path.startsWith('/link-social'))) {
+          throw new APIError('FORBIDDEN', { code: 'PUBLIC_REGISTRATION_DISABLED', message: 'Utilize o acesso por e-mail da sua conta.' });
+        }
+        if (!test.pool && ['/sign-in/email', '/request-password-reset', '/sign-in/magic-link'].includes(ctx.path) && typeof ctx.body?.email === 'string') {
+          const max = ctx.path === '/sign-in/email' ? 10 : 3;
+          try {
+            const result = await consumeLimit(`account${ctx.path}`, ctx.body.email.trim().toLowerCase(), max, 900);
+            if (!result.allowed) throw new APIError('TOO_MANY_REQUESTS', { code: 'TOO_MANY_REQUESTS', message: 'Muitas tentativas. Tente novamente mais tarde.' }, { 'Retry-After': String(result.retryAfter) });
+          } catch (error) {
+            if (error instanceof APIError) throw error;
+            throw new APIError('SERVICE_UNAVAILABLE', { message: 'Acesso temporariamente indisponível.' });
+          }
+        }
         if (ctx.path === '/passkey/verify-registration' || ctx.path === '/passkey/verify-authentication') {
           const credential = ctx.body?.response;
           const response = credential?.response;
@@ -104,7 +122,8 @@ export function createAuth(test: AuthTestOptions = {}) {
         }
         if (ctx.path.startsWith('/admin/') || ctx.path === '/two-factor/disable') {
           const current = await getSessionFromCtx(ctx);
-          if (ctx.path.startsWith('/admin/') && current?.user.twoFactorEnabled !== true) {
+          const localProvision = test.allowServerProvisioning && ctx.path === '/admin/create-user' && !ctx.request && !ctx.headers;
+          if (ctx.path.startsWith('/admin/') && !localProvision && current?.user.twoFactorEnabled !== true) {
             throw new APIError('FORBIDDEN', { code: 'MFA_REQUIRED', message: 'Autenticação em duas etapas obrigatória.' });
           }
           if (ctx.path === '/two-factor/disable' && current?.user.role === 'admin') {
@@ -127,6 +146,7 @@ export function createAuth(test: AuthTestOptions = {}) {
     },
     advanced: {
       database: { generateId: 'uuid' },
+      ipAddress: { ipAddressHeaders: test.pool ? ['x-forwarded-for'] : process.env.VERCEL === '1' ? ['x-vercel-forwarded-for'] : [] },
       useSecureCookies: site.startsWith('https://'), cookiePrefix: 'nexos',
       defaultCookieAttributes: { httpOnly: true, sameSite: 'lax', secure: site.startsWith('https://') },
     },

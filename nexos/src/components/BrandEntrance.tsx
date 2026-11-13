@@ -70,9 +70,13 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
         const duration = media.matches ? 400 : 1850;
         if (!media.matches) {
           const startTime = performance.now();
+          let lastProgressPaint = startTime;
           const tick = (now: number) => {
             if (disposed || leaving) return;
-            setProgress(Math.min(99, Math.floor((now - startTime) / duration * 100)));
+            if (now - lastProgressPaint >= 80) {
+              setProgress(Math.max(0, Math.min(99, Math.floor((now - startTime) / duration * 100))));
+              lastProgressPaint = now;
+            }
             progressFrame = requestAnimationFrame(tick);
           };
           progressFrame = requestAnimationFrame(tick);

@@ -36,7 +36,7 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     // Native smooth scrolling can keep animating after a touch/wheel interruption,
     // pulling the page back to the anchor. On touch/native scroll, land directly;
     // keep the interruptible Lenis animation only where Lenis owns the scroll.
-    const immediate = options.immediate || !lenis || matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const immediate = options.immediate || matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (options.history !== 'none' && window.location.hash !== `#${id}`) {
       history.pushState(history.state, '', `#${encodeURIComponent(id)}`);
     }

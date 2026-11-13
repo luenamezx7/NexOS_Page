@@ -1,0 +1,11 @@
+{
+  "checkedAt": "2026-11-12T22:30:50.579Z",
+  "counts": {
+    "total": 6,
+    "verified": 6,
+    "without_password": 6,
+    "verified_passwordless": 6,
+    "needs_identity_review": 0
+  },
+  "action": "Preserve users and account links; use verified mailbox recovery, manually review unverified identities before production cutover."
+}

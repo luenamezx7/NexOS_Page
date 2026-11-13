@@ -18,6 +18,11 @@ export function HomepageJourneyMotion() {
       const mm = gsap.matchMedia();
       mm.add({ desktop: '(min-width: 768px) and (prefers-reduced-motion: no-preference)', mobile: '(max-width: 767px) and (prefers-reduced-motion: no-preference)' }, context => {
         const desktop = !!context.conditions?.desktop;
+        const entries = root.querySelectorAll('[data-hero-plates], #mascot-solutions-title, #real-estate-video-title, #plate-management-title');
+        entries.forEach(element => gsap.fromTo(element, { opacity: .65, y: 18 }, {
+          opacity: 1, y: 0, duration: .65, ease: 'power2.out', immediateRender: false,
+          scrollTrigger: { trigger: element, start: 'top 92%', once: true },
+        }));
         const plateGrid = root.querySelector<HTMLElement>('[data-plate-grid]');
         const options = [...root.querySelectorAll<HTMLElement>('#showcase [data-plate-option]')];
         if (plateGrid && options.length === 4) {

@@ -5,14 +5,10 @@ import Link from 'next/link';
 import { ArrowRight, Eye, EyeOff, Fingerprint, LockKeyhole } from 'lucide-react';
 import { ScrollReveal } from '../ScrollReveal';
 import { Turnstile } from '@/components/Turnstile';
-import { PasswordStrengthMeter } from './PasswordStrengthMeter';
-import { evaluatePassword } from '@/lib/auth/password-strength';
 import { sanitizeCallbackPath } from '@/lib/auth/callback';
 import { useTurnstileConfig } from '@/lib/use-turnstile-config';
 import { authClient, authErrorMessage, signOutAccount } from '@/lib/auth/client';
-import { Button } from '@/components/ui/Button';
-import { SocialProviderIcon } from './SocialProviderIcon';
-import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from '@/components/ui/field';
+import { Field, FieldGroup, FieldLabel, FieldSeparator } from '@/components/ui/field';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -21,29 +17,24 @@ import { MetallicButton } from '@/components/ui/metallic-button';
 import { AuthHeader, AuthStory } from './AuthFrame';
 import { PageFooter } from '../PageChrome';
 
-type Mode = 'login' | 'signup' | 'forgot' | 'magic' | 'verify-email';
+type Mode = 'login' | 'forgot' | 'magic';
 const MODE_DESCRIPTION: Record<Mode, string> = {
   login: 'Entre com seu e-mail e senha ou escolha outra forma de acesso.',
-  signup: 'Crie sua conta para gerenciar seus dados e acessar os serviços da ezway.',
   forgot: 'Receba um link para definir uma nova senha.',
   magic: 'Enviaremos um link de acesso ao seu e-mail.',
-  'verify-email': 'Confirme seu cadastro para continuar.',
 };
 interface LoginFormProps {
   audience?: 'admin' | 'user';
   confirmationError?: boolean;
   callbackUrl?: string | null;
-  socialProviders?: ('google' | 'github')[];
-  socialAuthMode?: 'direct' | 'supabase';
   initialStep?: 'credentials' | 'totp';
-  initialMode?: 'login' | 'signup';
   verified?: boolean;
 }
 function needsTwoFactor(data: unknown): boolean {
   return !!data && typeof data === 'object' && (data as { twoFactorRedirect?: unknown }).twoFactorRedirect === true;
 }
 
-export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, socialProviders = [], socialAuthMode = 'direct', initialStep = 'credentials', initialMode = 'login', verified }: LoginFormProps) {
+export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, initialStep = 'credentials', verified }: LoginFormProps) {
   const userFlow = audience === 'user';
   const busyRef = useRef(false);
   const destination = sanitizeCallbackPath(callbackUrl) ?? (userFlow ? '/conta' : '/dashboard');
@@ -51,12 +42,11 @@ export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(confirmationError ? 'Não foi possível concluir o acesso. O link expirou, já foi usado ou a autorização foi cancelada. Tente novamente.' : '');
   const [message, setMessage] = useState(verified ? 'E-mail confirmado. Entre para continuar.' : '');
-  const [mode, setMode] = useState<Mode>(audience === 'user' ? initialMode : 'login');
+  const [mode, setMode] = useState<Mode>('login');
   const [step, setStep] = useState(initialStep);
   const [backup, setBackup] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState('');
-  const [pendingEmail, setPendingEmail] = useState('');
   const [captcha, setCaptcha] = useState('');
   const [captchaKey, setCaptchaKey] = useState(0);
   const security = useTurnstileConfig();
@@ -78,10 +68,6 @@ export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, 
   async function submit(form: FormData) {
     const email = String(form.get('email') ?? '').trim();
     const pass = String(form.get('password') ?? '');
-    if (mode === 'signup') {
-      if (pass !== String(form.get('confirmPassword') ?? '')) { setError('As senhas precisam ser iguais.'); return; }
-      if (!evaluatePassword(pass).acceptable) { setError('A senha precisa de: 12+ caracteres, maiúscula, minúscula, número e símbolo.'); return; }
-    }
     await guard(async () => {
       if (captchaBlocked) throw new Error('Complete a verificação de segurança antes de continuar.');
       if (mode === 'forgot') {
@@ -96,30 +82,11 @@ export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, 
         setMessage('Se o endereço estiver apto para entrar, você receberá um link de acesso de uso único. Ele expira em 10 minutos.');
         return;
       }
-      if (mode === 'signup') {
-        const result = await authClient.signUp.email({ email, password: pass, name: String(form.get('name') ?? '').trim(),
-          callbackURL: `${loginPath}?verified=1&callbackUrl=${encodeURIComponent(destination)}`, fetchOptions });
-        if (result.error) { setError(authErrorMessage(result.error, 'Não foi possível criar a conta. Se já tiver cadastro, tente entrar ou recuperar a senha.')); return; }
-        setPendingEmail(email); setPassword(''); setMode('verify-email'); return;
-      }
       const result = await authClient.signIn.email({ email, password: pass, fetchOptions });
       if (result.error) { setError(authErrorMessage(result.error, 'Não foi possível entrar. Confira o e-mail, a senha e a confirmação do cadastro.')); return; }
       setPassword('');
       if (needsTwoFactor(result.data)) { setStep('totp'); return; }
       finishLogin();
-    });
-  }
-  async function social(provider: 'google' | 'github') {
-    await guard(async () => {
-      if (socialAuthMode === 'supabase') {
-        const result = await authClient.signIn.supabase({ provider, callbackURL: destination, errorCallbackURL });
-        if (result.error) { setError(authErrorMessage(result.error, 'Não foi possível iniciar o acesso social.')); return; }
-        if (!result.data?.url) throw new Error('Não foi possível iniciar o acesso social.');
-        window.location.assign(result.data.url);
-        return;
-      }
-      const { error: err } = await authClient.signIn.social({ provider, callbackURL: destination, errorCallbackURL });
-      if (err) setError(authErrorMessage(err, 'Não foi possível iniciar o acesso social.'));
     });
   }
   async function passkeyLogin() {
@@ -154,60 +121,35 @@ export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, 
           <Card className={styles.panel}>
           <CardHeader className={styles.panelHeader}>
            <p className={styles.overline}>{userFlow ? 'Sua conta ezway' : 'Acesso administrativo'}</p>
-           {userFlow && step === 'credentials' && (mode === 'login' || mode === 'signup') &&
-             <div className={styles.modeSwitch} role="group" aria-label="Tipo de acesso">
-               <button type="button" aria-pressed={mode === 'login'} onClick={() => goMode('login')} disabled={busy}>Entrar</button>
-               <button type="button" aria-pressed={mode === 'signup'} onClick={() => goMode('signup')} disabled={busy}>Criar conta</button>
-             </div>}
           <div className={styles.title}>
             {!userFlow && <LockKeyhole size={20} />}
-            <h1 id="login-title" className={styles.heading}>{step === 'totp' ? 'Verificação em duas etapas' : mode === 'signup' ? 'Criar sua conta' : mode === 'forgot' ? 'Recuperar senha' : mode === 'magic' ? 'Entrar por link de e-mail' : mode === 'verify-email' ? 'Confirme seu e-mail' : userFlow ? 'Entrar na sua conta' : 'Entrada do operador'}</h1>
+            <h1 id="login-title" className={styles.heading}>{step === 'totp' ? 'Verificação em duas etapas' : mode === 'forgot' ? 'Recuperar senha' : mode === 'magic' ? 'Entrar por link de e-mail' : userFlow ? 'Entrar na sua conta' : 'Entrada do operador'}</h1>
           </div>
            <p className={styles.description}>{step === 'totp' ? 'Confirme sua identidade para concluir o acesso.' : !userFlow && mode === 'login' ? 'Área restrita a operadores autorizados.' : MODE_DESCRIPTION[mode]}</p>
           </CardHeader>
           <CardContent className={styles.panelContent}>
            <div className={styles.formStack}>
             {(error || (step === 'credentials' && security.error)) && <Alert variant="destructive"><AlertDescription>{error || security.error}</AlertDescription></Alert>}
-            {step === 'credentials' && (mode === 'login' || mode === 'signup') && socialProviders.length > 0 &&
-              <div className={styles.social} role="group" data-social-auth-mode={socialAuthMode} aria-label={mode === 'signup' ? 'Criar conta com provedor' : 'Entrar com provedor'}>
-                {socialProviders.map(provider => <Button key={provider} type="button" variant="secondary" disabled={busy} onClick={() => void social(provider)} className="flex-1">
-                  <SocialProviderIcon provider={provider} />{provider === 'google' ? 'Google' : 'GitHub'}
-                </Button>)}
-              </div>}
             {step === 'credentials' && mode === 'login' && <>
               <button type="button" disabled={busy} onClick={() => void passkeyLogin()} className={styles.passkeyButton}><Fingerprint size={18} aria-hidden="true" /> Entrar com chave de acesso</button>
               <button type="button" disabled={busy} onClick={() => goMode('magic')} className={styles.magicLink}>Entrar por link de e-mail</button>
             </>}
-            {step === 'credentials' && mode !== 'verify-email' && <form onSubmit={e => { e.preventDefault(); void submit(new FormData(e.currentTarget)); }}>
+            {step === 'credentials' && <form onSubmit={e => { e.preventDefault(); void submit(new FormData(e.currentTarget)); }}>
               <FieldGroup className={styles.formGroup}>
-                {mode === 'signup' && <Field><FieldLabel htmlFor="login-name">Nome</FieldLabel><Input id="login-name" name="name" autoComplete="name" required maxLength={120} className="field-input" disabled={busy} /></Field>}
                 <Field><FieldLabel htmlFor="login-email">E-mail</FieldLabel><Input id="login-email" name="email" type="email" autoComplete="username webauthn" required maxLength={254} className="field-input" disabled={busy} /></Field>
-                {(mode === 'login' || mode === 'signup') && <Field>
+                {mode === 'login' && <Field>
                   <FieldLabel htmlFor="login-password">Senha</FieldLabel>
                   <div className={styles.passwordControl}>
-                    <Input id="login-password" name="password" type={showPassword ? 'text' : 'password'} autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} required minLength={mode === 'signup' ? 12 : 1} maxLength={256} value={password} onChange={e => setPassword(e.target.value)} className="field-input" disabled={busy} />
+                    <Input id="login-password" name="password" type={showPassword ? 'text' : 'password'} autoComplete="current-password" required minLength={1} maxLength={256} value={password} onChange={e => setPassword(e.target.value)} className="field-input" disabled={busy} />
                     <button type="button" onClick={() => setShowPassword(v => !v)} aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'} aria-pressed={showPassword} className={styles.passwordToggle}>{showPassword ? <EyeOff size={17} aria-hidden="true" /> : <Eye size={17} aria-hidden="true" />}</button>
                   </div>
-                   {mode === 'signup' && <><FieldDescription>12+ caracteres, maiúscula, minúscula, número e símbolo.</FieldDescription><PasswordStrengthMeter password={password} /></>}
                   {mode === 'login' && <button type="button" onClick={() => goMode('forgot')} className={styles.forgotLink}>Esqueceu a senha?</button>}
                 </Field>}
-                {mode === 'signup' && <Field><FieldLabel htmlFor="confirm-password">Confirmar senha</FieldLabel><Input id="confirm-password" name="confirmPassword" type="password" autoComplete="new-password" required minLength={12} maxLength={256} className="field-input" disabled={busy} /></Field>}
                 <Turnstile key={captchaKey} onVerify={setCaptcha} onExpire={() => setCaptcha('')} onError={() => setCaptcha('')} />
-                <MetallicButton type="submit" disabled={busy || captchaBlocked} className="w-full" aria-busy={busy}>{busy ? 'Aguarde…' : mode === 'signup' ? 'Criar conta' : mode === 'forgot' ? 'Enviar link de redefinição' : mode === 'magic' ? 'Enviar link de acesso' : 'Entrar'}<ArrowRight size={16} aria-hidden="true" /></MetallicButton>
-                {userFlow && (mode === 'signup' || mode === 'login') && <button type="button" disabled={busy} className="self-start text-sm underline underline-offset-4" onClick={() => goMode(mode === 'signup' ? 'login' : 'signup')}>{mode === 'signup' ? 'Já tenho conta' : 'Criar uma conta'}</button>}
+                <MetallicButton type="submit" disabled={busy || captchaBlocked} className="w-full" aria-busy={busy}>{busy ? 'Aguarde…' : mode === 'forgot' ? 'Enviar link de redefinição' : mode === 'magic' ? 'Enviar link de acesso' : 'Entrar'}<ArrowRight size={16} aria-hidden="true" /></MetallicButton>
                 {mode !== 'login' && <button type="button" disabled={busy} onClick={() => goMode('login')} className="self-start text-sm underline underline-offset-4">Voltar ao login</button>}
               </FieldGroup>
             </form>}
-            {step === 'credentials' && mode === 'verify-email' && <>
-              <p>Enviamos um link de confirmação para {pendingEmail}. Confirme o cadastro e depois entre.</p>
-              <Turnstile key={captchaKey} onVerify={setCaptcha} onExpire={() => setCaptcha('')} onError={() => setCaptcha('')} />
-              <MetallicButton type="button" disabled={busy || captchaBlocked} className="w-full" onClick={() => void guard(async () => {
-                const result = await authClient.sendVerificationEmail({ email: pendingEmail, callbackURL: `${loginPath}?verified=1&callbackUrl=${encodeURIComponent(destination)}`, fetchOptions });
-                if (result.error) { setError(authErrorMessage(result.error, 'Não foi possível reenviar o e-mail.')); return; }
-                setMessage('Se o endereço estiver apto, você receberá um novo e-mail de confirmação.');
-              })}>Reenviar e-mail de confirmação</MetallicButton>
-              <button type="button" onClick={() => goMode('login')} className="self-start text-sm underline underline-offset-4">Voltar ao login</button>
-            </>}
             {step === 'totp' && <form onSubmit={e => { e.preventDefault(); void verify(String(new FormData(e.currentTarget).get('code') ?? '').trim()); }}>
               <FieldGroup>
                 <p>Confirme o segundo fator para concluir o acesso. O desafio expira em 10 minutos.</p>

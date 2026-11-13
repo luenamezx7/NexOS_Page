@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getUserScope } from '@/lib/db/user-scope';
 import { getAuth } from '@/lib/auth/instance';
 import { headers } from 'next/headers';
+import { readJsonBody, RequestError } from '@/lib/request-security';
+import { profilePatchSchema } from '@/lib/account/profile-validation';
+import { privateJson } from '@/lib/auth/http';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,8 +38,9 @@ export async function GET() {
       lastSignIn: session?.session.createdAt ?? null,
       createdAt: session?.user.createdAt ?? null,
     });
-  } catch {
-    return NextResponse.json({ error: 'Erro interno' }, { status: 500 });
+  } catch (error) {
+    if (error instanceof RequestError) return privateJson({ error: error.message }, error.status);
+    return privateJson({ error: 'Erro interno' }, 500);
   }
 }
 
@@ -46,16 +50,9 @@ export async function PATCH(req: NextRequest) {
     const scope = await getUserScope();
     if (!scope) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
 
-    const body = await req.json().catch(() => null);
-    if (!body || typeof body !== 'object') return NextResponse.json({ error: 'Corpo inválido' }, { status: 400 });
-
-    const { fullName, phone } = body as { fullName?: unknown; phone?: unknown };
-    if (fullName !== undefined && typeof fullName !== 'string') {
-      return NextResponse.json({ error: 'Nome inválido' }, { status: 400 });
-    }
-    if (phone !== undefined && typeof phone !== 'string') {
-      return NextResponse.json({ error: 'Telefone inválido' }, { status: 400 });
-    }
+    const parsed = profilePatchSchema.safeParse(await readJsonBody(req, 4096));
+    if (!parsed.success) return privateJson({ error: parsed.error.issues[0]?.message ?? 'Perfil inválido' }, 400);
+    const { fullName, phone } = parsed.data;
 
     const updates: Record<string, string> = { updated_at: new Date().toISOString() };
     if (fullName !== undefined) updates.full_name = String(fullName).trim();
@@ -67,7 +64,8 @@ export async function PATCH(req: NextRequest) {
 
     if (error) return NextResponse.json({ error: 'Erro ao atualizar perfil' }, { status: 500 });
     return NextResponse.json({ ok: true });
-  } catch {
-    return NextResponse.json({ error: 'Erro interno' }, { status: 500 });
+  } catch (error) {
+    if (error instanceof RequestError) return privateJson({ error: error.message }, error.status);
+    return privateJson({ error: 'Erro interno' }, 500);
   }
 }

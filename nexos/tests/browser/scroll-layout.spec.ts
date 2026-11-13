@@ -24,23 +24,20 @@ for (const viewport of [
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await openHome(page);
     const action = page.locator('#hero').getByRole('link', { name: 'Conhecer a Placa NFC' });
-    const bridge = page.locator('[data-nfc-bridge]');
+    await expect(page.locator('[data-nfc-bridge]')).toHaveCount(0);
     const strip = page.locator('[data-hero-brand-strip]');
     await expect(action).toBeVisible();
     const actionBox = (await action.boundingBox())!;
     const stripBox = (await strip.boundingBox())!;
-    const bridgeBox = (await bridge.boundingBox())!;
-    expect(actionBox.y + actionBox.height).toBeLessThan(bridgeBox.y - 16);
+    expect(actionBox.y + actionBox.height).toBeLessThan(stripBox.y);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     if (viewport.width < 768) {
       expect(await page.evaluate(() => document.documentElement.clientWidth)).toBe(viewport.width);
     }
     const heroBox = (await page.locator('#hero').boundingBox())!;
-    expect(bridgeBox.y).toBeLessThan(heroBox.y + heroBox.height);
     const product = (await page.locator('[data-home-experience="nfc"]').boundingBox())!;
-    expect(product.y).toBeGreaterThan(heroBox.y + heroBox.height);
-    expect(product.y).toBeLessThan(bridgeBox.y + bridgeBox.height - 48);
-    expect(stripBox.y).toBeGreaterThan(bridgeBox.y + bridgeBox.height);
+    expect(product.y).toBeGreaterThanOrEqual(heroBox.y + heroBox.height - 1);
+    expect(product.y).toBeLessThanOrEqual(heroBox.y + heroBox.height + 1);
     expect(stripBox.y).toBeGreaterThan(product.y);
     expect(await page.locator('[data-home-experience="nfc"]').evaluate(element => parseFloat(getComputedStyle(element).borderTopLeftRadius))).toBe(viewport.width < 768 ? 24 : 32);
     expect(await page.locator('[data-home-experience="nfc"]').evaluate(element => getComputedStyle(element, '::before').maskImage)).toContain('120px');
@@ -55,13 +52,13 @@ test('mobile toolbar-height changes do not move the next section or reverse down
   await page.setViewportSize({ width: 390, height: 740 });
   await openHome(page);
   const strip = page.locator('[data-hero-brand-strip]');
-  const bridge = page.locator('[data-nfc-bridge]');
+  const product = page.locator('[data-home-experience="nfc"]');
   const topBefore = await strip.evaluate(element => (element as HTMLElement).offsetTop);
-  const bridgeBefore = await bridge.evaluate(element => element.getBoundingClientRect().top + scrollY);
+  const productBefore = await product.evaluate(element => element.getBoundingClientRect().top + scrollY);
   await page.setViewportSize({ width: 390, height: 780 });
   const topAfter = await strip.evaluate(element => (element as HTMLElement).offsetTop);
   expect(Math.abs(topAfter - topBefore)).toBeLessThan(2);
-  expect(Math.abs(await bridge.evaluate(element => element.getBoundingClientRect().top + scrollY) - bridgeBefore)).toBeLessThan(2);
+  expect(Math.abs(await product.evaluate(element => element.getBoundingClientRect().top + scrollY) - productBefore)).toBeLessThan(2);
 
   let previous = await page.evaluate(() => scrollY);
   for (let i = 0; i < 6; i += 1) {
@@ -133,7 +130,7 @@ test('MacBook journey keeps its scroll length and vertical gesture responsive on
   const journey = page.locator('#services');
   await journey.scrollIntoViewIfNeeded();
   const before = await journey.evaluate(element => ({ height: element.getBoundingClientRect().height, y: scrollY }));
-  const first = await journey.locator('[data-arc-device]').first().evaluate(element => getComputedStyle(element).transform);
+  const first = await journey.locator('[data-macbook-chassis]').evaluate(element => getComputedStyle(element).transform);
   await page.setViewportSize({ width: 390, height: 760 });
   expect(Math.abs((await journey.boundingBox())!.height - before.height)).toBeLessThan(2);
   let previous = await page.evaluate(() => scrollY);
@@ -142,9 +139,8 @@ test('MacBook journey keeps its scroll length and vertical gesture responsive on
     await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(previous);
     previous = await page.evaluate(() => scrollY);
   }
-  const after = await journey.locator('[data-arc-device]').first().evaluate(element => getComputedStyle(element).transform);
-  expect(after).not.toBe(first);
-  expect(await journey.locator('[data-arc-device]').first().evaluate(element => getComputedStyle(element).pointerEvents)).toBe('none');
+  const after = await journey.locator('[data-macbook-chassis]').evaluate(element => getComputedStyle(element).transform);
+  expect(after).toBe(first);
 });
 
 test('MacBook journey returns to its first frame when scrolling upward', async ({ page }) => {
@@ -153,11 +149,11 @@ test('MacBook journey returns to its first frame when scrolling upward', async (
   const journey = page.locator('#services');
   const top = await journey.evaluate(element => element.getBoundingClientRect().top + scrollY);
   await page.evaluate(y => scrollTo(0, y), top + 40);
-  await expect(journey.locator('[data-arc-device]').first()).toHaveAttribute('data-active', 'true');
+  await expect(journey.locator('[data-macbook-slide]').first()).toHaveAttribute('data-active', 'true');
   await page.evaluate(y => scrollTo(0, y), top + 1750);
-  await expect(journey.locator('[data-arc-device]').first()).toHaveAttribute('data-active', 'false');
+  await expect(journey.locator('[data-macbook-slide]').first()).toHaveAttribute('data-active', 'false');
   await page.evaluate(y => scrollTo(0, y), top + 40);
-  await expect(journey.locator('[data-arc-device]').first()).toHaveAttribute('data-active', 'true');
+  await expect(journey.locator('[data-macbook-slide]').first()).toHaveAttribute('data-active', 'true');
 });
 
 test('rounded MacBook stage remains sticky without clipping its caption', async ({ page }) => {
@@ -170,7 +166,7 @@ test('rounded MacBook stage remains sticky without clipping its caption', async 
   await expect.poll(() => stage.evaluate(element => Math.round(element.getBoundingClientRect().top))).toBe(0);
   expect(await stage.evaluate(element => parseFloat(getComputedStyle(element).borderTopLeftRadius))).toBe(24);
   expect(await stage.evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgba(0, 0, 0, 0)');
-  expect(await page.locator('#services [data-warp-ring]').count()).toBe(1);
+  expect(await page.locator('#services [data-macbook-chassis]').count()).toBe(1);
   await expect(stage.locator('h3')).toBeVisible();
 });
 
@@ -186,18 +182,6 @@ test('hero CTA navigation yields to a manual reverse scroll without snapping bac
   const after = await page.evaluate(() => scrollY);
   await page.waitForTimeout(1400);
   expect(await page.evaluate(() => scrollY)).toBeLessThanOrEqual(after + 2);
-});
-
-test('NFC arcs remain cumulative and motion stops outside the viewport', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await openHome(page);
-  const bridge = page.locator('[data-nfc-bridge]');
-  await expect(bridge).toHaveAttribute('data-visible', 'true');
-  const waves = bridge.locator('span[class*="wave"]');
-  await expect(waves).toHaveCount(3);
-  await page.evaluate(() => scrollTo(0, 2500));
-  await expect(bridge).toHaveAttribute('data-visible', 'false');
-  expect(await waves.first().evaluate(element => getComputedStyle(element).animationName)).toBe('none');
 });
 
 test('Instagram invitation is legible on light ground before the dark footer', async ({ page }) => {
@@ -329,64 +313,9 @@ test('default selection uses the light pink highlight and EasyChat emphasises it
   expect(marker).toMatch(/1 0\.6666\d* 0\.8470\d* \/ 0\.32/);
 });
 
-test('Warp Carousel ring keeps the MacBook stage pinned and reversible', async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await openHome(page);
-  const journey = page.locator('#services');
-  const stage = journey.locator(':scope > div').first();
-  const top = await journey.evaluate(element => element.getBoundingClientRect().top + scrollY);
-  const front = () => page.evaluate(() => {
-    const cards = [...document.querySelectorAll<HTMLElement>('#services [data-warp-card]')];
-    return cards.findIndex(card => card.dataset.active === 'true');
-  });
-  const transforms = () => page.evaluate(() => [...document.querySelectorAll('#services [data-warp-card]')].map(card => getComputedStyle(card).transform));
-
-  await page.evaluate(y => scrollTo({ top: y, behavior: 'instant' }), top + 200);
-  await page.waitForTimeout(600);
-  expect(await stage.evaluate(element => Math.round(element.getBoundingClientRect().top))).toBe(0);
-  expect(await front()).toBe(0);
-
-  const before = await transforms();
-  await page.evaluate(y => scrollTo({ top: y, behavior: 'instant' }), top + 1600);
-  await page.waitForTimeout(600);
-  expect(await front()).not.toBe(0);
-  expect(await transforms()).not.toEqual(before);
-  expect(await stage.evaluate(element => Math.round(element.getBoundingClientRect().top))).toBe(0);
-
-  await page.evaluate(y => scrollTo({ top: y, behavior: 'instant' }), top + 200);
-  await page.waitForTimeout(600);
-  expect(await front()).toBe(0);
-  expect(await page.evaluate(() => document.querySelectorAll('#services [data-warp-card]').length)).toBe(4);
-});
-
-test('MacBooks keep their 3D angles without overlapping during the ring journey', async ({ page }) => {
-  for (const width of [390, 1440]) {
-    await page.setViewportSize({ width, height: width < 768 ? 844 : 900 });
-    await openHome(page);
-    const journey = page.locator('#services');
-    const top = await journey.evaluate(element => element.getBoundingClientRect().top + scrollY);
-    const distance = await journey.evaluate(element => element.offsetHeight - innerHeight);
-
-    for (const fraction of [0.05, 0.18, 0.33, 0.5, 0.66, 0.82, 0.95]) {
-      await page.evaluate(y => scrollTo({ top: y, behavior: 'instant' }), top + distance * fraction);
-      await page.waitForTimeout(550);
-      const cards = await page.evaluate(() => [...document.querySelectorAll<HTMLElement>('#services [data-warp-card]')].map(card => {
-        const bounds = card.getBoundingClientRect();
-        return { left: bounds.left, right: bounds.right, opacity: parseFloat(getComputedStyle(card).opacity), transform: getComputedStyle(card).transform };
-      }).filter(card => card.opacity > 0.3 && card.right > 0 && card.left < innerWidth).sort((a, b) => a.left - b.left));
-      for (let index = 1; index < cards.length; index++) {
-        expect(cards[index].left - cards[index - 1].right).toBeGreaterThanOrEqual(0);
-      }
-      if (width === 1440 && fraction === 0.33) {
-        expect(cards.some(card => card.transform.startsWith('matrix3d('))).toBe(true);
-      }
-    }
-  }
-});
-
-test('three emulated touch passes across the hero advance and return without reversing mid-gesture', async ({ browser, browserName }) => {
+test('three emulated touch passes across the hero advance and return without reversing mid-gesture', async ({ browser, browserName, baseURL }) => {
   test.skip(browserName !== 'chromium', 'CDP touch dispatch is Chromium-only; verify Safari on a real iPhone separately.');
-  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  const context = await browser.newContext({ baseURL, viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
   try {
     const page = await context.newPage();
     await openHome(page);
@@ -395,7 +324,7 @@ test('three emulated touch passes across the hero advance and return without rev
       type, touchPoints: type === 'touchEnd' ? [] : [{ x: 190, y, id: 1, radiusX: 1, radiusY: 1, force: 1 }],
     });
     for (let pass = 0; pass < 3; pass += 1) {
-      await page.evaluate(() => window.scrollTo({ top: 620, behavior: 'instant' }));
+      await page.evaluate(() => window.scrollTo({ top: document.querySelector<HTMLElement>('#hero')!.offsetHeight - 220, behavior: 'instant' }));
       for (const direction of [-1, 1]) {
         const start = direction === -1 ? 680 : 260;
         await send('touchStart', start);

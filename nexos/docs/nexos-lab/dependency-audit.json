@@ -1,0 +1,90 @@
+{
+  "beforeProduction": {
+    "info": 0,
+    "low": 4,
+    "moderate": 8,
+    "high": 9,
+    "critical": 2,
+    "total": 23
+  },
+  "afterProduction": {
+    "info": 0,
+    "low": 5,
+    "moderate": 4,
+    "high": 0,
+    "critical": 0,
+    "total": 9
+  },
+  "remaining": [
+    {
+      "package": "@react-email/components",
+      "severity": "low",
+      "fixAvailable": false
+    },
+    {
+      "package": "@react-email/render",
+      "severity": "low",
+      "fixAvailable": false
+    },
+    {
+      "package": "@shadcn/registry",
+      "severity": "low",
+      "fixAvailable": {
+        "name": "shadcn",
+        "version": "1.0.0",
+        "isSemVerMajor": true
+      }
+    },
+    {
+      "package": "@ts-morph/common",
+      "severity": "moderate",
+      "fixAvailable": {
+        "name": "shadcn",
+        "version": "1.0.0",
+        "isSemVerMajor": true
+      }
+    },
+    {
+      "package": "deepmerge",
+      "severity": "low",
+      "fixAvailable": false
+    },
+    {
+      "package": "html-to-text",
+      "severity": "low",
+      "fixAvailable": false
+    },
+    {
+      "package": "minimatch",
+      "severity": "moderate",
+      "fixAvailable": {
+        "name": "shadcn",
+        "version": "1.0.0",
+        "isSemVerMajor": true
+      }
+    },
+    {
+      "package": "shadcn",
+      "severity": "moderate",
+      "fixAvailable": {
+        "name": "shadcn",
+        "version": "1.0.0",
+        "isSemVerMajor": true
+      }
+    },
+    {
+      "package": "ts-morph",
+      "severity": "moderate",
+      "fixAvailable": {
+        "name": "shadcn",
+        "version": "1.0.0",
+        "isSemVerMajor": true
+      }
+    }
+  ],
+  "actions": [
+    "Next.js and eslint-config-next upgraded to 16.4.6",
+    "npm audit fix --ignore-scripts (compatible versions only)"
+  ],
+  "notes": "No forced breaking downgrade; CLI/tooling and email renderer low/moderate advisories require upstream fixes or separate migration. npm audit is advisory coverage, not a security guarantee."
+}

@@ -36,8 +36,8 @@
 :global(.dark) .scene[data-home-experience="nfc"] .fieldImage { display: none; }
 .section { scroll-margin-top: 100px; }
 /* Full-bleed product panel: both edges are visible against the page between sections. */
-.scene[data-home-experience='nfc'] { --section-ground: var(--bg-surface); --color-canvas: var(--bg-surface); --color-ink: var(--palette-ink); --text-secondary: var(--palette-muted); --text-tertiary: var(--palette-muted); --surface-base: var(--bg-card); --surface-raised: var(--bg-elevated); --surface-inset: var(--palette-bg); --surface-line: var(--palette-border); --detail-text: var(--palette-ink); width: calc(100% - 32px); margin: 0 auto 24px; padding-top: 184px; overflow: clip; background: transparent; color: var(--palette-ink); color-scheme: dark; border-radius: 32px; }
-.scene[data-home-experience='nfc']::before { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: var(--bg-surface); mask-image: linear-gradient(to bottom, #000 calc(100% - 120px), transparent 100%); pointer-events: none; }
+.scene[data-home-experience='nfc'] { --section-ground: var(--bg-surface); --color-canvas: var(--bg-surface); --color-ink: var(--palette-ink); --text-secondary: var(--palette-muted); --text-tertiary: var(--palette-muted); --surface-base: var(--bg-card); --surface-raised: var(--bg-elevated); --surface-inset: var(--palette-bg); --surface-line: var(--palette-border); --detail-text: var(--palette-ink); width: calc(100% - 32px); margin: 0 auto 24px; padding-top: 24px; overflow: clip; background: transparent; color: var(--palette-ink); color-scheme: dark; border-radius: 32px; }
+.scene[data-home-experience='nfc']::before { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: var(--bg-surface); mask-image: linear-gradient(to bottom, transparent 0, #000 80px, #000 calc(100% - 120px), transparent 100%); pointer-events: none; }
 :global(.dark) .scene[data-home-experience='nfc'] { --section-ground: var(--bg-surface); }
 .scene[data-home-experience='solutions'],
 :global(.dark) .scene[data-home-experience='solutions'] { --section-ground: var(--bg-base); }
@@ -73,7 +73,7 @@
   color: var(--color-ink);
   color-scheme: light;
 }
-@media (max-width: 767px) { .scene[data-home-experience='nfc'] { width: calc(100% - 24px); margin-bottom: 20px; padding-top: 176px; border-radius: 24px; } }
+@media (max-width: 767px) { .scene[data-home-experience='nfc'] { width: calc(100% - 24px); margin-bottom: 20px; padding-top: 16px; border-radius: 24px; } }
 .productBridge .container { display: flex; flex-wrap: wrap; align-items: baseline; gap: 16px 28px; padding-block: clamp(28px, 4vw, 48px) 12px; }
 .productBridge h2 { font: 700 clamp(20px, 2.8vw, 34px)/1.15 var(--font-display); letter-spacing: -.035em; }
 .productBridge h2 span { color: var(--pink-text); }
@@ -273,3 +273,9 @@
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { :global(.dark) .segmented { background: var(--glass-solid); } }
 @media (prefers-reduced-transparency: reduce) { :global(.dark) .segmented { background: var(--glass-solid); } }
 @media (forced-colors: active) { :global(.dark) .segmented { background: Canvas; border-color: CanvasText; box-shadow: none; } :global(.dark) .segmented label[data-selected="true"] { background: Highlight; color: HighlightText; box-shadow: none; } }
+
+/* Compositor animation: no React or JS work per frame. */
+.fieldImage { animation: scenery-drift 18s ease-in-out infinite; animation-play-state: paused; }
+.fieldImage[data-drifting='true'] { animation-play-state: running; }
+@keyframes scenery-drift { 50% { transform: translate3d(18px, -12px, 0); } }
+@media (prefers-reduced-motion: reduce) { .fieldImage { animation: none; } }

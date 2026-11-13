@@ -33,8 +33,8 @@ const G = {
   qPL: 1.07139,
 };
 
-/** Depth and yaw follow the reference; horizontal spacing follows the real devices. */
-const TUNING = { z: 0.34, yaw: 0.56, yawMax: 42 };
+/** Keep the pronounced depth and turning of the ring, sized for real devices. */
+const TUNING = { z: 0.8, yaw: 0.8, yawMax: 78 };
 
 type Pose = [number, number, number];
 
@@ -124,22 +124,29 @@ export function WarpCarousel({
     const cards = Array.from(ring.querySelectorAll<HTMLElement>('[data-warp-card]'));
     const count = cards.length;
     if (!count) return;
+    // Read layout once before any transform/style writes.
+    const compact = root.clientWidth < 768;
+    const widths = cards.map(card => card.offsetWidth);
     cards.forEach((card, index) => {
       // The ring wraps, so a card never drifts past the front.
       const raw = index - progress;
       const offset = ((raw + count / 2) % count + count) % count - count / 2;
-      const [, z, psi] = poseAt(offset);
+      const [orbitX, z, psi] = poseAt(offset);
       // The reference ring uses 256-unit cards. A MacBook is much wider: spacing
       // by its measured width prevents neighbors from covering the active screen.
       // Adjacent cards stay large enough to show their screens, while their
       // centers remain far enough apart even halfway between two examples.
-      const cardWidth = card.offsetWidth;
-      const scale = 1 - 0.22 * Math.min(Math.abs(offset), 1.5);
+      const cardWidth = widths[index];
+      const scale = 1 - 0.08 * Math.min(Math.abs(offset), 1.5);
       // Narrow stages crop the outer edge, so use a tighter orbit there.
-      const x = offset * (cardWidth * (root.clientWidth < 768 ? 0.72 : 0.94) + (root.clientWidth < 768 ? 36 : 40));
-      const y = Math.min(Math.abs(offset), 1) * 24;
-      const yaw = Math.max(-TUNING.yawMax, Math.min(TUNING.yawMax, ((psi * 180) / Math.PI) * TUNING.yaw));
-      card.style.transform = `translate(-50%, -50%) translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, ${(-z * unit * TUNING.z).toFixed(2)}px) rotateY(${yaw.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
+      const spacing = offset * (cardWidth * (compact ? 0.44 : 0.94) + (compact ? 36 : 40));
+      const x = spacing * .8 + orbitX * (cardWidth / CARD_WIDTH) * .2;
+      const y = Math.min(Math.abs(offset), 1.5) ** 2 * 24;
+      const pitch = -Math.min(Math.abs(offset), 1) * 8;
+      const roll = -offset * 4;
+      // Turn toward the centre of the orbit; outward yaw makes the screens edge-on.
+      const yaw = -Math.max(-TUNING.yawMax, Math.min(TUNING.yawMax, ((psi * 180) / Math.PI) * TUNING.yaw));
+      card.style.transform = `translate(-50%, -50%) translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, ${(-z * unit * TUNING.z).toFixed(2)}px) rotateX(${pitch.toFixed(2)}deg) rotateY(${yaw.toFixed(2)}deg) rotateZ(${roll.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
       card.style.opacity = String(Math.max(0, 1 - Math.abs(offset) / 2.7));
       card.style.zIndex = String(20 - Math.round(Math.abs(offset) * 4));
       card.dataset.active = String(Math.abs(offset) < 0.5);

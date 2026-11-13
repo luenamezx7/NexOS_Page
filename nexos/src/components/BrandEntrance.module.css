@@ -54,7 +54,7 @@
 }
 .progressDetails { font: 600 11px/1.5 var(--font-sans); }
 .progressTrack { height: 2px; margin-top: 10px; background: color-mix(in srgb, var(--color-ink) 18%, transparent); overflow: hidden; }
-.progressFill { display: block; width: 100%; height: 100%; background: var(--palette-cta); transform-origin: left center; }
+.progressFill { display: block; width: 100%; height: 100%; background: var(--palette-cta); transform-origin: left center; transition: transform 80ms linear; }
 .skip {
   position: absolute;
   right: max(24px, env(safe-area-inset-right));

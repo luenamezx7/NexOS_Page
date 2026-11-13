@@ -1,3 +1,4 @@
+import { consumeLimit, trustedClientAddress, rateLimitResponse } from '@/lib/rate-limit';
 import { NextResponse } from 'next/server';
 import { Client } from '@notionhq/client';
 import { z } from 'zod';
@@ -50,6 +51,14 @@ export async function POST(req: Request) {
     }
 
     const data: ContactPayload = parsed.data;
+    try {
+      const source = await consumeLimit('contact-source', trustedClientAddress(req.headers), 10, 900);
+      if (!source.allowed) return rateLimitResponse(source.retryAfter);
+      const account = await consumeLimit('contact-email', data.email.trim().toLowerCase(), 3, 900);
+      if (!account.allowed) return rateLimitResponse(account.retryAfter);
+    } catch {
+      return privateJson({ error: 'Envio temporariamente indisponível.' }, 503);
+    }
 
     // ── Turnstile (Cloudflare) ──
     if (isTurnstileEnforced()) {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, type ReactNode } from 'react';
-import { motion, useInView } from 'motion/react';
+import { useInView } from 'motion/react';
 import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import styles from './Sections.module.css';
 import { usePresentationActive } from '@/lib/use-presentation-active';
@@ -18,9 +18,7 @@ export function SectionBackground({
   return (
     <div ref={ref} className={styles.scene} data-home-experience={experience} data-section-panel={panel || undefined} data-entered={entered || reduce} data-tone={index % 2 ? 'alternate' : 'base'} data-scene={scene}>
       <div className={styles.scenery} aria-hidden="true">
-        {(scene === 'product' || scene === 'image') && <motion.div className={styles.fieldImage}
-          animate={!reduce && visible && !entryOpen ? { x: [0, 18, 0], y: [0, -12, 0] } : { x: 0, y: 0 }}
-          transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }} />}
+        {(scene === 'product' || scene === 'image') && <div className={styles.fieldImage} data-drifting={!reduce && visible && !entryOpen} />}
       </div>
       <div className={styles.sceneContent}>{children}</div>
     </div>

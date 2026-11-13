@@ -1179,6 +1179,8 @@ select.field-input option {
   background: radial-gradient(ellipse 62% 48% at 50% 62%, color-mix(in srgb, var(--color-canvas) 94%, transparent) 0%, color-mix(in srgb, var(--color-canvas) 78%, transparent) 38%, transparent 100%), linear-gradient(to top, var(--color-canvas), transparent 38%);
 }
 .landing-hero { position: relative; isolation: isolate; display: grid; grid-template-rows: 1fr auto; align-items: center; min-height: var(--hero-stable-height, 100svh); overflow: hidden; background: var(--color-canvas); }
+/* The intro focuses this reading landmark; it is not an interactive control. */
+.landing-hero[tabindex='-1']:focus { outline: none; }
 .footer-transition { background: linear-gradient(to bottom, #f8f8fa 0 32px, var(--bg-base) 32px); }
 .hero-container { position: relative; width: 100%; max-width: 1280px; margin-inline: auto; padding: 96px 40px 224px; z-index: 1; }
 .hero-copy { max-width: 1120px; margin-inline: auto; text-align: center; }
@@ -1570,8 +1572,6 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
 .landing-page .hero-heading .hero-title-line { color: #fff; -webkit-text-fill-color: #fff; }
 .landing-page .hero-heading [data-typing-word] > span:first-child { background: linear-gradient(105deg, #ff3f9f 0%, #ffaad8 55%, #ffffff 100%); background-clip: text; -webkit-background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
 .landing-page .hero-heading [data-typing-word] .cursor { -webkit-text-fill-color: initial; }
-.hero-fibers { position: absolute; inset: 0; }
-.hero-fibers::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 60% 48% at 50% 55%, #0008, transparent 88%), linear-gradient(180deg, transparent 55%, #0008 100%); }
 /* White highlights stay readable on the hero's dark background. */
 .hero-heading [data-accent-word] [data-blur-letter] { color: var(--heading-letter-color); }
 .background-paths { position: absolute; inset: 0; overflow: hidden; pointer-events: none; opacity: .55; mask-image: linear-gradient(90deg, transparent 12%, #000 65%); }
@@ -1607,7 +1607,6 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
 .hero-description { display: block; max-width: 36ch; margin: 20px 0 0; font-size: 14px; line-height: 1.55; color: var(--palette-muted); }
   .hero-actions { flex-direction: column; align-items: flex-start; width: min(100%, 380px); gap: 10px; margin-top: 22px; }
   .hero-actions > :first-child { width: 100%; min-width: 0; }
-  .hero-fibers { mask-image: linear-gradient(to bottom, #000 5%, #000 48%, #0009 78%, transparent 100%); }
   .hero-text-link { width: fit-content; min-height: 44px; padding: 4px 0; justify-content: flex-start; gap: 8px; border: 0; color: var(--text-secondary); }
   .hero-easychat-link, .landing-hero [data-hero-brand-strip] { display: none; }
   .landing-page [data-blur-letter] { filter: none !important; transform: none !important; }
@@ -1619,7 +1618,17 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
   .hero-heading { font-size: clamp(48px, 6vw, 76px); }
 }
 @media (forced-colors: active) {
-  .background-paths, .hero-fibers { display: none; }
+  .background-paths { display: none; }
   .site-shell :is(.btn-primary-nex, .btn-primary-glow, .primary-action, .btn-secondary-nex, .action-glass) { background: ButtonFace; color: ButtonText; border-color: ButtonText; box-shadow: none; }
   .hero-heading [data-accent-word] [data-blur-letter] { color: CanvasText; }
 }
+
+/* NexOS LAB: one reading column, with the catalogue below the primary action. */
+.landing-hero .hero-container { display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; justify-items: center; max-width: 848px; gap: 48px; padding: 132px 40px 80px; }
+.landing-hero .hero-copy { min-width: 0; width: 100%; margin: 0; text-align: center; }
+.landing-hero .hero-heading { font-size: clamp(40px, 4.6vw, 68px); max-width: 20ch; margin: 0 auto; text-align: center; }
+.landing-hero .hero-heading [data-typing-word] { display: block; width: 100%; max-width: none; min-width: 0; text-align: center; }
+.landing-hero [data-hero-plates] { margin: 0 auto; }
+.landing-hero .hero-eyebrow, .landing-hero .hero-actions { justify-content: center; }
+.landing-hero .hero-description { font-size: 16px; margin: 28px auto 0; text-align: center; }
+@media (max-width: 767px) { .landing-hero .hero-container { gap: 32px; padding: 116px 24px 56px; } .landing-hero .hero-heading { font-size: clamp(36px, 9vw, 54px); } .landing-hero .hero-description { font-size: 15px; } }

@@ -1,189 +1,87 @@
-# NexOS — Serviços Digitais de Escala
+# NexOS / ezway
 
-Landing page corporativa de alta conversão, minimalista (P&B), com motion background animado, checkout Pix integrado e deploy estático no GitHub Pages.
+Aplicação comercial com páginas de serviços, apresentação da placa NFC + QR Code,
+quiz de captação, conta de cliente e diagnóstico administrativo.
 
-## Stack
+## Stack e execução
 
-- **Framework**: Next.js 16 (App Router) + React 19 + TypeScript
-- **Estilização**: CSS Modules + CSS Custom Properties (design tokens)
-- **Animações**: Framer Motion + Canvas API (motion background)
-- **Ícones**: Lucide React
-- **Pagamentos**: Pix / Boleto / Cartão via Asaas
-- **Deploy**: GitHub Pages (static export)
+Next.js 16.4.6 (App Router), React 19, TypeScript, Tailwind 4 e CSS Modules.
+Better Auth mantém sessões no Postgres; Supabase atende dados administrativos.
+Notion recebe os leads e Resend entrega e-mails transacionais.
+O EasyChat é apresentado como produto em desenvolvimento.
 
-## Arquitetura
-
-```
-src/
-├── app/
-│   ├── api/
-│   │   ├── checkout/route.ts      # Cria cobrança Pix
-│   │   ├── contact/route.ts       # Processa formulário
-│   │   └── checkout/status/route.ts # Verifica pagamento
-│   ├── sucesso/page.tsx           # Página pós-pagamento
-│   ├── cancelado/page.tsx         # Página cancelamento
-│   ├── globals.css                # Design tokens + reset
-│   ├── layout.tsx                 # Root layout + metadata
-│   └── page.tsx                   # Home (compose sections)
-├── components/
-│   ├── ui/
-│   │   ├── Button.tsx             # Botão reutilizável
-│   │   └── Button.module.css
-│   ├── Header.tsx + .module.css   # Navegação responsiva
-│   ├── Hero.tsx + .module.css     # Hero com code preview
-│   ├── Services.tsx + .module.css # Cards de serviço + checkout
-│   ├── Testimonials.tsx + .module.css # Carrossel acessível
-│   ├── Contact.tsx + .module.css  # Form + WhatsApp
-│   ├── Footer.tsx + .module.css   # Footer + legal
-│   └── MotionBackground.tsx       # Canvas pixel wave
-├── config.ts                      # ÚNICO arquivo de configuração
-├── types/index.ts                 # Interfaces TypeScript
-└── lib/                           # Utilities (futuro)
-```
-
-## Configuração
-
-Edite **apenas** `src/config.ts` para personalizar:
-
-- Marca, hero, serviços, preços, depoimentos
-- Credenciais Asaas, URLs de retorno, WhatsApp
-- SEO metadata, navegação, footer
-
-## Desenvolvimento
-
-```bash
-# Instalar dependências
-npm install
-
-# Desenvolvimento
+```sh
+npm ci
+cp .env.example .env.local
 npm run dev
+```
 
-# Build de produção (static export)
-npm run build
+Preencha as variáveis necessárias em `.env.local`, sem versionar credenciais.
+`SITE_URL` e `NEXT_PUBLIC_SITE_URL` devem apontar para a origem real.
+Autenticação requer `DATABASE_URL`, `BETTER_AUTH_SECRET` e a configuração de e-mail.
+Configure Supabase, Notion, Turnstile e providers sociais conforme os fluxos utilizados.
+Consulte `AUTH-DEPLOY.md`, `AUTH-VALIDATION.md` e `EMAIL-SETUP.md`.
 
-# Preview do build
-npm run start
+## Estrutura
 
-# Type check
+- `src/app`: páginas, portal, painel e handlers HTTP.
+- `src/components`: interface, cenas e animações.
+- `src/lib/auth`: sessões, autorização, MFA e conexão Postgres.
+- `src/lib/db`: acesso a dados restrito ao usuário autenticado.
+- `src/lib/emails`: envio e retentativas de notificações.
+- `supabase/migrations`: histórico SQL; não executar migrações automaticamente em produção.
+- `tests`: testes unitários, integração e navegador.
+
+O contato comercial usa `POST /api/contact` e o quiz envia leads ao Notion.
+Não há checkout Asaas implementado nas rotas atuais.
+
+## Verificação
+
+```sh
 npm run typecheck
-
-# Lint
 npm run lint
+npm run test:security
+npm run test:auth:password
+npm run test:unit
+npm run build
+npm run test:browser -- tests/browser/device-performance.spec.ts
 ```
 
-## Deploy GitHub Pages
+Playwright inicia o build de produção na porta 3100. Testes de integração e os
+scripts `test:auth:production*` acessam serviços reais e não fazem parte dos testes locais.
 
-1. Configure `NEXT_PUBLIC_SITE_URL` nas variáveis do repositório
-2. Adicione as credenciais Asaas: `ASAAS_API_KEY` e `ASAAS_ENV` (sandbox/production)
-3. GitHub Actions fará build e deploy automático do folder `out/`
+## Deploy e segurança
 
-```yaml
-# .github/workflows/deploy.yml
-name: Deploy to GitHub Pages
-on:
-  push:
-    branches: [main]
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run build
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./out
-  deploy:
-    needs: build
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
-```
+Requer runtime Node.js (Vercel ou servidor compatível); não é exportação estática
+para GitHub Pages. Execute `npm run build` e `npm run start` para servir produção.
+`vercel.json` agenda retentativas da outbox; configure `CRON_SECRET`.
 
-4. Em Settings → Pages, selecione "GitHub Actions" como source
+A CSP usa um nonce diferente por resposta HTML, por isso documentos não são
+compartilhados em cache. Fontes, imagens e vídeos públicos ignoram o proxy e
+recebem cache longo: troque seus nomes quando o conteúdo mudar.
+Sessões e dados privados permanecem sem cache compartilhado.
 
-## Asaas Setup
+TLS do Postgres valida o certificado e o hostname com a CA oficial Supabase incluída.
+Para outra CA privada, configure
+`DATABASE_SSL_CA` com o certificado PEM fornecido pelo provedor. `DATABASE_SSL=false`
+é reservado ao desenvolvimento local. Parâmetros SSL da URI não substituem essa política.
 
-1. Crie sua conta em https://www.asaas.com (use Sandbox para testes: https://sandbox.asaas.com)
-2. Gere sua API Key em **Minha Conta > Integrações > Gerar nova chave de API**
-3. Defina no `.env.local` e na Vercel:
-   ```
-   ASAAS_API_KEY=sua_chave_aqui
-   ASAAS_ENV=sandbox  # ou production
-   ```
-4. (Opcional) Cadastre o Webhook em **Minha Conta > Integrações > Webhooks** apontando para `https://seudominio.com/api/webhooks/checkout` e ative os eventos `PAYMENT_CONFIRMED`, `PAYMENT_RECEIVED`
-5. Veja `src/lib/asaas.ts` para `SANDBOX_URL` vs `PROD_URL` — a troca é automática via `ASAAS_ENV`
+## Movimento e desempenho
 
-## Webhook Asaas
+Entradas usam Web Animations API com transform e opacidade, inclusive em telas
+pequenas. Fundos CSS usam o compositor; efeitos fora da tela e abas ocultas pausam.
+O hero usa fundo escuro sem o efeito de fibras. A preferência explícita
+`prefers-reduced-motion` continua sendo respeitada nas animações restantes.
 
-O Asaas notifica via `POST /api/webhooks/checkout` com `{ event, payment: { id, externalReference, status } }`.
-Responda sempre `200`. A confirmação visível ao usuário também funciona via polling (`POST /api/checkout/status`).
+A rolagem usa Lenis em desktops compatíveis e rolagem suave nativa nos demais.
+Resultados de emulação de CPU não substituem testes numa GPU integrada real.
 
-## WhatsApp Integration
+## Refinamento NexOS LAB
 
-Pós-pagamento redireciona automaticamente para WhatsApp com mensagem pré-preenchida contendo o `externalReference` / `paymentId`.
-
-## Acessibilidade (WCAG AA)
-
-- Semântica HTML5 correta
-- ARIA labels em todos os interativos
-- Contraste P&B rigoroso
-- `prefers-reduced-motion` respeitado
-- Foco visível (`:focus-visible`)
-- Touch targets ≥ 44px
-
-## Performance
-
-- Static export (zero JS desnecessário)
-- Fontes otimizadas (`next/font`)
-- Imagens não otimizadas (export estático)
-- Motion background em canvas (GPU accelerated)
-- Code splitting automático por rota
-
-## LGPD / Privacidade
-
-- Zero cookies de terceiros
-- Dados de formulário apenas para contato
-- Links para Política de Privacidade e Termos no footer
-- Minimização de dados
-
-## Scripts Disponíveis
-
-| Script | Descrição |
-|--------|-----------|
-| `npm run dev` | Servidor de desenvolvimento |
-| `npm run build` | Build produção (exporta para `out/`) |
-| `npm run start` | Preview do build local |
-| `npm run lint` | ESLint |
-| `npm run typecheck` | TypeScript strict check |
-| `npm run deploy` | Build + instruções deploy |
-
-## Estrutura de Dados (config.ts)
-
-```typescript
-interface SiteConfig {
-  brand: { name, tagline, logo };
-  hero: { headline, subheadline, ctaPrimary, ctaSecondary };
-  services: Service[];      // { id, title, description, price, features, ctaText }
-  testimonials: Testimonial[];
-  navigation: NavItem[];
-  footer: { links, legal, social };
-  whatsapp: { number, message };
-  meta: { title, description, ogImage };
-}
-```
-
-## Licença
-
-MIT — Use livremente para seus projetos.
+A home segue o briefing em `design-/rebrand-nexos/PROMPT-DOC/prompt-codex-nexos-lab.md`.
+Checklist, evidências, auditorias e pendências ficam em `docs/nexos-lab/`.
+Resultados da retomada e comandos de prévia: [validação local](docs/nexos-lab/VALIDATION.md).
+Cadastro público e OAuth foram desativados no código local; recuperação, sessão e MFA permanecem.
+Não publicar antes de revisar o inventário de acesso, provisionamento e rotação de credencial
+indicados em `docs/nexos-lab/ACCESS-MIGRATION.md` e `SECRET-ROTATION.md`.
+A regra WAF está apenas proposta; não foi ativada em produção.

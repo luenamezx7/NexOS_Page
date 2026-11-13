@@ -31,6 +31,7 @@ export function RealEstateVideo({ videoSrc }: { videoSrc?: string }) {
           {videoSrc ? <video ref={videoRef} src={videoSrc} poster="/ezway-demo-studio.jpg" muted playsInline loop controls preload="metadata" aria-label={t('Vídeo de apresentação de imóvel')} /> :
             <Image src="/ezway-demo-studio.jpg" alt={t('Imagem ilustrativa de um ambiente interno, não uma prévia de vídeo produzido pela ezway')} fill sizes="(max-width: 767px) 100vw, 1080px" className={styles.image} />}
         </div>
+        <div className={styles.info}>Vídeos para imobiliárias<span>Seu cliente sente o espaço antes de visitar.</span></div>
       </div>
       {!videoSrc && <p className={styles.disclaimer}>{t('Imagem ilustrativa. Vídeo demonstrativo em preparação.')}</p>}
     </div>

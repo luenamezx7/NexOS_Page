@@ -1,5 +1,7 @@
 'use server';
 
+import { profilePatchSchema } from './profile-validation';
+import { RequestError } from '@/lib/request-security';
 import { revalidatePath } from 'next/cache';
 import { getUserScope } from '@/lib/db/user-scope';
 
@@ -14,9 +16,8 @@ export async function updateProfileAction(prevState: { error?: string; success?:
   const fullName = String(formData.get('fullName') ?? '').trim();
   const phone = String(formData.get('phone') ?? '').trim();
 
-  if (!fullName) {
-    return { error: 'Nome é obrigatório' };
-  }
+  const parsed = profilePatchSchema.safeParse({ fullName, phone });
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Perfil inválido' };
 
   try {
     const scope = await getUserScope();
@@ -37,7 +38,8 @@ export async function updateProfileAction(prevState: { error?: string; success?:
 
     revalidatePath('/conta');
     return { success: true };
-  } catch {
+  } catch (error) {
+    if (error instanceof RequestError) return { error: error.message };
     return { error: 'Erro interno' };
   }
 }

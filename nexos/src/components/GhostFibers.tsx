@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useRef, type HTMLAttributes } from 'react';
+import { useEffect, useRef, useState, type HTMLAttributes } from 'react';
 
 import './GhostFibers.css';
+import { createResolutionBudget } from '@/lib/animation-budget';
 
 export type GhostFibersFiberStyle = 'dots' | 'dashes' | 'lines';
 
@@ -673,6 +674,7 @@ const GhostFibers = ({
   dpr,
   ...rest
 }: GhostFibersProps) => {
+  const [contextVersion, setContextVersion] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wakeRef = useRef<(() => void) | null>(null);
@@ -732,7 +734,9 @@ const GhostFibers = ({
       depth: false,
       stencil: false
     });
-    if (!container || !canvas || !gl) return undefined;
+    if (!container || !canvas) return;
+    container.dataset.renderState = 'fallback';
+    if (!gl) return;
 
     const floatTargets = !!gl.getExtension('EXT_color_buffer_float');
     const dots = link(gl, DOT_VERTEX, DOT_FRAGMENT, DOT_UNIFORMS);
@@ -790,6 +794,9 @@ const GhostFibers = ({
       pulse: { s: 0, age: 9, strength: 0, ribbon: 0 },
       camera: null as Camera | null
     };
+    const budget = createResolutionBudget();
+    let renderScale = 0.85;
+    let paintedAt = 0;
     let raf = 0;
     let last = 0;
     let visible = true;
@@ -869,8 +876,8 @@ const GhostFibers = ({
       const baseDpr = Math.min(s.dpr || window.devicePixelRatio || 1, 2);
       const longest = Math.max(width, height) * baseDpr;
       const ratio = longest > MAX_RENDER_DIM ? (baseDpr * MAX_RENDER_DIM) / longest : baseDpr;
-      const pixelWidth = Math.max(1, Math.round(width * ratio));
-      const pixelHeight = Math.max(1, Math.round(height * ratio));
+      const pixelWidth = Math.max(1, Math.round(width * ratio * renderScale));
+      const pixelHeight = Math.max(1, Math.round(height * ratio * renderScale));
       if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
         canvas.width = pixelWidth;
         canvas.height = pixelHeight;
@@ -893,6 +900,7 @@ const GhostFibers = ({
     };
 
     const render = () => {
+      if (gl.isContextLost()) return;
       const s = settingsRef.current;
       resolveColors(s);
       const camera = cameraFor(s);
@@ -991,8 +999,9 @@ const GhostFibers = ({
 
       const blooming = s.glow > 0.001 && !s.lightMode;
       gl.bindVertexArray(vao);
+      const bloomLevels = renderScale < .7 ? 3 : BLOOM_LEVELS;
       if (blooming) {
-        chain.forEach((target, index) => {
+        chain.slice(0, bloomLevels).forEach((target, index) => {
           allocate(
             target,
             Math.max(1, Math.round(canvas.width / 2 ** (index + 1))),
@@ -1000,12 +1009,12 @@ const GhostFibers = ({
           );
         });
         drawPass(bright, chain[0], scene, [0.5 / scene.width, 0.5 / scene.height]);
-        for (let index = 1; index < BLOOM_LEVELS; index += 1) {
+        for (let index = 1; index < bloomLevels; index += 1) {
           drawPass(down, chain[index], chain[index - 1], [1 / chain[index - 1].width, 1 / chain[index - 1].height]);
         }
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.ONE, gl.ONE);
-        for (let index = BLOOM_LEVELS - 1; index > 0; index -= 1) {
+        for (let index = bloomLevels - 1; index > 0; index -= 1) {
           drawPass(up, chain[index - 1], chain[index], [0.5 / chain[index].width, 0.5 / chain[index].height]);
         }
         gl.disable(gl.BLEND);
@@ -1037,14 +1046,29 @@ const GhostFibers = ({
       gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(gl.TEXTURE_2D, null);
       gl.bindVertexArray(null);
+      container.dataset.renderState = 'animated';
+      container.dataset.renderFrames = String(state.frame);
+      container.dataset.renderScale = renderScale.toFixed(2);
     };
 
     const frame = (now: number) => {
       raf = 0;
-      if (!alive || !visible || document.hidden) return;
+      if (!alive || !visible || document.hidden || gl.isContextLost()) return;
+      const interval = 1000 / 30;
+      if (paintedAt && now - paintedAt < interval - 1) {
+        raf = requestAnimationFrame(frame);
+        return;
+      }
+      const gap = last ? now - last : interval;
+      const nextScale = budget.sample(gap);
+      if (nextScale !== renderScale) {
+        renderScale = nextScale;
+        resize();
+      }
+      paintedAt = now;
       const s = settingsRef.current;
       const elapsed = last ? (now - last) / 1000 : 1 / 60;
-      const dt = Math.min(0.05, elapsed);
+      const dt = Math.min(0.1, elapsed);
       last = now;
       const moving = !s.paused && !reduce;
       if (moving) {
@@ -1098,10 +1122,11 @@ const GhostFibers = ({
     };
 
     const wake = () => {
-      if (!raf && alive && visible && !document.hidden) raf = requestAnimationFrame(frame);
+      if (!raf && alive && visible && !document.hidden && !gl.isContextLost()) raf = requestAnimationFrame(frame);
     };
 
     const onPointerMove = (event: PointerEvent) => {
+      if (!visible || document.hidden || !settingsRef.current.mouseInteraction) return;
       const rect = container.getBoundingClientRect();
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
@@ -1119,6 +1144,7 @@ const GhostFibers = ({
         event.target.closest('a, button, input, textarea, select, label, [role="button"]')
       )
         return;
+      if (!visible || document.hidden || !settingsRef.current.mouseInteraction) return;
       const rect = container.getBoundingClientRect();
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
@@ -1134,7 +1160,7 @@ const GhostFibers = ({
     };
 
     const onVisibility = () => {
-      last = 0;
+      cancelAnimationFrame(raf); raf = 0; last = 0; paintedAt = 0;
       wake();
     };
 
@@ -1142,8 +1168,9 @@ const GhostFibers = ({
     resizeObserver.observe(container);
     const intersection = new IntersectionObserver(entries => {
       visible = entries.some(entry => entry.isIntersecting);
+      if (!visible) { cancelAnimationFrame(raf); raf = 0; }
       if (visible) {
-        last = 0;
+        paintedAt = 0; last = 0;
         wake();
       }
     });
@@ -1152,6 +1179,14 @@ const GhostFibers = ({
     window.addEventListener('pointerdown', onPointerDown);
     document.documentElement.addEventListener('pointerleave', onPointerLeave);
     document.addEventListener('visibilitychange', onVisibility);
+    const lost = (event: Event) => {
+      event.preventDefault();
+      cancelAnimationFrame(raf); raf = 0;
+      container.dataset.renderState = 'fallback';
+    };
+    const restored = () => setContextVersion(value => value + 1);
+    canvas.addEventListener('webglcontextlost', lost);
+    canvas.addEventListener('webglcontextrestored', restored);
     resize();
     wake();
 
@@ -1162,6 +1197,8 @@ const GhostFibers = ({
 
     return () => {
       alive = false;
+      canvas.removeEventListener('webglcontextlost', lost);
+      canvas.removeEventListener('webglcontextrestored', restored);
       cancelAnimationFrame(raf);
       wakeRef.current = null;
       resizeObserver.disconnect();
@@ -1177,12 +1214,18 @@ const GhostFibers = ({
       });
       [dots, dust, bright, down, up, composite].forEach(entry => gl.deleteProgram(entry.program));
     };
-  }, []);
+  }, [contextVersion]);
 
   const { className = '', ...attributes } = rest;
 
   return (
     <div ref={containerRef} className={`ghost-fibers-container${className ? ` ${className}` : ''}`} {...attributes}>
+      <svg className="ghost-fibers-fallback" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <g fill="none" stroke="currentColor" strokeWidth="0.8">
+          {Array.from({ length: 24 }, (_, i) => <path key={i} opacity={.12 + (i % 4) * .06}
+            d={`M-100 ${220 + i * 7} C240 ${-80 + i * 12} 560 ${740 - i * 9} 1300 ${230 + i * 8}`} />)}
+        </g>
+      </svg>
       <canvas ref={canvasRef} className="ghost-fibers-canvas" aria-hidden="true" />
     </div>
   );
