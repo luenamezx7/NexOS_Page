@@ -3,6 +3,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useSyncExternalStore } from 'react';
 import ButtonWithIcon from './ui/button-witn-icon';
 import { HeroPlates } from './HeroPlates';
+import { HeroVideo } from './HeroVideo';
 import { TextType } from './ui/TextType';
 import { cn } from '@/lib/utils';
 import { motion } from 'motion/react';
@@ -54,6 +55,7 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
 
   return (
     <section ref={sectionRef} id="hero" tabIndex={-1} aria-labelledby="hero-title" data-home-experience="hero" data-managed-section-links data-nav-ready={navigationReady} className={cn('landing-hero oceanic-surface', className)}>
+      <HeroVideo active={showHero} />
       <motion.div className="hero-container" data-hero-scroll>
         <motion.div className="hero-copy" initial={false} animate={showHero ? 'show' : 'hidden'}
           variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { duration: reduce ? 0 : .6 } } }}>
