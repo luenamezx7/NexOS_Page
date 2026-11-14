@@ -12,7 +12,7 @@ export function PlateManagement() {
           <span className={styles.eyebrow}>{t('ATENDIMENTO · WHATSAPP')}</span>
           <h2 id="plate-management-title">{t('Mudou de cardápio? Sua placa acompanha.')}</h2>
             <p>{t('Precisa de outro destino para sua placa? Fale com a ezway no WhatsApp para conferir as opções disponíveis.')}</p>
-          <a href={commercialHref('Olá! Quero trocar o link da minha placa.')} target="_blank" rel="noopener noreferrer" className="btn-primary-nex">{t('Trocar o link da minha placa')} <ArrowUpRight size={17} aria-hidden="true" /></a>
+          <a href={commercialHref(t('Olá! Quero trocar o link da minha placa.'))} target="_blank" rel="noopener noreferrer" className="btn-primary-nex">{t('Trocar o link da minha placa')} <ArrowUpRight size={17} aria-hidden="true" /></a>
       </div>
         <div className={styles.preview} data-journey-visual role="img" aria-label={t('Conversa sobre a troca do destino da placa pelo WhatsApp comercial')}>
           <div className={styles.previewHead}>

@@ -138,9 +138,9 @@ export function Services({ className = '', selectedUse }: { className?: string; 
             {examples.map((example, index) => <div key={example.id} className={styles.screenSlide} data-macbook-slide data-active={active === index} aria-hidden={active !== index}>
               {index < 2 ? <Image src={example.image} alt={t(example.title)} fill sizes="(max-width: 767px) 90vw, 720px" quality={90} className={styles.screenImage} /> :
                 <div className={`${styles.demoScreen} ${index === 3 ? styles.demoLanding : ''}`}>
-                  <div className={styles.demoNav}><span>{index === 2 ? 'atelier espaço' : 'grão & casa'}</span><span>{index === 2 ? 'Estúdio  /  Projetos  /  Contato' : 'Cafés  /  Sobre  /  Contato'}</span></div>
+                  <div className={styles.demoNav}><span>{index === 2 ? 'atelier espaço' : 'grão & casa'}</span><span>{t(index === 2 ? 'Estúdio  /  Projetos  /  Contato' : 'Cafés  /  Sobre  /  Contato')}</span></div>
                   <div className={styles.demoPhoto}><Image src={example.image} alt={t(example.title)} fill sizes="(max-width: 767px) 90vw, 720px" quality={90} className={styles.screenImage} /></div>
-                  <div className={styles.demoCopy}><strong>{index === 2 ? 'Espaços feitos para viver.' : 'Uma pausa para o seu dia.'}</strong><span>{index === 2 ? 'Arquitetura e interiores' : 'Café de bairro'}</span></div>
+                  <div className={styles.demoCopy}><strong>{t(index === 2 ? 'Espaços feitos para viver.' : 'Uma pausa para o seu dia.')}</strong><span>{t(index === 2 ? 'Arquitetura e interiores' : 'Café de bairro')}</span></div>
                 </div>}
             </div>)}
             <div className={styles.notch} aria-hidden="true" />

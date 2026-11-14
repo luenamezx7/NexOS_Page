@@ -18,6 +18,7 @@ import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-r
 import { Cookie, X, ShieldCheck } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 import { useScrollLock } from './useScrollLock';
+import { useLocale } from '@/lib/locale';
 
 // ============================================================
 // ezway — Consentimento de Cookies (LGPD)
@@ -136,6 +137,7 @@ const CATEGORIES: CategoryDef[] = [
 ];
 
 export function CookieConsentProvider({ children }: { children: ReactNode }) {
+  const { t } = useLocale();
   // Hidratação sem setState em effect: lazy init lê o localStorage no 1º render client.
   // (SSR retorna defaults; o client corrige na hidratação — sem cascading renders.)
   const [storedInitial] = useState<CookieConsent | null>(() => {
@@ -258,7 +260,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
             ref={bannerRef}
             role="dialog"
             aria-live="polite"
-            aria-label="Aviso de cookies"
+            aria-label={t('Aviso de cookies')}
             initial={reduce ? { opacity: 0 } : { opacity: 0, y: 24 }}
             animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
             exit={reduce ? { opacity: 0 } : { opacity: 0, y: 16 }}
@@ -279,12 +281,12 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                 </span>
                 <div className="min-w-0">
                   <p className={`text-sm font-semibold leading-snug ${isDark ? 'text-white' : 'text-ink'}`}>
-                    Usamos cookies — você escolhe
+                    {t("Usamos cookies — você escolhe")}
                   </p>
                   <p className={`mt-1 text-[13px] leading-relaxed ${isDark ? 'text-white/70' : 'text-ink/70'}`}>
-                    Só o essencial roda por padrão. Analytics e marketing ficam desligados até você aceitar.{' '}
+                    {t("Só o essencial roda por padrão. Analytics e marketing ficam desligados até você aceitar.")}{' '}
                     <Link href="/cookies" className="underline underline-offset-2 hover:opacity-80">
-                      Política de Cookies
+                      {t("Política de Cookies")}
                     </Link>
                   </p>
                 </div>
@@ -299,7 +301,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                       : 'border-ink/15 bg-ink/[0.06] text-ink/70 hover:bg-ink/12 hover:text-ink'
                   }`}
                 >
-                  Recusar
+                  {t("Recusar")}
                 </button>
                 <button
                   type="button"
@@ -310,14 +312,14 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                       : 'border-ink/15 bg-ink/[0.06] text-ink/70 hover:bg-ink/12 hover:text-ink'
                   }`}
                 >
-                  Personalizar
+                  {t("Personalizar")}
                 </button>
                 <MetallicButton
                   type="button"
                   onClick={acceptAll}
                   className="min-h-11 px-4 py-2.5 text-xs"
                 >
-                  Aceitar tudo
+                  {t("Aceitar tudo")}
                 </MetallicButton>
               </div>
             </div>
@@ -367,23 +369,23 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                     <p
                       className={`font-mono text-[11px] uppercase tracking-[0.18em] ${isDark ? 'text-white/40' : 'text-ink/40'}`}
                     >
-                      ezway · Privacidade
+                      {t("ezway · Privacidade")}
                     </p>
                     <h2
                       id="cookie-prefs-title"
                       className={`font-display text-lg font-bold tracking-tight ${isDark ? 'text-white' : 'text-ink'}`}
                     >
-                      Preferências de cookies
+                      {t("Preferências de cookies")}
                     </h2>
                     <p id="cookie-prefs-description" className={`mt-1 text-xs ${isDark ? 'text-white/60' : 'text-ink/60'}`}>
-                      Gerencie quais categorias de cookies podem ser usadas. Cookies essenciais são sempre ativos.
+                      {t("Gerencie quais categorias de cookies podem ser usadas. Cookies essenciais são sempre ativos.")}
                     </p>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setPrefsOpen(false)}
-                  aria-label="Fechar preferências de cookies"
+                  aria-label={t('Fechar preferências de cookies')}
                   className={`grid h-9 w-9 shrink-0 place-items-center rounded-full border transition focus-visible:outline-none focus-visible:ring-2 ${
                     isDark
                       ? 'border-white/10 bg-white/[0.06] text-white/70 hover:bg-white/10 hover:text-white focus-visible:ring-white/30'
@@ -405,17 +407,17 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                 >
                   <div>
                     <p className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-ink'}`}>
-                      Estritamente necessários
+                      {t("Estritamente necessários")}
                     </p>
                     <p className={`mt-1 text-xs leading-relaxed ${isDark ? 'text-white/55' : 'text-ink/55'}`}>
-                      Tema e sua escolha de cookies. Sempre ativos.
+                      {t("Tema e sua escolha de cookies. Sempre ativos.")}
                     </p>
                   </div>
                   <span
                     className="shrink-0 rounded-full bg-[#28c840]/15 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-[#28c840]"
-                    aria-label="Sempre ativos"
+                    aria-label={t('Sempre ativos')}
                   >
-                    Sempre on
+                    {t("Sempre on")}
                   </span>
                 </div>
 
@@ -427,16 +429,16 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                       className={`flex items-center justify-between gap-4 rounded-xl border p-4 ${isDark ? 'border-white/15 bg-white/[0.05]' : 'border-ink/15 bg-ink/[0.05]'}`}
                     >
                       <div className="min-w-0">
-                        <p className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-ink'}`}>{cat.title}</p>
+                        <p className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-ink'}`}>{t(cat.title)}</p>
                         <p className={`mt-1 text-xs leading-relaxed ${isDark ? 'text-white/55' : 'text-ink/55'}`}>
-                          {cat.description}
+                          {t(cat.description)}
                         </p>
                       </div>
                       <button
                         type="button"
                         role="switch"
                         aria-checked={on}
-                        aria-label={`${cat.title}: ${on ? 'ativado' : 'desativado'}`}
+                        aria-label={`${t(cat.title)}: ${t(on ? 'ativado' : 'desativado')}`}
                         onClick={() => toggleDraft(cat.key)}
                         className={`relative h-7 w-12 shrink-0 rounded-full border transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-choice)]/60 ${
                           on ? 'border-[var(--brand-choice)] bg-[var(--brand-choice)]' : isDark ? 'border-white/15 bg-white/10' : 'border-ink/15 bg-ink/10'
@@ -454,9 +456,8 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                   );
                 })}
 
-<p className={`text-[11px] leading-relaxed ${isDark ? 'text-white/50' : 'text-ink/50'}`}>
-                  Detalhes em <Link href="/cookies" className="underline underline-offset-2">/cookies</Link>. Sua escolha
-                  vale por 12 meses e pode ser alterada no rodapé em &ldquo;Gerenciar cookies&rdquo;.
+                <p className={`text-[11px] leading-relaxed ${isDark ? 'text-white/50' : 'text-ink/50'}`}>
+                  {t("Detalhes em")} <Link href="/cookies" className="underline underline-offset-2">/cookies</Link>{t(". Sua escolha vale por 12 meses e pode ser alterada no rodapé em “Gerenciar cookies”.")}
                 </p>
               </div>
 
@@ -472,7 +473,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                       : 'border-ink/10 bg-ink/[0.04] text-ink/60 hover:bg-ink/10 hover:text-ink'
                   }`}
                 >
-                  Recusar tudo
+                  {t("Recusar tudo")}
                 </button>
                 <button
                   type="button"
@@ -483,14 +484,14 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                       : 'border-ink/10 bg-ink text-white hover:bg-ink/90'
                   }`}
                 >
-                  Salvar escolhas
+                  {t("Salvar escolhas")}
                 </button>
                 <MetallicButton
                   type="button"
                   onClick={acceptAll}
                   className="min-h-11 flex-1 px-4 py-2.5 text-xs"
                 >
-                  Aceitar tudo
+                  {t("Aceitar tudo")}
                 </MetallicButton>
               </div>
 
@@ -499,7 +500,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                   className={`flex items-center justify-center gap-2 text-center font-mono text-[10px] uppercase tracking-[0.16em] ${isDark ? 'text-white/30' : 'text-ink/35'}`}
                 >
                   <ShieldCheck size={12} strokeWidth={2} aria-hidden="true" />
-                  LGPD · sem rastreio antes do aceite
+                  {t("LGPD · sem rastreio antes do aceite")}
                 </p>
               </div>
             </motion.div>

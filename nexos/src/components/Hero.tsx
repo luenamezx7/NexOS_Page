@@ -7,7 +7,6 @@ import { HeroVideo } from './HeroVideo';
 import { TextType } from './ui/TextType';
 import { cn } from '@/lib/utils';
 import { motion } from 'motion/react';
-import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { usePresentationActive, usePresentationRevealing } from '@/lib/use-presentation-active';
 import { ScrollReveal } from './ScrollReveal';
 import { useSectionScroll } from './SmoothScrollProvider';
@@ -22,7 +21,6 @@ const heroWords = {
 const heroSentence = { pt: ['Seu negócio', 'em uma aproximação'], en: ['Your business', 'with a single tap'], es: ['Tu negocio', 'con un solo toque'] } as const;
 
 export const Hero = forwardRef<HTMLElement, { className?: string }>(function Hero({ className = '' }, ref) {
-  const reduce = useReducedMotion();
   const { t, locale } = useLocale();
   const scrollToSection = useSectionScroll();
   const navigationReady = useSyncExternalStore(subscribeHydration, () => true, () => false);
@@ -57,10 +55,9 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
     <section ref={sectionRef} id="hero" tabIndex={-1} aria-labelledby="hero-title" data-home-experience="hero" data-managed-section-links data-nav-ready={navigationReady} className={cn('landing-hero oceanic-surface', className)}>
       <HeroVideo active={showHero} />
       <motion.div className="hero-container" data-hero-scroll>
-        <motion.div className="hero-copy" initial={false} animate={showHero ? 'show' : 'hidden'}
-          variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { duration: reduce ? 0 : .6 } } }}>
+        <div className="hero-copy">
            <ScrollReveal as="p" preset="label" className="hero-eyebrow"><span aria-hidden="true" /> {t('Placa Inteligente NFC + QR Code')}</ScrollReveal>
-             <h1 id="hero-title" className="hero-heading" aria-label={`${heroSentence[locale][0]} ${heroWords[locale][0]} ${heroSentence[locale][1]}`}>
+             <h1 id="hero-title" data-heading-static className="hero-heading" aria-label={`${heroSentence[locale][0]} ${heroWords[locale][0]} ${heroSentence[locale][1]}`}>
                <span className="hero-title-line" aria-hidden="true">{heroSentence[locale][0]}</span>
                <TextType key={locale} text={heroWords[locale]} />
                <span className="hero-title-line" aria-hidden="true">{heroSentence[locale][1]}</span>
@@ -69,7 +66,7 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
            <ScrollReveal className="hero-actions" delay={.2}>
               <ButtonWithIcon href="#showcase" onClick={event => { event.preventDefault(); scrollToSection('#showcase'); }}>{t('Conhecer a Placa NFC')}</ButtonWithIcon>
            </ScrollReveal>
-        </motion.div>
+        </div>
         <HeroPlates />
       </motion.div>
     </section>

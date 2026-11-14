@@ -15,8 +15,15 @@ test('switches the public site between Portuguese, English and Spanish, preservi
   await expect(page.getByRole('menuitem', { name: 'Español' }).locator('img')).toHaveAttribute('src', '/flags/es.svg');
   await english.click();
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('AI-powered solutions');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Your business');
   await expect(page.getByRole('banner').getByRole('button', { name: 'Select language: English' }).locator('img')).toHaveAttribute('src', '/flags/us.svg');
+  await expect(page.locator('[data-hero-brand-strip]')).toContainText('Digital menus');
+  await expect(page.locator('section[aria-labelledby="real-estate-video-title"]')).toContainText('Professional, immersive videos with AI.');
+  const cookieNotice = page.getByRole('dialog', { name: 'Cookie notice' });
+  await cookieNotice.getByRole('button', { name: 'Customize', exact: true }).click();
+  await expect(page.getByRole('dialog', { name: 'Cookie preferences', exact: true })).toContainText('Strictly necessary');
+  await page.getByRole('button', { name: 'Close cookie preferences', exact: true }).click();
+
 
   await page.goto('/criacao-de-sites');
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
@@ -32,6 +39,11 @@ test('switches the public site between Portuguese, English and Spanish, preservi
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('lang', 'es');
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Un sitio a la altura de tu negocio.');
+
+  await page.goto('/');
+  await expect(page.locator('[data-hero-brand-strip]')).toContainText('Menús digitales');
+  await expect(page.locator('section[aria-labelledby="real-estate-video-title"]')).toContainText('Vídeos profesionales e inmersivos con IA.');
+  await expect(page.locator('#cta-final a[href*="wa.me"]')).toHaveAttribute('href', /Hola/);
 
   for (const [path, headline] of [
     ['/landing-pages', 'Una página. Una oferta clara.'],

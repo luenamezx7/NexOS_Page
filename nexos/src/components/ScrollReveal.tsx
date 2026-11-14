@@ -55,6 +55,12 @@ export function ScrollReveal({ children, as = 'div', preset = 'body', delay = 0,
       for (const property of ['opacity', 'transform', 'will-change']) element.style.removeProperty(property);
       element.dataset.revealState = 'visible';
     };
+    // Homepage headings have a single owner: HeadingScrollMotion's scrubbed GSAP tween.
+    // Leave their styles alone here so a locale change cannot overwrite that tween.
+    if (element.closest('.landing-page') && element.matches('h1, h2, h3, h4, h5, h6')) {
+      element.dataset.revealState = 'visible';
+      return;
+    }
     // Read the preference directly too, before the external-store hydration update.
     if (reduce || motionMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window) || !element.animate) {
       recordMotion('reveals', reduce || motionMedia('(prefers-reduced-motion: reduce)').matches ? 'blocked-reduced-motion' : 'unsupported-api');

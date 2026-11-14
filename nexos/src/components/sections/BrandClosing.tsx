@@ -13,7 +13,7 @@ export function BrandClosing() {
     <div className={styles.wordmarkCrop}>
       <a href="#hero" className={styles.wordmarkLink} aria-label={t('ezway, início')}>
         <ScrollReveal preset="image" className={styles.wordmarkFrame}>
-          <BrandWordmark as="h2" className={styles.gradientWordmark} />
+          <BrandWordmark as="h2" registered className={styles.gradientWordmark} />
         </ScrollReveal>
       </a>
     </div>

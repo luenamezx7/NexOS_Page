@@ -1,4 +1,5 @@
 .wordmark {
+  position: relative;
   display: block;
   width: fit-content;
   max-width: 100%;
@@ -11,4 +12,5 @@
   color: var(--color-ink);
 }
 .way { color: var(--brand-wordmark-accent); }
+.registered { position: absolute; top: 56%; left: calc(100% + .22em); transform: translateY(-50%); width: 1em; color: var(--color-ink); -webkit-text-fill-color: currentColor; font: 400 .16em/1 Arial, Helvetica, sans-serif; letter-spacing: 0; text-align: center; pointer-events: none; }
 @media (forced-colors: active) { .wordmark, .way { color: CanvasText; } }

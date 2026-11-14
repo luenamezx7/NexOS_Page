@@ -127,7 +127,7 @@ export function PlateChooser({ onSelect }: { onSelect?: (name: string) => void }
           <p className={styles.detailCaption}>{t(selected.caption)}</p>
           <p id="plate-dialog-description">{t(selected.description)}</p>
           <a href={selected.demoUrl} target="_blank" rel="noopener noreferrer" className={styles.demoLink}>{t('Conhecer este destino')} <ArrowUpRight size={16} aria-hidden="true" /></a>
-          <a className="btn-primary-nex" href={plateCommercialHref(selected.name)} target="_blank" rel="noopener noreferrer">{t('Entender mais')} <ArrowUpRight size={17} aria-hidden="true" /></a>
+          <a className="btn-primary-nex" href={plateCommercialHref(selected.name, t)} target="_blank" rel="noopener noreferrer">{t('Entender mais')} <ArrowUpRight size={17} aria-hidden="true" /></a>
         </div>
       </div>}
     </dialog>

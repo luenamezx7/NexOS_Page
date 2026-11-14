@@ -1633,9 +1633,13 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
 /* Round only the top of a dark chapter immediately following a light one. */
 .landing-page { --dark-section-radius: 32px; background: #f8f8fa; }
 .landing-page [data-home-experience='real-estate-video'] + [data-home-experience='plate-management'],
-.landing-page [data-home-experience='easychat'] + [data-home-experience='process'],
-.landing-page #faq + #cta-final {
+.landing-page [data-home-experience='easychat'] + [data-home-experience='process'] {
   border-radius: var(--dark-section-radius) var(--dark-section-radius) 0 0;
+  overflow: clip;
+}
+.landing-page .about-surface-frame { background: #f8f8fa; }
+.landing-page #faq + #cta-final {
+  border-radius: var(--dark-section-radius);
   overflow: clip;
 }
 .landing-page [data-home-experience='contact'] { background: #f8f8fa; }

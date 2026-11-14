@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { useLocale } from '@/lib/locale';
 import styles from './RealEstateVideo.module.css';
 import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
+import { ScrollReveal } from '../ScrollReveal';
 
 /** Pass a real video URL when approved portfolio footage is available. */
 export function RealEstateVideo({ videoSrc, posterSrc = "/ezway-demo-studio.jpg" }: { videoSrc?: string; posterSrc?: string }) {
@@ -38,14 +39,13 @@ export function RealEstateVideo({ videoSrc, posterSrc = "/ezway-demo-studio.jpg"
 
   return <section className={styles.section} aria-labelledby="real-estate-video-title">
     <div className={styles.inner}>
-      <h2 id="real-estate-video-title" className={styles.title}>{t('Transpareça a verdadeira qualidade do seu trabalho.')}</h2>
+      <ScrollReveal as="h2" preset="title" id="real-estate-video-title" className={styles.title}>{t('Transpareça a verdadeira qualidade do seu trabalho.')}</ScrollReveal>
       <p className={styles.description}>{t('Vídeos profissionais e imersivos com IA.')}</p>
       <div className={styles.posterWrap} data-video={Boolean(videoSrc)}>
         <div className={styles.poster}>
           {videoSrc ? <video ref={videoRef} src={videoSrc} poster={posterSrc} muted playsInline loop controls preload="metadata" aria-label={t('Vídeo demonstrativo da ezway')} /> :
             <Image src="/ezway-demo-studio.jpg" alt={t('Imagem ilustrativa de um ambiente interno, não uma prévia de vídeo produzido pela ezway')} fill sizes="(max-width: 767px) 100vw, 1080px" className={styles.image} />}
         </div>
-        <div className={styles.info}>Vídeos para imobiliárias<span>Seu cliente sente o espaço antes de visitar.</span></div>
       </div>
       {!videoSrc && <p className={styles.disclaimer}>{t('Imagem ilustrativa. Vídeo demonstrativo em preparação.')}</p>}
     </div>

@@ -21,7 +21,7 @@ export function HomepageJourneyMotion() {
       mm.add({ desktop: '(min-width: 768px)', mobile: '(max-width: 767px)' }, context => {
         const desktop = !!context.conditions?.desktop;
         recordMotion('homepageGsap', 'initialized', desktop ? 'desktop' : 'mobile');
-        const entries = root.querySelectorAll('[data-hero-plates], #mascot-solutions-title, #real-estate-video-title, #plate-management-title');
+        const entries = root.querySelectorAll('[data-hero-plates]');
         entries.forEach(element => gsap.fromTo(element, { opacity: .65, y: 18 }, {
           opacity: 1, y: 0, duration: .65, ease: 'power2.out', immediateRender: false,
           scrollTrigger: { trigger: element, start: 'top 92%', once: true },

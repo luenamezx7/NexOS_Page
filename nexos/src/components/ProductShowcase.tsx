@@ -40,7 +40,7 @@ export function ProductShowcase({ className = '', onSelectUse }: { className?: s
                      <p className={styles.commercialNote}>{t('Conte onde vai usá-la. Definimos com você o link, a personalização e o valor.')}</p>
                 </div>
               </div>
-                   <a href={plateCommercialHref(selectedUse)} target="_blank" rel="noopener noreferrer" className={`${styles.buyButton} btn-primary-nex`}><MetallicSurface /><span className="metallic-content inline-flex items-center gap-2">{t('Conversar sobre minha placa')} <ArrowUpRight size={16} aria-hidden="true" /></span></a>
+                   <a href={plateCommercialHref(selectedUse, t)} target="_blank" rel="noopener noreferrer" className={`${styles.buyButton} btn-primary-nex`}><MetallicSurface /><span className="metallic-content inline-flex items-center gap-2">{t('Conversar sobre minha placa')} <ArrowUpRight size={16} aria-hidden="true" /></span></a>
                 <p className={styles.hint}>{t('A placa e o destino digital podem ser contratados separadamente.')}</p>
             </ScrollReveal>
           </div>

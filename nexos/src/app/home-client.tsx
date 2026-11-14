@@ -15,6 +15,7 @@ import { TransitionGuide } from '@/components/sections/TransitionGuide';
 import { LandingPageBlur } from '@/components/sections/LandingPageBlur';
 import { RealEstateVideo } from '@/components/sections/RealEstateVideo';
 import { MotionDiagnosticsLoader } from '@/components/MotionDiagnosticsLoader';
+import { HeadingScrollMotion } from '@/components/HeadingScrollMotion';
 
 const Services = dynamic(() => import('@/components/Services').then(m => m.Services));
 const AboutUs = dynamic(() => import('@/components/AboutUs').then(m => m.AboutUs));
@@ -63,6 +64,7 @@ export default function HomeClient() {
   return (
     <main data-motion-detail="full" className="landing-page w-full max-w-full overflow-x-clip bg-canvas text-ink">
       <HomepageJourneyMotion />
+      <HeadingScrollMotion />
       <MotionDiagnosticsLoader />
       <LandingPageBlur />
       {entrance.visible && <BrandEntrance key={entrance.key} onComplete={handleEntranceComplete} />}
@@ -91,9 +93,11 @@ export default function HomeClient() {
                <MascotSolutions />
              </SectionBackground>
              <ProofStrip />
-              <SectionBackground index={7} experience="about">
-              <AboutUs />
-            </SectionBackground>
+             <div className="about-surface-frame">
+               <SectionBackground index={7} experience="about">
+                 <AboutUs />
+               </SectionBackground>
+             </div>
                <SectionBackground index={8} experience="contact">
                 <FAQ />
                  <CTAFinal />

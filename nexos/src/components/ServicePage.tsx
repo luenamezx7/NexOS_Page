@@ -23,7 +23,7 @@ export function ServicePage({ service }: { service: ServicePageContent }) {
     questions: service.questions.map(item => ({ question: t(item.question), answer: t(item.answer) })),
   };
   const isPlate = service.productId === 'placa';
-  const contact = isPlate ? plateCommercialHref() : commercialHref(`Olá! Quero conversar com o comercial sobre ${service.label.toLowerCase()} para meu negócio.`);
+  const contact = isPlate ? plateCommercialHref(undefined, t) : commercialHref(`${t('Olá! Quero conversar com o comercial sobre')} ${display.label.toLowerCase()} ${t('para meu negócio.')}`);
 
   return (
     <div className={`service-page interior-page ${styles.page}`}>

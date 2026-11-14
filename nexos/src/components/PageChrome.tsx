@@ -22,7 +22,7 @@ export function PageHeader({ children, accountOnly = false }: { children?: React
   return (
     <header className="page-header" role="banner" data-page-header>
       <a href="#main-content" className="page-skip-link">{t('Pular para o conteúdo')}</a>
-       <Link href="/" className="page-header-brand" aria-label={`ezway — ${t('página inicial')}`}><BrandMark /></Link>
+       <Link href="/" className="page-header-brand" aria-label={`ezway — ${t('página inicial')}`}><BrandMark registered /></Link>
        {!accountOnly && <nav className="page-header-nav" aria-label={t('Navegação de páginas')}>
          {PAGE_LINKS.map(({ href, label }) => <Link key={href} href={href} aria-current={pathname === href ? 'page' : undefined}>{href === '/portal/acesso' && <ProfileOrb />}{t(label)}</Link>)}
        </nav>}

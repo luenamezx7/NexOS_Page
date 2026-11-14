@@ -3,26 +3,25 @@
 import { ArrowUpRight } from 'lucide-react';
 import Image from 'next/image';
 import { config } from '@/config';
-import maskedPortrait from '../../../public/media/masked-man-white.jpg';
+import toqueEzway from '../../../public/media/toque-ezway.jpg';
 import styles from './Sections.module.css';
 import { ScrollReveal } from '../ScrollReveal';
-import { BlurReveal } from '../blur-reveal';
 import { useLocale } from '@/lib/locale';
 
 export function CTAFinal() {
   const { t } = useLocale();
-  const whatsapp = `https://wa.me/${config.whatsapp.number}?text=${encodeURIComponent(config.whatsapp.message)}`;
+  const whatsapp = `https://wa.me/${config.whatsapp.number}?text=${encodeURIComponent(t(config.whatsapp.message))}`;
 
   return <section id="cta-final" aria-labelledby="cta-title" className={`${styles.section} ${styles.brandCta}`}>
     <span id="manifesto" className={styles.ctaAnchor} aria-hidden="true" />
     <span id="contact" className={styles.ctaAnchor} aria-hidden="true" />
     <div className={`${styles.container} ${styles.finalCta}`}>
       <div className={styles.ctaLayout}>
-           <BlurReveal as="h2" id="cta-title" inView speedReveal={3}>{t('Vamos conectar seu negócio?')}</BlurReveal>
+           <h2 id="cta-title">{t('Vamos conectar seu negócio?')}</h2>
       </div>
       <div className={styles.ctaVisual} data-cta-visual>
         <div className={styles.ctaImageMotion}>
-          <Image src={maskedPortrait} alt={t('Figura de branco com máscara e olhos em forma de estrelas')} fill sizes="(max-width: 767px) calc(100vw - 48px), (max-width: 1280px) 45vw, 540px" quality={90} className={styles.ctaBrandImage} loading="lazy" />
+          <Image src={toqueEzway} alt={t('Duas mãos se aproximando com a marca ezway ao centro')} fill sizes="(max-width: 767px) calc(100vw - 48px), (max-width: 1280px) 45vw, 540px" quality={90} className={styles.ctaBrandImage} loading="lazy" />
         </div>
       </div>
         <div className={styles.ctaBottom}><ScrollReveal as="p">{t('Conte o que seu cliente precisa encontrar. Vamos definir juntos a placa e o destino digital.')}</ScrollReveal><ScrollReveal className={styles.ctaActions} delay={.1}>

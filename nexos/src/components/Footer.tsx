@@ -103,8 +103,8 @@ export function Footer({ onViewPresentation }: { onViewPresentation?: () => void
                   </a>
                 );
               })}
-              <a href={commercialHref()} target="_blank" rel="noopener noreferrer" role="listitem" aria-label={t('WhatsApp da ezway')} className={styles.socialLink}><MessageSquare size={18} strokeWidth={1.75} aria-hidden="true" /></a>
-              {landingEvidence.linkedInUrl && <a href={landingEvidence.linkedInUrl} target="_blank" rel="noopener noreferrer" role="listitem" aria-label="LinkedIn da ezway" className={styles.socialLink}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="2" /><path d="M7 10v7m0-10v.01M11 17v-7h3v1c.5-.8 1.3-1.2 2.4-1.2 2.1 0 2.6 1.5 2.6 3.1V17m-8-4v4" /></svg></a>}
+              <a href={commercialHref(t(config.whatsapp.message))} target="_blank" rel="noopener noreferrer" role="listitem" aria-label={t('WhatsApp da ezway')} className={styles.socialLink}><MessageSquare size={18} strokeWidth={1.75} aria-hidden="true" /></a>
+              {landingEvidence.linkedInUrl && <a href={landingEvidence.linkedInUrl} target="_blank" rel="noopener noreferrer" role="listitem" aria-label={t('LinkedIn da ezway')} className={styles.socialLink}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="2" /><path d="M7 10v7m0-10v.01M11 17v-7h3v1c.5-.8 1.3-1.2 2.4-1.2 2.1 0 2.6 1.5 2.6 3.1V17m-8-4v4" /></svg></a>}
             </div>
           </ScrollReveal>
 
