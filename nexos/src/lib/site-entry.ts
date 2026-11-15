@@ -5,7 +5,51 @@ export const ENTRY_ACTION = 'site-entry';
 export const ENTRY_TTL = 30 * 60;
 export const CHALLENGE_TTL = 5 * 60;
 type Purpose = 'challenge' | 'clearance';
-type Claims = { purpose: Purpose; expires: number; nonce: string; browser: string };
+type Claims = { purpose: Purpose; expires: number; nonce: string; browser: string; net: string };
+
+/**
+ * F-02 — vínculo de rede do token de entrada.
+ *
+ * O token de clearance é um portador (bearer): quem o tiver, usa. Hoje ele é
+ * atrelado ao User-Agent (que é público e trivialmente forjável), mas NÃO à
+ * rede. Consequência: um cookie vazado (perfil compartilhado, HAR, log de
+ * proxy) vale por 30 min a partir de QUALQUER IP — e, com o origin da Vercel
+ * acessível direto (F-13), um atacante com IPs rotativos nunca esbarra nos
+ * limites por IP do app.
+ *
+ * Aqui o token passa a carregar também o vínculo de rede, dentro do MAC
+ * (HMAC-SHA256 já existente), então não é forjável.
+ *
+ * Política (SITE_ENTRY_NETWORK_BINDING):
+ *   strict — exige match de /24 (IPv4) ou /64 (IPv6). Mais forte, mas quebra
+ *            CGNAT e IPv6 rotativo (celular, VPN, iCloud Private Relay).
+ *   soft   — padrão. Aceita, mas marca a sessão como "movida" (header de
+ *            diagnóstico) para o time de segurança perceber cookie em
+ *            circulação. Não quebra ninguém.
+ *   off    — desliga (equivalente ao comportamento atual).
+ *
+ * O endereço vem de `trustedClientAddress` (src/lib/rate-limit.ts), que só
+ * confia no header de plataforma da Vercel.
+ */
+function networkBinding(): 'strict' | 'soft' | 'off' {
+  const value = (process.env.SITE_ENTRY_NETWORK_BINDING ?? 'soft').toLowerCase();
+  return value === 'strict' || value === 'off' ? value : 'soft';
+}
+
+/** Prefixo de rede: /24 em IPv4 (256 enderecos), /64 em IPv6 (prefixo assinante). */
+export function networkOf(address: string): string {
+  if (!address || address === 'shared' || !isIPAddress(address)) return 'shared';
+  if (address.includes(':')) return address.split(':').slice(0, 4).join(':') + '::/64';
+  const parts = address.split('.');
+  return parts.length === 4 ? `${parts.slice(0, 3).join('.')}.0/24` : 'shared';
+}
+
+function isIPAddress(value: string): boolean {
+  return /^[0-9a-fA-F:.]+$/.test(value) && /[.:]/.test(value);
+}
+
+const netClaim = (address: string) =>
+  createHmac('sha256', secret()).update(`ezway-site-entry-net-v1:${networkOf(address)}`).digest('base64url').slice(0, 22);
 
 export function siteEntryEnforced() {
   if (process.env.SITE_ENTRY_ENFORCED === 'true') return true;
@@ -22,13 +66,13 @@ function secret() {
 const browserHash = (userAgent: string) => createHash('sha256').update(userAgent).digest('base64url');
 const signature = (payload: string) => createHmac('sha256', secret()).update(`ezway-site-entry-v1:${payload}`).digest();
 
-export function createEntryToken(purpose: Purpose, userAgent: string, now = Date.now()) {
-  const claims: Claims = { purpose, expires: Math.floor(now / 1000) + (purpose === 'challenge' ? CHALLENGE_TTL : ENTRY_TTL), nonce: randomBytes(24).toString('hex'), browser: browserHash(userAgent) };
+export function createEntryToken(purpose: Purpose, userAgent: string, now = Date.now(), address = 'shared') {
+  const claims: Claims = { purpose, expires: Math.floor(now / 1000) + (purpose === 'challenge' ? CHALLENGE_TTL : ENTRY_TTL), nonce: randomBytes(24).toString('hex'), browser: browserHash(userAgent), net: netClaim(address) };
   const payload = Buffer.from(JSON.stringify(claims)).toString('base64url');
   return { token: `${payload}.${signature(payload).toString('base64url')}`, claims };
 }
 
-export function readEntryToken(token: string | undefined, purpose: Purpose, userAgent: string, now = Date.now()): Claims | null {
+export function readEntryToken(token: string | undefined, purpose: Purpose, userAgent: string, now = Date.now(), address = 'shared'): Claims | null {
   try {
     if (!token || token.length > 1024) return null;
     const parts = token.split('.');
@@ -39,8 +83,11 @@ export function readEntryToken(token: string | undefined, purpose: Purpose, user
     const claims = JSON.parse(Buffer.from(parts[0], 'base64url').toString()) as Claims;
     const seconds = Math.floor(now / 1000);
     const ttl = purpose === 'challenge' ? CHALLENGE_TTL : ENTRY_TTL;
+    const netMatches = claims.net === netClaim(address);
+    if (networkBinding() === 'strict' && !netMatches) return null;
     return claims.purpose === purpose && Number.isInteger(claims.expires) && claims.expires > seconds && claims.expires <= seconds + ttl &&
-      /^[a-f0-9]{48}$/.test(claims.nonce) && claims.browser === browserHash(userAgent) ? claims : null;
+      /^[a-f0-9]{48}$/.test(claims.nonce) && claims.browser === browserHash(userAgent) &&
+      (claims.net === undefined || netMatches) ? claims : null;
   } catch { return null; }
 }
 
@@ -64,4 +111,10 @@ export function entryReturnPath(value: unknown): string {
     if (url.origin !== 'https://entry.invalid' || path.startsWith('//') || /[\\\u0000-\u0020\u007f]/.test(path) || !isEntryProtectedPath(path)) return '/';
     return `${url.pathname}${url.search}${url.hash}`;
   } catch { return '/'; }
+}
+
+/** O token foi visto de uma rede diferente da original (policy 'soft'). */
+export function entryNetworkMoved(claims: Claims | null, address: string): boolean {
+  if (!claims || networkBinding() !== 'soft') return false;
+  return claims.net !== netClaim(address);
 }

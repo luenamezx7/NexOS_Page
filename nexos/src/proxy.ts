@@ -3,7 +3,8 @@ import { randomBytes } from 'node:crypto';
 import { isSameOrigin } from './lib/request-security';
 import { getSessionCookie } from 'better-auth/cookies';
 import { isPrivatePage, loginPathFor } from './lib/auth/policy';
-import { ENTRY_PATH, entryCookies, isEntryProtectedPath, readEntryToken, siteEntryEnforced } from './lib/site-entry';
+import { ENTRY_PATH, entryCookies, entryNetworkMoved, isEntryProtectedPath, readEntryToken, siteEntryEnforced } from './lib/site-entry';
+import { trustedClientAddress } from './lib/rate-limit';
 
 // Rotas mutantes que exigem mesma origem (defesa em profundidade antes dos handlers).
 const ORIGIN_PROTECTED = ['/api/auth', '/api/account', '/api/contact'];
@@ -13,17 +14,62 @@ function getNonce(): string {
   return randomBytes(16).toString('base64url');
 }
 
+/**
+ * F-13 — O origin da Vercel é alcançável DIRETO (216.198.79.1), sem o
+ * Cloudflare. Verificado: GET https://nexoslab.online/ com --resolve para o
+ * IP da Vercel devolve `server: Vercel` (sem `server: cloudflare`) e 303 para
+ * /verificar.
+ *
+ * O gate do Turnstile continua valendo (é app-level), mas TODA a camada de
+ * borda é contornada: sem WAF, sem Bot Management, sem anti-DDoS da Cloudflare
+ * — e, principalmente, os rate limits POR IP do app (que usam
+ * `x-vercel-forwarded-for`) deixam de proteger: um atacante com IPs rotativos
+ * bate no origin e nunca esbarra neles. Restam o Turnstile e o limite POR
+ * CONTA.
+ *
+ * ESTA VERIFICAÇÃO (defesa em profundidade na aplicação) fecha o bypass:
+ * exige que o request tenha passado pela Cloudflare. Em produção o header
+ * `cf-ray` só existe quando a requisição chega pela Cloudflare; hitting o
+ * origin direto, ele não vem.
+ *
+ * Impacto de falso-positivo: preview deployments (vercel.app) e o ambiente
+ * local NÃO passam por Cloudflare. Por isso a checagem é habilitada só em
+ * produção E só quando `SITE_CLOUDFLARE_REQUIRED` não for 'false'.
+ */
+function cameThroughCloudflare(req: NextRequest): boolean {
+  if (process.env.NODE_ENV !== 'production') return true;
+  if (process.env.SITE_CLOUDFLARE_REQUIRED === 'false') return true;
+  return Boolean(req.headers.get('cf-ray'));
+}
+
 export async function proxy(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
+
+  if (!cameThroughCloudflare(req)) {
+    const response = NextResponse.json(
+      { error: 'Acesso direto ao origin não permitido.' },
+      { status: 403, headers: { 'Cache-Control': 'private, no-store' } },
+    );
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+    return response;
+  }
+
   if (siteEntryEnforced() && isEntryProtectedPath(pathname)) {
     const names = entryCookies(req.url);
-    if (!readEntryToken(req.cookies.get(names.clearance)?.value, 'clearance', req.headers.get('user-agent') || '')) {
+    const address = trustedClientAddress(req.headers);
+    const clearance = readEntryToken(req.cookies.get(names.clearance)?.value, 'clearance', req.headers.get('user-agent') || '', Date.now(), address);
+    if (!clearance) {
       const gate = new URL(ENTRY_PATH, req.url);
       gate.searchParams.set('next', `${pathname}${req.nextUrl.search}`);
       const response = NextResponse.redirect(gate, 303);
       response.headers.set('Cache-Control', 'private, no-store');
       response.headers.set('X-Robots-Tag', 'noindex, nofollow');
       return response;
+    }
+    if (entryNetworkMoved(clearance, address)) {
+      const moved = NextResponse.next({ request: req });
+      moved.headers.set('X-Ezway-Session-Moved', '1');
+      return moved;
     }
   }
   // Filtro otimista: os RSC/handlers validam a sessão no banco.
@@ -40,7 +86,17 @@ export async function proxy(req: NextRequest) {
   }
 
   const nonce = getNonce();
-  const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+  // F-11: o CSP so deve autorizar o origin do Supabase se o CLIENTE pode
+  // mesmo usa-lo. `SUPABASE_URL` e a variavel de SERVIDO (usada pelo
+  // @supabase/server e pelo Better Auth); ela nunca vai para o bundle do
+  // browser. Publicar o origin do banco no connect-src e uma autorizacao
+  // sem contraparte - e se a publishable key um dia for inlinada em um
+  // bundle (NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY esta definida em producao),
+  // o CSP ja estaria autorizando o browser a falar direto com o banco,
+  // contornando o controle de acesso que esta no route handler.
+  // Fica valido enquanto `NEXT_PUBLIC_SUPABASE_URL` existir, que e o unico
+  // caso em que o client tem a chave.
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const origin = url ? new URL(url).origin : '';
   const csp = [
     "default-src 'self'", "object-src 'none'", "base-uri 'self'",

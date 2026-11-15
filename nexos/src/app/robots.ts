@@ -9,7 +9,10 @@ const disallowedPaths = [
   '/portal/',
   '/admin-dashboard-su/',
   '/dashboard',
-  '/auth/',
+  // F-08: rotas reais que faltavam.
+  '/og',        // gera um PNG renderizado (200) — não deve ser rastreado
+  '/verificar', // página do desafio Turnstile
+  // F-08: '/auth/' foi removido — a rota não existe (404).
 ];
 
 export default function robots(): MetadataRoute.Robots {
