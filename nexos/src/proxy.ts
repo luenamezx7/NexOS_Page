@@ -95,17 +95,28 @@ export async function proxy(req: NextRequest) {
   }
 
   const nonce = getNonce();
-  // F-11: o CSP so deve autorizar o origin do Supabase se o CLIENTE pode
-  // mesmo usa-lo. `SUPABASE_URL` e a variavel de SERVIDO (usada pelo
-  // @supabase/server e pelo Better Auth); ela nunca vai para o bundle do
-  // browser. Publicar o origin do banco no connect-src e uma autorizacao
-  // sem contraparte - e se a publishable key um dia for inlinada em um
-  // bundle (NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY esta definida em producao),
-  // o CSP ja estaria autorizando o browser a falar direto com o banco,
-  // contornando o controle de acesso que esta no route handler.
-  // Fica valido enquanto `NEXT_PUBLIC_SUPABASE_URL` existir, que e o unico
-  // caso em que o client tem a chave.
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  // F-11: o CSP NAO deve autorizar o origin do Supabase por padrao.
+  //
+  // O client nao usa o Supabase: a grep nos 47 chunks (publicos E
+  // autenticados) nao encontra nenhuma chave nem a URL, e a RLS bloqueia as
+  // 7 tabelas para a publishable key. Autorizar o origin do banco no
+  // connect-src e, portanto, uma autorizacao SEM CONTRAPARTE.
+  //
+  // O risco e latente, nao atual: `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+  // esta definida em producao. Se um dia um componente client passar a
+  // referenciar `process.env.NEXT_PUBLIC_SUPABASE_URL`, a publishable key
+  // e inlinada no bundle E o CSP ja estaria autorizando o browser a falar
+  // direto com o banco - contornando o controle de acesso que esta no
+  // route handler.
+  //
+  // Por isso a origem entra no CSP por FLAG EXPLICITA, e nao por inferencia
+  // de variavel de ambiente: inferir nao funciona, porque as duas
+  // NEXT_PUBLIC_* estao definidas em producao mesmo sem uso.
+  //
+  // Para ligar de verdade: o client precisa passar a usar o SDK do browser
+  // do Supabase E defina SITE_CSP_ALLOW_SUPABASE=true.
+  const supabaseAllowed = process.env.SITE_CSP_ALLOW_SUPABASE === 'true';
+  const url = supabaseAllowed ? process.env.NEXT_PUBLIC_SUPABASE_URL : undefined;
   const origin = url ? new URL(url).origin : '';
   const csp = [
     "default-src 'self'", "object-src 'none'", "base-uri 'self'",
