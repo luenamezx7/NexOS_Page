@@ -4,7 +4,7 @@ test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem('nexos-cookie-consent-v1', JSON.stringify({ necessary: true, functional: false, analytics: false, marketing: false, updatedAt: new Date().toISOString() })));
 });
 
-for (const width of [320, 390, 768, 1280, 1440]) {
+for (const width of [320, 390, 600, 767, 768, 1280, 1440]) {
   test(`catalogue, continuous boundary and keyboard focus at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/');
@@ -46,7 +46,7 @@ for (const width of [320, 390, 768, 1280, 1440]) {
   });
 }
 
-test('curved band pauses manually and offscreen, and remains useful without motion', async ({ page }) => {
+test('support band pauses manually and offscreen and preserves messages with system reduce enabled', async ({ page }) => {
   await page.goto('/#mascot-solutions');
   await expect(page.locator('dialog[data-presentation]')).toHaveCount(0, { timeout: 15000 });
   const band = page.locator('[data-tilted-grid]');
@@ -59,8 +59,12 @@ test('curved band pauses manually and offscreen, and remains useful without moti
   await expect(band).toHaveAttribute('data-running', 'false');
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.locator('#mascot-solutions').scrollIntoViewIfNeeded();
+  await expect(band).toHaveAttribute('data-running', 'true');
+  await expect(page.getByRole('region', { name: 'Suporte da ezway', exact: true })).toBeVisible();
+  await expect(page.locator('#mascot-solutions li')).toHaveCount(4);
+  await expect(page.locator('#mascot-solutions li').first()).toContainText('Vamos entender seu negócio.');
+  await page.getByRole('button', { name: 'Pausar animação', exact: true }).click();
   await expect(band).toHaveAttribute('data-running', 'false');
-  await expect(page.locator('#mascot-solutions a')).toHaveCount(4);
 });
 
 test('MacBook chassis remains fixed while original screen contents change and reverse', async ({ page }) => {
@@ -82,6 +86,43 @@ test('MacBook chassis remains fixed while original screen contents change and re
   await page.getByRole('button', { name: 'Ver exemplo: Landing page' }).click();
   await expect(page.getByRole('button', { name: 'Ver exemplo: Landing page' })).toHaveAttribute('aria-pressed', 'true');
   expect(await chassis.evaluate(el => getComputedStyle(el).transform)).toBe(original);
+});
+
+test('support card text fits the artwork in Portuguese, English and Spanish', async ({ page }) => {
+  await page.goto('/#mascot-solutions');
+  await expect(page.locator('dialog[data-presentation]')).toHaveCount(0, { timeout: 15000 });
+  const section = page.locator('#mascot-solutions');
+  await section.scrollIntoViewIfNeeded();
+  for (const locale of ['pt', 'en', 'es']) {
+    await page.evaluate(value => {
+      localStorage.setItem('easyway-language', value);
+      window.dispatchEvent(new Event('easyway-language-change'));
+    }, locale);
+    await expect(page.locator('html')).toHaveAttribute('lang', locale === 'pt' ? 'pt-BR' : locale);
+    await expect(section.locator('li')).toHaveCount(4);
+    const clipped = await section.evaluate(root => {
+      const sources = new Set([...root.querySelectorAll('img')].map(image => image.src));
+      const failures: string[] = [];
+      for (const source of sources) {
+        if (!source.startsWith('data:image/svg+xml')) continue;
+        const parsed = new DOMParser().parseFromString(decodeURIComponent(source.slice(source.indexOf(',') + 1)), 'image/svg+xml');
+        const svg = document.importNode(parsed.documentElement, true) as unknown as SVGSVGElement;
+        svg.style.cssText = 'position:fixed;visibility:hidden;pointer-events:none;left:0;top:0;width:1200px;height:828px';
+        document.body.append(svg);
+        try {
+          const view = svg.viewBox.baseVal;
+          for (const text of svg.querySelectorAll('text')) {
+            const box = text.getBBox();
+            if (box.x < 0 || box.y < 0 || box.x + box.width > view.width || box.y + box.height > view.height) failures.push(text.textContent ?? '');
+          }
+        } finally { svg.remove(); }
+      }
+      return { images: sources.size, failures };
+    });
+    expect(clipped.images).toBeGreaterThanOrEqual(4);
+    expect(clipped.failures, `${locale}: artwork must not clip support copy`).toEqual([]);
+    await section.screenshot({ path: `test-results/support-${locale}.png` });
+  }
 });
 
 for (const scale of [1, 1.25, 2]) {

@@ -41,6 +41,10 @@ test('o contador progride até 100% antes da abertura e reinicia ao repetir a ap
   await expect(progress).toHaveAttribute('aria-valuenow', /\d+/);
   const percentage = dialog.locator('[data-presentation-percentage]');
   await expect(percentage).toBeVisible();
+  await expect(percentage).toHaveCSS('font-weight', '900');
+  await expect(percentage).toHaveCSS('font-family', /Satoshi/);
+  await expect(progress).toHaveCount(1);
+  await expect(dialog.locator('[class*=progressTrack], [class*=progressFill]')).toHaveCount(0);
   const logoBounds = await dialog.getByText('ezway', { exact: true }).boundingBox();
   const numberBounds = await percentage.boundingBox();
   expect(numberBounds!.y).toBeGreaterThan(logoBounds!.y + logoBounds!.height);
@@ -50,8 +54,22 @@ test('o contador progride até 100% antes da abertura e reinicia ao repetir a ap
   await expect(percentage).toHaveText('100%');
   await expect(dialog).toHaveCount(0);
 
+  // Observe the mount itself: by the time click() resolves, animation frames may
+  // already have advanced the counter beyond its initial 0%.
+  await page.evaluate(() => {
+    const values: string[] = [];
+    Object.assign(window, { presentationStartValues: values });
+    const observer = new MutationObserver(records => {
+      for (const record of records) for (const node of record.addedNodes) {
+        if (!(node instanceof Element)) continue;
+        const counter = node.matches('[data-presentation-percentage]') ? node : node.querySelector('[data-presentation-percentage]');
+        if (counter) { values.push(counter.getAttribute('aria-valuenow') || ''); observer.disconnect(); return; }
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  });
   await page.getByRole('button', { name: 'Ver apresentação', exact: true }).click();
-  await expect(progress).toHaveAttribute('aria-valuenow', '0');
+  expect(await page.evaluate(() => (window as Window & { presentationStartValues?: string[] }).presentationStartValues)).toEqual(['0']);
   await expect.poll(async () => Number(await progress.getAttribute('aria-valuenow'))).toBeGreaterThan(0);
   await expect(progress).toHaveAttribute('aria-valuenow', '100');
   await expect(dialog).toHaveCount(0);

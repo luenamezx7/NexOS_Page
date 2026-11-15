@@ -2,40 +2,23 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { chromium, expect } from '@playwright/test';
 
-const SITE = 'https://nexoslab.online';
-const CALLBACK = 'https://lgfttyeezviecfqbbmqk.supabase.co/auth/v1/callback';
+const site = new URL(process.env.AUTH_SMOKE_URL || 'https://nexoslab.online');
+assert.equal(site.protocol, 'https:', 'A homologação remota exige HTTPS.');
 
-test('produção: botões com ícones no login/cadastro chegam a Google e GitHub', { timeout: 120000 }, async () => {
-  const browser = await chromium.launch();
+test('produção: o visitante recebe apenas a verificação antes de qualquer página', { timeout: 120000 }, async () => {
+  const browser = await chromium.launch({ channel: process.env.PLAYWRIGHT_CHANNEL || undefined });
   try {
-    for (const mode of ['login', 'signup']) {
-      for (const provider of ['google', 'github']) {
-        const context = await browser.newContext();
-        try {
-          const page = await context.newPage();
-          const host = provider === 'google' ? 'accounts.google.com' : 'github.com';
-          let callback;
-          page.on('request', request => {
-            const url = new URL(request.url());
-            if (request.isNavigationRequest() && url.hostname === host && url.searchParams.has('redirect_uri')) {
-              callback = url.searchParams.get('redirect_uri');
-            }
-          });
-          await page.goto(`${SITE}/portal/acesso`);
-          if (mode === 'signup') await page.getByRole('button', { name: 'Criar uma conta', exact: true }).click();
-          const group = page.getByRole('group', { name: mode === 'signup' ? 'Criar conta com provedor' : 'Entrar com provedor' });
-          await expect(group).toHaveAttribute('data-social-auth-mode', 'supabase');
-          const button = group.getByRole('button', { name: provider === 'google' ? 'Google' : 'GitHub', exact: true });
-          await expect(button.locator(`[data-provider-icon="${provider}"]`)).toBeVisible();
-          await button.click();
-          await page.waitForURL(url => url.hostname === host, { timeout: 30000 });
-          await page.waitForLoadState('domcontentloaded');
-          assert.equal(callback, CALLBACK, `${mode}/${provider}: callback externo precisa ser o Supabase`);
-          await expect(page.locator('body')).not.toContainText(/redirect_uri_mismatch|invalid_client|Access blocked|redirect_uri is not associated/i);
-          if (provider === 'google') await expect(page.getByRole('textbox').first()).toBeVisible({ timeout: 15000 });
-          else await expect(page.locator('input[name="login"]')).toBeVisible({ timeout: 15000 });
-        } finally { await context.close(); }
+    const context = await browser.newContext();
+    try {
+      const page = await context.newPage();
+      await page.route('https://challenges.cloudflare.com/**', route => route.abort());
+      for (const path of ['/', '/portal/acesso', '/portal/acesso?mode=signup', '/admin-dashboard-su/secure-entry']) {
+        await page.goto(new URL(path, site).href);
+        await expect(page).toHaveURL(/\/verificar\?next=/);
+        await expect(page.getByRole('heading', { name: 'Verificação de segurança' })).toBeVisible();
+        await expect(page.locator('#hero, .site-shell, form')).toHaveCount(0);
+        await expect(page.locator('script[src*="/_next/"]')).toHaveCount(0);
       }
-    }
+    } finally { await context.close(); }
   } finally { await browser.close(); }
 });

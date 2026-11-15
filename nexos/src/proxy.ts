@@ -3,6 +3,7 @@ import { randomBytes } from 'node:crypto';
 import { isSameOrigin } from './lib/request-security';
 import { getSessionCookie } from 'better-auth/cookies';
 import { isPrivatePage, loginPathFor } from './lib/auth/policy';
+import { ENTRY_PATH, entryCookies, isEntryProtectedPath, readEntryToken, siteEntryEnforced } from './lib/site-entry';
 
 // Rotas mutantes que exigem mesma origem (defesa em profundidade antes dos handlers).
 const ORIGIN_PROTECTED = ['/api/auth', '/api/account', '/api/contact'];
@@ -14,6 +15,17 @@ function getNonce(): string {
 
 export async function proxy(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
+  if (siteEntryEnforced() && isEntryProtectedPath(pathname)) {
+    const names = entryCookies(req.url);
+    if (!readEntryToken(req.cookies.get(names.clearance)?.value, 'clearance', req.headers.get('user-agent') || '')) {
+      const gate = new URL(ENTRY_PATH, req.url);
+      gate.searchParams.set('next', `${pathname}${req.nextUrl.search}`);
+      const response = NextResponse.redirect(gate, 303);
+      response.headers.set('Cache-Control', 'private, no-store');
+      response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+      return response;
+    }
+  }
   // Filtro otimista: os RSC/handlers validam a sessão no banco.
   if (isPrivatePage(pathname) && !getSessionCookie(req, { cookiePrefix: 'nexos' })) {
     const login = new URL(loginPathFor(pathname), req.url);

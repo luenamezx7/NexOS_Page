@@ -1627,6 +1627,7 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
 .landing-hero .hero-heading [data-typing-word] { display: block; width: 100%; max-width: none; min-width: 0; text-align: center; }
 .landing-hero [data-hero-plates] { margin: 0 auto; }
 .landing-hero .hero-eyebrow, .landing-hero .hero-actions { justify-content: center; }
+.landing-hero .hero-actions { margin-inline: auto; }
 .landing-hero .hero-description { font-size: 16px; margin: 28px auto 0; text-align: center; }
 @media (max-width: 767px) { .landing-hero .hero-container { gap: 32px; padding: 116px 24px 56px; } .landing-hero .hero-heading { font-size: clamp(36px, 9vw, 54px); } .landing-hero .hero-description { font-size: 15px; } }
 

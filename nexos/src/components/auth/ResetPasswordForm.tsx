@@ -22,6 +22,7 @@ import { authClient, authErrorMessage } from '@/lib/auth/client';
 import styles from '@/components/auth/LoginForm.module.css';
 import { AuthHeader, AuthStory } from './AuthFrame';
 import { PageFooter } from '../PageChrome';
+import { Card, CardHeader, CardContent, CardFooter } from '../ui/card';
 
 export function ResetPasswordForm({ token }: { token: string }) {
   const busyRef = useRef(false);
@@ -76,9 +77,11 @@ export function ResetPasswordForm({ token }: { token: string }) {
       <div className={styles.content} id="main-content">
         <AuthStory recovery />
         <ScrollReveal as="section" preset="card"
-          className={styles.panel}
+          className={styles.panelWrap}
           aria-labelledby="reset-title"
         >
+          <Card className={`${styles.panel} ${styles.recoveryPanel}`}>
+          <CardHeader className={`${styles.panelHeader} ${styles.recoveryHeader}`}>
           <p className={styles.overline}>Recuperar acesso</p>
           <div className={styles.title}>
             <h1 id="reset-title" className={styles.heading}>
@@ -90,6 +93,8 @@ export function ResetPasswordForm({ token }: { token: string }) {
               ? 'Sua senha foi alterada. Entre com a nova senha para continuar.'
               : 'Escolha uma senha forte. O link de recuperação confirma que é você.'}
           </p>
+          </CardHeader>
+          <CardContent className={styles.panelContent}>
 
           {done ? (
             <div className="flex flex-col gap-4">
@@ -99,7 +104,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
               </MetallicButton>
             </div>
           ) : (
-            <form className="flex flex-col gap-5" onSubmit={(e) => { e.preventDefault(); void handleSubmit(new FormData(e.currentTarget)); }}>
+            <form className="flex flex-col gap-6" onSubmit={(e) => { e.preventDefault(); void handleSubmit(new FormData(e.currentTarget)); }}>
               <div className="flex flex-col gap-2">
                 <label htmlFor="reset-password" className="text-sm font-medium">
                   Nova senha
@@ -162,16 +167,20 @@ export function ResetPasswordForm({ token }: { token: string }) {
           )}
 
           {error && (
-            <p className="mt-5 rounded-lg border border-ink/20 p-3 text-sm" role="alert" aria-live="assertive">
+            <p className="mt-6 rounded-lg border border-ink/20 p-3 text-sm" role="alert" aria-live="assertive">
               {error}
             </p>
           )}
-          <p className="mt-8 text-sm leading-relaxed text-ink/75">
+          </CardContent>
+          <CardFooter className={styles.panelFooter}>
+          <p className="text-sm leading-relaxed text-ink/75">
             Precisa de ajuda?{' '}
             <a href="mailto:nexosperformance@gmail.com" className="underline underline-offset-4">
               Fale com a ezway
             </a>
           </p>
+          </CardFooter>
+          </Card>
         </ScrollReveal>
       </div>
       <PageFooter />

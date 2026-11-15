@@ -84,53 +84,45 @@ test('keeps the language switch accessible without horizontal overflow', async (
   }
 });
 
-test('renders solid pink accents, CTAs and wordmarks in all three languages', async ({ page }) => {
+test('keeps current brand accents and localized hero content in all three languages', async ({ page }) => {
   await page.goto('/');
   const intro = page.locator('dialog[data-presentation]');
-  if (await intro.isVisible()) {
-    await expect(intro.locator('[data-brand-way]')).toHaveCSS('color', 'rgb(255, 22, 141)');
-    await intro.getByRole('button', { name: 'Pular apresentação' }).click();
-  }
-  await expect(intro).toHaveCount(0);
+  await expect(intro).toHaveCount(0, { timeout: 15000 });
   await expect(page.getByRole('banner').locator('[data-brand-way]')).toHaveText('way');
   await expect(page.getByRole('banner').locator('[data-wordmark]')).toHaveText('ez');
-  await expect(page.getByRole('banner').locator('[data-brand-way]')).toHaveCSS('color', 'rgb(255, 22, 141)');
+  await expect(page.getByRole('banner').locator('[data-brand-way]')).toHaveCSS('color', 'rgb(255, 63, 159)');
 
-  for (const [words, language, next] of [
-    [['conectado.', 'aproximação.'], 'Português', 'English'],
-    [['connected.', 'tap.'], 'English', 'Español'],
-    [['conectado.', 'acercamiento.'], 'Español', null],
+  for (const [locale, sentence, next] of [
+    ['pt', 'Seu negócio conectado em uma aproximação', 'English'],
+    ['en', 'Your business connected with a single tap', 'Español'],
+    ['es', 'Tu negocio conectado con un solo toque', null],
   ] as const) {
-    await expect(page.locator('#hero [data-accent-word]')).toHaveCount(2);
-    for (const word of words) {
-      const accent = page.locator('#hero').locator(`[data-reveal-word="${word}"][data-accent-word]`);
-      await expect(accent).toHaveCSS('background-image', 'none');
-      await expect(accent).toHaveCSS('border-top-width', '0px');
-      for (const letter of await accent.locator('[data-blur-letter]').all()) {
-        await expect(letter).toHaveCSS('color', 'rgb(255, 139, 195)');
-        await expect(letter).toHaveCSS('background-image', 'none');
-        await expect(letter).toHaveCSS('text-shadow', 'none');
-      }
-    }
-    await expect(page.getByRole('banner').locator('a[href="#contact"]')).toHaveCSS('background-color', 'rgb(244, 110, 170)');
-    await expect(page.locator('#hero a[href="#showcase"]')).toHaveCSS('background-color', 'rgb(244, 110, 170)');
+    await expect(page.locator('#hero-title')).toHaveAttribute('aria-label', sentence);
+    await expect(page.locator('#hero [data-typing-word]')).toBeVisible();
+    await expect(page.locator('#hero [data-typing-word] > span').first()).toHaveCSS('background-image', /linear-gradient/);
+    await expect(page.getByRole('banner').locator('a[href*="wa.me"]')).toHaveCSS('background-color', 'rgb(255, 63, 159)');
+    await expect(page.locator('#hero a[href="#showcase"]')).toHaveCSS('background-color', 'rgb(255, 63, 159)');
     if (next) {
-      const label = language === 'Português' ? 'Selecionar idioma' : 'Select language';
-      await page.getByRole('banner').getByRole('button', { name: `${label}: ${language}` }).click();
+      const label = locale === 'pt' ? 'Selecionar idioma: Português' : 'Select language: English';
+      await page.getByRole('banner').getByRole('button', { name: label }).click();
       await page.getByRole('menuitem', { name: next }).click();
     }
   }
-  await expect(page.locator('#brand-closing [data-brand-way]')).toHaveCSS('color', 'rgb(255, 22, 141)');
+  await expect(page.locator('#brand-closing h2')).toHaveCSS('background-image', /linear-gradient/);
   await expect(page.locator('#brand-closing')).toContainText('Hecho por ezway');
 
   for (const width of [390, 1366]) {
     await page.setViewportSize({ width, height: 844 });
-    const phone = page.locator('#easychat [data-iphone]');
+    await page.locator('#easychat').scrollIntoViewIfNeeded();
+    const phone = page.locator('#easychat [data-iphone15pro]');
     await phone.scrollIntoViewIfNeeded();
+    await expect(phone.locator('img')).toHaveAttribute('src', '/mockups/iphone-15-pro.svg');
     expect(await phone.evaluate(el => {
-      const media = el.querySelector('[class*="__media"]')!.getBoundingClientRect();
-      const screen = el.querySelector('[class*="__phoneScreen"]')!.getBoundingClientRect();
-      const input = el.querySelector('[class*="__phoneInput"]')!.getBoundingClientRect();
+      const viewport = el.firstElementChild!;
+      const content = viewport.firstElementChild!;
+      const media = viewport.getBoundingClientRect();
+      const screen = content.getBoundingClientRect();
+      const input = content.lastElementChild!.getBoundingClientRect();
       return Math.abs(media.left - screen.left) < 1 && Math.abs(media.top - screen.top) < 1 &&
         Math.abs(media.width - screen.width) < 1 && Math.abs(media.height - screen.height) < 1 &&
         input.bottom <= screen.bottom && input.top >= screen.top;
@@ -139,14 +131,15 @@ test('renders solid pink accents, CTAs and wordmarks in all three languages', as
   }
 });
 
-test('fills the pink top progress line when scrolling and resets at the start', async ({ page }) => {
+test('fills the green top progress line when scrolling and resets at the start', async ({ page }) => {
   await page.goto('/');
   const intro = page.locator('dialog[data-presentation]');
   if (await intro.isVisible()) await intro.getByRole('button', { name: 'Pular apresentação' }).click();
   await expect(intro).toHaveCount(0);
   const progress = page.getByRole('progressbar', { name: 'Progresso da página' });
   await expect(progress).toBeVisible();
-  await expect(page.locator('#hero .hero-actions a').first()).toHaveCSS('background-color', 'rgb(255, 22, 141)');
+  await expect(page.locator('#hero .hero-actions a').first()).toHaveCSS('background-color', 'rgb(255, 63, 159)');
+  await expect(progress.locator('div')).toHaveCSS('background-color', 'rgb(34, 197, 94)');
   await expect(page.getByRole('navigation', { name: 'Navegação de seções' })).toHaveCount(0);
   await page.evaluate(() => scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }));
   await expect.poll(async () => Number(await progress.getAttribute('aria-valuenow'))).toBeGreaterThan(95);

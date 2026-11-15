@@ -3,6 +3,10 @@
 Nenhuma regra foi publicada. Falta confirmar hostname privado, zona, plano e permissão WAF.
 A prévia chatgpt.site não pertence à zona de produção e não deve ser incluída na regra.
 
+Em 14/11/2026, a consulta somente leitura à zona `nexoslab.online` usando o token
+configurado retornou HTTP 403, código 9109 (`Invalid access token`). É necessário
+restabelecer esse acesso antes de identificar a zona/plano e configurar a regra.
+
 ## Regra de Challenge Page
 
 Substituir HOST_PRIVADO_CONFIRMADO apenas após a confirmação do proprietário:

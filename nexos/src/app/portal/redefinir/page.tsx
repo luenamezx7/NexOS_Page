@@ -5,6 +5,7 @@ import { MetallicSurface } from '@/components/ui/metallic-button';
 import { AuthHeader, AuthStory } from '@/components/auth/AuthFrame';
 import styles from '@/components/auth/LoginForm.module.css';
 import { PageFooter } from '@/components/PageChrome';
+import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 
 /**
  * Página de redefinição de senha.
@@ -32,22 +33,30 @@ export default async function ResetPasswordPage({ searchParams }: { searchParams
        <AuthHeader accountOnly />
       <div className={styles.content} id="main-content">
       <AuthStory recovery />
-      <section className={`${styles.panel} flex flex-col gap-6`} aria-labelledby="reset-link-title">
-        <p className="font-mono text-xs uppercase tracking-widest text-[var(--nex-pink)]">Recuperação</p>
+      <section className={styles.panelWrap} aria-labelledby="reset-link-title">
+        <Card className={`${styles.panel} ${styles.recoveryPanel}`}>
+        <CardHeader className={`${styles.panelHeader} ${styles.recoveryHeader}`}>
+        <p className={styles.overline}>Recuperação</p>
         <h1 id="reset-link-title" className={styles.heading}>Link necessário</h1>
         <p className="text-sm leading-relaxed text-ink/70">
           Para redefinir a senha é preciso o link enviado por e-mail. Ele é de uso único e expira em
           pouco tempo. Peça um novo em “Esqueceu a senha”.
         </p>
+        </CardHeader>
+        <CardContent className={styles.panelContent}>
         <Link href="/portal/acesso" className="btn-primary-nex justify-center">
           <MetallicSurface /><span className="metallic-content">Pedir um novo link</span>
         </Link>
+        </CardContent>
+        <CardFooter className={styles.panelFooter}>
         <p className="text-xs text-ink/55">
           Suporte ·{' '}
           <a href="mailto:nexosperformance@gmail.com" className="underline underline-offset-4">
             nexosperformance@gmail.com
           </a>
         </p>
+        </CardFooter>
+        </Card>
       </section>
       </div>
       <PageFooter />

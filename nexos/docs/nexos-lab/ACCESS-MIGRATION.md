@@ -32,7 +32,8 @@ criar a conta e enviar sua verificação. O script usa acesso interno do servido
 cria apenas papel user com senha aleatória nunca exibida e envia confirmação ao e-mail.
 Depois de confirmar a caixa postal, o membro define a senha pela recuperação normal.
 Nenhuma conta real foi criada nesta entrega. A variante de convites pode substituir
-este fluxo quando o proprietário responder à preferência perguntada.
+este fluxo futuramente; o fluxo operacional preparado nesta retomada é o
+provisionamento administrativo, sem reabrir cadastro público.
 
 A isenção de MFA é exclusiva à chamada interna create-user sem Request/Headers, numa
 instância criada pelo CLI com configuração explícita. getAuth() nunca ativa essa opção;

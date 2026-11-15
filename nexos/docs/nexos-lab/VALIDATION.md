@@ -1,5 +1,9 @@
 # Validação de retomada — 12/11/2026
 
+Estado mais recente: [retomada de 14/11/2026](RETOMADA-2026-11-14.md).
+As políticas de movimento e as composições descritas abaixo são registros
+históricos; o relatório mais recente distingue testes atuais e pendências externas.
+
 ## Publicação autorizada — ajustes posteriores
 
 Deploy de produção concluído (Ready) em https://nexoslab.online.

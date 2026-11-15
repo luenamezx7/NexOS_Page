@@ -52,6 +52,10 @@ scripts `test:auth:production*` acessam serviços reais e não fazem parte dos t
 
 ## Deploy e segurança
 
+As páginas exigem verificação Turnstile antes de entregar o conteúdo. A tela
+`/verificar` é independente da home; somente Siteverify válido emite a liberação
+assinada por 30 minutos. Configuração e testes: [entrada protegida](docs/nexos-lab/SITE-ENTRY.md).
+
 Requer runtime Node.js (Vercel ou servidor compatível); não é exportação estática
 para GitHub Pages. Execute `npm run build` e `npm run start` para servir produção.
 `vercel.json` agenda retentativas da outbox; configure `CRON_SECRET`.
@@ -70,8 +74,10 @@ Para outra CA privada, configure
 
 Entradas usam Web Animations API com transform e opacidade, inclusive em telas
 pequenas. Fundos CSS usam o compositor; efeitos fora da tela e abas ocultas pausam.
-O hero usa fundo escuro sem o efeito de fibras. A preferência explícita
-`prefers-reduced-motion` continua sendo respeitada nas animações restantes.
+O hero usa vídeo com poster e controles manuais, sem o efeito de fibras.
+A política atual mantém as animações completas mesmo quando o navegador informa
+`prefers-reduced-motion`; a preferência nativa continua visível no diagnóstico.
+Consulte `docs/motion-diagnostics.md` para os detalhes e a validação dessa política.
 
 A rolagem usa Lenis em desktops compatíveis e rolagem suave nativa nos demais.
 Resultados de emulação de CPU não substituem testes numa GPU integrada real.
@@ -81,6 +87,7 @@ Resultados de emulação de CPU não substituem testes numa GPU integrada real.
 A home segue o briefing em `design-/rebrand-nexos/PROMPT-DOC/prompt-codex-nexos-lab.md`.
 Checklist, evidências, auditorias e pendências ficam em `docs/nexos-lab/`.
 Resultados da retomada e comandos de prévia: [validação local](docs/nexos-lab/VALIDATION.md).
+Estado atual e pendências: [retomada de 14/11](docs/nexos-lab/RETOMADA-2026-11-14.md).
 Cadastro público e OAuth foram desativados no código local; recuperação, sessão e MFA permanecem.
 Não publicar antes de revisar o inventário de acesso, provisionamento e rotação de credencial
 indicados em `docs/nexos-lab/ACCESS-MIGRATION.md` e `SECRET-ROTATION.md`.

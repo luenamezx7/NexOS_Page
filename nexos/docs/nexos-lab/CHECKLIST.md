@@ -1,5 +1,12 @@
 # Prompt para Cursor + Codex | Refinamento da home EZway / NexOS LAB
 
+> Atualização de 14/11/2026: ver [estado atual](RETOMADA-2026-11-14.md).
+> Este briefing preserva requisitos e evidências históricos. A política posterior
+> de movimento completo substituiu a redução automática. O bloqueio público de
+> cadastro/OAuth foi validado localmente e na produção, com provisionamento
+> administrativo preparado. WAF, rotação da credencial e testes físicos continuam
+> pendentes; não devem ser considerados concluídos pelos testes automatizados.
+
 Trabalhe no repositório aberto. Refine a **home existente** usando a prévia privada para a organização visual, hierarquia, alinhamento e ritmo entre as seções. Use os componentes, conteúdo, imagens, animações e fluxos do projeto atual como base. O card com todas as placas NFC no hero é uma adição explícita. As mudanças de autenticação e segurança descritas abaixo também fazem parte da entrega.
 
 Implemente, revise e teste por etapas. Trabalhe localmente e, quando houver ambiente privado autorizado, use-o para validação. Publicação, ampliação de visibilidade e mudanças no domínio de produção dependem da minha aprovação. Aplique as skills de design, performance, acessibilidade, segurança e testes que estiverem instaladas e forem úteis para a tarefa.

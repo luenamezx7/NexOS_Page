@@ -147,12 +147,8 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
       <div className={styles.stage}>
         <div className={styles.frame}>
           <BrandWordmark animated />
-          <span className={styles.progressNumber} data-presentation-percentage aria-hidden="true">{progress}%</span>
+          <span className={styles.progressNumber} role="progressbar" aria-label={t('Preparando a página')} aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress} data-presentation-percentage data-presentation-progress>{progress}%</span>
         </div>
-      </div>
-      <div className={styles.progress} role="progressbar" aria-label={t('Preparando a página')} aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress} data-presentation-progress>
-        <div className={styles.progressDetails} aria-hidden="true">{t('Preparando a página')}</div>
-        <div className={styles.progressTrack} aria-hidden="true"><span className={styles.progressFill} style={{ transform: `scaleX(${progress / 100})` }} /></div>
       </div>
        <button type="button" className={styles.skip} onClick={() => exitRef.current?.()}>{t('Pular apresentação')} <span aria-hidden="true">↗</span></button>
     </dialog>

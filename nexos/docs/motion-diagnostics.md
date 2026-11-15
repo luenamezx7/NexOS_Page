@@ -2,7 +2,7 @@
 
 A política atual apresenta a experiência completa em todos os dispositivos. A preferência `prefers-reduced-motion` do navegador continua disponível no relatório, mas não desativa vídeo, GSAP, animações CSS ou suavização no desktop. Não há seletor nem ativação exigida do visitante. Memória e núcleos não desligam movimentos, e a redução adaptativa de detalhes/resolução foi retirada. Layouts continuam responsivos; touch mantém rolagem nativa e os efeitos ligados ao scroll continuam ativos.
 
-A apresentação começa em CSS no HTML do servidor, sem aguardar hidratação, fontes ou shaders. A capa expira após 2,7 segundos; se o JavaScript chegar depois, não reabre a apresentação. O movimento de entrada e a barra usam transform/opacity; o contador React acompanha quando a hidratação estiver disponível. Sem JavaScript, o conteúdo fica acessível pelo fallback existente.
+A apresentação começa em CSS no HTML do servidor, sem aguardar hidratação, fontes ou shaders. A capa expira após 2,7 segundos; se o JavaScript chegar depois, não reabre a apresentação. O movimento de entrada usa transform/opacity; a apresentação mostra somente o contador de 0% a 100%, em Satoshi Black (900), sem barra inferior; o contador React acompanha quando a hidratação estiver disponível. Sem JavaScript, o conteúdo fica acessível pelo fallback existente.
 
 Efeitos continuam pausando fora da tela e em aba oculta. Vídeos continuam com controles manuais. Uma recusa real de autoplay ou uma API gráfica indisponível ainda depende do navegador: o site não consegue garantir suporte ou FPS de hardware desconhecido.
 
@@ -35,3 +35,15 @@ A política de CSS é aplicada pelo plugin local `scripts/postcss-full-motion.cj
 https://nexos-j7ut2qwcb-nex-os2.vercel.app — Vercel Ready, protegido por autenticação. Resposta HTML HTTP 200 confirmada por acesso autenticado do CLI. Produção não foi alterada.
 
 Build e 5 testes unitários passaram. As três suítes principais passaram com 21 cenários; após centralizar o processamento de CSS, as suítes de diagnóstico e dispositivos foram repetidas e passaram com 13 cenários. O CSS final foi inspecionado e não contém condições `prefers-reduced-motion`. O PC físico do trabalho ainda não foi testado.
+
+## Apresentação — contador sem barra (14/11/2026)
+
+A barra inferior e seu texto visual foram removidos. O número de 0% a 100% usa
+Satoshi Black (900), com o indicador acessível no próprio contador. Duração,
+logo, saída e opção de pular foram preservadas. Build, tipos e lint dos arquivos
+alterados passaram. Os oito cenários de apresentação passaram entre a suíte
+inicial e a repetição do contador, cujo teste agora observa o 0% no momento da
+montagem para evitar uma disputa com o primeiro frame de animação.
+
+Produção Ready: `dpl_21eKv2kXrgqLhdBRgx2VJArNTVgX`,
+`https://nexos-7ksh1qob4-nex-os2.vercel.app`, associado a `https://nexoslab.online`.

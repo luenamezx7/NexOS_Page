@@ -4,33 +4,53 @@ import assert from 'node:assert/strict';
 const site = new URL(process.env.AUTH_SMOKE_URL || 'https://nexoslab.online');
 assert.equal(site.protocol, 'https:', 'A homologação remota exige HTTPS.');
 const origin = site.origin;
-const brokerMode = process.env.AUTH_SMOKE_OAUTH_MODE !== 'direct';
 const request = (path, options = {}) => fetch(new URL(path, origin), {
   redirect: 'manual', signal: AbortSignal.timeout(30000), ...options,
 });
 
-test('produção: páginas de acesso renderizam e anunciam os métodos configurados', async () => {
-  const response = await request('/portal/acesso');
-  assert.equal(response.status, 200);
-  const html = await response.text();
-  assert.ok(html.includes('Google') && html.includes('GitHub') && html.includes('Entrar com chave de acesso'));
-  assert.match(response.headers.get('content-security-policy'), /nonce-/);
-  assert.match(response.headers.get('cache-control'), /no-store/);
-  assert.equal((await request('/admin-dashboard-su/secure-entry')).status, 200);
-  assert.equal((await request('/portal/redefinir')).status, 200);
+test('produção: nenhuma página é entregue antes da verificação Turnstile', async () => {
+  for (const path of ['/', '/portal/acesso', '/admin-dashboard-su/secure-entry', '/portal/redefinir', '/placa-nfc']) {
+    const response = await request(path);
+    assert.equal(response.status, 303, path);
+    const gate = new URL(response.headers.get('location'), origin);
+    assert.equal(gate.pathname, '/verificar');
+    assert.equal(gate.searchParams.get('next'), path);
+    assert.match(response.headers.get('cache-control'), /no-store/);
+  }
+  const gate = await request('/verificar?next=%2F');
+  assert.equal(gate.status, 200);
+  const html = await gate.text();
+  assert.match(html, /Verificação de segurança/);
+  assert.match(html, /challenges.cloudflare.com/);
+  assert.doesNotMatch(html, /hero-title|gloved-hand|\/_next\//);
+  assert.match(gate.headers.get('content-security-policy'), /nonce-/);
+  assert.match(gate.headers.get('set-cookie'), /HttpOnly/i);
 });
 
-test('produção: rotas privadas preservam destino e cookie forjado não autentica', async () => {
+test('produção: cookies forjados não contornam a entrada nem autenticam APIs', async () => {
   for (const path of ['/conta', '/dashboard', '/portal/seguranca']) {
     const response = await request(path);
-    assert.equal(response.status, 307);
-    assert.equal(new URL(response.headers.get('location'), origin).searchParams.get('callbackUrl'), path);
+    assert.equal(response.status, 303);
+    assert.equal(new URL(response.headers.get('location'), origin).searchParams.get('next'), path);
   }
-  const forged = await request('/conta', { headers: { Cookie: '__Secure-nexos.session_token=forged' } });
-  assert.equal(forged.status, 307);
+  const forged = await request('/conta', { headers: { Cookie: '__Secure-nexos.session_token=forged; __Host-ezway-clearance=forged' } });
+  assert.equal(forged.status, 303);
   assert.equal((await request('/api/account/profile')).status, 401);
   assert.equal((await request('/api/auth/session')).status, 401);
   assert.equal(await (await request('/api/auth/get-session')).json(), null);
+});
+
+test('produção: um desafio válido com token Cloudflare falso é recusado sem liberar o site', async () => {
+  const challenge = await request('/verificar');
+  assert.equal(challenge.status, 200);
+  const cookie = challenge.headers.getSetCookie().map(value => value.split(';')[0]).join('; ');
+  assert.ok(cookie.includes('__Host-ezway-entry='));
+  const response = await request('/api/security/entry', {
+    method: 'POST', headers: { Origin: origin, 'Content-Type': 'application/json', Cookie: cookie },
+    body: JSON.stringify({ token: 'invalid-entry-smoke-token', next: '/' }),
+  });
+  assert.equal(response.status, 403);
+  assert.equal(response.headers.get('set-cookie'), null);
 });
 
 test('produção: CSRF e job privado recusam requisições não autorizadas', async () => {
@@ -67,40 +87,23 @@ test('produção: WebAuthn usa o RP canônico e cadastro exige sessão', async (
   assert.equal((await request('/api/auth/passkey/generate-register-options')).status, 401);
 });
 
-for (const provider of ['google', 'github']) {
-  test(`produção: OAuth ${provider} inicia com callback correto e trata cancelamento`, async () => {
-    // Só inicia e cancela. Não simula consentimento nem cria contas.
-    const started = await request(brokerMode ? '/api/auth/sign-in/supabase' : '/api/auth/sign-in/social', { method: 'POST',
-      headers: { Origin: origin, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ provider, callbackURL: '/conta', errorCallbackURL: '/portal/acesso?confirmation=error&callbackUrl=%2Fconta' }),
+test('produção: cadastro público, OAuth e callbacks antigos são bloqueados', async () => {
+  const paths = ['/sign-up/email', '/sign-in/social', '/sign-in/supabase'];
+  for (const path of paths) {
+    const response = await request(`/api/auth${path}`, {
+      method: 'POST', headers: { Origin: origin, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ provider: 'google', email: 'blocked@example.test', password: 'Test-Password-12345!', name: 'Blocked', callbackURL: '/conta' }),
     });
-    assert.equal(started.status, 200);
-    const authorization = new URL((await started.json()).url);
-    if (brokerMode) {
-      assert.equal(authorization.hostname, 'lgfttyeezviecfqbbmqk.supabase.co');
-      assert.equal(authorization.searchParams.get('provider'), provider);
-      assert.equal(authorization.searchParams.get('redirect_to'), `${origin}/api/auth/supabase/callback`);
-      assert.equal(authorization.searchParams.get('code_challenge_method'), 's256');
-      const providerHop = await fetch(authorization, { redirect: 'manual', signal: AbortSignal.timeout(30000) });
-      assert.equal(providerHop.status, 302);
-      const providerURL = new URL(providerHop.headers.get('location'));
-      assert.equal(providerURL.hostname, provider === 'google' ? 'accounts.google.com' : 'github.com');
-      assert.equal(providerURL.searchParams.get('redirect_uri'), 'https://lgfttyeezviecfqbbmqk.supabase.co/auth/v1/callback');
+    if (path === '/sign-up/email' && response.status === 400) {
+      // Turnstile can reject before Better Auth's disabled-signup hook.
+      // The isolated integration suite also verifies the hook with CAPTCHA off.
+      assert.equal((await response.json()).code, 'MISSING_RESPONSE', path);
     } else {
-      assert.equal(authorization.hostname, provider === 'google' ? 'accounts.google.com' : 'github.com');
-      assert.equal(authorization.searchParams.get('redirect_uri'), `${origin}/api/auth/callback/${provider}`);
+      assert.equal(response.status, path === '/sign-in/supabase' ? 404 : 403, path);
     }
-    const cookies = started.headers.getSetCookie();
-    assert.ok(cookies.length > 0);
-    assert.ok(cookies.every(cookie => /Secure/i.test(cookie) && /HttpOnly/i.test(cookie) && /SameSite=Lax/i.test(cookie)));
-    const cancelled = await request(brokerMode ? '/api/auth/supabase/callback?error=access_denied' : `/api/auth/callback/${provider}?error=access_denied&state=${encodeURIComponent(authorization.searchParams.get('state'))}`, {
-      headers: { Cookie: cookies.map(cookie => cookie.split(';')[0]).join('; ') },
-    });
-    assert.equal(cancelled.status, 302);
-    const location = new URL(cancelled.headers.get('location'), origin);
-    assert.equal(location.origin, origin);
-    assert.equal(location.pathname, '/portal/acesso');
-    assert.equal(location.searchParams.get('confirmation'), 'error');
-    assert.equal(location.searchParams.get('callbackUrl'), '/conta');
-  });
-}
+  }
+  for (const path of ['/callback/google', '/callback/github', '/supabase/callback']) {
+    const response = await request(`/api/auth${path}?error=access_denied`);
+    assert.equal(response.status, path === '/supabase/callback' ? 404 : 403, path);
+  }
+});
