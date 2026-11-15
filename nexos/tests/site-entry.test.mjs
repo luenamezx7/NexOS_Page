@@ -148,3 +148,40 @@ test('o origin direto e recusado, mas preview (outro host) continua permitido', 
     if (previousNodeEnv === undefined) delete process.env.NODE_ENV; else process.env.NODE_ENV = previousNodeEnv;
   }
 });
+
+test('o vinculo de rede e consistente: emissao e leitura com o mesmo address', () => {
+  const ipA = '203.0.113.10';
+  const ipB = '198.51.100.77';
+  const now = Date.now();
+
+  // 1) emitido e lido com o MESMO address -> valido
+  const a = createEntryToken('challenge', userAgent, now, ipA);
+  assert.ok(readEntryToken(a.token, 'challenge', userAgent, now, ipA),
+    'mesmo address tem de validar');
+
+  // 2) policy soft (padrao): address diferente tem de SER ACEITO.
+  //    Regressao do bug que quebrou o gate: a condicao final exigia
+  //    netMatches mesmo em 'soft', invalidando todo token.
+  assert.ok(readEntryToken(a.token, 'challenge', userAgent, now, ipB),
+    "policy 'soft' tem de aceitar divergencia de rede");
+
+  // 3) policy strict: address diferente tem de ser REJEITADO
+  const previous = process.env.SITE_ENTRY_NETWORK_BINDING;
+  process.env.SITE_ENTRY_NETWORK_BINDING = 'strict';
+  try {
+    assert.equal(readEntryToken(a.token, 'challenge', userAgent, now, ipB), null,
+      "policy 'strict' tem de rejeitar divergencia de rede");
+    assert.ok(readEntryToken(a.token, 'challenge', userAgent, now, ipA),
+      "policy 'strict' tem de aceitar o mesmo address");
+  } finally {
+    if (previous === undefined) delete process.env.SITE_ENTRY_NETWORK_BINDING;
+    else process.env.SITE_ENTRY_NETWORK_BINDING = previous;
+  }
+
+  // 4) token emitido SEM address (padrao 'shared') lido com um address real
+  //    tem de continuar valido em 'soft' - era exatamente o que acontecia em
+  //    producao (challenge emitido sem address, lido com o IP do cliente).
+  const legacy = createEntryToken('challenge', userAgent, now);
+  assert.ok(readEntryToken(legacy.token, 'challenge', userAgent, now, ipA),
+    "token emitido sem address tem de ser aceito na leitura");
+});
