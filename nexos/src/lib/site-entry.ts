@@ -83,11 +83,16 @@ export function readEntryToken(token: string | undefined, purpose: Purpose, user
     const claims = JSON.parse(Buffer.from(parts[0], 'base64url').toString()) as Claims;
     const seconds = Math.floor(now / 1000);
     const ttl = purpose === 'challenge' ? CHALLENGE_TTL : ENTRY_TTL;
+    // Politica de vinculo de rede:
+    //   strict -> a rede tem de bater (rejeita em caso contrario)
+    //   soft   -> aceita a divergencia (so marca a sessao como movida)
+    //   off    -> nao compara
+    // BUG CORRIGIDO: a condicao final exigia netMatches mesmo em 'soft',
+    // o que invalidava todo token emitido sem vinculo de rede.
     const netMatches = claims.net === netClaim(address);
-    if (networkBinding() === 'strict' && !netMatches) return null;
+    const netOk = claims.net === undefined || netMatches || networkBinding() !== 'strict';
     return claims.purpose === purpose && Number.isInteger(claims.expires) && claims.expires > seconds && claims.expires <= seconds + ttl &&
-      /^[a-f0-9]{48}$/.test(claims.nonce) && claims.browser === browserHash(userAgent) &&
-      (claims.net === undefined || netMatches) ? claims : null;
+      /^[a-f0-9]{48}$/.test(claims.nonce) && claims.browser === browserHash(userAgent) && netOk ? claims : null;
   } catch { return null; }
 }
 

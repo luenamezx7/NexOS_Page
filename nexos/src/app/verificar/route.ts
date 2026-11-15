@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getTurnstileSiteKey, isTurnstileConfigured } from '@/lib/turnstile';
 import { CHALLENGE_TTL, createEntryToken, ENTRY_ACTION, entryCookies, entryReturnPath, readEntryToken, siteEntryEnforced } from '@/lib/site-entry';
+import { trustedClientAddress } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 const escape = (value: string) => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]!);
@@ -11,7 +12,10 @@ export function GET(req: NextRequest) {
   const next = entryReturnPath(req.nextUrl.searchParams.get('next'));
   const names = entryCookies(req.url);
   const userAgent = req.headers.get('user-agent') || '';
-  if (!siteEntryEnforced() || readEntryToken(req.cookies.get(names.clearance)?.value, 'clearance', userAgent)) {
+  // O address tem de ser o MESMO na emissao e na leitura do token, senao o
+  // vinculo de rede diverge e o token e rejeitado.
+  const address = trustedClientAddress(req.headers);
+  if (!siteEntryEnforced() || readEntryToken(req.cookies.get(names.clearance)?.value, 'clearance', userAgent, Date.now(), address)) {
     const response = NextResponse.redirect(new URL(next, req.url), 303);
     response.headers.set('Cache-Control', 'private, no-store');
     return response;
@@ -19,7 +23,7 @@ export function GET(req: NextRequest) {
   const nonce = req.headers.get('x-nonce') || '';
   let challenge: ReturnType<typeof createEntryToken> | undefined;
   if (isTurnstileConfigured()) {
-    try { challenge = createEntryToken('challenge', userAgent); } catch { /* Fail closed. */ }
+    try { challenge = createEntryToken('challenge', userAgent, Date.now(), address); } catch { /* Fail closed. */ }
   }
   const available = Boolean(challenge);
   const script = challenge ? `<script nonce="${escape(nonce)}">
