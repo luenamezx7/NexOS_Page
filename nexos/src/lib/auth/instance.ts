@@ -93,7 +93,7 @@ export function createAuth(test: AuthTestOptions = {}) {
       },
     },
     socialProviders: test.allowLegacyAuth ? (test.socialProviders ?? socialProviders()) : {},
-    session: { expiresIn: 604800, updateAge: 86400, cookieCache: { enabled: false } },
+    session: { expiresIn: 172800, updateAge: 86400, cookieCache: { enabled: false } },
     hooks: {
       before: createAuthMiddleware(async ctx => {
         if (!test.allowLegacyAuth && (ctx.path.startsWith('/sign-up') || ctx.path === '/sign-in/social' || ctx.path.startsWith('/sign-in/supabase') || ctx.path.startsWith('/callback/') || ctx.path.startsWith('/supabase/callback') || ctx.path.startsWith('/link-social'))) {
@@ -139,6 +139,13 @@ export function createAuth(test: AuthTestOptions = {}) {
           throw new APIError('BAD_REQUEST', { code: 'WEAK_PASSWORD', message: 'A senha precisa de: 12+ caracteres, maiúscula, minúscula, número e símbolo.' });
         }
         // Confiar no dispositivo não é permitido: cada novo login pede TOTP.
+        // F-06: o `name` do Better Auth nao pode ser alterado pela API sem
+        // reautenticacao. O app renomeia o usuario pelo perfil
+        // (/api/account/profile -> fullName), que tem allowlist propria.
+        // Antes, um token de sessao vazado allowia renomear a conta.
+        if (ctx.path === '/update-user' && ctx.body && typeof ctx.body === 'object' && 'name' in ctx.body) {
+          throw new APIError('BAD_REQUEST', { message: 'Use a area da conta para atualizar seu nome.' });
+        }
         if (ctx.path.startsWith('/two-factor/') && ctx.body?.trustDevice === true) {
           throw new APIError('BAD_REQUEST', { message: 'Confirme o segundo fator a cada acesso.' });
         }

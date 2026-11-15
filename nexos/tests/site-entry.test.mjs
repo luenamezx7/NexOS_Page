@@ -124,3 +124,27 @@ test('rate limits, missing configuration and upstream outages never issue cleara
   assert.equal((await POST(post('cloudflare-test-token', challenge.token))).status, 503);
   assert.equal(GET(request('/verificar')).status, 503);
 });
+
+test('o origin direto e recusado, mas preview (outro host) continua permitido', async () => {
+  // esta checagem so vale em producao
+  const previousNodeEnv = process.env.NODE_ENV;
+  process.env.NODE_ENV = 'production';
+  try {
+  // com cf-ray a checagem de origin passa; como nao ha clearance, cai no gate (303)
+  const withCloudflare = await proxy(request('/', { headers: { 'cf-ray': 'a1b2c3d4e5f6' } }));
+  assert.equal(withCloudflare.status, 303, 'com cf-ray (via Cloudflare) deve passar pela checagem de origin');
+  assert.equal(new URL(withCloudflare.headers.get('location')).pathname, '/verificar');
+
+  const direct = await proxy(request('/', { headers: {} }));
+  assert.equal(direct.status, 403, 'sem cf-ray (origin direto) deve ser recusado');
+  assert.equal(new URL(direct.headers.get('location') ?? 'http://x/').pathname, '/');
+
+  // preview: host diferente do canônico -> permitido mesmo sem cf-ray
+  const preview = await proxy(new NextRequest('https://nexos-git-branch.vercel.app/', {
+    headers: { 'user-agent': userAgent },
+  }));
+  assert.equal(preview.status, 303, 'preview deve cair no gate, e nao em 403 de origin');
+  } finally {
+    if (previousNodeEnv === undefined) delete process.env.NODE_ENV; else process.env.NODE_ENV = previousNodeEnv;
+  }
+});
