@@ -37,8 +37,17 @@ function getNonce(): string {
  * produção E só quando `SITE_CLOUDFLARE_REQUIRED` não for 'false'.
  */
 function cameThroughCloudflare(req: NextRequest): boolean {
-  if (process.env.NODE_ENV !== 'production') return true;
   if (process.env.SITE_CLOUDFLARE_REQUIRED === 'false') return true;
+  // desenvolvimento e suites de teste nao passam pela Cloudflare
+  if (process.env.NODE_ENV !== 'production') return true;
+  // Só exige para o HOST CANÔNICO. Preview deployments têm outro host
+  // (vercel.app) e não passam pela Cloudflare — exigi-las quebraria todo
+  // preview. `NODE_ENV` não serve de discriminante: em preview da Vercel
+  // ele também é 'production'.
+  const site = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL;
+  try {
+    if (site && req.nextUrl.host !== new URL(site).host) return true;
+  } catch { /* site mal configurado: não bloqueia */ }
   return Boolean(req.headers.get('cf-ray'));
 }
 
