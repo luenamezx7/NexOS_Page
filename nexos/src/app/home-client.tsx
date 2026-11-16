@@ -1,9 +1,13 @@
 'use client';
 
+import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { Header } from '@/components/Header';
 import { Hero } from '@/components/Hero';
+import { Management } from '@/components/sections/Management';
+import { BusinessExamples } from '@/components/sections/BusinessExamples';
+import { Ecosystem } from '@/components/sections/Ecosystem';
 import { HeroBrandStrip } from '@/components/HeroBrandStrip';
 import { SectionBackground } from '@/components/sections/SectionBackground';
 import { ProofStrip } from '@/components/sections/ProofStrip';
@@ -33,6 +37,7 @@ const CTAFinal = dynamic(() => import('@/components/sections/CTAFinal').then(m =
 
 export default function HomeClient() {
   const { t } = useLocale();
+  const reduce = usePrefersReducedMotion();
   const [entrance, setEntrance] = useState({ visible: true, key: 0 });
   const [selectedPlateUse, setSelectedPlateUse] = useState<string>();
   const entranceGeneration = useRef(0);
@@ -62,7 +67,7 @@ export default function HomeClient() {
   useEffect(() => () => cancelAnimationFrame(focusRaf.current), []);
 
   return (
-    <main data-motion-detail="full" className="landing-page w-full max-w-full overflow-x-clip bg-canvas text-ink">
+    <main data-motion-detail={reduce ? 'reduced' : 'full'} className="landing-page w-full max-w-full overflow-x-clip bg-canvas text-ink">
       <HomepageJourneyMotion />
       <HeadingScrollMotion />
       <MotionDiagnosticsLoader />
@@ -74,18 +79,21 @@ export default function HomeClient() {
         <div className="relative">
           <div id="main-content" tabIndex={-1} className="relative">
                <Hero ref={heroRef} />
-               <SectionBackground index={0} scene="product" experience="nfc">
-                  <HeroBrandStrip />
-                  <PlacaNFCSection onSelectUse={setSelectedPlateUse} />
-              </SectionBackground>
-               <TransitionGuide text={t('Da placa ao próximo passo')} afterProduct />
+               <Management />
+               <Ecosystem />
+               <SectionBackground index={3} experience="easychat"><EasyChat /></SectionBackground>
                <SectionBackground index={1} experience="solutions">
                   <Services selectedUse={selectedPlateUse} />
                </SectionBackground>
+               <TransitionGuide text={t('Da presença digital ao próximo contato')} afterProduct />
+               <SectionBackground index={0} scene="product" experience="nfc">
+                  <HeroBrandStrip />
+                  <PlacaNFCSection onSelectUse={setSelectedPlateUse} />
+               </SectionBackground>
                <SectionBackground index={1} experience="real-estate-video"><RealEstateVideo videoSrc="/media/gloved-hand-connecting-iphone.mp4" posterSrc="/media/gloved-hand-connecting-iphone-poster.jpg" /></SectionBackground>
                <SectionBackground index={2} experience="plate-management"><PlateManagement /></SectionBackground>
-              <TransitionGuide text={t('Menos tarefas. Mais negócio.')} />
-               <SectionBackground index={3} experience="easychat"><EasyChat /></SectionBackground>
+
+             <details className="business-examples-disclosure"><summary>{t('Ver exemplos por tipo de negócio')}</summary><BusinessExamples /></details>
              <SectionBackground index={4} scene="waves" experience="process">
                <DeliveryProcess />
              </SectionBackground>

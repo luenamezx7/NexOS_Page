@@ -27,9 +27,10 @@ export function HeaderAccount({ expanded = false, onNavigate }: { expanded?: boo
     finally { setBusy(false); }
   };
   const avatar = <ProfileOrb className={styles.avatar} />;
+  const loginLink = <Link href="/portal/acesso" prefetch={false} className={styles.accountLink} onClick={onNavigate}>{t('Entrar')}</Link>;
 
   return <div className={expanded ? styles.expandedAccount : styles.accountSlot} data-account-state={state}>
-    {isPending ? <span role="status" aria-label={t('Verificando sua sessão')}><Skeleton className={styles.accountSkeleton} /></span> : error ? <button type="button" className={styles.accountLink} onClick={() => void refetch()} title={t('Não foi possível verificar a sessão. Tentar novamente.')}><RefreshCw size={20} aria-hidden="true" /><span className={styles.accountLabel}>{t('Verificar conta')}</span></button> : !user ? <div className={styles.guestActions}><Link href="/portal/acesso" prefetch={false} className={styles.accountLink} onClick={onNavigate}>{t('Entrar')}</Link></div> : expanded ? <>
+    {isPending ? <div className={styles.guestActions}>{loginLink}<span role="status" aria-label={t('Verificando sua sessão')}><Skeleton className={styles.accountSkeleton} /></span></div> : error ? <div className={styles.guestActions}>{loginLink}<button type="button" className={styles.accountLink} onClick={() => void refetch()} title={t('Não foi possível verificar a sessão. Tentar novamente.')}><RefreshCw size={20} aria-hidden="true" /><span className={styles.accountLabel}>{t('Verificar conta')}</span></button>{expanded && <p role="status" className={styles.accountError}>{t('Não foi possível verificar a sessão. Tentar novamente.')}</p>}</div> : !user ? <div className={styles.guestActions}>{loginLink}</div> : expanded ? <>
       <div className={styles.userRow}>{avatar}<span>{user.name || t('Sua conta')}</span></div>
       <Link href="/conta" onClick={onNavigate}>{t('Minha conta')}</Link>
       <Link href="/portal/seguranca" onClick={onNavigate}>{t('Segurança da conta')}</Link>

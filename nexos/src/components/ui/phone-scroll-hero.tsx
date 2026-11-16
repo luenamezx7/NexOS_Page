@@ -1,15 +1,18 @@
 'use client';
 
+import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { useEffect, useRef, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
 /** Scroll-linked positioning keeps live text sharp; transform/scale/3D would rasterize it. */
 export function PhoneScrollHero({ titleComponent, children, className }: { titleComponent: ReactNode; children: ReactNode; className?: string }) {
+  const reduce = usePrefersReducedMotion();
   const sectionRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const phoneRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (reduce) return;
     let disposed = false;
     let cleanup = () => {};
     void Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(([{ gsap }, { ScrollTrigger }]) => {
@@ -40,7 +43,7 @@ export function PhoneScrollHero({ titleComponent, children, className }: { title
       cleanup = () => mm.revert();
     });
     return () => { disposed = true; cleanup(); };
-  }, []);
+  }, [reduce]);
 
   return <div ref={sectionRef} className={cn('relative mx-auto flex min-h-[650px] flex-col items-center justify-center py-16 text-center max-md:min-h-[520px]', className)}>
     <div ref={titleRef} className="relative z-0 max-w-4xl">{titleComponent}</div>

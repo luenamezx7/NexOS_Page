@@ -1,5 +1,6 @@
 'use client';
 
+import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { useEffect } from 'react';
 import { useLocale } from '@/lib/locale';
 import { usePresentationActive } from '@/lib/use-presentation-active';
@@ -9,11 +10,12 @@ const HEADINGS = 'h1, h2, h3, h4, h5, h6';
 
 /** One scroll animation per heading, including headings mounted by lazy sections. */
 export function HeadingScrollMotion() {
+  const reduce = usePrefersReducedMotion();
   const presenting = usePresentationActive();
   const { locale } = useLocale();
 
   useEffect(() => {
-    if (presenting) return;
+    if (presenting || reduce) return;
     let disposed = false;
     let cleanup = () => {};
     void Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(([{ gsap }, { ScrollTrigger }]) => {
@@ -68,7 +70,7 @@ export function HeadingScrollMotion() {
       if (!disposed) recordMotion('headingGsap', 'initialization-error', motionError(error));
     });
     return () => { disposed = true; cleanup(); };
-  }, [presenting, locale]);
+  }, [presenting, locale, reduce]);
 
   return null;
 }

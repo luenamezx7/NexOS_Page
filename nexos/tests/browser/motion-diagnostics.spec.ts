@@ -28,17 +28,16 @@ test('normal motion reports completed intro, GSAP and real video progress', asyn
   await page.screenshot({ path: 'test-results/motion-diagnostics-panel.png' });
 });
 
-test('browser reduce preference keeps the full experience active', async ({ page }) => {
+test('browser reduce preference reports the simplified experience', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await open(page);
-  for (const name of ['homepageGsap', 'servicesGsap']) {
-    await expect.poll(async () => (await report(page)).resources[name]?.status).toBe('initialized');
-  }
-  await expect.poll(async () => (await report(page)).video?.advancedSincePreviousSample).toBe(true);
-  expect((await report(page)).environment.reducedMotion).toBe(true);
-  expect((await report(page)).motionPolicy.effectiveMotion).toBe('full');
-  expect((await report(page)).resources.scroll.status).toBe('lenis-initialized');
-  expect((await report(page)).resources.reveals.status).toBe('enabled');
+  await expect.poll(async () => (await report(page)).resources.servicesGsap?.status).toBe('blocked-reduced-motion');
+  await expect.poll(async () => (await report(page)).resources.scroll?.status).toBe('native');
+  const result = await report(page);
+  expect(result.environment.reducedMotion).toBe(true);
+  expect(result.motionPolicy.effectiveMotion).toBe('reduced');
+  expect(result.video.paused).toBe(true);
+  expect(result.resources.reveals.status).toBe('blocked-reduced-motion');
 });
 
 test('limited CPU retains full opening, GSAP and smooth scroll', async ({ page }) => {

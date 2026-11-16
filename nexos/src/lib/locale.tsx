@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useSyncExternalStore, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
+import { commerceEn, commerceEs } from './translations-commerce';
 import { en } from './translations-en';
 import { es } from './translations-es';
 
@@ -39,7 +40,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     try { localStorage.setItem(STORAGE_KEY, value); } catch { /* Storage can be disabled. */ }
     window.dispatchEvent(new Event(CHANGE_EVENT));
   };
-  const t: Translation = text => activeLocale === 'en' ? en[text] ?? text : activeLocale === 'es' ? es[text] ?? text : text;
+  const t: Translation = text => activeLocale === 'en' ? commerceEn[text] ?? en[text] ?? text : activeLocale === 'es' ? commerceEs[text] ?? es[text] ?? text : text;
   return <LocaleContext.Provider value={{ locale: activeLocale, setLocale: changeLocale, t }}>{children}</LocaleContext.Provider>;
 }
 

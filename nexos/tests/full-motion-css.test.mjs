@@ -1,10 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import postcss from 'postcss';
-import fullMotion from '../scripts/postcss-full-motion.cjs';
+import config from '../postcss.config.js';
+import { createRequire } from 'node:module';
 
-test('full-motion compilation preserves responsive and forced-color behavior while removing motion suppression', async () => {
-  const result = await postcss([fullMotion()]).process(`
+const require = createRequire(import.meta.url);
+
+test('configured CSS pipeline preserves motion preferences, responsive rules and forced colors', async () => {
+  const plugins = Object.entries(config.plugins).map(([name, options]) => require(name)(options));
+  const result = await postcss(plugins).process(`
     @media (max-width: 767px) { .card { width: 100%; } }
     @media (prefers-reduced-motion: reduce) { .card { animation: none !important; } }
     @media (min-width: 768px) and (prefers-reduced-motion: no-preference) { .card { animation: drift 4s infinite; } }
@@ -16,7 +20,9 @@ test('full-motion compilation preserves responsive and forced-color behavior whi
   root.walkAtRules('media', rule => media.push(rule.params));
   assert.ok(media.includes('(max-width: 767px)'));
   assert.ok(media.includes('(forced-colors: active)'));
-  assert.ok(media.includes('(min-width: 768px) and (min-width: 0px)'));
-  assert.doesNotMatch(result.css, /prefers-reduced-motion|animation: none|transform: none/);
+  assert.ok(media.includes('(prefers-reduced-motion: reduce)'));
+  assert.ok(media.includes('(min-width: 768px) and (prefers-reduced-motion: no-preference)'));
+  assert.match(result.css, /animation: none/);
+  assert.match(result.css, /transform: none/);
   assert.match(result.css, /animation: drift 4s infinite/);
 });

@@ -121,3 +121,13 @@
 .exampleLinks button[aria-pressed='true'] { background: var(--palette-cta); color: #080609; border-color: var(--palette-cta); }
 @media (max-width: 767px) { .fixedDevice { width: 94%; top: 45%; } }
 @media (prefers-reduced-motion: reduce) { .fixedDevice { position: relative; left: auto; top: auto; width: min(100%, 720px); margin: auto; transform: none; } .screenSlide { opacity: 0 !important; transform: none !important; } .screenSlide[data-active='true'] { opacity: 1 !important; } .fixedStage .arcBottom { display: block; position: static; width: 100%; margin-top: 32px; transform: none; } }
+
+/* Code-native menu preview: categories and descriptions, without monetary information. */
+.menuDemo { height: 100%; background: #f5f1e8; color: #333d24; }
+.menuHero { position: relative; height: 48%; overflow: hidden; }
+.menuHero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, #080f0bba, transparent); }
+.menuHero strong { position: absolute; z-index: 1; left: 6%; top: 26%; max-width: 12ch; color: #fff; font: 650 clamp(16px, 3vw, 36px)/1.1 var(--font-display); }
+.menuItems { padding: 4% 6%; }
+.menuItems h4 { color: inherit; font: 650 clamp(12px, 2vw, 26px)/1.2 var(--font-display); }
+.menuItems p { margin-top: 3%; font-size: clamp(9px, 1.3vw, 16px); }
+.menuItems > span { display: block; margin-top: 3%; font-size: clamp(7px, 1vw, 12px); }

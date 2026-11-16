@@ -296,3 +296,8 @@
 .fieldImage[data-drifting='true'] { animation-play-state: running; }
 @keyframes scenery-drift { 50% { transform: translate3d(18px, -12px, 0); } }
 @media (prefers-reduced-motion: reduce) { .fieldImage { animation: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .processStage { position: static; min-height: 0; }
+  .processSection { min-height: 0; height: auto; }
+}

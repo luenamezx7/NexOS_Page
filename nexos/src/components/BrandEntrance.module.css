@@ -69,3 +69,5 @@
 /* CSS starts before hydration; the cover expires even if client chunks arrive late. */
 @keyframes brand-frame-enter { from { opacity: .08; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes brand-cover-lifetime { from { visibility: visible; } to { visibility: hidden; pointer-events: none; } }
+
+@media (prefers-reduced-motion: reduce) { .dialog { visibility: hidden; animation: none; transition: none; pointer-events: none; }.frame { animation: none; transition: none; } }

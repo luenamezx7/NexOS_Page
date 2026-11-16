@@ -11,20 +11,17 @@ import { LanguageSwitch } from './LanguageSwitch';
 import { useLocale } from '@/lib/locale';
 import { useSectionScroll } from './SmoothScrollProvider';
 import { useScrollLock } from './useScrollLock';
+import { publicSolutions } from '@/config/solutions';
 import { commercialHref } from '@/lib/commercial';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
 import styles from './Header.module.css';
 
-const SOLUTIONS = [
-  { label: 'Placa NFC + QR Code', href: '/placa-nfc' },
-  { label: 'Cardápios Digitais', href: '/cardapio-digital' },
-  { label: 'Sites e Portfólios', href: '/criacao-de-sites' },
-  { label: 'Landing Pages', href: '/landing-pages' },
-];
+const SOLUTIONS = publicSolutions.filter(solution => ['gestao', 'nfc', 'menu', 'site', 'landing'].includes(solution.id)).map(solution => ({ label: solution.name, href: solution.href }));
+
 const NAV_ITEMS = [
+  { label: 'Gestão', href: '#gestao' },
+  { label: 'Ecossistema', href: '#ecossistema' },
   { label: 'Placas', href: '#showcase' },
-  { label: 'Destinos digitais', href: '#services' },
-  { label: 'WhatsApp', href: '#plate-management' },
   { label: 'EasyChat', href: '#easychat' },
 ];
 
@@ -79,7 +76,7 @@ export function Header() {
             <DropdownMenuTrigger className={styles.navLink}>{t('Soluções')} <ChevronDown size={13} aria-hidden="true" /></DropdownMenuTrigger>
             <DropdownMenuContent className={styles.popup} sideOffset={14}>
               <DropdownMenuGroup>
-                 <DropdownMenuItem render={<Link href="/#showcase" />} className={styles.menuItem}>{t('Conhecer a Placa NFC')} <ArrowUpRight size={15} aria-hidden="true" /></DropdownMenuItem>
+                 <DropdownMenuItem render={<Link href="/#ecossistema" />} className={styles.menuItem}>{t('Conhecer as soluções')} <ArrowUpRight size={15} aria-hidden="true" /></DropdownMenuItem>
                 {SOLUTIONS.map(item => <DropdownMenuItem key={item.href} render={<Link href={item.href} />} className={styles.menuItem}>{t(item.label)}</DropdownMenuItem>)}
               </DropdownMenuGroup>
             </DropdownMenuContent>

@@ -1,7 +1,7 @@
 /** Upcoming product: keep provisional naming and development copy in one place. */
 export const easychat = {
   name: 'EasyChat',
-  status: 'Conheça o fluxo',
+  status: 'Em desenvolvimento',
   headline: 'Seu administrativo pelo WhatsApp',
-  description: 'Organize documentos e acompanhe tarefas pelo WhatsApp. Peça um contrato, revise o conteúdo e decida quando ele está pronto para ser compartilhado.',
+  description: 'Projeto de assistente administrativo com IA, em desenvolvimento. A prévia ilustra funcionalidades previstas e não representa um serviço disponível.',
 } as const;

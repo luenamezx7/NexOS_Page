@@ -16,8 +16,8 @@ interface FAQItem {
 const FAQ_ITEMS: FAQItem[] = [
   {
     id: '01',
-    question: 'Quanto custa contratar a ezway?',
-    answer: 'Valores e condições são definidos com o comercial conforme a solução, a quantidade e o escopo. Entre em contato para alinharmos uma proposta para o seu negócio.',
+    question: 'Por onde começo a escolher uma solução?',
+    answer: 'Comece contando o que precisa organizar, melhorar no atendimento ou apresentar aos clientes. A conversa de diagnóstico ajuda a definir uma solução e seu escopo. Você não precisa contratar todo o ecossistema.',
   },
   {
     id: '02',
@@ -48,12 +48,12 @@ const FAQ_ITEMS: FAQItem[] = [
   {
     id: '07',
     question: 'O que é o EasyChat?',
-     answer: 'O EasyChat reúne documentos, notas fiscais, arquivos e lembretes em uma conversa, com revisão antes de compartilhar um contrato. Fale com a equipe para entender o funcionamento e a disponibilidade para o seu negócio.',
+     answer: 'O EasyChat é um projeto de assistente administrativo com IA, em desenvolvimento. A conversa exibida no site é uma prévia conceitual de funcionalidades previstas. Fale com a equipe sobre as soluções disponíveis hoje.',
   },
   {
     id: '08',
     question: `O que a ${config.brand.name} oferece?`,
-    answer: `A ${config.brand.name} desenvolve sites, landing pages e cardápios digitais e oferece placas NFC com QR Code para empresas.`,
+    answer: `A ${config.brand.name} apresenta Controle & Gestão, sites, portfólios, landing pages, cardápios digitais e placas NFC com QR Code. O diagnóstico ajuda a definir o escopo e a disponibilidade para sua necessidade.`,
   },
 ];
 

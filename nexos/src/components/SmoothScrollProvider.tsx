@@ -87,7 +87,7 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Keep the existing desktop smooth-scroll/ScrollTrigger integration.
     // Touch devices continue to use the browser's compositor-driven scrolling.
-    const media = matchMedia('(min-width: 768px) and (pointer: fine)');
+    const media = matchMedia('(min-width: 768px) and (pointer: fine) and (prefers-reduced-motion: no-preference)');
     let disposed = false, instance: Lenis | null = null, raf = 0, scrolling = false, generation = 0;
     let timeout: ReturnType<typeof setTimeout> | undefined;
     function stop() {

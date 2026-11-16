@@ -1,8 +1,9 @@
+import { diagnosticMessage } from './config/solutions';
 import type { SiteConfig } from './types';
 
 const whatsapp = {
   number: '5564993289250',
-  message: 'Olá, vim pelo site da ezway e gostaria de conversar sobre meu projeto.',
+  message: diagnosticMessage,
 };
 
 export const config: SiteConfig = {
@@ -16,10 +17,10 @@ export const config: SiteConfig = {
   
   
   hero: {
-    headline: 'Construímos soluções digitais para seu negócio.',
-    subheadline: 'Da ideia ao mercado. Desenvolvimento, design e estratégia para startups e empresas que precisam de velocidade sem abrir mão da qualidade.',
-    ctaPrimary: { label: 'Entrar em contato', href: `https://wa.me/${whatsapp.number}?text=${encodeURIComponent(whatsapp.message)}` },
-    ctaSecondary: { label: 'Sobre Nós', href: '#testimonials' },
+    headline: 'Seu negócio conectado em uma aproximação',
+    subheadline: 'Converse com a EZWAY sobre organização do negócio, atendimento e presença digital para a sua realidade.',
+    ctaPrimary: { label: 'Conversar sobre meu negócio', href: `https://wa.me/${whatsapp.number}?text=${encodeURIComponent(whatsapp.message)}` },
+    ctaSecondary: { label: 'Conhecer as soluções', href: '#ecossistema' },
   },
   services: [
     {
@@ -64,7 +65,7 @@ export const config: SiteConfig = {
   whatsapp,
   meta: {
     title: 'EZway - Performance e Escala',
-    description: 'Performance e Escala para pequenos e grandes negócios. A ezway cria placas NFC + QR Code, cardápios digitais e sites para aproximar seus clientes do seu negócio.',
+    description: 'Mais clareza para gerir. Conheça a EZWAY e converse sobre organização do negócio, atendimento, sites, portfólios, cardápios digitais e placas NFC com QR Code.',
     ogImage: '/og',
   },
 };

@@ -11,13 +11,13 @@ for (const width of [320, 390, 600, 767, 768, 1280, 1440]) {
     await expect(page.locator('dialog[data-presentation]')).toHaveCount(0, { timeout: 15000 });
     await expect(page.locator('#hero')).toBeFocused();
     await expect(page.locator('#hero')).toHaveCSS('outline-style', 'none');
-    const plates = page.locator('[data-hero-plates] img');
-    await expect(plates).toHaveCount(4);
+    const plates = page.locator('#hero figure img');
+    await expect(plates).toHaveCount(1);
     expect(await plates.evaluateAll(images => images.every(image => (image as HTMLImageElement).naturalWidth > 0))).toBe(true);
-    await expect(page.locator('[data-hero-plates]')).toBeVisible();
+    await expect(page.locator('#hero figure')).toBeVisible();
     const geometry = await page.evaluate(() => {
       const hero = document.querySelector('#hero')!.getBoundingClientRect();
-      const panel = document.querySelector('[data-hero-plates]')!.getBoundingClientRect();
+      const panel = document.querySelector('#hero figure')!.getBoundingClientRect();
       const copy = document.querySelector('.hero-copy')!.getBoundingClientRect();
       const button = document.querySelector('.hero-actions a')!.getBoundingClientRect();
       const title = document.querySelector('.hero-heading')!;
@@ -25,11 +25,9 @@ for (const width of [320, 390, 600, 767, 768, 1280, 1440]) {
       return { heroBottom: hero.bottom, panelTop: panel.top, panelCenter: panel.left + panel.width / 2, copyCenter: copy.left + copy.width / 2, copyBottom: copy.bottom, buttonCenter: button.left + button.width / 2, titleAlign: getComputedStyle(title).textAlign, wordAlign: getComputedStyle(word).textAlign, overflow: document.documentElement.scrollWidth > innerWidth };
     });
     expect(geometry.overflow).toBe(false);
-    expect(geometry.panelTop).toBeGreaterThan(geometry.copyBottom);
-    expect(Math.abs(geometry.panelCenter - geometry.copyCenter)).toBeLessThan(1);
-    expect(Math.abs(geometry.buttonCenter - geometry.copyCenter)).toBeLessThan(1);
-    expect(geometry.titleAlign).toBe('center');
-    expect(geometry.wordAlign).toBe('center');
+    if (width < 1024) expect(geometry.panelTop).toBeGreaterThan(geometry.copyBottom);
+    expect(geometry.titleAlign).toBe('left');
+    expect(geometry.wordAlign).toBe('left');
     await page.keyboard.press('Tab');
     expect(await page.evaluate(() => document.activeElement?.matches('a,button,input'))).toBe(true);
     expect(await page.evaluate(() => getComputedStyle(document.activeElement!).outlineStyle)).not.toBe('none');
@@ -59,7 +57,7 @@ test('support band pauses manually and offscreen and preserves messages with sys
   await expect(band).toHaveAttribute('data-running', 'false');
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.locator('#mascot-solutions').scrollIntoViewIfNeeded();
-  await expect(band).toHaveAttribute('data-running', 'true');
+  await expect(band).toHaveAttribute('data-running', 'false');
   await expect(page.getByRole('region', { name: 'Suporte da ezway', exact: true })).toBeVisible();
   await expect(page.locator('#mascot-solutions li')).toHaveCount(4);
   await expect(page.locator('#mascot-solutions li').first()).toContainText('Vamos entender seu negócio.');
@@ -137,7 +135,7 @@ for (const scale of [1, 1.25, 2]) {
       await expect(page.locator('#hero')).toHaveCSS('border-bottom-width', '0px');
       await page.evaluate(() => scrollTo(0, document.querySelector('#hero')!.getBoundingClientRect().bottom + scrollY - 300));
       await page.waitForTimeout(300);
-      await page.screenshot({ path: `docs/nexos-lab/boundary-dpr-${scale}.png` });
+      await page.screenshot({ path: `test-results/boundary-dpr-${scale}.png` });
     } finally { await context.close(); }
   });
 }

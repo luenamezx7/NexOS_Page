@@ -12,7 +12,7 @@ import { useLocale } from '@/lib/locale';
 
 export function DeliveryProcess() {
   const { t } = useLocale();
-  const [kind, setKind] = useState<keyof typeof DELIVERY_STEPS>('product');
+  const [kind, setKind] = useState<keyof typeof DELIVERY_STEPS>('service');
   const [pinned, setPinned] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
@@ -20,7 +20,7 @@ export function DeliveryProcess() {
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end end'] });
   const { scrollYProgress: timelineProgress } = useScroll({ target: timelineRef, offset: ['start center', 'end center'] });
   useEffect(() => {
-    const media = matchMedia('(min-width: 768px) and (min-height: 700px)');
+    const media = matchMedia('(min-width: 768px) and (min-height: 700px) and (prefers-reduced-motion: no-preference)');
     const update = () => setPinned(media.matches);
     update();
     media.addEventListener('change', update);

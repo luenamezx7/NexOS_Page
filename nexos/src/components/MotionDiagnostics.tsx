@@ -12,7 +12,7 @@ function snapshot() {
   const observed = readMotionObservations();
   return {
     schemaVersion: 2,
-    motionPolicy: { effectiveMotion: 'full', reason: 'complete-experience-on-all-devices', automaticQualityReduction: false },
+    motionPolicy: { effectiveMotion: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'reduced' : 'full', reason: 'system-preference', automaticQualityReduction: false },
     build: process.env.NEXT_PUBLIC_MOTION_BUILD || 'local',
     capturedAt: new Date().toISOString(),
     environment: {
@@ -69,7 +69,7 @@ export default function MotionDiagnostics() {
     <details>
       <summary>Diagnóstico de movimento</summary>
       <p>Role a página e copie o relatório. Os dados ficam neste navegador. A apresentação precisa terminar antes de usar este painel.</p>
-      <p>Experiência completa ativa. Preferência informada pelo navegador: {report.includes('"reducedMotion": true') ? 'reduzir movimento' : 'movimento normal'}.</p>
+      <p>Movimento adaptado à preferência informada pelo navegador: {report.includes('"reducedMotion": true') ? 'reduzir movimento' : 'movimento normal'}.</p>
       <textarea ref={textRef} aria-label="Relatório de movimento" value={report} readOnly spellCheck={false}
         onFocus={() => { selecting.current = true; }} onBlur={() => { selecting.current = false; }} />
       <button type="button" onClick={async () => {

@@ -75,8 +75,8 @@ Para outra CA privada, configure
 Entradas usam Web Animations API com transform e opacidade, inclusive em telas
 pequenas. Fundos CSS usam o compositor; efeitos fora da tela e abas ocultas pausam.
 O hero usa vídeo com poster e controles manuais, sem o efeito de fibras.
-A política atual mantém as animações completas mesmo quando o navegador informa
-`prefers-reduced-motion`; a preferência nativa continua visível no diagnóstico.
+A política atual respeita `prefers-reduced-motion`: revela conteúdo sem animação,
+pausa reprodução automática e simplifica as jornadas fixadas. O diagnóstico registra a preferência efetiva.
 Consulte `docs/motion-diagnostics.md` para os detalhes e a validação dessa política.
 
 A rolagem usa Lenis em desktops compatíveis e rolagem suave nativa nos demais.

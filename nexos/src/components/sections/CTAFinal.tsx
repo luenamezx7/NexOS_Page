@@ -17,15 +17,15 @@ export function CTAFinal() {
     <span id="contact" className={styles.ctaAnchor} aria-hidden="true" />
     <div className={`${styles.container} ${styles.finalCta}`}>
       <div className={styles.ctaLayout}>
-           <h2 id="cta-title">{t('Vamos conectar seu negócio?')}</h2>
+           <h2 id="cta-title">{t('Vamos entender seu próximo passo?')}</h2>
       </div>
       <div className={styles.ctaVisual} data-cta-visual>
         <div className={styles.ctaImageMotion}>
           <Image src={toqueEzway} alt={t('Duas mãos se aproximando com a marca ezway ao centro')} fill sizes="(max-width: 767px) calc(100vw - 48px), (max-width: 1280px) 45vw, 540px" quality={90} className={styles.ctaBrandImage} loading="lazy" />
         </div>
       </div>
-        <div className={styles.ctaBottom}><ScrollReveal as="p">{t('Conte o que seu cliente precisa encontrar. Vamos definir juntos a placa e o destino digital.')}</ScrollReveal><ScrollReveal className={styles.ctaActions} delay={.1}>
-         <a href={whatsapp} target="_blank" rel="noopener noreferrer" className={styles.textLink}>{t('Conversar com a ezway no WhatsApp')} <ArrowUpRight size={16} aria-hidden="true" /></a>
+        <div className={styles.ctaBottom}><ScrollReveal as="p">{t('Conte o que precisa organizar na sua rotina. Vamos conversar sobre gestão, atendimento e presença digital para o seu negócio.')}</ScrollReveal><ScrollReveal className={styles.ctaActions} delay={.1}>
+         <a href={whatsapp} target="_blank" rel="noopener noreferrer" className={styles.textLink} data-cta-section="cta-final" data-cta-solution="diagnostico">{t('Conversar sobre meu negócio')} <ArrowUpRight size={16} aria-hidden="true" /></a>
       </ScrollReveal></div>
     </div>
   </section>;

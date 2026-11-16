@@ -22,7 +22,7 @@ export function pageMetadata(path: string, title: string, description: string): 
       url: siteUrl(path),
       title: socialTitle,
       description,
-      images: [{ url: siteUrl(config.meta.ogImage), width: 1200, height: 630, alt: 'ezway — Sites, landing pages e placas NFC' }],
+      images: [{ url: siteUrl(config.meta.ogImage), width: 1200, height: 630, alt: 'ezway — Gestão, atendimento e presença digital' }],
     },
     twitter: {
       card: 'summary_large_image',

@@ -1,13 +1,16 @@
 'use client';
 
+import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { useEffect } from 'react';
 import { usePresentationActive } from '@/lib/use-presentation-active';
 import { motionError, recordMotion } from '@/lib/motion-diagnostics';
 
 /** Reversible scroll handoffs on every screen; content stays in normal flow. */
 export function HomepageJourneyMotion() {
+  const reduce = usePrefersReducedMotion();
   const presenting = usePresentationActive();
   useEffect(() => {
+    if (reduce) return;
     if (presenting) { recordMotion('homepageGsap', 'waiting-presentation'); return; }
     recordMotion('homepageGsap', 'loading');
     let disposed = false;
@@ -67,6 +70,6 @@ export function HomepageJourneyMotion() {
       if (!disposed) recordMotion('homepageGsap', 'initialization-error', motionError(error));
     });
     return () => { disposed = true; revert(); };
-  }, [presenting]);
+  }, [presenting, reduce]);
   return null;
 }

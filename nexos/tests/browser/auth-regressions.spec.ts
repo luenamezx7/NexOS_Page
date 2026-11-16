@@ -47,3 +47,24 @@ test('anonymous APIs and internal email worker fail closed', async ({ request })
   expect((await request.get('/api/internal/email-outbox')).status()).toBe(401);
   expect((await request.post('/api/account/profile', { headers: { Origin: 'https://attacker.example' }, data: {} })).status()).toBe(403);
 });
+
+for (const width of [390, 1280]) {
+  test(`login remains accessible when session verification fails at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.addInitScript(() => localStorage.setItem('nexos-cookie-consent-v1', JSON.stringify({ necessary: true, functional: false, analytics: false, marketing: false, updatedAt: new Date().toISOString() })));
+    await page.route('**/api/auth/get-session', route => route.fulfill({ status: 503, json: { message: 'Unavailable' } }));
+    await page.goto('/');
+    await expect(page.locator('dialog[data-presentation]')).toHaveCount(0);
+    if (width < 768) await page.getByRole('button', { name: 'Abrir menu', exact: true }).click();
+    const scope = width < 768 ? page.locator('#mobile-navigation') : page.getByRole('banner');
+    await expect(scope.locator('[data-account-state="error"]')).toBeVisible();
+    const login = scope.getByRole('link', { name: 'Entrar', exact: true });
+    await expect(login).toBeVisible();
+    await expect(login).toHaveAttribute('href', '/portal/acesso');
+    await expect(scope.getByRole('button', { name: 'Verificar conta', exact: true })).toBeVisible();
+    await login.click();
+    await expect(page).toHaveURL(/\/portal\/acesso$/);
+    await expect(page.getByRole('button', { name: 'Entrar', exact: true })).toBeVisible();
+  });
+}

@@ -1,6 +1,6 @@
 # Movimento e diagnóstico
 
-A política atual apresenta a experiência completa em todos os dispositivos. A preferência `prefers-reduced-motion` do navegador continua disponível no relatório, mas não desativa vídeo, GSAP, animações CSS ou suavização no desktop. Não há seletor nem ativação exigida do visitante. Memória e núcleos não desligam movimentos, e a redução adaptativa de detalhes/resolução foi retirada. Layouts continuam responsivos; touch mantém rolagem nativa e os efeitos ligados ao scroll continuam ativos.
+A política atual respeita `prefers-reduced-motion`. Com redução ativa, o site apresenta conteúdo estático, pula a abertura, pausa reprodução automática, desativa Lenis e simplifica as jornadas de dispositivos e processo. Vídeos continuam com controles manuais. Sem redução, a experiência completa permanece ativa; memória e número de núcleos não alteram a preferência do visitante. A preferência pode mudar durante a visita e é registrada no diagnóstico.
 
 A apresentação começa em CSS no HTML do servidor, sem aguardar hidratação, fontes ou shaders. A capa expira após 2,7 segundos; se o JavaScript chegar depois, não reabre a apresentação. O movimento de entrada usa transform/opacity; a apresentação mostra somente o contador de 0% a 100%, em Satoshi Black (900), sem barra inferior; o contador React acompanha quando a hidratação estiver disponível. Sem JavaScript, o conteúdo fica acessível pelo fallback existente.
 
@@ -28,7 +28,9 @@ Se o painel não aparecer, confira console e requisições JavaScript no DevTool
 
 Inclui sistema em `reduce`, CPU limitada em 6 vezes com 2 núcleos/2 GB informados, abertura completa, chunks JavaScript atrasados, ausência de WebGL, touch, autoplay recusado e arquivo de vídeo inválido. A simulação não reproduz o driver, a GPU ou as políticas corporativas do PC do trabalho.
 
-A política de CSS é aplicada pelo plugin local `scripts/postcss-full-motion.cjs` após Tailwind e Autoprefixer. Isso também cobre regras importadas por bibliotecas: os blocos de redução não entram no CSS publicado, e os blocos condicionados a `no-preference` passam a valer em todos os ambientes, preservando condições de viewport e contraste forçado. As consultas JavaScript usam `motionMedia` e o hook de compatibilidade central, sem modificar APIs globais do navegador.
+O CSS preserva as condições nativas de movimento, incluindo regras importadas. O antigo plugin `postcss-full-motion.cjs`, que removia essas condições, foi retirado. As consultas JavaScript usam `motionMedia` sem reescrita e um hook reativo baseado na preferência real do navegador. O relatório usa `effectiveMotion: reduced | full`.
+
+Os resultados abaixo são históricos, anteriores à atualização de 15/11/2026. Para a rodada atual, consulte `site-catalogo-conversao/RELATORIO-2026-11-15.md`; afirmações históricas de movimento completo em `reduce` não descrevem mais a política vigente.
 
 ## Preview validado — 13/11/2026
 

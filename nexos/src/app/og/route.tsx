@@ -12,12 +12,12 @@ export function GET() {
           <span style={{ fontSize: 58, fontWeight: 700 }}>EZway</span>
           <span style={{ color: SITE_PALETTE.highlight }}>Performance e Escala</span>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', fontSize: 80, fontWeight: 700, lineHeight: 1.1 }}>
-          <span>Seu negócio,</span>
-          <span style={{ color: SITE_PALETTE.highlight }}>mais perto do cliente.</span>
+        <div style={{ display: 'flex', flexDirection: 'column', fontSize: 68, fontWeight: 700, lineHeight: 1.1 }}>
+          <span>Mais clareza para gerir.</span>
+          <span style={{ color: SITE_PALETTE.highlight }}>Mais organização para crescer.</span>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 18, borderTop: `1px solid ${SITE_PALETTE.border}`, paddingTop: 24, fontSize: 24 }}>
-          <span>Sites · Landing pages · Cardápios digitais · NFC + QR Code</span>
+          <span>Gestão · Atendimento · Presença digital · NFC + QR Code</span>
           <span style={{ fontSize: 20, color: SITE_PALETTE.muted }}>{config.brand.tagline}</span>
         </div>
       </div>

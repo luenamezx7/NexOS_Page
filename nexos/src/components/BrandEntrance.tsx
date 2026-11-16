@@ -24,6 +24,11 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
   useLayoutEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      dialog.close();
+      onComplete(true);
+      return;
+    }
     let disposed = false;
     let completed = false;
     let leaving = false;

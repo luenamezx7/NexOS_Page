@@ -12,9 +12,9 @@ export const DELIVERY_STEPS = {
     { title: 'Entrega', body: 'Combinamos o envio e orientamos a utilização no seu ponto de atendimento.', detail: 'Produto + orientação' },
   ],
   service: [
-    { title: 'Conversa', body: 'Entendemos o objetivo, as referências e o que o projeto precisa resolver.', detail: 'Objetivo + escopo' },
-    { title: 'Design', body: 'Organizamos as informações e desenhamos a experiência com a sua identidade.', detail: 'Estrutura + visual' },
-    { title: 'Construção', body: 'Transformamos o design em uma experiência funcional, com espaço para revisão.', detail: 'Código + validação' },
-    { title: 'Publicação', body: 'Conferimos os detalhes, publicamos e alinhamos os próximos passos com você.', detail: 'Entrega + continuidade' },
+    { title: 'Diagnóstico', body: 'Conversamos sobre sua rotina, o que precisa organizar e o próximo objetivo do negócio.', detail: 'Rotina + necessidade' },
+    { title: 'Definição da solução', body: 'Alinhamos a solução, o escopo e a disponibilidade para a sua necessidade.', detail: 'Solução + escopo' },
+    { title: 'Implementação', body: 'Preparamos a entrega definida com você e alinhamos os pontos de revisão do projeto.', detail: 'Construção + revisão' },
+    { title: 'Acompanhamento', body: 'Conversamos sobre a utilização e os próximos passos conforme as condições definidas para a entrega.', detail: 'Orientação + continuidade' },
   ],
 };

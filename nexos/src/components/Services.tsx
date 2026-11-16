@@ -8,11 +8,10 @@ import { useScrollContext } from './SmoothScrollProvider';
 import { usePresentationActive } from '@/lib/use-presentation-active';
 import { motionError, recordMotion } from '@/lib/motion-diagnostics';
 import siteArtwork from '../../design-/rebrand-nexos/nfcs/CONTEXT-AI-VIDEOS/imgg1.png';
-import menuArtwork from '../../design-/rebrand-nexos/nfcs/CONTEXT-AI-VIDEOS/imgg2.png';
 import styles from './DigitalSolutions.module.css';
 
 const examples = [
-  { id: 'menu', title: 'Cardápio digital', description: 'Itens e informações que o cliente pode consultar no próprio celular.', image: menuArtwork },
+  { id: 'menu', title: 'Cardápio digital', description: 'Itens e informações que o cliente pode consultar no próprio celular.', image: '/ezway-demo-cafe.jpg' },
   { id: 'portfolio', title: 'Portfólio', description: 'Trabalhos apresentados com contexto e um caminho para o contato.', image: siteArtwork },
   { id: 'site', title: 'Site vitrine', description: 'Sua marca, seus serviços e formas de contato em um só lugar.', image: '/ezway-demo-studio.jpg' },
   { id: 'landing', title: 'Landing page', description: 'Uma página dedicada para apresentar uma oferta com clareza.', image: '/ezway-demo-cafe.jpg' },
@@ -136,7 +135,7 @@ export function Services({ className = '', selectedUse }: { className?: string; 
           <img className={styles.macbookFrame} src="/mackbook_1.svg" alt="" width={2180} height={1324} draggable={false} />
           <div ref={screenRef} className={styles.macbookScreen}>
             {examples.map((example, index) => <div key={example.id} className={styles.screenSlide} data-macbook-slide data-active={active === index} aria-hidden={active !== index}>
-              {index < 2 ? <Image src={example.image} alt={t(example.title)} fill sizes="(max-width: 767px) 90vw, 720px" quality={90} className={styles.screenImage} /> :
+              {index === 0 ? <div className={styles.menuDemo}><div className={styles.demoNav}><strong>grão & casa</strong><span>{t('Cardápio digital')}</span></div><div className={styles.menuHero}><Image src={example.image} alt="" fill sizes="(max-width: 767px) 90vw, 720px" className={styles.screenImage} /><strong>{t('Uma pausa para o seu dia.')}</strong></div><div className={styles.menuItems}><h4>{t('Cafés da casa')}</h4><p>{t('Café coado')} · {t('Cappuccino')} · {t('Espresso')}</p><span>{t('Itens e informações que o cliente pode consultar no próprio celular.')}</span></div></div> : index === 1 ? <Image src={example.image} alt={t(example.title)} fill sizes="(max-width: 767px) 90vw, 720px" quality={90} className={styles.screenImage} /> :
                 <div className={`${styles.demoScreen} ${index === 3 ? styles.demoLanding : ''}`}>
                   <div className={styles.demoNav}><span>{index === 2 ? 'atelier espaço' : 'grão & casa'}</span><span>{t(index === 2 ? 'Estúdio  /  Projetos  /  Contato' : 'Cafés  /  Sobre  /  Contato')}</span></div>
                   <div className={styles.demoPhoto}><Image src={example.image} alt={t(example.title)} fill sizes="(max-width: 767px) 90vw, 720px" quality={90} className={styles.screenImage} /></div>

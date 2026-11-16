@@ -101,7 +101,7 @@ test('keeps current brand accents and localized hero content in all three langua
     await expect(page.locator('#hero [data-typing-word]')).toBeVisible();
     await expect(page.locator('#hero [data-typing-word] > span').first()).toHaveCSS('background-image', /linear-gradient/);
     await expect(page.getByRole('banner').locator('a[href*="wa.me"]')).toHaveCSS('background-color', 'rgb(255, 63, 159)');
-    await expect(page.locator('#hero a[href="#showcase"]')).toHaveCSS('background-color', 'rgb(255, 63, 159)');
+    await expect(page.locator('#hero a[data-cta-solution="diagnostico"]')).toHaveCSS('background-color', 'rgb(255, 63, 159)');
     if (next) {
       const label = locale === 'pt' ? 'Selecionar idioma: Português' : 'Select language: English';
       await page.getByRole('banner').getByRole('button', { name: label }).click();

@@ -1,8 +1,15 @@
 'use client';
 
-/** Compatibility hook: the site always presents the full authored motion.
- * Browser preference is reported separately by MotionDiagnostics.
- */
+import { useSyncExternalStore } from 'react';
+
+const query = '(prefers-reduced-motion: reduce)';
+function subscribe(notify: () => void) {
+  const media = window.matchMedia(query);
+  media.addEventListener('change', notify);
+  return () => media.removeEventListener('change', notify);
+}
+
+/** Server content starts static; hydration follows the user's live preference. */
 export function usePrefersReducedMotion() {
-  return false;
+  return useSyncExternalStore(subscribe, () => window.matchMedia(query).matches, () => true);
 }
