@@ -4,8 +4,8 @@
   "private": true,
   "packageManager": "npm@11.19.0",
   "scripts": {
-    "dev": "node --use-system-ca ./node_modules/next/dist/bin/next dev",
-    "dev:orig": "next dev",
+    "dev": "node scripts/dev-shared.mjs",
+    "dev:orig": "node scripts/dev-shared.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

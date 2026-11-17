@@ -17,6 +17,29 @@ npm run dev
 ```
 
 Preencha as variáveis necessárias em `.env.local`, sem versionar credenciais.
+
+## Cursor, Orca e publicação
+
+Os dois editores usam a mesma pasta `nexos` do checkout da branch `main` e o mesmo
+local em **http://localhost:3000**. No computador atual, a pasta compartilhada é
+`/Users/henriqueemanuel/Desktop/projetos/PROJETO - TTR/NexOS/NexOS/nexos`.
+No Orca, selecione o workspace **NexOS · compartilhado Cursor + Orca**.
+As worktrees antigas ficam preservadas como histórico; não edite nelas o site principal.
+
+`npm run dev` encontra o checkout da `main`, usa suas dependências, seus arquivos
+de ambiente e sua cache de desenvolvimento. A porta é explícita: se já estiver
+ocupada, use o servidor existente ou pare-o antes de reiniciar; não abra outro na 3001.
+As URLs de autenticação locais usam `http://localhost:3000`.
+
+Produção usa o projeto Vercel **nex-os2/nexos**, raiz **nexos/**, conectado ao
+GitHub **luenamezx7/NexOS_Page**, branch de produção **main**.
+Salve as alterações em commit e envie a `main` ao GitHub para disparar o deploy.
+Não publique arquivos sem commit por CLI: isso cria uma versão que o Git não reproduz.
+O domínio **https://nexoslab.online** e o alias **https://nexos-nex-os2.vercel.app**
+devem apontar para o mesmo deploy READY. URLs de deploys antigos são imutáveis.
+Alterações locais aparecem nos dois editores imediatamente; produção acompanha
+o último commit publicado com sucesso, não cada arquivo ainda em edição.
+
 `SITE_URL` e `NEXT_PUBLIC_SITE_URL` devem apontar para a origem real.
 Autenticação requer `DATABASE_URL`, `BETTER_AUTH_SECRET` e a configuração de e-mail.
 Configure Supabase, Notion, Turnstile e providers sociais conforme os fluxos utilizados.
