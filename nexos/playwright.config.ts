@@ -8,7 +8,7 @@ export default defineConfig({
     command: `node --use-system-ca node_modules/next/dist/bin/next start -p ${process.env.PLAYWRIGHT_PORT || '3100'}`,
     url: `http://localhost:${process.env.PLAYWRIGHT_PORT || '3100'}/admin-dashboard-su/secure-entry`,
     reuseExistingServer: process.env.PLAYWRIGHT_REUSE_SERVER === 'true',
-    env: { SITE_URL: 'http://localhost:3100', TURNSTILE_ENFORCED: 'false', SOCIAL_AUTH_USE_SUPABASE: 'false',
+    env: { SITE_URL: `http://localhost:${process.env.PLAYWRIGHT_PORT || '3100'}`, SITE_CLOUDFLARE_REQUIRED: 'false', TURNSTILE_ENFORCED: 'false', SOCIAL_AUTH_USE_SUPABASE: 'false',
       GOOGLE_CLIENT_ID: 'browser-test-google-id', GOOGLE_CLIENT_SECRET: 'browser-test-google-secret' },
     timeout: 60000,
   },
