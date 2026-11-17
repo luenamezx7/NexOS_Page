@@ -1,8 +1,6 @@
 'use client';
 
-import { ArrowUpRight } from 'lucide-react';
-import { diagnosticMessage, publicSolutions, type Solution } from '@/config/solutions';
-import { commercialHref } from '@/lib/commercial';
+import { publicSolutions, type Solution } from '@/config/solutions';
 import { useLocale } from '@/lib/locale';
 import styles from './Ecosystem.module.css';
 
@@ -19,9 +17,7 @@ export function Ecosystem() {
       <p><strong>{t('O que entrega:')}</strong> {solution.deliveries.map(t).join(' · ')}</p>
       <p><strong>{t('Exemplo ilustrativo:')}</strong> {t(solution.example)}</p>
       <p>{t(solution.limits)}</p>
-      <a href={solution.href}>{t('Conhecer esta solução')} <ArrowUpRight size={15} aria-hidden="true" /></a>
     </div></details>
-    <a href={commercialHref(t(solution.message))} target="_blank" rel="noopener noreferrer" data-cta-section="ecossistema" data-cta-solution={solution.id}>{t(solution.cta)} <ArrowUpRight size={16} aria-hidden="true" /></a>
   </article>;
 
   return <section id="ecossistema" aria-labelledby="ecosystem-title" className={styles.section}>
@@ -34,7 +30,6 @@ export function Ecosystem() {
         <div className={styles.catalogue}>{publicSolutions.filter(solution => !primaryIds.has(solution.id)).map(card)}</div>
       </details>
       <p className={styles.note}>{t('Você escolhe o que precisa. O escopo é combinado no diagnóstico.')}</p>
-      <a className="btn-primary-nex" href={commercialHref(t(diagnosticMessage))} target="_blank" rel="noopener noreferrer" data-cta-section="ecossistema" data-cta-solution="diagnostico">{t('Conversar sobre meu negócio')} <ArrowUpRight size={17} aria-hidden="true" /></a>
     </div>
   </section>;
 }

@@ -1,14 +1,10 @@
-import { ArrowUpRight } from 'lucide-react';
-import type { AnchorHTMLAttributes } from 'react';
-import { cn } from '@/lib/utils';
-import styles from './button-witn-icon.module.css';
+import ArrowFillButton, { type ArrowFillButtonProps } from './arrow-fill-button';
 
-/** Link version of the sliding-icon button: navigation stays a real link. */
-export default function ButtonWithIcon({ children, className, ...props }: AnchorHTMLAttributes<HTMLAnchorElement>) {
-  return (
-    <a className={cn(styles.button, className)} {...props}>
-      <span className={styles.label}>{children}</span>
-      <span className={styles.icon} aria-hidden="true"><ArrowUpRight size={18} /></span>
-    </a>
-  );
+type ButtonWithIconProps = Omit<ArrowFillButtonProps, 'btnText' | 'children'> & { children: string };
+
+/** EZWAY commercial CTAs share the fill interaction and retain real link semantics. */
+export default function ButtonWithIcon({ children, ...props }: ButtonWithIconProps) {
+  return <ArrowFillButton bgColor="var(--palette-cta)" textColor="var(--palette-cta-ink)"
+    fillBgColor="#09090b" fillTextColor="var(--palette-cta)" hoverFillBgColor="#ffffff"
+    hoverFillTextColor="#09090b" {...props} btnText={children} />;
 }

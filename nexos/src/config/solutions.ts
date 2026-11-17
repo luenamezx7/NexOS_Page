@@ -28,6 +28,13 @@ export const needs = [
   { id: 'conectar', name: 'Conectar', description: 'Facilitar o caminho entre o interesse do cliente e o próximo passo.' },
 ] as const;
 
+export const heroSolutionExamples = [
+  { id: 'gestao', label: 'Controle e gestão', note: null },
+  { id: 'sites', label: 'Sites e portfólios', note: null },
+  { id: 'biolink', label: 'Mini-sites/Bio-links', note: null },
+  { id: 'easychat', label: 'EasyChat | Chatbot IA', note: 'Em desenvolvimento' },
+] as const;
+
 export const solutions: Solution[] = [
   {
     id: 'gestao', name: 'Controle & Gestão', category: 'Organizar', stage: 'Organização e relacionamento',

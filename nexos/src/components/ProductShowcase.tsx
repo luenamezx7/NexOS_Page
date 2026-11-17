@@ -33,7 +33,11 @@ export function ProductShowcase({ className = '', onSelectUse }: { className?: s
                   <ScrollReveal as="h2" preset="title" id="showcase-title" className={styles.heading}>{t('O que seu cliente vai abrir')} <HighlightedText inView from="bottom" delay={.1}>{t('na placa?')}</HighlightedText></ScrollReveal>
               </div>
               <div className={styles.productVisual}><PlateChooser onSelect={name => { setSelectedUse(name); onSelectUse?.(name); }} /></div>
-             <ScrollReveal preset="card" className={styles.purchase}>
+
+          </div>
+        </div>
+             <div className={styles.purchaseBand}>
+              <div className={styles.purchaseBandInner}>
               <div className={styles.selectionRow}>
                 <div>
                     <h3 className={styles.commercialHeading}>{t('Quer uma placa no seu espaço?')}</h3>
@@ -42,8 +46,9 @@ export function ProductShowcase({ className = '', onSelectUse }: { className?: s
               </div>
                    <a href={plateCommercialHref(selectedUse, t)} target="_blank" rel="noopener noreferrer" className={`${styles.buyButton} btn-primary-nex`}><MetallicSurface /><span className="metallic-content inline-flex items-center gap-2">{t('Conversar sobre minha placa')} <ArrowUpRight size={16} aria-hidden="true" /></span></a>
                 <p className={styles.hint}>{t('A placa e o destino digital podem ser contratados separadamente.')}</p>
-            </ScrollReveal>
-          </div>
+              </div>
+            </div>
+        <div className={`${styles.container} ${styles.productDetailsContainer}`}>
            <ScrollReveal><DetailTabs id="plate-details" tabs={DETAILS.map(tab => ({ ...tab, label: t(tab.label), title: t(tab.title), description: t(tab.description), items: tab.items.map(t) }))} /></ScrollReveal>
         </div>
       </section>

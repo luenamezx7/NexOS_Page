@@ -2,7 +2,7 @@
 
 import { motionMedia } from '@/lib/motion-policy';
 
-import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import type Lenis from 'lenis';
 import { sectionScrollPosition } from '@/lib/section-position';
@@ -24,6 +24,27 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
   const cancelNavigationRef = useRef<(() => void) | null>(null);
   const userInteractedRef = useRef(false);
   const navigationPathRef = useRef(pathname);
+
+  useLayoutEffect(() => {
+    if (pathname !== '/') return;
+    // The intro and section controller own the homepage's initial position.
+    // Native restoration can otherwise run after the intro's one-off reset.
+    const previous = history.scrollRestoration;
+    history.scrollRestoration = 'manual';
+    let disposed = false;
+    let restorePlugin: (() => void) | undefined;
+    // ScrollTrigger caches this setting and reapplies it during refresh.
+    void Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(([{ gsap }, { ScrollTrigger }]) => {
+      if (disposed) return;
+      gsap.registerPlugin(ScrollTrigger);
+      ScrollTrigger.clearScrollMemory('manual');
+      restorePlugin = () => ScrollTrigger.clearScrollMemory(previous);
+    }).catch(error => recordMotion('scroll', 'restoration-error', motionError(error)));
+    if (!location.hash || location.hash === '#hero') {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+    return () => { disposed = true; restorePlugin?.(); history.scrollRestoration = previous; };
+  }, [pathname]);
 
   const scrollToSection = useCallback<SectionScroll>((hash, options = {}) => {
     let id: string;

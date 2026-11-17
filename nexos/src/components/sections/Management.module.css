@@ -9,10 +9,8 @@
 .journey button span { font-size: 10px; opacity: .75; }
 .journey button[aria-pressed='true'] { background: #252029; color: #fff; border-color: #252029; }
 .journey button:focus-visible { outline: 3px solid #89325d; outline-offset: 4px; }
-.laptop { position: relative; max-width: 920px; margin: auto; }
-.frame { width: 100%; height: auto; display: block; }
-.screen { position: absolute; inset: 3.474% 10.0917% 11.255%; border-radius: 6px 6px 0 0; overflow: hidden; background: #0a090c; color: #fff; }
-.screenshot { object-fit: contain; object-position: center; }
+.screen { width: 100%; max-width: 920px; margin: auto; border: 1px solid rgb(137 50 93 / 16%); border-radius: 16px; overflow: hidden; background: #0a090c; color: #fff; box-shadow: 0 0 40px rgb(255 116 189 / 12%); }
+.screenshot { display: block; width: 100%; height: auto; }
 .demo figcaption { display: grid; gap: 6px; margin: 14px auto 0; text-align: center; font-size: 12px; line-height: 1.5; color: #655a64; }
 .explanation { min-height: 3.4em; max-width: 60ch; margin: 16px auto 0; text-align: center; color: #59525d; font-size: 16px; line-height: 1.65; }
 .container > a { display: flex; width: fit-content; margin: 24px auto 0; }
@@ -22,6 +20,6 @@
 .moreLinks { display: flex; flex-wrap: wrap; gap: 8px 24px; }
 .moreLinks a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: #89325d; text-decoration: underline; text-underline-offset: 4px; font-size: 14px; }
 .more :is(a, summary):focus-visible { outline: 3px solid #89325d; outline-offset: 4px; }
-@media (max-width: 767px) { .journey { gap: 8px; }.journey button { padding: 10px 18px; font-size: 13px; } }
+@media (max-width: 767px) { .journey { gap: 8px; }.journey button { padding: 10px 18px; font-size: 13px; } .screen { box-shadow: 0 0 24px rgb(255 116 189 / 10%); } }
 .demo figcaption a { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; width: fit-content; margin: auto; color: #89325d; font-weight: 650; text-decoration: underline; text-underline-offset: 4px; }
 .demo figcaption a:focus-visible { outline: 3px solid #89325d; outline-offset: 4px; border-radius: 4px; }

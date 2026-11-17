@@ -17,8 +17,9 @@
   max-width: 480px;
   height: 350px;
   overflow: hidden;
-  /* Finish the waist dissolve before the frame edge, leaving no crop residue. */
-  mask-image: linear-gradient(to bottom, #000 0%, #000 62%, rgb(0 0 0 / .94) 70%, rgb(0 0 0 / .7) 78%, rgb(0 0 0 / .32) 85%, rgb(0 0 0 / .07) 91%, transparent 96%, transparent 100%);
+  /* The shared foreground fade handles the waist; this only hides the crop. */
+  mask-image: linear-gradient(to bottom, #000 80%, rgb(0 0 0 / .9) 88%, transparent 98%);
+  z-index: 1;
   transform: translateX(-12px);
   pointer-events: none;
   user-select: none;
@@ -32,41 +33,83 @@
   user-select: none;
 }
 
-.managementScene > figure {
-  position: relative;
+.presenterFrame { display: contents; }
+
+.presenterFrame > [data-hero-solution-popups] {
+  position: absolute;
   width: 58%;
   max-width: 340px;
-  transform: translateX(16px);
-  z-index: 1;
+  right: -16px;
+  bottom: 100px;
+  z-index: auto;
 }
 
 .sectionFade {
   position: absolute;
   inset: auto 0 0;
-  height: clamp(180px, 22vw, 260px);
-  /* The ellipse keeps the handoff curved. The eased base becomes fully opaque
-     before the section boundary, so neither video nor a sharp ramp reaches it. */
-  background:
-    radial-gradient(ellipse 95% 115% at 60% 132%, var(--hero-handoff-surface) 0%, var(--hero-handoff-surface) 26%, rgb(245 243 241 / .96) 38%, rgb(245 243 241 / .82) 49%, rgb(245 243 241 / .55) 62%, rgb(245 243 241 / .23) 77%, rgb(245 243 241 / .04) 92%, rgb(245 243 241 / 0) 100%),
-    linear-gradient(to bottom, rgb(245 243 241 / 0) 34%, rgb(245 243 241 / .035) 44%, rgb(245 243 241 / .15) 54%, rgb(245 243 241 / .4) 65%, rgb(245 243 241 / .72) 76%, rgb(245 243 241 / .93) 85%, var(--hero-handoff-surface) 94%, var(--hero-handoff-surface) 100%);
+  height: clamp(240px, 22vw, 280px);
   pointer-events: none;
-  z-index: 0;
+  z-index: 2;
+}
+
+.sectionFade::before {
+  content: '';
+  position: absolute;
+  width: 130%;
+  height: 100%;
+  left: -15%;
+  bottom: -43%;
+  border-radius: 50% 50% 0 0 / 22% 22% 0 0;
+  background: var(--hero-handoff-surface);
+  filter: blur(42px);
+}
+
+.sectionFade::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 -1px;
+  height: 26%;
+  background: linear-gradient(to bottom, rgb(245 243 241 / 0), var(--hero-handoff-surface) 82%, var(--hero-handoff-surface));
 }
 
 @media (max-width: 1099px) {
   .managementScene { max-width: 620px; min-height: 400px; }
+  .avatarFrame { left: -22%; }
 }
 
 @media (max-width: 767px) {
-  .managementScene { min-height: clamp(300px, 78vw, 440px); }
-  .avatarFrame {
-    width: 76%;
-    left: -22%;
-    height: auto;
+  .managementScene {
+    min-height: clamp(300px, 78vw, 440px);
+  }
+  /* Both elements share one frame. Its geometry preserves the avatar's position. */
+  .presenterFrame {
+    display: block;
+    position: absolute;
+    width: 68%;
+    left: calc(-19% - 8px);
     aspect-ratio: 48 / 35;
     bottom: 8px;
-    transform: translateX(-8px);
   }
-  .managementScene > figure { width: 58%; transform: translateX(8px); }
-  .sectionFade { height: clamp(160px, 42vw, 210px); }
+  .avatarFrame {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    left: auto;
+    bottom: auto;
+    transform: none;
+  }
+  .presenterFrame > [data-hero-solution-popups] {
+    position: absolute;
+    /* 58% of the scene, expressed relative to the 68%-wide avatar frame. */
+    width: 85.294118%;
+    min-height: 0;
+    left: calc(100% - 8px);
+    top: 50%;
+    transform: translateY(-50%);
+    right: auto;
+    bottom: auto;
+    z-index: 3;
+  }
+  .sectionFade { height: 230px; }
+  .sectionFade::before { filter: blur(32px); }
 }

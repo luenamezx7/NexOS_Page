@@ -1,0 +1,54 @@
+.button {
+  --af-circle: var(--icon-circle, 38px);
+  --af-right: var(--icon-right, 6px);
+  --af-pad: var(--btn-padding-x, 24px);
+  --af-text-right: calc(var(--af-circle) + var(--af-right) + 16px);
+  --af-top: calc((100% - var(--af-circle)) / 2);
+  --af-left: calc(100% - var(--af-right) - var(--af-circle));
+  --af-ease: cubic-bezier(.785, .135, .15, .86);
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: fit-content;
+  min-width: 0;
+  max-width: 100%;
+  min-height: var(--btn-height, 52px);
+  padding: 12px var(--af-text-right) 12px var(--af-pad);
+  overflow: hidden;
+  border: 1px solid var(--btn-bg);
+  border-radius: 999px;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  font: 600 var(--btn-font-size, 14px)/1.35 var(--font-sans, sans-serif);
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.utilityBackground { background: revert-layer; }
+.label { position: relative; z-index: 1; }
+.fill, .fillLabel, .circle { position: absolute; pointer-events: none; }
+.fill { z-index: 2; inset: var(--af-top) var(--af-right) var(--af-top) var(--af-left); border-radius: inherit; background: var(--btn-fill-bg); transition: inset var(--btn-duration) var(--af-ease), background-color var(--btn-duration) var(--af-ease); }
+.fillLabel { z-index: 2; inset: 0; display: flex; justify-content: center; align-items: center; padding: 12px var(--af-text-right) 12px var(--af-pad); color: var(--btn-fill-text); clip-path: inset(var(--af-top) var(--af-right) var(--af-top) var(--af-left)); transition: clip-path var(--btn-duration) var(--af-ease), color var(--btn-duration) var(--af-ease); }
+.circle { z-index: 3; top: 50%; right: var(--af-right); display: grid; place-items: center; width: var(--af-circle); height: var(--af-circle); overflow: hidden; border-radius: 50%; transform: translateY(-50%); background: var(--btn-fill-bg); color: var(--btn-arrow); transition: background-color var(--btn-duration) var(--af-ease), color var(--btn-duration) var(--af-ease); }
+.circle svg { position: absolute; width: 18px; height: 18px; transition: transform var(--btn-duration) var(--af-ease); }
+.enteringArrow { transform: translateX(-170%) scale(0); }
+.leavingArrow { transform: translateX(0) scale(1); }
+.button[data-ready='false'] *, .button[data-ready='false'] { transition: none; }
+.button[data-pressed='true'] .fill, .button[data-fill-on-hover='true']:focus-visible .fill { inset: 0; background: var(--btn-fill-bg-hover); }
+.button[data-pressed='true'] .fillLabel, .button[data-fill-on-hover='true']:focus-visible .fillLabel { clip-path: inset(0); color: var(--btn-fill-text-hover); }
+.button[data-pressed='true'] .circle, .button[data-fill-on-hover='true']:focus-visible .circle { background: var(--btn-fill-bg-hover); color: var(--btn-arrow-hover); }
+.button[data-pressed='true'] .enteringArrow, .button[data-fill-on-hover='true']:focus-visible .enteringArrow { transform: translateX(0) scale(1); }
+.button[data-pressed='true'] .leavingArrow, .button[data-fill-on-hover='true']:focus-visible .leavingArrow { transform: translateX(170%) scale(0); }
+.button:focus-visible { outline: 2px solid var(--palette-highlight, #ff74bd); outline-offset: 4px; }
+@media (hover: hover) {
+  .button[data-fill-on-hover='true']:hover .fill { inset: 0; background: var(--btn-fill-bg-hover); }
+  .button[data-fill-on-hover='true']:hover .fillLabel { clip-path: inset(0); color: var(--btn-fill-text-hover); }
+  .button[data-fill-on-hover='true']:hover .circle { background: var(--btn-fill-bg-hover); color: var(--btn-arrow-hover); }
+  .button[data-fill-on-hover='true']:hover .enteringArrow { transform: translateX(0) scale(1); }
+  .button[data-fill-on-hover='true']:hover .leavingArrow { transform: translateX(170%) scale(0); }
+}
+@media (max-width: 767px) { .button { --af-pad: var(--btn-padding-x, 20px); } }
+@media (prefers-reduced-motion: reduce) { .button, .button * { transition: none !important; } }
+@media (forced-colors: active) { .button { border-color: ButtonText; background: ButtonFace; color: ButtonText; } .fill, .fillLabel, .circle { display: none; } }

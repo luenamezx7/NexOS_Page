@@ -36,10 +36,16 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
     let frame = 0;
     let progressFrame = 0;
     const timers = new Set<ReturnType<typeof setTimeout>>();
-    // CSS already animates the server HTML, even while client chunks are loading.
-    const cover = dialog.getAnimations().find(animation => (animation as CSSAnimation).animationName?.includes('brand-cover-lifetime'));
-    const elapsedAtHydration = Math.max(0, Number(cover?.currentTime ?? 0));
-    const coverExpired = getComputedStyle(dialog).visibility === 'hidden';
+    const computed = getComputedStyle(dialog);
+    // The CSS compiler may normalize 1850ms to 1.85s. Preserve the unit.
+    const durationInMs = (property: string, fallback: number) => {
+      const value = computed.getPropertyValue(property).trim();
+      const amount = parseFloat(value);
+      if (!Number.isFinite(amount) || amount <= 0) return fallback;
+      return value.endsWith('ms') ? amount : value.endsWith('s') ? amount * 1000 : fallback;
+    };
+    const duration = durationInMs('--entry-duration', 1850);
+    const exitDuration = durationInMs('--exit-duration', 800);
     const htmlOverflow = document.documentElement.style.overflow;
     const bodyOverflow = document.body.style.overflow;
     const notify = () => document.dispatchEvent(new Event('nexos-entry-change'));
@@ -69,7 +75,7 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
         frame = requestAnimationFrame(() => {
           if (disposed) return;
           setPhase('leaving');
-          later(complete, Math.max(0, Math.min(850, 2700 - elapsedAtHydration)));
+          later(complete, exitDuration);
         });
       });
     };
@@ -77,30 +83,28 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
       if (disposed || completed || leaving || started) return;
       started = true;
       setPhase('entering');
-      const duration = 1850;
-      recordMotion('presentation', 'entering', `effectiveMotion=full; durationMs=${duration}; elapsedBeforeHydrationMs=${Math.round(elapsedAtHydration)}`);
-      const startTime = performance.now() - elapsedAtHydration;
-      let lastProgressPaint = 0;
+      recordMotion('presentation', 'entering', `effectiveMotion=full; durationMs=${duration}`);
+      // Begin at the first paint, after hydration's synchronous work. Limit
+      // frame gaps so a busy frame cannot skip a visible part of the counter.
+      let previousFrame: number | null = null;
+      let elapsed = 0;
       const tick = (now: number) => {
         if (disposed || leaving) return;
-        if (now - lastProgressPaint >= 80) {
-          setProgress(Math.max(0, Math.min(99, Math.floor((now - startTime) / duration * 100))));
-          lastProgressPaint = now;
+        if (previousFrame !== null) elapsed += Math.min(64, Math.max(0, now - previousFrame));
+        previousFrame = now;
+        if (elapsed >= duration) {
+          beginExit();
+          return;
         }
+        setProgress(Math.min(99, Math.floor(elapsed / duration * 100)));
         progressFrame = requestAnimationFrame(tick);
       };
       progressFrame = requestAnimationFrame(tick);
-      later(beginExit, Math.max(0, duration - elapsedAtHydration));
     };
 
     exitRef.current = beginExit;
     completeRef.current = complete;
     dialog.close();
-    if (elapsedAtHydration >= 2700 || coverExpired) {
-      recordMotion('presentation', 'completed-before-hydration');
-      onComplete(true);
-      return;
-    }
     dialog.showModal();
     recordMotion('presentation', 'open');
     dialog.focus({ preventScroll: true });

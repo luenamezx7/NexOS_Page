@@ -1,5 +1,13 @@
 /** Portuguese source keys shared by the management-led public journey. */
 const copy: [string, string, string][] = [
+  ['SOLUÇÕES EZWAY', 'EZWAY SOLUTIONS', 'SOLUCIONES EZWAY'],
+  ['Controle e gestão', 'Control and management', 'Control y gestión'],
+  ['Mini-sites/Bio-links', 'Mini-sites/Bio-links', 'Minisitios/Bio-links'],
+  ['EasyChat | Chatbot IA', 'EasyChat | AI Chatbot', 'EasyChat | Chatbot IA'],
+  ['Sites e portfólios', 'Websites and portfolios', 'Sitios y portafolios'],
+  ['Cardápios digitais', 'Digital menus', 'Menús digitales'],
+  ['Placas NFC + QR Code', 'NFC plates + QR Code', 'Placas NFC + código QR'],
+  ['Explorar soluções', 'Explore solutions', 'Explorar soluciones'],
   ['Clientes organizados', 'Organized customers', 'Clientes organizados'],
   ['Retornos no radar', 'Follow-ups in sight', 'Seguimientos a la vista'],
   ['Vendas e financeiro à vista', 'Sales and finances in view', 'Ventas y finanzas a la vista'],

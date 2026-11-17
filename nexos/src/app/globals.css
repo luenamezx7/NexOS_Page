@@ -1652,7 +1652,8 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
 @media (max-width: 767px) { .landing-page { --dark-section-radius: 24px; } }
 
 /* Management-led opening: the first message stays readable without animation. */
-.landing-hero .hero-container { max-width: 960px; grid-template-columns: minmax(0, 1fr); align-items: center; gap: 32px; padding-bottom: 72px; }
+.landing-hero .hero-container { max-width: 960px; grid-template-columns: minmax(0, 1fr); align-items: center; gap: 32px; padding-bottom: 72px; z-index: auto; }
+.landing-hero .hero-copy { position: relative; z-index: 3; }
 .landing-hero .hero-copy, .landing-hero .hero-heading { text-align: center; }
 .landing-hero .hero-heading { max-width: 22ch; margin: 0 auto; font-size: clamp(38px, 4.15vw, 62px); }
 .landing-hero .hero-eyebrow { display: flex; justify-content: center; font-size: 11px; }

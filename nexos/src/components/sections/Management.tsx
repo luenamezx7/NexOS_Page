@@ -7,6 +7,7 @@ import { solutions } from '@/config/solutions';
 import { commercialHref } from '@/lib/commercial';
 import { useLocale } from '@/lib/locale';
 import styles from './Management.module.css';
+import ButtonWithIcon from '../ui/button-witn-icon';
 
 const journey = [
   { title: 'Comercial', image: '/images/crm/pipeline.png', alt: 'Tela real do CRM: pipeline comercial com Retentativas, com dados sensíveis ocultados.', description: 'Acompanhe oportunidades e saiba quem precisa de retorno.' },
@@ -24,12 +25,8 @@ export function Management() {
       <header className={styles.header}><p className={styles.eyebrow}>{t('CONTROLE & GESTÃO')}</p><h2 data-heading-static id="management-title">{t('Seu negócio, mais organizado.')}</h2><p>{t('Acompanhe clientes, vendas e financeiro em um só lugar.')}</p></header>
       <ul className={styles.journey} aria-label={t('Veja o sistema na prática')}>{journey.map((item, index) => <li key={item.title}><button type="button" aria-pressed={active === index} aria-controls="management-demo" onClick={() => setActive(index)}>{t(item.title)}</button></li>)}</ul>
       <figure className={styles.demo}>
-        <div className={styles.laptop}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/mackbook_1.svg" width={2180} height={1324} alt="" className={styles.frame} loading="lazy" />
-          <div id="management-demo" className={styles.screen} aria-live="polite" aria-atomic="true">
-            <Image src={step.image} alt={t(step.alt)} fill sizes="(max-width: 767px) 80vw, 736px" className={styles.screenshot} />
-          </div>
+        <div id="management-demo" className={styles.screen} aria-live="polite" aria-atomic="true">
+          <Image src={step.image} alt={t(step.alt)} width={1200} height={750} sizes="(max-width: 968px) calc(100vw - 48px), 920px" quality={90} className={styles.screenshot} />
         </div>
         <figcaption><span>{t('Telas reais do CRM · dados sensíveis ocultados')}</span><a href={step.image} target="_blank" rel="noopener noreferrer">{t('Ampliar tela do CRM')} <ArrowUpRight size={14} aria-hidden="true" /></a></figcaption>
       </figure>
@@ -42,7 +39,7 @@ export function Management() {
           <a href="/images/crm/vendas.png" target="_blank" rel="noopener noreferrer">{t('Ver tela de vendas')} <ArrowUpRight size={14} aria-hidden="true" /></a>
         </div>
       </details>
-      <a href={commercialHref(t(solution.message))} target="_blank" rel="noopener noreferrer" className="btn-primary-nex" data-cta-section="gestao" data-cta-solution="gestao">{t(solution.cta)} <ArrowUpRight size={17} aria-hidden="true" /></a>
+      <ButtonWithIcon href={commercialHref(t(solution.message))} target="_blank" rel="noopener noreferrer" data-cta-section="gestao" data-cta-solution="gestao">{t(solution.cta)}</ButtonWithIcon>
     </div>
   </section>;
 }

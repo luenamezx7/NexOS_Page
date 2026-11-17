@@ -72,6 +72,7 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
            </div>
         </div>
         <div className={styles.managementScene}>
+          <div className={styles.presenterFrame}>
           <div className={styles.avatarFrame} aria-hidden="true">
             <Image
             className={styles.avatar}
@@ -84,6 +85,7 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
             />
           </div>
           <ManagementIntro />
+          </div>
         </div>
       </motion.div>
       <div className={styles.sectionFade} aria-hidden="true" />

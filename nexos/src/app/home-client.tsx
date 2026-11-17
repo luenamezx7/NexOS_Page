@@ -52,6 +52,12 @@ export default function HomeClient() {
 
   const handleEntranceComplete = useCallback((entered: boolean) => {
     if (entrance.key !== entranceGeneration.current) return;
+    // Reduced motion bypasses BrandEntrance's scroll reset. Land before
+    // releasing the cover, including browser reload restores.
+    // Explicit deep links still belong to the section-navigation controller.
+    if (entered && (entrance.key > 0 || !location.hash || location.hash === '#hero')) {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
     setEntrance({ visible: false, key: entrance.key });
     if (!entered) return;
     focusRaf.current = requestAnimationFrame(() => {

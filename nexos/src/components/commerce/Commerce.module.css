@@ -158,3 +158,26 @@
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { :global(.dark) .plateStage, :global(.dark) .quantity, :global(.dark) .tabs button:not([aria-selected="true"]) { background: var(--glass-solid); } }
 @media (prefers-reduced-transparency: reduce) { :global(.dark) .plateStage, :global(.dark) .quantity, :global(.dark) .tabs button:not([aria-selected="true"]) { background: var(--glass-solid); -webkit-backdrop-filter: none; backdrop-filter: none; } }
 @media (forced-colors: active) { :global(.dark) .plateStage, :global(.dark) .quantity, :global(.dark) .tabs button { border-color: CanvasText; background: Canvas; box-shadow: none; } :global(.dark) .tabs button[aria-selected="true"] { background: Highlight; color: HighlightText; } }
+
+/* Full-width commercial strip, separate from the product cards. */
+.purchaseBand {
+  width: 100%;
+  border-block: 1px solid var(--commerce-line);
+  background: linear-gradient(110deg, var(--surface-raised), var(--surface-base));
+}
+.purchaseBandInner {
+  max-width: 1280px;
+  margin-inline: auto;
+  padding: 36px 24px;
+  display: grid;
+  gap: 16px 40px;
+  align-items: center;
+}
+.purchaseBand .selectionRow { margin: 0; }
+.purchaseBand .hint { margin: 0; text-align: left; }
+.productDetailsContainer { padding-top: 0; }
+@media (min-width: 768px) {
+  .purchaseBandInner { grid-template-columns: minmax(0, 1fr) auto; padding: 40px; }
+  .purchaseBand .buyButton { width: auto; padding-inline: 24px; }
+  .purchaseBand .hint { grid-column: 1 / -1; }
+}

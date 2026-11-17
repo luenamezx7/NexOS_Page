@@ -230,11 +230,20 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
     const banner = bannerRef.current;
     if (!banner || hasDecided || !bannerVisible || prefsOpen) return;
     const root = document.documentElement;
-    const measure = () => root.style.setProperty('--cookie-banner-space', `${banner.offsetHeight + 16}px`);
-    const observer = new ResizeObserver(measure);
+    let frame = 0;
+    const measure = () => {
+      frame = 0;
+      const space = `${banner.offsetHeight + 16}px`;
+      if (root.style.getPropertyValue('--cookie-banner-space') !== space) {
+        root.style.setProperty('--cookie-banner-space', space);
+      }
+    };
+    // Updating layout inside ResizeObserver can trigger a notification loop in Safari.
+    const schedule = () => { if (!frame) frame = requestAnimationFrame(measure); };
+    const observer = new ResizeObserver(schedule);
     observer.observe(banner);
     measure();
-    return () => { observer.disconnect(); root.style.removeProperty('--cookie-banner-space'); };
+    return () => { cancelAnimationFrame(frame); observer.disconnect(); root.style.removeProperty('--cookie-banner-space'); };
   }, [hasDecided, bannerVisible, prefsOpen]);
 
   // Trava real SÓ na central (modal). O banner nunca trava o scroll.

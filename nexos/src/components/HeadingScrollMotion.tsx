@@ -24,12 +24,15 @@ export function HeadingScrollMotion() {
       gsap.registerPlugin(ScrollTrigger);
       const headings = new Map<HTMLElement, () => void>();
       let frame = 0;
+      let lastWidth = -1;
+      let lastHeight = -1;
 
       const sync = () => {
         frame = 0;
         if (disposed) return;
+        let changed = false;
         headings.forEach((revert, heading) => {
-          if (!root.contains(heading)) { revert(); headings.delete(heading); }
+          if (!root.contains(heading)) { revert(); headings.delete(heading); changed = true; }
         });
         root.querySelectorAll<HTMLElement>(HEADINGS).forEach(heading => {
           if (headings.has(heading) || heading.hasAttribute('data-heading-static') || heading.closest('dialog, [aria-hidden="true"], .sr-only')) return;
@@ -45,8 +48,15 @@ export function HeadingScrollMotion() {
           }, root);
           heading.dataset.headingScroll = 'ready';
           headings.set(heading, () => { context.revert(); delete heading.dataset.headingScroll; });
+          changed = true;
         });
-        ScrollTrigger.refresh();
+        const width = root.offsetWidth;
+        const height = root.offsetHeight;
+        // The initial ResizeObserver delivery and fonts.ready often describe
+        // the same layout. Avoid refreshing every trigger repeatedly at startup.
+        if (changed || width !== lastWidth || height !== lastHeight) ScrollTrigger.refresh();
+        lastWidth = width;
+        lastHeight = height;
         recordMotion('headingGsap', 'initialized', `${headings.size} headings`);
       };
       const schedule = () => { if (!disposed && !frame) frame = requestAnimationFrame(sync); };
