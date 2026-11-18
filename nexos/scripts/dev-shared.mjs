@@ -5,15 +5,17 @@ import { fileURLToPath } from 'node:url';
 
 // Both editors must serve the same checkout, env files and Next.js cache.
 const currentApp = realpathSync(join(dirname(fileURLToPath(import.meta.url)), '..'));
-const worktrees = execFileSync('git', ['worktree', 'list', '--porcelain'], {
+const worktrees = execFileSync('git', ['worktree', 'list', '--porcelain', '-z'], {
   cwd: currentApp, encoding: 'utf8',
 });
-const main = worktrees.split('\n\n').find(block => block.split('\n').includes('branch refs/heads/main'));
-if (!main) {
-  console.error('Abra a branch main em um checkout antes de iniciar o local compartilhado.');
+// Git lists the primary worktree first. Its identity is the directory, not its
+// current branch: a reviewed design branch must use the same local in both IDEs.
+const primary = worktrees.split('\0')[0];
+if (!primary?.startsWith('worktree ')) {
+  console.error('Não foi possível identificar o checkout principal compartilhado.');
   process.exit(1);
 }
-const app = realpathSync(join(main.split('\n')[0].slice('worktree '.length), 'nexos'));
+const app = realpathSync(join(primary.slice('worktree '.length), 'nexos'));
 const next = join(app, 'node_modules/next/dist/bin/next');
 if (!existsSync(next)) {
   console.error(`Instale as dependências com npm ci em: ${app}`);

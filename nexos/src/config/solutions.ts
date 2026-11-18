@@ -57,7 +57,7 @@ export const solutions: Solution[] = [
     need: 'Apoiar a rotina administrativa com IA.', audience: 'Empreendedores e operações administrativas.',
     benefits: ['Conhecer uma proposta de organização administrativa por conversa.'], deliveries: ['Prévia conceitual de um assistente administrativo com IA.'],
     limits: 'Em desenvolvimento. As funcionalidades da prévia são previstas e não representam um serviço disponível.',
-    example: 'Prévia ilustrativa de solicitação de documento para revisão.', connection: 'Não implica integração com gestão ou chatbot.',
+    example: 'Solicitação de documento para revisão.', connection: 'Não implica integração com gestão ou chatbot.',
     availability: 'development', source: 'README.md e seção EasyChat; status de desenvolvimento preservado.', asset: null,
     href: '#easychat', cta: 'Conhecer o projeto EasyChat', message: 'Olá! Quero conhecer o projeto EasyChat, que está em desenvolvimento, e conversar sobre alternativas disponíveis.',
   },
@@ -67,7 +67,7 @@ export const solutions: Solution[] = [
     benefits: ['Reunir apresentação, serviços e contato em um só lugar.'], deliveries: ['Apresentação da empresa', 'Serviços e formas de contato'],
     limits: 'Páginas e funcionalidades são definidas no escopo. Loja, área restrita e integrações não estão automaticamente incluídas.',
     example: 'Uma empresa de serviços apresenta suas áreas de atuação e convida para uma conversa.', connection: 'Pode ser o destino de um biolink, NFC ou QR Code, conforme o projeto.',
-    availability: 'catalogue', source: 'src/config.ts: Desenvolvimento ezway; rota /criacao-de-sites.', asset: { src: '/ezway-demo-studio.jpg', alt: 'Imagem de uma demonstração ilustrativa de site' },
+    availability: 'catalogue', source: 'src/config.ts: Desenvolvimento ezway; rota /criacao-de-sites.', asset: { src: '/ezway-demo-studio.jpg', alt: 'Site com apresentação de arquitetura e interiores' },
     href: '/criacao-de-sites', cta: 'Conversar sobre meu site', message: 'Olá! Tenho interesse em um site para apresentar minha empresa e seus serviços.',
   },
   {
@@ -85,7 +85,7 @@ export const solutions: Solution[] = [
     benefits: ['Concentrar a mensagem e deixar o próximo passo claro.'], deliveries: ['Página focada em um objetivo', 'Apresentação e chamada para ação'],
     limits: 'Não inclui automaticamente mídia paga, CRM ou automação e não garante conversão.',
     example: 'Uma página apresenta um serviço e convida o visitante a conversar.', connection: 'Pode ser destino de uma campanha ou de um link; integrações exigem escopo próprio.',
-    availability: 'catalogue', source: 'src/config.ts e rota /landing-pages.', asset: { src: '/ezway-demo-cafe.jpg', alt: 'Imagem de uma demonstração ilustrativa de landing page' },
+    availability: 'catalogue', source: 'src/config.ts e rota /landing-pages.', asset: { src: '/ezway-demo-cafe.jpg', alt: 'Página de apresentação de uma cafeteria' },
     href: '/landing-pages', cta: 'Conversar sobre minha página', message: 'Olá! Tenho interesse em uma landing page para um objetivo específico do meu negócio.',
   },
   {
@@ -116,7 +116,7 @@ export const solutions: Solution[] = [
   {
     id: 'audiovisual', name: 'Conteúdo audiovisual com IA', category: 'Apresentar', stage: 'Presença e acesso',
     need: 'Apoiar a apresentação visual de uma proposta.', audience: 'Negócios com uma ideia a comunicar.', benefits: [], deliveries: [],
-    limits: 'Validar escopo, disponibilidade, direitos de uso e demonstrações antes de ampliar a divulgação.', example: 'Peça de apresentação de um serviço, sujeita à validação.', connection: 'Uso em páginas depende do escopo.',
+    limits: 'Validar escopo, disponibilidade, direitos de uso e materiais antes de ampliar a divulgação.', example: 'Peça de apresentação de um serviço, sujeita à validação.', connection: 'Uso em páginas depende do escopo.',
     availability: 'pending', source: 'Briefing do guia mestre; vídeo existente não comprova oferta.', asset: null,
     href: '#ecossistema', cta: 'Conversar sobre conteúdo', message: 'Olá! Quero conversar sobre a apresentação visual do meu negócio.',
   },

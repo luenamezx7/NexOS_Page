@@ -24,7 +24,7 @@
 .header { margin-bottom: 32px; }
 
 /* FAQ */
-.faqSection { --color-ink: #17171a; --text-secondary: #494950; --text-tertiary: #626269; --bottom-muted: #494950; --bottom-surface: #f1f1f3; --bottom-raised: #fff; --bottom-line: #d9d9df; --bottom-accent: #a8175f; --surface-edge: #dedee2; --detail-text: #a8175f; --detail-accent: #a8175f; --detail-ink: #fff; --gradient-heading: linear-gradient(105deg, #17171a, #45454c); --ring: #a8175f; background: #f8f8fa; color: var(--color-ink); color-scheme: light; }
+.faqSection { --color-ink: #000000; --text-secondary: #494950; --text-tertiary: #626269; --bottom-muted: #494950; --bottom-surface: #f1f1f3; --bottom-raised: #fff; --bottom-line: #d9d9df; --bottom-accent: #a8175f; --surface-edge: #dedee2; --detail-text: #a8175f; --detail-accent: #a8175f; --detail-ink: #fff; --gradient-heading: linear-gradient(105deg, #000000, #45454c); --ring: #a8175f; background: #f8f8fa; color: var(--color-ink); color-scheme: light; }
 :global(.dark) .faqSection { --bottom-accent: #a8175f; }
 :global(.landing-page) .faqSection .heading .accent { color: #a8175f; -webkit-text-fill-color: #a8175f; }
 .faqList { display: grid; gap: 12px; min-width: 0; }

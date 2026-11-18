@@ -1,5 +1,7 @@
 'use client';
 
+import { motionMedia } from '@/lib/motion-policy';
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useMotionValueEvent, useScroll } from 'motion/react';
 import { ScrollReveal } from '../ScrollReveal';
@@ -20,7 +22,7 @@ export function DeliveryProcess() {
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end end'] });
   const { scrollYProgress: timelineProgress } = useScroll({ target: timelineRef, offset: ['start center', 'end center'] });
   useEffect(() => {
-    const media = matchMedia('(min-width: 768px) and (min-height: 700px) and (prefers-reduced-motion: no-preference)');
+    const media = motionMedia('(min-width: 768px) and (min-height: 700px) and (min-width: 0px)');
     const update = () => setPinned(media.matches);
     update();
     media.addEventListener('change', update);

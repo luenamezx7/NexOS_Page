@@ -80,9 +80,9 @@ test('MacBook chassis remains fixed while original screen contents change and re
   }
   expect(Math.max(...bounds) - Math.min(...bounds)).toBeLessThan(1);
   await expect(page.locator('[data-macbook-slide][data-active="true"]')).toHaveCount(1);
-  await expect(page.getByRole('button', { name: 'Ver exemplo: Cardápio digital' })).toHaveAttribute('aria-pressed', 'true');
-  await page.getByRole('button', { name: 'Ver exemplo: Landing page' }).click();
-  await expect(page.getByRole('button', { name: 'Ver exemplo: Landing page' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByRole('button', { name: 'Ver solução: Cardápio digital' })).toHaveAttribute('aria-pressed', 'true');
+  await page.getByRole('button', { name: 'Ver solução: Landing page' }).click();
+  await expect(page.getByRole('button', { name: 'Ver solução: Landing page' })).toHaveAttribute('aria-pressed', 'true');
   expect(await chassis.evaluate(el => getComputedStyle(el).transform)).toBe(original);
 });
 

@@ -35,6 +35,6 @@ export function PlateFan() {
       </FieldGroup></FieldSet>
     </div>
     <div className={styles.stageFoot}><span><span className={styles.stageDot} /> {t('Estudos de identidade')}</span><span>NFC + QR</span></div>
-    <p className={styles.studyDisclaimer} aria-live="polite">{t(STUDIES.find(s => s.id === selected)?.title || '')}: {t('prévia ilustrativa. A personalização final é combinada com a ezway.')}</p>
+    <p className={styles.studyDisclaimer} aria-live="polite">{t(STUDIES.find(s => s.id === selected)?.title || '')}: {t('A personalização é combinada com a ezway.')}</p>
   </div>;
 }

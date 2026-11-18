@@ -12,9 +12,7 @@ test('login and account recovery describe access instead of orders', async ({ pa
   await expect(page.locator('main')).not.toContainText(/pedidos/i);
   await expect(page.locator('main')).not.toContainText('Conhecer as soluções');
   await expect(page.locator('main')).toContainText('Acesso protegido');
-  await page.getByRole('button', { name: 'Criar conta', exact: true }).first().click();
-  await expect(page.getByRole('heading', { name: 'Criar sua conta' })).toBeVisible();
-  await page.getByRole('button', { name: 'Entrar', exact: true }).first().click();
+  await expect(page.getByRole('button', { name: 'Criar conta', exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Esqueceu a senha?' }).click();
   await expect(page.getByRole('heading', { name: 'Recuperar senha' })).toBeVisible();
   await expect(page.locator('main')).not.toContainText(/pedidos/i);

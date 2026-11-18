@@ -1,34 +1,34 @@
 'use client';
 
+import { useRef } from 'react';
 import { publicSolutions, type Solution } from '@/config/solutions';
 import { useLocale } from '@/lib/locale';
+import { StackedCards } from '@/components/ui/glass-cards';
 import styles from './Ecosystem.module.css';
 
-const primaryIds = new Set(['site', 'menu', 'nfc']);
+const chapterIds = ['site', 'menu', 'nfc', 'portfolio', 'landing', 'easychat', 'suporte'];
+const chapters = chapterIds.map(id => publicSolutions.find(solution => solution.id === id)!);
 
 export function Ecosystem() {
   const { t } = useLocale();
-  const card = (solution: Solution) => <article key={solution.id} className={styles.card} data-solution={solution.id}>
-    {solution.availability === 'development' && <p className={styles.category}>{t('Em desenvolvimento')}</p>}
-    <h3 data-heading-static>{t(solution.name)}</h3>
-    <p>{t(solution.need)}</p>
-    <details><summary>{t('Saiba mais')}</summary><div className={styles.detail}>
-      <p>{t(solution.audience)}</p>
-      <p><strong>{t('O que entrega:')}</strong> {solution.deliveries.map(t).join(' · ')}</p>
-      <p><strong>{t('Exemplo ilustrativo:')}</strong> {t(solution.example)}</p>
-      <p>{t(solution.limits)}</p>
-    </div></details>
-  </article>;
+  const stageRef = useRef<HTMLDivElement>(null);
+  const colors: Record<string, { color: string; ink?: string }> = {
+    site: { color: '#ff78bb' }, menu: { color: 'var(--brand-lime)' }, nfc: { color: '#000000', ink: '#fffaf6' },
+    portfolio: { color: '#d1c5f1' }, landing: { color: '#f6e8a9' }, easychat: { color: '#b9dcf3' }, suporte: { color: 'var(--brand-lime)' },
+  };
+  const cards = chapters.map((solution: Solution) => ({
+    id: solution.id, title: t(solution.name), description: t(solution.need), category: t(solution.category),
+    ...colors[solution.id], badge: solution.availability === 'development' ? t('Em desenvolvimento') : undefined,
+
+  }));
 
   return <section id="ecossistema" aria-labelledby="ecosystem-title" className={styles.section}>
     <div className={styles.container}>
+      <div ref={stageRef} className={styles.stage} data-ecosystem-stage>
       <h2 data-heading-static id="ecosystem-title">{t('Além da gestão.')}</h2>
       <p className={styles.lead}>{t('Sites, cardápios e placas para apresentar seu negócio e facilitar o contato.')}</p>
-      <div className={`${styles.catalogue} ${styles.primaryCatalogue}`}>{publicSolutions.filter(solution => primaryIds.has(solution.id)).map(card)}</div>
-      <details className={styles.moreSolutions}>
-        <summary>{t('Ver todas as soluções')}</summary>
-        <div className={styles.catalogue}>{publicSolutions.filter(solution => !primaryIds.has(solution.id)).map(card)}</div>
-      </details>
+      <StackedCards items={cards} stageRef={stageRef} />
+      </div>
       <p className={styles.note}>{t('Você escolhe o que precisa. O escopo é combinado no diagnóstico.')}</p>
     </div>
   </section>;

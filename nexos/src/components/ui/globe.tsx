@@ -86,7 +86,7 @@ export function Globe() {
   return <figure className={styles.figure}>
     <div ref={root} className={styles.globe} data-globe-state={status}>
       <div className={styles.fallback} aria-hidden="true"><span /><span /><span /></div>
-      <canvas ref={canvas} className={styles.canvas} tabIndex={status === 'ready' ? 0 : -1} role="img" aria-label="Globo interativo ilustrativo. Arraste horizontalmente ou use as setas esquerda e direita para girar."
+      <canvas ref={canvas} className={styles.canvas} tabIndex={status === 'ready' ? 0 : -1} role="img" aria-label="Globo interativo. Arraste horizontalmente ou use as setas esquerda e direita para girar."
         onKeyDown={event => { if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') { event.preventDefault(); rotate(event.key === 'ArrowLeft' ? -.12 : .12); } }}
         onPointerDown={event => { interaction.current.dragging = true; interaction.current.x = event.clientX; event.currentTarget.setPointerCapture(event.pointerId); }}
         onPointerMove={event => { if (interaction.current.dragging) { rotate((event.clientX - interaction.current.x) * .006); interaction.current.x = event.clientX; } }}

@@ -25,26 +25,26 @@
 
   /* Neutral surfaces shared across both themes. */
   --color-canvas: #ffffff;
-  --color-ink: #111411;
+  --color-ink: #000000;
   --color-glass: rgba(255, 255, 255, 0.72);
   --color-glass-strong: rgba(255, 255, 255, 0.9);
   --color-card: #f5f7f3;
 }
 
 .dark {
-  --color-canvas: #09090b;
+  --color-canvas: #000000;
   --color-ink: #f8f7f8;
   --color-glass: rgba(0, 0, 0, 0.72);
   --color-glass-strong: rgba(0, 0, 0, 0.9);
-  --color-card: #1e1d21;
+  --color-card: #000000;
 }
 
 :root {
   /* NexOS Lab brand tokens. Legacy palette aliases below keep existing components in sync. */
-  --bg-base: #09090b;
-  --bg-surface: #141416;
-  --bg-card: #1e1d21;
-  --bg-elevated: #2a292e;
+  --bg-base: #000000;
+  --bg-surface: #000000;
+  --bg-card: #000000;
+  --bg-elevated: #000000;
   --border: #303036;
   /* Legacy variable names retained for component compatibility; all resolve to pink. */
   --purple-300: #ffaad8;
@@ -60,8 +60,11 @@
   --text-primary: #f8f7f8;
   --text-secondary: #bdbbc2;
   --text-muted: #99979f;
-  --text-on-lime: #200818;
-  --success: #34d399;
+  --text-on-lime: #000000;
+  --brand-lime: #b9ef75;
+  --brand-lime-rgb: 185 239 117;
+  --brand-lime-ink: #000000;
+  --success: var(--brand-lime);
   --warning: #ffb020;
   --error: #ff5c7a;
   --info: #60a5fa;
@@ -69,7 +72,7 @@
   /* Default highlight: a very light pink, used for text selection and focus accents. */
   --highlight-soft: #ffe2f1;
   --highlight-ink: #3a0a20;
-  --gradient-hero: radial-gradient(65% 70% at 50% 0%, #242329 0%, #141416 42%, #09090b 100%);
+  --gradient-hero: radial-gradient(65% 70% at 50% 0%, #000000 0%, #000000 42%, #000000 100%);
   --gradient-brand: linear-gradient(125deg, #ff3f9f 0%, #ffaad8 55%, #ffffff 100%);
   --gradient-lime: linear-gradient(125deg, #e6197d 0%, #ff67b4 58%, #ffffff 100%);
   --glow-purple: 0 0 40px rgba(255, 255, 255, 0.14);
@@ -99,14 +102,14 @@
   --surface-base: #ffffff;
   --surface-raised: #ffffff;
   --surface-inset: #f7f4f7;
-  --surface-line: rgb(16 28 13 / 14%);
+  --surface-line: rgb(0 0 0 / 14%);
   --surface-edge: rgb(255 255 255 / 90%);
-  --surface-shadow: inset 0 1px 0 var(--surface-edge), 0 20px 60px -40px #11181145;
+  --surface-shadow: inset 0 1px 0 var(--surface-edge), 0 20px 60px -40px #00000045;
   --ambient-violet: rgb(255 255 255 / 5%);
   --ambient-blue: rgb(255 255 255 / 4%);
   --panel-ground: #ffffff;
   --panel-alternate: #f7f4f7;
-  --panel-border: rgb(26 39 21 / 10%);
+  --panel-border: rgb(0 0 0 / 10%);
   --panel-rim: rgb(255 255 255 / 88%);
   --panel-halo: rgb(255 255 255 / 5%);
   --panel-radius: clamp(20px, 2.5vw, 32px);
@@ -149,7 +152,7 @@
   --surface-glass: rgba(255, 255, 255, 0.96);
   --reading-glass: rgba(255, 255, 255, 0.97);
   --reading-glass-border: rgba(255, 255, 255, 0.85);
-  --reading-glass-shadow: inset 0 1px 0 #ffffffa6, 0 12px 36px -28px #11181140;
+  --reading-glass-shadow: inset 0 1px 0 #ffffffa6, 0 12px 36px -28px #00000040;
   --field-surface: #f5f7f3;
   --action-gradient: var(--gradient-brand);
   --action-hover-shadow:
@@ -160,10 +163,10 @@
   --action-glass-background: linear-gradient(125deg, #ffffff80, #ffffff18 70%), rgb(255 255 255 / 5%);
   --action-glass-border: rgb(255 255 255 / 22%);
   --action-lit-background: radial-gradient(ellipse at 50% 0%, #ffffff66, transparent 72%), linear-gradient(115deg, #e6197de8, #ad125df2 65%, #42132cf2);
-  --metallic-veil: linear-gradient(110deg, #e6197de6 0%, #101610e6 100%);
+  --metallic-veil: linear-gradient(110deg, #e6197de6 0%, #000000e6 100%);
   --metallic-static-base: var(--visor-gradient);
   --metallic-static-veil: var(--action-gradient);
-  --metallic-inner-shadow: #10161055;
+  --metallic-inner-shadow: #00000055;
   --header-brand: var(--visor-violet);
   --header-glass-background:
     linear-gradient(125deg, #ffffff80 0%, #ffffff18 36%, transparent 62%, #ffffff18 100%),
@@ -174,8 +177,8 @@
     inset 0 1px 0 #ffffffe6,
     inset 0 -1px 0 #ffffff20,
     inset 1px 0 0 #ffffff66,
-    0 18px 48px -20px #1016104d,
-    0 4px 14px -6px #10161026;
+    0 18px 48px -20px #0000004d,
+    0 4px 14px -6px #00000026;
   --commerce-buy: var(--palette-action);
   --commerce-buy-hover: var(--palette-action-hover);
   --nex-hairline: color-mix(in srgb, var(--color-ink) 12%, transparent);
@@ -199,7 +202,7 @@
   --popover: #ffffff;
   --popover-foreground: var(--color-ink);
   --primary: var(--visor-violet);
-  --primary-foreground: #200818;
+  --primary-foreground: #000000;
   --secondary: color-mix(in srgb, var(--visor-lilac) 10%, var(--color-canvas));
   --secondary-foreground: var(--color-ink);
   --muted: color-mix(in srgb, var(--visor-plum) 7%, var(--color-canvas));
@@ -245,14 +248,14 @@
   --brand-choice-rgb: 255, 255, 255;
   --brand-secondary-rgb: 255, 255, 255;
   --action-gradient: var(--gradient-brand);
-  --action-glass-background: linear-gradient(125deg, #ffffff14, #ffffff04 70%), rgb(13 18 13 / 50%);
+  --action-glass-background: linear-gradient(125deg, #ffffff14, #ffffff04 70%), rgb(0 0 0 / 50%);
   --action-glass-border: rgb(255 255 255 / 20%);
   --metallic-veil: linear-gradient(110deg, var(--palette-action), var(--palette-action-hover));
   --metallic-static-base: var(--visor-gradient);
   --metallic-static-veil: var(--action-gradient);
-  --metallic-inner-shadow: #10161055;
+  --metallic-inner-shadow: #00000055;
   --header-brand: var(--palette-ink);
-  --header-glass-background: linear-gradient(125deg, #ffffff0f, transparent 52%), rgb(20 20 22 / 88%);
+  --header-glass-background: linear-gradient(125deg, #ffffff0f, transparent 52%), rgb(0 0 0 / 88%);
   --header-glass-border: rgb(248 247 248 / 18%);
   --header-glass-filter: blur(8px) saturate(110%);
   --header-glass-shadow:
@@ -260,16 +263,16 @@
     inset 0 -1px 0 #ffffff16,
     inset 1px 0 0 #ffffff12,
     0 20px 56px -20px #000000b3,
-    0 4px 18px -8px #10161080;
+    0 4px 18px -8px #00000080;
   /* Reusable dark glass: one blurred layer per surface, never over the artwork. */
-  --glass-panel: linear-gradient(160deg, rgb(255 255 255 / 5%), transparent 44%), rgb(25 24 28 / 76%);
-  --glass-control: linear-gradient(155deg, rgb(255 255 255 / 7%), transparent 55%), rgb(25 24 28 / 82%);
+  --glass-panel: linear-gradient(160deg, rgb(255 255 255 / 5%), transparent 44%), rgb(0 0 0 / 76%);
+  --glass-control: linear-gradient(155deg, rgb(255 255 255 / 7%), transparent 55%), rgb(0 0 0 / 82%);
   --glass-line: rgb(255 255 255 / 20%);
   --glass-line-hover: rgb(255 255 255 / 36%);
   --glass-shadow: inset 0 1px 0 rgb(247 250 246 / 17%), 0 12px 30px -23px rgb(0 0 0 / 90%);
   --glass-filter: blur(10px) saturate(125%);
   --glass-solid: var(--bg-elevated);
-  --cta-volume: inset 0 1px 0 rgb(255 255 255 / 30%), inset 0 -2px 0 rgb(5 6 6 / 30%), 0 8px 20px -14px var(--lime-glow);
+  --cta-volume: inset 0 1px 0 rgb(255 255 255 / 30%), inset 0 -2px 0 rgb(0 0 0 / 30%), 0 8px 20px -14px var(--lime-glow);
   --commerce-buy: var(--palette-action);
   --commerce-buy-hover: var(--palette-action-hover);
   --nex-gradient-accent: var(--visor-gradient);
@@ -1089,7 +1092,7 @@ select.field-input option {
   --landing-accent: var(--display-rose);
   --landing-edge-tint: #ffffff25;
 }
-.dark .landing-page { --landing-accent: var(--palette-ink); --landing-edge-tint: #09090b25; --gradient-heading: linear-gradient(105deg, #ffffff, #d9d8dc); background-color: var(--bg-base); }
+.dark .landing-page { --landing-accent: var(--palette-ink); --landing-edge-tint: #00000025; --gradient-heading: linear-gradient(105deg, #ffffff, #d9d8dc); background-color: var(--bg-base); }
 .landing-page :where(h1, h2, h3), .service-page :where(h1, h2, h3) { font-family: var(--font-display); text-wrap: balance; overflow-wrap: break-word; }
 /* One continuous ramp across each marketing title, even when the text wraps. */
 :is(.landing-page, .service-page) :is(h1, h2):not([data-blur-reveal]):not(.sr-only) {
@@ -1130,7 +1133,7 @@ select.field-input option {
 /* The two Oceanic Shimmer surfaces have local contrast tokens in either theme. */
 .oceanic-surface {
   --color-canvas: #ffffff;
-  --color-ink: #111411;
+  --color-ink: #000000;
   --text-secondary: #52604d;
   --text-tertiary: #65715e;
   --display-rose: var(--visor-violet);
@@ -1203,7 +1206,7 @@ select.field-input option {
 .hero-coordinate { position: absolute; right: 40px; bottom: 40px; font: 11px var(--font-mono); letter-spacing: 0.12em; color: var(--muted-foreground); writing-mode: vertical-rl; }
 .landing-hero .tech-badge { padding: 0; border: none; background: none; color: var(--muted-foreground); letter-spacing: 0.1em; }
 .landing-hero .tech-badge-dot { background: var(--display-rose); box-shadow: 0 0 8px color-mix(in srgb, var(--display-rose) 30%, transparent); border-radius: 1px; }
-.intro-flow { opacity: 0.65; mask-image: radial-gradient(ellipse at center, #0003 18%, black 78%); }
+.intro-flow { opacity: 0.65; mask-image: radial-gradient(ellipse at center, #00000033 18%, black 78%); }
 .intro-accent, .intro-brand-name { background: var(--visor-text-gradient); background-clip: text; -webkit-background-clip: text; color: transparent; }
 .intro-copy { text-align: center; }
 .intro-brand { display: inline-flex; gap: 8px; align-items: flex-start; margin-bottom: 32px; font-family: var(--font-display); font-size: clamp(32px, 3.4vw, 48px); font-weight: 700; letter-spacing: -0.05em; }
@@ -1214,7 +1217,7 @@ select.field-input option {
 /* Waves entry: the header wordmark, with a scroll-driven portal reveal.
    Native dialog occupies the top layer; no additional z-index scale is needed. */
 .waves-entry {
-  --entry-ink: #000;
+  --entry-ink: #000000;
   --entry-background: linear-gradient(155deg, #ffffff 0%, #fdf5fa 40%, #ffe0f0 72%, #ffc8e4 100%);
   --color-canvas: #ffffff;
   --color-ink: var(--entry-ink);
@@ -1240,8 +1243,8 @@ select.field-input option {
 }
 .dark .waves-entry {
   --entry-ink: #f7faf6;
-  --entry-background: #000;
-  --color-canvas: #000;
+  --entry-background: #000000;
+  --color-canvas: #000000;
   --star-shadow: #f7faf6;
   --star-color: #ffffff;
   color-scheme: dark;
@@ -1286,7 +1289,7 @@ html:not(.dark) .waves-entry-stars { opacity: 0.28; }
   pointer-events: none;
   background: radial-gradient(ellipse at 50% 52%, #ffffff50 0%, #ffffff18 38%, #ffffff00 74%);
 }
-.dark .waves-entry-scrim { background: radial-gradient(ellipse at 50% 52%, #000c 0%, #0009 38%, transparent 74%); }
+.dark .waves-entry-scrim { background: radial-gradient(ellipse at 50% 52%, #000000cc 0%, #00000099 38%, transparent 74%); }
 .waves-entry-content {
   position: relative;
   display: flex;
@@ -1369,7 +1372,7 @@ html:not(.dark) .waves-entry-stars { opacity: 0.28; }
   radial-gradient(ellipse 26% 45% at 27% 65%, #ffffff3b 46%, #ffffff1b 67%, transparent 86%),
   radial-gradient(ellipse 30% 63% at 49% 47%, #ffffff40 40%, #ffffff18 65%, transparent 84%),
   radial-gradient(ellipse 25% 47% at 73% 66%, #ffffff2d 44%, #ffffff0f 66%, transparent 86%),
-  radial-gradient(ellipse 63% 25% at 50% 79%, #1016104d 40%, transparent 82%);
+  radial-gradient(ellipse 63% 25% at 50% 79%, #0000004d 40%, transparent 82%);
 }
 .sky-cloud-one { top: 5%; left: -18%; width: 85%; height: 40%; transform: rotate(-8deg); }
 .sky-cloud-two { right: -20%; bottom: 2%; width: 80%; height: 40%; transform: rotate(7deg); opacity: 0.85; }
@@ -1488,7 +1491,7 @@ html:not(.dark) .waves-entry-instruction { width: fit-content; margin-inline: au
   html:not(.dark) .topography-glass { background: Canvas; border-color: CanvasText; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none; }
   .waves-entry-reading-glass { display: none; }
 }
-.hero-veil { display: none; position: absolute; inset: 0; pointer-events: none; mask-image: linear-gradient(90deg, transparent, #0006 45%, black); }
+.hero-veil { display: none; position: absolute; inset: 0; pointer-events: none; mask-image: linear-gradient(90deg, transparent, #00000066 45%, black); }
 .dark .hero-veil { display: block; opacity: 0.22; }
 .hero-veil canvas { width: 100%; height: 100%; display: block; }
 .dialog-stars { display: none; position: absolute; inset: 0; overflow: hidden; pointer-events: none; opacity: 0.22; }
@@ -1570,9 +1573,9 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
 .landing-page .hero-heading [data-typing-word] .cursor { -webkit-text-fill-color: initial; }
 /* White highlights stay readable on the hero's dark background. */
 .hero-heading [data-accent-word] [data-blur-letter] { color: var(--heading-letter-color); }
-.background-paths { position: absolute; inset: 0; overflow: hidden; pointer-events: none; opacity: .55; mask-image: linear-gradient(90deg, transparent 12%, #000 65%); }
+.background-paths { position: absolute; inset: 0; overflow: hidden; pointer-events: none; opacity: .55; mask-image: linear-gradient(90deg, transparent 12%, #000000 65%); }
 .background-paths svg { width: 100%; height: 100%; }
-.landing-hero .background-paths { opacity: .3; mask-image: linear-gradient(to bottom, #000, #0006 24%, transparent 48%); }
+.landing-hero .background-paths { opacity: .3; mask-image: linear-gradient(to bottom, #000000, #00000066 24%, transparent 48%); }
 :is(.landing-page, .service-page) :is(.primary-action, .btn-primary-nex) { background: var(--palette-cta); color: var(--palette-cta-ink); border-color: var(--palette-cta); box-shadow: var(--cta-volume); }
 :is(.landing-page, .service-page) :is(.primary-action, .btn-primary-nex)::before { display: none; }
 :is(.landing-page, .service-page) :is(.primary-action, .btn-primary-nex):is(:hover, :focus-visible):not(:disabled):not([aria-disabled='true']) { background: var(--palette-cta-hover); color: var(--palette-cta-ink); border-color: var(--palette-cta-hover); box-shadow: var(--glow-lime); }
@@ -1634,11 +1637,12 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
 /* Round only the top of a dark chapter immediately following a light one. */
 .landing-page { --dark-section-radius: 32px; --hero-handoff-surface: #f5f3f1; background: #f8f8fa; }
 .landing-page [data-home-experience='real-estate-video'] + [data-home-experience='plate-management'],
-.landing-page [data-home-experience='easychat'] + [data-home-experience='process'] {
+.landing-page [data-home-experience='process'] {
   border-radius: var(--dark-section-radius) var(--dark-section-radius) 0 0;
   overflow: clip;
 }
 .landing-page .about-surface-frame { background: #f8f8fa; }
+.landing-page .chapter-surface-frame { display: flow-root; background: #f8f8fa; }
 .landing-page #faq + #cta-final {
   border-radius: var(--dark-section-radius);
   overflow: clip;
@@ -1665,4 +1669,23 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
 @media (min-width: 768px) and (max-width: 1099px) { .landing-hero .hero-heading { font-size: clamp(38px, 6vw, 60px); } }
 @media (max-width: 767px) { .landing-hero .hero-container { padding-top: 112px; gap: 36px; } .landing-hero .hero-heading { font-size: clamp(34px, 8.7vw, 54px); } .landing-hero .hero-eyebrow { font-size: 9px; gap: 8px; margin-bottom: 20px; } .landing-hero .hero-actions { width: 100%; } .landing-hero .hero-actions > :first-child { min-width: 0; width: 100%; } }
 
-.business-examples-disclosure { background: #f5f3f1; color: #19171c; }.business-examples-disclosure > summary { width: min(100% - 48px, 1180px); margin: auto; padding: 24px 0; min-height: 44px; cursor: pointer; font-size: 15px; }.business-examples-disclosure > summary:focus-visible { outline: 3px solid #89325d; outline-offset: 4px; }
+.business-examples-disclosure { background: #f5f3f1; color: #000000; }.business-examples-disclosure > summary { width: min(100% - 48px, 1180px); margin: auto; padding: 24px 0; min-height: 44px; cursor: pointer; font-size: 15px; }.business-examples-disclosure > summary:focus-visible { outline: 3px solid #89325d; outline-offset: 4px; }
+
+/* Presentation headings share their content's centre axis; UI fields keep their own layout. */
+.landing-page #main-content :is(h2, h3):not(dialog *) { margin-inline: auto; text-align: center; text-wrap: balance; }
+.landing-page #main-content :is(h2, h3):not(dialog *) + p { margin-inline: auto; text-align: center; }
+.landing-hero .hero-copy { display: flex; flex-direction: column; align-items: center; }
+.landing-hero .hero-heading { width: 100%; }
+.landing-hero .hero-description { width: min(100%, 50ch); }
+.landing-hero .hero-actions { width: 100%; max-width: 640px; justify-content: center; align-items: center; }
+.landing-hero .hero-actions > * { flex: 0 1 auto; }
+.landing-hero .hero-heading [data-typing-word] > span:first-child { position: relative; }
+@media (max-width: 767px) {
+  .landing-hero .hero-actions { width: min(100%, 380px); align-items: center; }
+  .landing-hero .hero-actions > :first-child { width: 100%; }
+}
+/* Clipping must not create a nested scroller that can shift the hero on focus. */
+.landing-hero { overflow: clip; }
+
+/* OLED: dark surfaces stay pure black; borders retain separation. */
+.dark { --header-glass-background: #000000; --header-glass-filter: none; --glass-panel: #000000; --glass-control: #000000; --action-glass-background: #000000; }

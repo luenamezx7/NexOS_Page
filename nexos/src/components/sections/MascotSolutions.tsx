@@ -7,10 +7,10 @@ import styles from './MascotSolutions.module.css';
 import { useLocale } from '@/lib/locale';
 
 const SUPPORT_CARDS = [
-  { id: 'conversation', background: '#ff168d', ink: '#09090b', title: 'Vamos entender seu negócio.', description: 'Converse com a ezway para escolher o que faz sentido para você.' },
-  { id: 'guidance', background: '#09090b', ink: '#ffffff', title: 'Orientação para usar sua placa.', description: 'Conte com a equipe para entender o acesso pelo NFC e QR Code.' },
+  { id: 'conversation', background: '#ff168d', ink: '#000000', title: 'Vamos entender seu negócio.', description: 'Converse com a ezway para escolher o que faz sentido para você.' },
+  { id: 'guidance', background: '#000000', ink: '#ffffff', title: 'Orientação para usar sua placa.', description: 'Conte com a equipe para entender o acesso pelo NFC e QR Code.' },
   // Same green as the site's scroll progress line.
-  { id: 'destination', background: '#22c55e', ink: '#09090b', title: 'Mudou o link? Fale com a gente.', description: 'A equipe confere as opções disponíveis para o destino da sua placa.' },
+  { id: 'destination', background: '#b9ef75', ink: '#000000', title: 'Mudou o link? Fale com a gente.', description: 'A equipe confere as opções disponíveis para o destino da sua placa.' },
   { id: 'project', background: '#7c3aed', ink: '#ffffff', title: 'Dúvidas sobre o seu projeto?', description: 'Converse com a ezway para alinhar os próximos passos.' },
 ] as const;
 

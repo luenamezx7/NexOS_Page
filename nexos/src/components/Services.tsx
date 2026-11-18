@@ -2,13 +2,16 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
+import { GradientWave } from './ui/gradient-wave';
 import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
+import { isEmbeddedBrowser } from '@/lib/scroll-profile';
 import { useLocale } from '@/lib/locale';
-import { useScrollContext } from './SmoothScrollProvider';
 import { usePresentationActive } from '@/lib/use-presentation-active';
 import { motionError, recordMotion } from '@/lib/motion-diagnostics';
 import siteArtwork from '../../design-/rebrand-nexos/nfcs/CONTEXT-AI-VIDEOS/imgg1.png';
 import styles from './DigitalSolutions.module.css';
+
+const waveColors = ['#f8f8fa', '#ffe2f1', '#d1c5f1', '#ffaad8'] as const;
 
 const examples = [
   { id: 'menu', title: 'Cardápio digital', description: 'Itens e informações que o cliente pode consultar no próprio celular.', image: '/ezway-demo-cafe.jpg' },
@@ -19,9 +22,9 @@ const examples = [
 
 export function Services({ className = '', selectedUse }: { className?: string; selectedUse?: string }) {
   const { t } = useLocale();
-  const { lenis } = useScrollContext();
   const ref = useRef<HTMLElement>(null);
   const screenRef = useRef<HTMLDivElement>(null);
+  const selectExampleRef = useRef<((index: number) => void) | null>(null);
   const [active, setActive] = useState(0);
   const reducedMotion = usePrefersReducedMotion();
   const presenting = usePresentationActive();
@@ -35,11 +38,12 @@ export function Services({ className = '', selectedUse }: { className?: string; 
       root.style.removeProperty('--journey-viewport-height');
       root.style.setProperty('--journey-viewport-height', getComputedStyle(stage).height);
     };
-    if (width < 768) measure();
+    const touch = matchMedia('(pointer: coarse)').matches || isEmbeddedBrowser(navigator.userAgent);
+    if (touch) measure();
     const onResize = () => {
       if (window.innerWidth === width) return;
       width = window.innerWidth;
-      if (width < 768) measure();
+      if (touch) measure();
       else root.style.removeProperty('--journey-viewport-height');
     };
     window.addEventListener('resize', onResize);
@@ -55,70 +59,58 @@ export function Services({ className = '', selectedUse }: { className?: string; 
     recordMotion('servicesGsap', 'loading');
     let disposed = false;
     let cleanup = () => {};
-    void import('gsap/ScrollTrigger').then(({ ScrollTrigger }) => {
-      if (disposed || !ref.current) return;
+    void Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(([{ gsap }, { ScrollTrigger }]) => {
       const root = ref.current;
-      // Safari's address bar resizes the visual viewport without changing layout width.
-      ScrollTrigger.config({ ignoreMobileResize: true });
-      const count = examples.length;
-      let target = 0;
-      let position = 0;
-      let frame = 0;
-      let lastTime = 0;
+      if (disposed || !root) return;
+      gsap.registerPlugin(ScrollTrigger);
+      const stage = root.querySelector<HTMLElement>('[data-services-journey]')!;
       const slides = [...(screenRef.current?.querySelectorAll<HTMLElement>('[data-macbook-slide]') ?? [])];
+      const state = { progress: 0 };
+      let manualBoundary: number | null = null;
+      let lastActive = -1;
+      let readScrollProgress = () => state.progress;
       const paint = (progress: number) => {
-        const position = progress * (count - 1);
+        const position = progress * (examples.length - 1);
         slides.forEach((slide, index) => {
-          const delta = index - position;
-          const opacity = Math.max(0, 1 - Math.abs(delta));
-          // Crossfade only the screen; camera, chassis and crop never change.
-          slide.style.opacity = String(opacity);
-          slide.style.transform = `translate3d(${Math.max(-12, Math.min(12, delta * 12))}px, 0, 0)`;
+          slide.style.opacity = String(Math.max(0, 1 - Math.abs(index - position)));
+          slide.style.removeProperty('transform');
         });
-        const focus = Math.round(progress * (count - 1));
-        setActive(current => (focus === current ? current : focus));
+        const focus = Math.round(position);
+        if (focus !== lastActive) { lastActive = focus; setActive(focus); }
       };
-      const settle = (time: number) => {
-        const elapsed = lastTime ? Math.min(time - lastTime, 64) : 16;
-        lastTime = time;
-        position += (target - position) * (1 - Math.exp(-elapsed / 175));
-        if (Math.abs(target - position) < .0004) {
-          position = target;
-          frame = 0;
-          lastTime = 0;
-          paint(position);
-          return;
-        }
-        paint(position);
-        frame = requestAnimationFrame(settle);
+      const follow = () => {
+        const chapter = Math.round(readScrollProgress() * (examples.length - 1));
+        if (manualBoundary === chapter) return;
+        manualBoundary = null;
+        paint(state.progress);
       };
-      const follow = (progress: number) => {
-        target = progress;
-        if (!frame) frame = requestAnimationFrame(settle);
+      const context = gsap.context(() => {
+        const animation = gsap.fromTo(state, { progress: 0 }, {
+          progress: 1, ease: 'none', onUpdate: follow,
+          scrollTrigger: {
+            id: 'services-screens', trigger: root, start: 'top top',
+            end: () => `+=${Math.max(1, root.offsetHeight - stage.offsetHeight)}`,
+            scrub: .25, invalidateOnRefresh: true,
+            onRefresh: self => { state.progress = self.progress; follow(); root.dataset.artworkFocus = String(self.isActive); },
+            onToggle: self => { root.dataset.artworkFocus = String(self.isActive); },
+          },
+        });
+        readScrollProgress = () => animation.scrollTrigger?.progress ?? state.progress;
+      }, root);
+      selectExampleRef.current = index => {
+        manualBoundary = Math.round(readScrollProgress() * (examples.length - 1));
+        paint(index / (examples.length - 1));
       };
-      const trigger = ScrollTrigger.create({
-        trigger: root, start: 'top top', end: 'bottom bottom', invalidateOnRefresh: true,
-        onUpdate: self => follow(self.progress),
-        onRefresh: self => { target = position = self.progress; cancelAnimationFrame(frame); frame = 0; lastTime = 0; paint(position); root.dataset.artworkFocus = String(self.isActive); },
-        onEnter: () => { root.dataset.artworkFocus = 'true'; },
-        onEnterBack: () => { root.dataset.artworkFocus = 'true'; },
-        onLeave: () => { root.dataset.artworkFocus = 'false'; },
-        onLeaveBack: () => { root.dataset.artworkFocus = 'false'; },
-      });
-      root.dataset.artworkFocus = String(trigger.isActive);
+      paint(state.progress);
+      ScrollTrigger.refresh();
+      void document.fonts.ready.then(() => { if (!disposed) ScrollTrigger.refresh(); });
       recordMotion('servicesGsap', 'initialized');
-      const refresh = () => ScrollTrigger.refresh();
-      document.fonts.ready.then(() => { if (!disposed) refresh(); });
-      let viewportWidth = window.innerWidth;
-      const onResize = () => {
-        if (window.innerWidth === viewportWidth) return;
-        viewportWidth = window.innerWidth;
-        refresh();
+      cleanup = () => {
+        selectExampleRef.current = null;
+        context.revert();
+        slides.forEach(slide => { slide.style.removeProperty('opacity'); slide.style.removeProperty('transform'); });
+        delete root.dataset.artworkFocus;
       };
-      window.addEventListener('resize', onResize);
-      target = position = trigger.progress;
-      paint(position);
-      cleanup = () => { window.removeEventListener('resize', onResize); cancelAnimationFrame(frame); trigger.kill(); delete root.dataset.artworkFocus; };
     }).catch(error => {
       if (!disposed) recordMotion('servicesGsap', 'initialization-error', motionError(error));
     });
@@ -127,7 +119,8 @@ export function Services({ className = '', selectedUse }: { className?: string; 
 
   return <section ref={ref} id="services" aria-labelledby="services-title" className={`${styles.journey} ${className}`}>
     <div className={`${styles.stage} ${styles.fixedStage}`} data-services-journey>
-      <h2 id="services-title" className={styles.journeyTitle}>{t('Sites, cardápios e páginas para o seu negócio.')}</h2>
+      <GradientWave className={styles.waveBackground} colors={waveColors} isPlaying={!presenting} noiseSpeed={.000008} noiseFrequency={[.00015, .0006]} deform={{ incline: .12, noiseAmp: 180, noiseFlow: 3 }} />
+      <h2 data-heading-static id="services-title" className={styles.journeyTitle}>{t('Sites, cardápios e páginas para o seu negócio.')}</h2>
       <div className={styles.fixedDevice} data-macbook-chassis>
         <div className={styles.device}>
           {/* Original chassis remains fixed while the screen contents change. */}
@@ -135,7 +128,7 @@ export function Services({ className = '', selectedUse }: { className?: string; 
           <img className={styles.macbookFrame} src="/mackbook_1.svg" alt="" width={2180} height={1324} draggable={false} />
           <div ref={screenRef} className={styles.macbookScreen}>
             {examples.map((example, index) => <div key={example.id} className={styles.screenSlide} data-macbook-slide data-active={active === index} aria-hidden={active !== index}>
-              {index === 0 ? <div className={styles.menuDemo}><div className={styles.demoNav}><strong>grão & casa</strong><span>{t('Cardápio digital')}</span></div><div className={styles.menuHero}><Image src={example.image} alt="" fill sizes="(max-width: 767px) 90vw, 720px" className={styles.screenImage} /><strong>{t('Uma pausa para o seu dia.')}</strong></div><div className={styles.menuItems}><h4>{t('Cafés da casa')}</h4><p>{t('Café coado')} · {t('Cappuccino')} · {t('Espresso')}</p><span>{t('Itens e informações que o cliente pode consultar no próprio celular.')}</span></div></div> : index === 1 ? <Image src={example.image} alt={t(example.title)} fill sizes="(max-width: 767px) 90vw, 720px" quality={90} className={styles.screenImage} /> :
+              {index === 0 ? <div className={styles.menuDemo}><div className={styles.demoNav}><strong>grão & casa</strong><span>{t('Cardápio digital')}</span></div><div className={styles.menuHero}><Image src={example.image} alt="" fill sizes="(max-width: 767px) 90vw, 720px" className={styles.screenImage} /><strong>{t('Uma pausa para o seu dia.')}</strong></div><div className={styles.menuItems}><h4 data-heading-static>{t('Cafés da casa')}</h4><p>{t('Café coado')} · {t('Cappuccino')} · {t('Espresso')}</p><span>{t('Itens e informações que o cliente pode consultar no próprio celular.')}</span></div></div> : index === 1 ? <Image src={example.image} alt={t(example.title)} fill sizes="(max-width: 767px) 90vw, 720px" quality={90} className={styles.screenImage} /> :
                 <div className={`${styles.demoScreen} ${index === 3 ? styles.demoLanding : ''}`}>
                   <div className={styles.demoNav}><span>{index === 2 ? 'atelier espaço' : 'grão & casa'}</span><span>{t(index === 2 ? 'Estúdio  /  Projetos  /  Contato' : 'Cafés  /  Sobre  /  Contato')}</span></div>
                   <div className={styles.demoPhoto}><Image src={example.image} alt={t(example.title)} fill sizes="(max-width: 767px) 90vw, 720px" quality={90} className={styles.screenImage} /></div>
@@ -147,15 +140,10 @@ export function Services({ className = '', selectedUse }: { className?: string; 
         </div>
       </div>
       <div className={styles.arcBottom}>
-        <div className={styles.arcCaption} aria-live="polite"><span>{t('Exemplo ilustrativo')} {String(active + 1).padStart(2, '0')} / 04</span><h3>{t(examples[active].title)}</h3><p>{t(examples[active].description)}</p></div>
-        <div className={styles.exampleLinks}>{examples.map((example, index) => <button key={example.id} type="button" aria-label={`${t('Ver exemplo')}: ${t(example.title)}`} aria-pressed={active === index} onClick={() => {
-          const root = ref.current;
-          if (!root) return;
-          const distance = Math.max(0, root.offsetHeight - innerHeight);
+        <div className={styles.arcCaption} aria-live="polite"><span>{String(active + 1).padStart(2, '0')} / 04</span><h3 data-heading-static>{t(examples[active].title)}</h3><p>{t(examples[active].description)}</p></div>
+        <div className={styles.exampleLinks}>{examples.map((example, index) => <button key={example.id} type="button" aria-label={`${t('Ver solução')}: ${t(example.title)}`} aria-pressed={active === index} onClick={() => {
           if (reducedMotion) { setActive(index); return; }
-          const top = root.getBoundingClientRect().top + scrollY + distance * index / 3;
-          if (lenis) lenis.scrollTo(top, { duration: .65 });
-          else window.scrollTo({ top, behavior: 'smooth' });
+          selectExampleRef.current?.(index);
         }}>{index + 1}</button>)}</div>
       </div>
     </div>

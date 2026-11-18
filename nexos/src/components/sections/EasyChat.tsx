@@ -34,9 +34,9 @@ export function EasyChat() {
   return <section id="easychat" aria-labelledby="easychat-title" className={styles.section}>
     <div className={styles.container}>
       <div className={styles.top}><span>{t('Assistente administrativo com IA')}</span><GlowingBadge variant="neutral" className={styles.statusBadge} dotColor="#ff3f9f" glowColor="rgb(255 63 159 / 28%)">{t('Em desenvolvimento')}</GlowingBadge></div>
-      <PhoneScrollHero titleComponent={<div className={styles.intro}><p className={styles.name}>{easychat.name}</p><h2 id="easychat-title" className={styles.heading}>{t('Menos tarefas.')} <span className={styles.secondaryLine}><HighlightedText inView from="bottom" delay={.12}>{t('Mais tempo para o negócio.')}</HighlightedText></span></h2></div>}>
+      <PhoneScrollHero titleComponent={<div className={styles.intro}><p className={styles.name}>{easychat.name}</p><h2 data-heading-static id="easychat-title" className={styles.heading}>{t('Menos tarefas.')} <span className={styles.secondaryLine}><HighlightedText multiline inView from="bottom" delay={.12}>{t('Mais tempo para o negócio.')}</HighlightedText></span></h2></div>}>
         <figure className={styles.mockup} data-journey-visual>
-          <div ref={conversationRef} className={styles.phonePreview} role="img" aria-label={t('Prévia ilustrativa de conversa do EasyChat com documento para revisar')}>
+          <div ref={conversationRef} className={styles.phonePreview} role="img" aria-label={t('Conversa do EasyChat com documento para revisar')}>
             <Iphone15Pro className={styles.device}>
               <div className={styles.phoneScreen}>
                 <div className={styles.chatHeader}><ArrowLeft size={15} aria-hidden="true" /><span className={styles.avatar} aria-hidden="true">E</span><span className={styles.contact}><strong>EasyChat</strong><small>{t('Em desenvolvimento')}</small></span><Phone size={15} aria-hidden="true" /><MoreVertical size={16} aria-hidden="true" /></div>

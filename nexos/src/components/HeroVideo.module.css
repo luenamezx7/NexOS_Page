@@ -4,7 +4,7 @@
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
-  background: #08090b url('/media/gloved-hand-connecting-iphone-poster.jpg') 50% 50% / cover no-repeat;
+  background: #000000 url('/media/gloved-hand-connecting-iphone-poster.jpg') 50% 50% / cover no-repeat;
 }
 
 .video {
@@ -18,7 +18,7 @@
 .shade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgb(5 6 9 / 74%) 0%, rgb(5 6 9 / 82%) 48%, rgb(5 6 9 / 90%) 78%, var(--color-canvas) 100%);
+  background: linear-gradient(180deg, rgb(0 0 0 / 74%) 0%, rgb(0 0 0 / 82%) 48%, rgb(0 0 0 / 90%) 78%, var(--color-canvas) 100%);
 }
 
 .grain {
@@ -41,7 +41,7 @@
   height: 44px;
   border: 1px solid rgb(255 255 255 / 22%);
   border-radius: 50%;
-  background: rgb(8 9 11 / 75%);
+  background: rgb(0 0 0 / 75%);
   color: #fff;
   cursor: pointer;
   transition: background 160ms ease;
@@ -51,7 +51,7 @@
 
 @media (max-width: 767px) {
   .video { object-position: 52% 50%; }
-  .shade { background: linear-gradient(180deg, rgb(5 6 9 / 76%) 0%, rgb(5 6 9 / 84%) 48%, rgb(5 6 9 / 92%) 80%, var(--color-canvas) 100%); }
+  .shade { background: linear-gradient(180deg, rgb(0 0 0 / 76%) 0%, rgb(0 0 0 / 84%) 48%, rgb(0 0 0 / 92%) 80%, var(--color-canvas) 100%); }
   .control { top: 84px; right: 12px; bottom: auto; }
 }
 @media (prefers-reduced-motion: reduce) { .control { display: none; } }

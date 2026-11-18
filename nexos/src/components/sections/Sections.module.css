@@ -22,12 +22,12 @@
 .scene[data-scene="plain"] .scenery { background: radial-gradient(ellipse at 18% 8%, color-mix(in srgb, var(--visor-violet) 9%, transparent), transparent 57%); }
 :global(.dark) .scene[data-scene="plain"] .scenery { background: none; }
 .sceneContent { position: relative; }
-.contours { position: absolute; inset: 0; opacity: .42; mask-image: linear-gradient(90deg, #0009, transparent 38%, transparent 62%, #000b); }
+.contours { position: absolute; inset: 0; opacity: .42; mask-image: linear-gradient(90deg, #00000099, transparent 38%, transparent 62%, #000000bb); }
 .scene[data-scene="waves"] .scenery { background: radial-gradient(ellipse at 85% 45%, color-mix(in srgb, var(--visor-lilac) 12%, transparent), transparent 65%), radial-gradient(ellipse at 15% 70%, color-mix(in srgb, var(--visor-violet) 10%, transparent), transparent 60%); }
 :global(.dark) .scene[data-scene="waves"] .scenery { background: none; }
-.fieldImage { position: absolute; inset: -24px; background: url('/nexos-field.svg') center / cover no-repeat; opacity: .24; mask-image: linear-gradient(90deg, #0009, transparent 26%, transparent 72%, #000c); }
+.fieldImage { position: absolute; inset: -24px; background: url('/nexos-field.svg') center / cover no-repeat; opacity: .24; mask-image: linear-gradient(90deg, #00000099, transparent 26%, transparent 72%, #000000cc); }
 :global(.dark) .fieldImage { background-image: url('/nexos-field-dark.svg'); opacity: .3; }
-.scene[data-scene="product"] .fieldImage { opacity: .32; mask-image: linear-gradient(90deg, transparent, #000 12%, #000 30%, transparent 49%); }
+.scene[data-scene="product"] .fieldImage { opacity: .32; mask-image: linear-gradient(90deg, transparent, #000000 12%, #000000 30%, transparent 49%); }
 .scene[data-scene="product"] .scenery { background: radial-gradient(ellipse at 12% 22%, rgba(var(--brand-accent-rgb), .16), transparent 45%), radial-gradient(ellipse at 95% 85%, rgba(var(--brand-secondary-rgb), .1), transparent 38%); }
 :global(.dark) .scene[data-scene="product"] .scenery { background: none; }
 /* Product sections keep the same dark canvas without extra saturated halos. */
@@ -36,14 +36,14 @@
 :global(.dark) .scene[data-home-experience="nfc"] .fieldImage { display: none; }
 .section { scroll-margin-top: 100px; }
 /* Full-bleed product panel: both edges are visible against the page between sections. */
-.scene[data-home-experience='nfc'] { --section-ground: var(--bg-surface); --color-canvas: var(--bg-surface); --color-ink: var(--palette-ink); --text-secondary: var(--palette-muted); --text-tertiary: var(--palette-muted); --surface-base: var(--bg-card); --surface-raised: var(--bg-elevated); --surface-inset: var(--palette-bg); --surface-line: var(--palette-border); --detail-text: var(--palette-ink); width: calc(100% - 32px); margin: 0 auto 24px; padding-top: 24px; overflow: clip; background: transparent; color: var(--palette-ink); color-scheme: dark; border-radius: 0; }
-.scene[data-home-experience='nfc']::before { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: var(--bg-surface); mask-image: linear-gradient(to bottom, transparent 0, #000 80px, #000 calc(100% - 120px), transparent 100%); pointer-events: none; }
+.scene[data-home-experience='nfc'] { --section-ground: var(--bg-surface); --color-canvas: var(--bg-surface); --color-ink: var(--palette-ink); --text-secondary: var(--palette-muted); --text-tertiary: var(--palette-muted); --surface-base: var(--bg-card); --surface-raised: var(--bg-elevated); --surface-inset: var(--palette-bg); --surface-line: var(--palette-border); --detail-text: var(--palette-ink); width: calc(100% - 32px); margin: 0 auto 24px; padding-top: 24px; overflow: clip; background: transparent; color: var(--palette-ink); color-scheme: dark; border-radius: var(--dark-section-radius) var(--dark-section-radius) 0 0; }
+.scene[data-home-experience='nfc']::before { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: var(--bg-surface); pointer-events: none; }
 :global(.dark) .scene[data-home-experience='nfc'] { --section-ground: var(--bg-surface); }
 /* Light chapters are scoped: dark product mockups and the final CTA keep their own palette. */
 .scene:is([data-home-experience='solutions'], [data-home-experience='real-estate-video'], [data-home-experience='applications'], [data-home-experience='easychat']),
 :global(.dark) .scene:is([data-home-experience='solutions'], [data-home-experience='real-estate-video'], [data-home-experience='applications'], [data-home-experience='easychat']) {
   --section-ground: #f8f8fa;
-  --color-ink: #17171a;
+  --color-ink: #000000;
   --text-secondary: #494950;
   --text-tertiary: #626269;
   --landing-muted: #494950;
@@ -58,15 +58,15 @@
   --palette-bg: #ffffff;
   --palette-surface: #f1f1f3;
   --palette-border: #d9d9df;
-  --palette-ink: #17171a;
-  --palette-highlight: #17171a;
+  --palette-ink: #000000;
+  --palette-highlight: #000000;
   --palette-muted: #494950;
   --visor-violet: #a8175f;
   --visor-plum: #b9b9c0;
   --visor-lilac: #d9d9df;
   --detail-text: #a8175f;
   --display-rose: #a8175f;
-  --gradient-heading: linear-gradient(105deg, #17171a, #45454c);
+  --gradient-heading: linear-gradient(105deg, #000000, #45454c);
   --ring: #a8175f;
   color: var(--color-ink);
   color-scheme: light;
@@ -88,7 +88,7 @@
   color-scheme: dark;
 }
 .scene[data-home-experience='about'] .scenery { background: none; }
-@media (max-width: 767px) { .scene[data-home-experience='nfc'] { width: calc(100% - 24px); margin-bottom: 20px; padding-top: 16px; border-radius: 0; } }
+@media (max-width: 767px) { .scene[data-home-experience='nfc'] { width: calc(100% - 24px); margin-bottom: 20px; padding-top: 16px; } }
 .productBridge .container { display: flex; flex-wrap: wrap; align-items: baseline; gap: 16px 28px; padding-block: clamp(28px, 4vw, 48px) 12px; }
 .productBridge h2 { font: 700 clamp(20px, 2.8vw, 34px)/1.15 var(--font-display); letter-spacing: -.035em; }
 .productBridge h2 span { color: var(--pink-text); }
@@ -190,17 +190,17 @@
 .processFoot { display: flex; justify-content: space-between; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 24px; font: 13px/1.6 var(--font-sans); color: var(--landing-muted); }
 .processFoot a { display: inline-flex; gap: 8px; align-items: center; min-height: 44px; color: var(--color-ink); }
 .processFoot a svg, .processFoot a:is(:hover, :focus-visible) { color: var(--detail-text); }
-@media (min-width: 768px) and (min-height: 700px) and (prefers-reduced-motion: no-preference) {
-  .scene[data-home-experience='process'] .scenery { position: sticky; inset: auto 0; top: 0; height: 100svh; }
-  .scene[data-home-experience='process'] .sceneContent { margin-top: -100svh; }
-  .processContainer { min-height: 360svh; padding-block: 0; }
-  .processStage { position: sticky; top: 76px; display: flex; flex-direction: column; justify-content: center; min-height: calc(100svh - 76px); padding-block: 20px; }
-  .processStage .splitHeader { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: end; gap: 40px; margin-bottom: 0; }
-  .processStage .timeline { margin-top: 20px; }
-  .processStage .timeline li { padding-bottom: 20px; }
-  .processStage .stepMarker { margin-bottom: 20px; }
-  .processStage .timeline p { margin-top: 10px; }
-  .processStage .stepEnd { margin-top: 14px; }
+@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+  :global(html[data-scroll-layout='tall']) .scene[data-home-experience='process'] .scenery { position: sticky; inset: auto 0; top: 0; height: var(--page-viewport-height, 100svh); }
+  :global(html[data-scroll-layout='tall']) .scene[data-home-experience='process'] .sceneContent { margin-top: calc(-1 * var(--page-viewport-height, 100svh)); }
+  :global(html[data-scroll-layout='tall']) .processContainer { min-height: calc(var(--page-viewport-height, 100svh) * 3.6); padding-block: 0; }
+  :global(html[data-scroll-layout='tall']) .processStage { position: sticky; top: 76px; display: flex; flex-direction: column; justify-content: center; min-height: calc(var(--page-viewport-height, 100svh) - 76px); padding-block: 20px; }
+  :global(html[data-scroll-layout='tall']) .processStage .splitHeader { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: end; gap: 40px; margin-bottom: 0; }
+  :global(html[data-scroll-layout='tall']) .processStage .timeline { margin-top: 20px; }
+  :global(html[data-scroll-layout='tall']) .processStage .timeline li { padding-bottom: 20px; }
+  :global(html[data-scroll-layout='tall']) .processStage .stepMarker { margin-bottom: 20px; }
+  :global(html[data-scroll-layout='tall']) .processStage .timeline p { margin-top: 10px; }
+  :global(html[data-scroll-layout='tall']) .processStage .stepEnd { margin-top: 14px; }
 }
 .finalCta { position: relative; margin: 0 auto; width: min(100%, 1280px); padding: var(--section-space) 40px; }
 .brandCta { overflow: hidden; background: var(--palette-bg); color: var(--palette-ink); }
@@ -213,7 +213,7 @@
 .brandCta .ctaBottom > p { color: var(--palette-muted); }
 .brandCta .textLink { color: var(--palette-highlight); }
 /* A wide crop keeps the hands and wordmark together without vertical dead space. */
-.ctaVisual { position: relative; isolation: isolate; grid-column: 2; grid-row: 1 / span 2; width: 100%; aspect-ratio: 12 / 5; overflow: hidden; mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 92%, transparent); }
+.ctaVisual { position: relative; isolation: isolate; grid-column: 2; grid-row: 1 / span 2; width: 100%; aspect-ratio: 12 / 5; overflow: hidden; mask-image: linear-gradient(to bottom, transparent, #000000 8%, #000000 92%, transparent); }
 .ctaVisual::before { position: absolute; z-index: 1; inset: 0; background: linear-gradient(90deg, var(--palette-bg), transparent 18%, transparent 82%, var(--palette-bg)); pointer-events: none; content: ''; }
 .ctaVisual::after { position: absolute; z-index: 2; inset: 0; background: url('/media/hero-grain.png') repeat; background-size: 160px 160px; opacity: .1; mix-blend-mode: soft-light; pointer-events: none; content: ''; }
 .ctaImageMotion { position: absolute; inset: 0; }
@@ -252,7 +252,7 @@
   .brandGrid, .splitHeader, .metricsGrid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
   .heading { font-size: clamp(30px, 7.4vw, 42px); }
   .lead { font-size: 17px; margin-top: 20px; }
-  .scene[data-scene="product"] .fieldImage { inset: 0 0 auto; height: 540px; mask-image: linear-gradient(to bottom, transparent, #0009 12%, transparent 95%); }
+  .scene[data-scene="product"] .fieldImage { inset: 0 0 auto; height: 540px; mask-image: linear-gradient(to bottom, transparent, #00000099 12%, transparent 95%); }
   .connection { min-height: 250px; padding: 24px; border-radius: var(--radius-card); }
   .featureGrid { grid-template-columns: minmax(0, 1fr); margin-top: 36px; }
   .featureGrid { gap: 0; }
@@ -301,3 +301,9 @@
   .processStage { position: static; min-height: 0; }
   .processSection { min-height: 0; height: auto; }
 }
+
+/* Supporting copy follows the same centre axis as its presentation heading. */
+.splitHeader .lead { margin-inline: auto; text-align: center; }
+.processSwitch { margin-inline: auto; }
+.brandCta .ctaBottom { align-items: center; text-align: center; }
+.brandCta .ctaBottom > p { margin-inline: auto; }

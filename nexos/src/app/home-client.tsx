@@ -15,8 +15,6 @@ import { PlateManagement } from '@/components/sections/PlateManagement';
 import { HomepageJourneyMotion } from '@/components/sections/HomepageJourneyMotion';
 import BrandEntrance from '@/components/BrandEntrance';
 import { useLocale } from '@/lib/locale';
-import { TransitionGuide } from '@/components/sections/TransitionGuide';
-import { LandingPageBlur } from '@/components/sections/LandingPageBlur';
 import { RealEstateVideo } from '@/components/sections/RealEstateVideo';
 import { MotionDiagnosticsLoader } from '@/components/MotionDiagnosticsLoader';
 import { HeadingScrollMotion } from '@/components/HeadingScrollMotion';
@@ -77,7 +75,6 @@ export default function HomeClient() {
       <HomepageJourneyMotion />
       <HeadingScrollMotion />
       <MotionDiagnosticsLoader />
-      <LandingPageBlur />
       {entrance.visible && <BrandEntrance key={entrance.key} onComplete={handleEntranceComplete} />}
       <div>
          <a href="#main-content" className="skip-link">{t('Pular para o conteúdo')}</a>
@@ -91,18 +88,21 @@ export default function HomeClient() {
                <SectionBackground index={1} experience="solutions">
                   <Services selectedUse={selectedPlateUse} />
                </SectionBackground>
-               <TransitionGuide text={t('Da presença digital ao próximo contato')} afterProduct />
+               <div className="chapter-surface-frame">
                <SectionBackground index={0} scene="product" experience="nfc">
                   <HeroBrandStrip />
                   <PlacaNFCSection onSelectUse={setSelectedPlateUse} />
+                  <PlateManagement />
                </SectionBackground>
+               </div>
                <SectionBackground index={1} experience="real-estate-video"><RealEstateVideo videoSrc="/media/gloved-hand-connecting-iphone.mp4" posterSrc="/media/gloved-hand-connecting-iphone-poster.jpg" /></SectionBackground>
-               <SectionBackground index={2} experience="plate-management"><PlateManagement /></SectionBackground>
 
-             <details className="business-examples-disclosure"><summary>{t('Ver exemplos por tipo de negócio')}</summary><BusinessExamples /></details>
+             <details className="business-examples-disclosure"><summary>{t('Soluções para cada negócio')}</summary><BusinessExamples /></details>
+             <div className="chapter-surface-frame">
              <SectionBackground index={4} scene="waves" experience="process">
                <DeliveryProcess />
              </SectionBackground>
+             </div>
              <SectionBackground index={5} experience="applications">
                <MascotSolutions />
              </SectionBackground>

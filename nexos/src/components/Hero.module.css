@@ -18,7 +18,7 @@
   height: 350px;
   overflow: hidden;
   /* The shared foreground fade handles the waist; this only hides the crop. */
-  mask-image: linear-gradient(to bottom, #000 80%, rgb(0 0 0 / .9) 88%, transparent 98%);
+  mask-image: linear-gradient(to bottom, #000000 80%, rgb(0 0 0 / .9) 88%, transparent 98%);
   z-index: 1;
   transform: translateX(-12px);
   pointer-events: none;

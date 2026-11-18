@@ -20,16 +20,20 @@ Preencha as variáveis necessárias em `.env.local`, sem versionar credenciais.
 
 ## Cursor, Orca e publicação
 
-Os dois editores usam a mesma pasta `nexos` do checkout da branch `main` e o mesmo
+Os dois editores usam a mesma pasta `nexos` do checkout principal e o mesmo
 local em **http://localhost:3000**. No computador atual, a pasta compartilhada é
 `/Users/henriqueemanuel/Desktop/projetos/PROJETO - TTR/NexOS/NexOS/nexos`.
 No Orca, selecione o workspace **NexOS · compartilhado Cursor + Orca**.
 As worktrees antigas ficam preservadas como histórico; não edite nelas o site principal.
 
-`npm run dev` encontra o checkout da `main`, usa suas dependências, seus arquivos
+`npm run dev` encontra o checkout principal, independentemente da branch ativa,
+e usa suas dependências, seus arquivos
 de ambiente e sua cache de desenvolvimento. A porta é explícita: se já estiver
 ocupada, use o servidor existente ou pare-o antes de reiniciar; não abra outro na 3001.
 As URLs de autenticação locais usam `http://localhost:3000`.
+Refatorações usam uma branch de trabalho nesse checkout compartilhado; produção
+continua acompanhando a `main`. O plano e o progresso do design estão em
+[documento mestre](docs/design/PLANO-MESTRE-REFATORACAO-DESIGN.md).
 
 Produção usa o projeto Vercel **nex-os2/nexos**, raiz **nexos/**, conectado ao
 GitHub **luenamezx7/NexOS_Page**, branch de produção **main**.

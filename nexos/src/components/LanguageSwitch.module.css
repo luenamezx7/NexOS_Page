@@ -2,7 +2,7 @@
 .switch:hover { border-color: var(--detail-accent); }
 .switch:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
 .flag { display: block; width: 22px; height: 16px; flex: none; border-radius: 2px; object-fit: cover; }
-.menu { width: 172px; padding: 5px; border: 1px solid var(--border); background: var(--popover); color: var(--popover-foreground); font-family: var(--font-sans); box-shadow: 0 20px 60px -24px #0009; }
+.menu { width: 172px; padding: 5px; border: 1px solid var(--border); background: var(--popover); color: var(--popover-foreground); font-family: var(--font-sans); box-shadow: 0 20px 60px -24px #00000099; }
 .option { display: flex; gap: 10px; min-height: 44px; padding-inline: 10px; cursor: pointer; }
 .option[data-highlighted] { background: var(--detail-accent); color: var(--detail-ink); }
 .check { margin-left: auto; }

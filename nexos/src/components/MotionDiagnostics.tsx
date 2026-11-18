@@ -12,7 +12,7 @@ function snapshot() {
   const observed = readMotionObservations();
   return {
     schemaVersion: 2,
-    motionPolicy: { effectiveMotion: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'reduced' : 'full', reason: 'system-preference', automaticQualityReduction: false },
+    motionPolicy: { effectiveMotion: 'full', reason: 'product-full-motion', automaticQualityReduction: false },
     build: process.env.NEXT_PUBLIC_MOTION_BUILD || 'local',
     capturedAt: new Date().toISOString(),
     environment: {

@@ -14,6 +14,7 @@ import { useSectionScroll } from './SmoothScrollProvider';
 import { useLocale } from '@/lib/locale';
 import Image from 'next/image';
 import styles from './Hero.module.css';
+import { useHeroChoreography } from './use-hero-choreography';
 
 const subscribeHydration = () => () => {};
 const heroWords = {
@@ -31,6 +32,7 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
   const revealing = usePresentationRevealing();
   const showHero = !entryOpen || revealing;
   const sectionRef = useRef<HTMLElement>(null);
+  useHeroChoreography(sectionRef, showHero);
   useImperativeHandle(ref, () => sectionRef.current!);
   useEffect(() => {
     const hero = sectionRef.current;
@@ -59,21 +61,21 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
       <HeroVideo active={showHero} />
       <motion.div className="hero-container" data-hero-scroll>
         <div className="hero-copy">
-           <p className="hero-eyebrow"><span aria-hidden="true" /> {t('GESTÃO · ATENDIMENTO · PRESENÇA DIGITAL')}</p>
-             <h1 id="hero-title" data-heading-static className="hero-heading" aria-label={`${heroSentence[locale][0]} ${heroWords[locale][0]} ${heroSentence[locale][1]}`}>
+           <p className="hero-eyebrow" data-hero-enter><span aria-hidden="true" /> {t('GESTÃO · ATENDIMENTO · PRESENÇA DIGITAL')}</p>
+             <h1 id="hero-title" data-heading-static data-hero-enter className="hero-heading" aria-label={`${heroSentence[locale][0]} ${heroWords[locale][0]} ${heroSentence[locale][1]}`}>
                <span className="hero-title-line" aria-hidden="true">{heroSentence[locale][0]}</span>
                <TextType key={locale} text={heroWords[locale]} />
                <span className="hero-title-line" aria-hidden="true">{heroSentence[locale][1]}</span>
              </h1>
-             <p className="hero-description">{t('Organize clientes, acompanhe vendas e cuide do financeiro. Da gestão à presença digital, encontre o próximo passo do seu negócio.')}</p>
-           <div className="hero-actions">
+             <p className="hero-description" data-hero-enter>{t('Organize clientes, acompanhe vendas e cuide do financeiro. Da gestão à presença digital, encontre o próximo passo do seu negócio.')}</p>
+           <div className="hero-actions" data-hero-enter>
               <ButtonWithIcon href={commercialHref(t(diagnosticMessage))} target="_blank" rel="noopener noreferrer" data-cta-section="hero" data-cta-solution="diagnostico">{t('Conversar sobre meu negócio')}</ButtonWithIcon>
               <a className="hero-secondary-action" href="#ecossistema" onClick={event => { event.preventDefault(); scrollToSection('#ecossistema'); }}>{t('Conhecer as soluções')}</a>
            </div>
         </div>
-        <div className={styles.managementScene}>
-          <div className={styles.presenterFrame}>
-          <div className={styles.avatarFrame} aria-hidden="true">
+        <div className={styles.managementScene} data-avatar-scene>
+          <div className={styles.presenterFrame} data-avatar-stage>
+          <div className={styles.avatarFrame} aria-hidden="true" data-avatar-figure>
             <Image
             className={styles.avatar}
             src="/images/avatars/Avatar_presenting_in_white_outfit_5cbe3a87_2K.png"

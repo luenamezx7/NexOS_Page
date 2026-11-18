@@ -17,7 +17,7 @@
 }
 .gradient-overlay::before {
   content: ''; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-  width: calc(100% - 2px); height: calc(100% - 2px); border-radius: inherit; background-color: #120F17; z-index: -1;
+  width: calc(100% - 2px); height: calc(100% - 2px); border-radius: inherit; background-color: #000000; z-index: -1;
 }
 .text-content {
   display: inline-block; position: relative; z-index: 2;

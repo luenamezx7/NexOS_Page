@@ -1,5 +1,7 @@
-.root { display: inline-block; position: relative; min-height: 1em; min-width: 11ch; text-align: center; white-space: nowrap; vertical-align: baseline; }
+.root { display: inline-block; position: relative; min-height: 1lh; min-width: 11ch; text-align: center; white-space: nowrap; vertical-align: baseline; }
+/* Keep a line box even while the typewriter has deleted every character. */
+.word::before { content: "\200b"; }
 .word { background: var(--gradient-heading); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
-.cursor { display: inline-block; width: max(2px, .035em); height: .8em; margin-left: .06em; vertical-align: -.06em; border-radius: 2px; background: var(--lime-400); }
-@media (max-width: 767px) { .root { display: block; width: max-content; max-width: 100%; min-width: 0; text-align: left; font-size: inherit; } }
+.cursor { position: absolute; display: inline-block; width: max(2px, .035em); height: .8em; margin-left: .06em; vertical-align: -.06em; border-radius: 2px; background: var(--lime-400); }
+@media (max-width: 767px) { .root { display: block; width: max-content; max-width: 100%; min-width: 0; text-align: center; font-size: inherit; } }
 @media (forced-colors: active) { .word { background: none; color: CanvasText; -webkit-text-fill-color: CanvasText; } .cursor { background: CanvasText; } }

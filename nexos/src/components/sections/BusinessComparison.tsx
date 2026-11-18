@@ -18,6 +18,6 @@ export function BusinessComparison() {
     <header><Image src="/logo-ghost.svg" unoptimized style={{ filter: 'invert(1)' }} alt="" width={80} height={80} /><div><p>{t('DA ROTINA ESPALHADA AO PRÓXIMO PASSO')}</p><h2 data-heading-static id="comparison-title">{t('Menos caminhos perdidos. Mais clareza para agir.')}</h2></div></header>
     <div className={styles.labels} aria-hidden="true"><span>{t('Sem EZWAY')}</span><span>{t('Com EZWAY')}</span></div>
     <ul>{pairs.map(([before, after, mechanism]) => <li key={before}><div className={styles.before}><span>{t('Sem EZWAY')}</span><h3 data-heading-static>{t(before)}</h3></div><div className={styles.after}><span>{t('Com EZWAY')}</span><h3 data-heading-static>{t(after)}</h3><p>{t(mechanism)}</p></div></li>)}</ul>
-    <p className={styles.note}>{t('Cenários ilustrativos. Cada mudança depende da solução escolhida e do escopo definido; não representa resultado garantido nem integração automática.')}</p>
+    <p className={styles.note}>{t('Cada mudança depende da solução escolhida e do escopo definido; não representa resultado garantido nem integração automática.')}</p>
   </div></section>;
 }

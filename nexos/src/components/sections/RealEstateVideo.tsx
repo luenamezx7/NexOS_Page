@@ -43,11 +43,11 @@ export function RealEstateVideo({ videoSrc, posterSrc = "/ezway-demo-studio.jpg"
       <p className={styles.description}>{t('Vídeos profissionais e imersivos com IA.')}</p>
       <div className={styles.posterWrap} data-video={Boolean(videoSrc)}>
         <div className={styles.poster}>
-          {videoSrc ? <video ref={videoRef} src={videoSrc} poster={posterSrc} muted playsInline loop controls preload="metadata" aria-label={t('Vídeo demonstrativo da ezway')} /> :
-            <Image src="/ezway-demo-studio.jpg" alt={t('Imagem ilustrativa de um ambiente interno, não uma prévia de vídeo produzido pela ezway')} fill sizes="(max-width: 767px) 100vw, 1080px" className={styles.image} />}
+          {videoSrc ? <video ref={videoRef} src={videoSrc} poster={posterSrc} muted playsInline loop controls preload="metadata" aria-label={t('Vídeo da ezway')} /> :
+            <Image src="/ezway-demo-studio.jpg" alt={t('Ambiente interno com arquitetura e decoração contemporâneas')} fill sizes="(max-width: 767px) 100vw, 1080px" className={styles.image} />}
         </div>
       </div>
-      {!videoSrc && <p className={styles.disclaimer}>{t('Imagem ilustrativa. Vídeo demonstrativo em preparação.')}</p>}
+      {!videoSrc && <p className={styles.disclaimer}>{t('Vídeo em preparação.')}</p>}
     </div>
   </section>;
 }

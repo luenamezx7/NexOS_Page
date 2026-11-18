@@ -6,7 +6,7 @@ import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
 
-test('configured CSS pipeline preserves motion preferences, responsive rules and forced colors', async () => {
+test('configured CSS pipeline keeps motion enabled and preserves responsive rules and forced colors', async () => {
   const plugins = Object.entries(config.plugins).map(([name, options]) => require(name)(options));
   const result = await postcss(plugins).process(`
     @media (max-width: 767px) { .card { width: 100%; } }
@@ -20,9 +20,9 @@ test('configured CSS pipeline preserves motion preferences, responsive rules and
   root.walkAtRules('media', rule => media.push(rule.params));
   assert.ok(media.includes('(max-width: 767px)'));
   assert.ok(media.includes('(forced-colors: active)'));
-  assert.ok(media.includes('(prefers-reduced-motion: reduce)'));
-  assert.ok(media.includes('(min-width: 768px) and (prefers-reduced-motion: no-preference)'));
-  assert.match(result.css, /animation: none/);
-  assert.match(result.css, /transform: none/);
+  assert.ok(media.every(query => !query.includes('prefers-reduced-motion')));
+  assert.ok(media.includes('(min-width: 768px)'));
+  assert.doesNotMatch(result.css, /animation: none/);
+  assert.doesNotMatch(result.css, /transform: none/);
   assert.match(result.css, /animation: drift 4s infinite/);
 });

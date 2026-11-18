@@ -11,11 +11,11 @@
 .website { display: flex; flex-direction: column; min-width: 0; border-radius: 16px; overflow: hidden; background: var(--surface-base); border: 1px solid var(--border); }
 .demoLabel { display: flex; align-items: center; gap: 8px; padding: 20px 24px; font: 13px/1.5 var(--font-sans); color: var(--text-tertiary); }
 .demoLabel svg { color: var(--detail-text); }
-.sitePreview { position: relative; min-height: 250px; flex: 1; margin: 0 24px; overflow: hidden; background: #000; color: #f9f3fa; border-radius: 10px; }
+.sitePreview { position: relative; min-height: 250px; flex: 1; margin: 0 24px; overflow: hidden; background: #000000; color: #f9f3fa; border-radius: 10px; }
 .previewNav { position: relative; z-index: 1; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px 12px; padding: 24px; font-size: 13px; }
 .previewNav > span:last-child { color: #bcb0c8; }
 .siteImage { width: 100%; height: 100%; position: absolute; inset: 0; object-fit: cover; opacity: .65; }
-.sitePreview::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, #000, transparent 85%); }
+.sitePreview::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, #000000, transparent 85%); }
 .sitePreview > p { position: relative; z-index: 1; padding: 115px 24px 32px; font: 600 clamp(32px, 3.4vw, 48px)/1.08 var(--font-display); letter-spacing: -.04em; color: #f4f8ff; }
 .serviceCaption { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px; padding: 24px; align-items: center; }
 .serviceCaption h3, .menuCopy h3 { font-size: 21px; font-weight: 600; letter-spacing: -.025em; }
@@ -33,9 +33,9 @@
 .menuCopy > a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 14px; margin-block: 16px; }
 .menuCopy > a svg { color: var(--detail-text); }
 .menuCopy small { color: var(--text-tertiary); font-size: 13px; line-height: 1.6; }
-.menuPreview { border-radius: 20px; padding: 24px 16px 16px; min-width: 0; background: #f5f7f3; color: #111411; box-shadow: 0 20px 40px -30px #0009; border: 4px solid #202420; }
+.menuPreview { border-radius: 20px; padding: 24px 16px 16px; min-width: 0; background: #f5f7f3; color: #000000; box-shadow: 0 20px 40px -30px #00000099; border: 4px solid #000000; }
 .menuPreview > span { font-size: 13px; color: #52604d; }
-.menuPreview > p { font: 600 24px/1.15 var(--font-display); letter-spacing: -.04em; margin-block: 16px; color: #111411; }
+.menuPreview > p { font: 600 24px/1.15 var(--font-display); letter-spacing: -.04em; margin-block: 16px; color: #000000; }
 .categories { display: flex; flex-wrap: wrap; gap: 6px; }
 .categories button { display: grid; place-items: center; min-height: 44px; padding-inline: 8px; font-size: 13px; border-radius: 6px; }
 .categories button[aria-pressed='true'] { background: var(--detail-accent); color: var(--detail-ink); }
@@ -64,7 +64,7 @@
 /* Four illustrated digital solutions travel on the Warp Carousel ring, reversibly. */
 .journey { position: relative; scroll-margin-top: 100px; }
 /* The stage keeps the sticky position: the ring root only sets the surface. */
-.journey .stage { position: sticky; top: 0; width: calc(100% - 32px); height: var(--journey-viewport-height, 100svh); min-height: 500px; margin-inline: auto; overflow: hidden; border-radius: 32px; }
+.journey .stage { position: sticky; top: 0; width: calc(100% - 32px); height: var(--journey-viewport-height, 100svh); min-height: min(500px, 100svh); margin-inline: auto; overflow: clip; border-radius: 32px; }
 .journeyTitle { position: absolute; top: clamp(96px, 11svh, 116px); left: 50%; z-index: 20; width: min(24ch, calc(100% - 40px)); transform: translateX(-50%); color: var(--color-ink); font: 650 clamp(28px, 4vw, 50px)/1.12 var(--font-display); letter-spacing: -.04em; text-align: center; text-wrap: balance; }
 .deviceSlot { position: absolute; left: 50%; top: 46%; width: min(650px, 58vw); transform-origin: center; pointer-events: none; will-change: transform, opacity; }
 .deviceSlot::before { content: ''; position: absolute; inset: 4% 6% 18%; z-index: -1; pointer-events: none; border-radius: 40%; background: radial-gradient(ellipse, rgb(231 160 204 / 17%), transparent 71%); opacity: 0; transition: opacity 300ms ease; }
@@ -73,9 +73,9 @@
 .device::after { content: ''; position: absolute; inset: 2% 4% 10%; pointer-events: none; border-radius: 12px; background: linear-gradient(100deg, transparent 25%, rgb(255 255 255 / 8%) 49%, transparent 69%); opacity: .55; }
 .macbookFrame { display: block; width: 100%; height: auto; }
 .macbookScreen { position: absolute; inset: calc(3.474% - 1px) calc(10.0917% - 1px) calc(11.255% - 1px); border-radius: 5px 5px 0 0; overflow: hidden; background: #f7f5f0; isolation: isolate; }
-.notch { position: absolute; top: 0; left: 50%; z-index: 3; width: 13.45%; height: 3.45%; border-radius: 0 0 6px 6px; background: #000; transform: translateX(-50%); }
+.notch { position: absolute; top: 0; left: 50%; z-index: 3; width: 13.45%; height: 3.45%; border-radius: 0 0 6px 6px; background: #000000; transform: translateX(-50%); }
 .screenImage { object-fit: cover; object-position: top center; }
-.demoScreen { height: 100%; background: #f6f4ee; color: #202721; font-family: var(--font-sans); }
+.demoScreen { height: 100%; background: #f6f4ee; color: #000000; font-family: var(--font-sans); }
 .demoNav { display: flex; align-items: center; justify-content: space-between; gap: 10px; height: 12%; padding-inline: 4%; font-size: clamp(8px, 1.05vw, 14px); }
 .demoNav span:first-child { font-weight: 800; font-size: 1.35em; }
 .demoPhoto { position: relative; height: 61%; overflow: hidden; }
@@ -92,7 +92,7 @@
 .steps { margin-top: calc(-1 * var(--journey-viewport-height, 100svh)); pointer-events: none; }
 .steps > div { height: var(--journey-viewport-height, 100svh); }
 @media (max-width: 767px) {
-  .journey .stage { width: calc(100% - 24px); min-height: 530px; border-radius: 24px; }
+  .journey .stage { width: calc(100% - 24px); min-height: min(530px, 100svh); border-radius: 24px; }
   .deviceSlot { will-change: auto; }
   .journeyTitle { top: 100px; font-size: clamp(25px, 7vw, 36px); }
   .deviceSlot { width: min(600px, 94vw); top: 45%; }
@@ -118,16 +118,39 @@
 .screenSlide:first-child { opacity: 1; }
 .exampleLinks { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
 .exampleLinks button { width: 44px; height: 44px; border: 1px solid var(--surface-line); border-radius: 50%; }
-.exampleLinks button[aria-pressed='true'] { background: var(--palette-cta); color: #080609; border-color: var(--palette-cta); }
+.exampleLinks button[aria-pressed='true'] { background: var(--palette-cta); color: #000000; border-color: var(--palette-cta); }
 @media (max-width: 767px) { .fixedDevice { width: 94%; top: 45%; } }
 @media (prefers-reduced-motion: reduce) { .fixedDevice { position: relative; left: auto; top: auto; width: min(100%, 720px); margin: auto; transform: none; } .screenSlide { opacity: 0 !important; transform: none !important; } .screenSlide[data-active='true'] { opacity: 1 !important; } .fixedStage .arcBottom { display: block; position: static; width: 100%; margin-top: 32px; transform: none; } }
 
 /* Code-native menu preview: categories and descriptions, without monetary information. */
 .menuDemo { height: 100%; background: #f5f1e8; color: #333d24; }
 .menuHero { position: relative; height: 48%; overflow: hidden; }
-.menuHero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, #080f0bba, transparent); }
+.menuHero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, #000000ba, transparent); }
 .menuHero strong { position: absolute; z-index: 1; left: 6%; top: 26%; max-width: 12ch; color: #fff; font: 650 clamp(16px, 3vw, 36px)/1.1 var(--font-display); }
 .menuItems { padding: 4% 6%; }
 .menuItems h4 { color: inherit; font: 650 clamp(12px, 2vw, 26px)/1.2 var(--font-display); }
 .menuItems p { margin-top: 3%; font-size: clamp(9px, 1.3vw, 16px); }
 .menuItems > span { display: block; margin-top: 3%; font-size: clamp(7px, 1vw, 12px); }
+
+@media (max-height: 640px) and (orientation: landscape) { .fixedDevice { width: min(62vw, 68svh); top: 51%; } }
+:global(html[data-browser-profile='embedded']) .fixedStage { perspective: none; }
+:global(html[data-browser-profile='embedded']) .fixedDevice { transform: translate(-50%, -50%); }
+
+/* A single sticky viewport; the device fits the free row instead of overlapping copy. */
+.journey .fixedStage { display: flex; flex-direction: column; gap: 16px; padding: 96px 24px 24px; }
+.fixedStage .journeyTitle { position: static; flex: none; width: min(24ch, 100%); margin: 0 auto; transform: none; }
+.fixedStage .fixedDevice { position: relative; inset: auto; flex: 1; min-height: 0; width: 100%; display: grid; place-items: center; container-type: size; transform: none; }
+.fixedDevice > .device { width: min(720px, 100cqw, calc(100cqh * 1.6465)); transform: rotateX(5deg) rotateY(-7deg) rotateZ(-1deg); }
+.fixedStage .arcBottom { position: static; flex: none; width: min(520px, 100%); margin: 0 auto; transform: none; }
+.fixedStage .arcCaption h3 { min-height: 1.2em; }
+.fixedStage .arcCaption p { min-height: 4.35em; }
+@media (max-width: 767px) { .journey .fixedStage { gap: 12px; padding: 96px 16px 20px; } }
+@media (max-height: 640px) and (orientation: landscape) { .journey .fixedStage { gap: 8px; padding: 84px 16px 12px; } .fixedStage .arcCaption p { display: none; } .fixedStage .journeyTitle { font-size: 24px; } .fixedStage .exampleLinks { margin-top: 8px; } }
+:global(html[data-browser-profile='embedded']) .fixedDevice > .device { transform: none; }
+@media (prefers-reduced-motion: reduce) { .journey .fixedStage { height: auto; padding-block: 96px 48px; } .fixedStage .fixedDevice { flex: none; container-type: normal; width: min(100%, 720px); margin: 24px auto; } .fixedDevice > .device { width: 100%; transform: none; } .fixedStage .arcBottom { margin-top: 0; } }
+
+/* Full-bleed decoration inside the existing sticky viewport; consumes no flex row. */
+.fixedStage { isolation: isolate; }
+.waveBackground { opacity: .85; }
+.waveBackground::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, #f8f8faad, #ffffff00 38%, #f8f8facc); }
+.fixedStage .fixedDevice { z-index: 1; }

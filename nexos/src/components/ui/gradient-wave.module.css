@@ -1,0 +1,7 @@
+.root { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: var(--wave-fallback); }
+.canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; opacity: 0; }
+@media (forced-colors: active) { .root { display: none; } }
+
+.fallback { position: absolute; inset: -12%; background: var(--wave-fallback); }
+@keyframes waveDrift { 0%, 100% { transform: translate(-4%, -2%) rotate(-3deg) scale(1.04); } 50% { transform: translate(4%, 2%) rotate(3deg) scale(1.08); } }
+.root[data-wave-state='fallback'][data-wave-active='true'] .fallback { animation: waveDrift 12s ease-in-out infinite; }

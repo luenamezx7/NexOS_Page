@@ -8,6 +8,7 @@ import type Lenis from 'lenis';
 import { sectionScrollPosition } from '@/lib/section-position';
 import { PRESENTATION_SELECTOR } from '@/lib/use-presentation-active';
 import { motionError, recordMotion } from '@/lib/motion-diagnostics';
+import { isEmbeddedBrowser } from '@/lib/scroll-profile';
 
 type SectionScrollOptions = { immediate?: boolean; history?: 'push' | 'none'; focus?: boolean };
 type SectionScroll = (hash: string, options?: SectionScrollOptions) => boolean;
@@ -26,6 +27,21 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
   const navigationPathRef = useRef(pathname);
 
   useLayoutEffect(() => {
+    const root = document.documentElement;
+    let width = -1;
+    const touch = matchMedia('(pointer: coarse)').matches || isEmbeddedBrowser(navigator.userAgent);
+    const measure = () => {
+      if (touch && width === innerWidth) return;
+      width = innerWidth;
+      root.style.setProperty('--page-viewport-height', `${innerHeight}px`);
+      root.dataset.scrollLayout = innerHeight >= 700 ? 'tall' : 'short';
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => { window.removeEventListener('resize', measure); root.style.removeProperty('--page-viewport-height'); delete root.dataset.scrollLayout; };
+  }, []);
+
+  useLayoutEffect(() => {
     if (pathname !== '/') return;
     // The intro and section controller own the homepage's initial position.
     // Native restoration can otherwise run after the intro's one-off reset.
@@ -37,6 +53,7 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     void Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(([{ gsap }, { ScrollTrigger }]) => {
       if (disposed) return;
       gsap.registerPlugin(ScrollTrigger);
+      ScrollTrigger.config({ ignoreMobileResize: true });
       ScrollTrigger.clearScrollMemory('manual');
       restorePlugin = () => ScrollTrigger.clearScrollMemory(previous);
     }).catch(error => recordMotion('scroll', 'restoration-error', motionError(error)));
@@ -60,7 +77,7 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     // Native smooth scrolling can keep animating after a touch/wheel interruption,
     // pulling the page back to the anchor. On touch/native scroll, land directly;
     // keep the interruptible Lenis animation only where Lenis owns the scroll.
-    const immediate = options.immediate || motionMedia('(prefers-reduced-motion: reduce)').matches;
+    const immediate = options.immediate || motionMedia('(prefers-reduced-motion: reduce)').matches || motionMedia('(pointer: coarse)').matches || isEmbeddedBrowser(navigator.userAgent);
     if (options.history !== 'none' && window.location.hash !== `#${id}`) {
       history.pushState(history.state, '', `#${encodeURIComponent(id)}`);
     }
@@ -108,7 +125,9 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Keep the existing desktop smooth-scroll/ScrollTrigger integration.
     // Touch devices continue to use the browser's compositor-driven scrolling.
-    const media = matchMedia('(min-width: 768px) and (pointer: fine) and (prefers-reduced-motion: no-preference)');
+    const media = motionMedia('(pointer: fine) and (min-width: 0px)');
+    const embedded = isEmbeddedBrowser(navigator.userAgent);
+    document.documentElement.dataset.browserProfile = embedded ? 'embedded' : 'standard';
     let disposed = false, instance: Lenis | null = null, raf = 0, scrolling = false, generation = 0;
     let timeout: ReturnType<typeof setTimeout> | undefined;
     function stop() {
@@ -126,8 +145,8 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     async function setup() {
       stop();
       if (disposed) return;
-      if (pathname !== '/' || !media.matches) {
-        recordMotion('scroll', 'native', pathname !== '/' ? 'route' : motionMedia('(prefers-reduced-motion: reduce)').matches ? 'reduced-motion' : 'viewport-or-pointer');
+      if (pathname !== '/' || !media.matches || embedded) {
+        recordMotion('scroll', 'native', embedded ? 'embedded-browser' : pathname !== '/' ? 'route' : motionMedia('(prefers-reduced-motion: reduce)').matches ? 'reduced-motion' : 'viewport-or-pointer');
         return;
       }
       const current = generation;
@@ -135,9 +154,10 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
       try {
         const { default: Lenis } = await import('lenis');
         if (disposed || !media.matches || current !== generation) return;
-        instance = new Lenis({ duration: 1, lerp: 0.07, wheelMultiplier: 0.9, infinite: false, anchors: false });
+        instance = new Lenis({ duration: 1.2, easing: t => 1 - Math.pow(1 - t, 3), smoothWheel: true, syncTouch: false, wheelMultiplier: .9, infinite: false, anchors: false, autoRaf: false });
         setLenis(instance);
         const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+        ScrollTrigger.config({ ignoreMobileResize: true });
         if (disposed || current !== generation) return;
         instance.on('scroll', () => {
           ScrollTrigger.update();
@@ -148,13 +168,14 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
         if (!document.hidden) raf = requestAnimationFrame(frame);
         recordMotion('scroll', 'lenis-initialized');
       } catch (error) {
-        if (!disposed && current === generation) recordMotion('scroll', 'initialization-error', motionError(error));
+        if (!disposed && current === generation) { stop(); recordMotion('scroll', 'initialization-error', motionError(error)); }
       }
     }
     function visibility() {
       cancelAnimationFrame(raf); raf = 0;
       if (!document.hidden && instance) {
         instance.resize();
+        instance.scrollTo(window.scrollY, { immediate: true });
         raf = requestAnimationFrame(frame);
       }
     }

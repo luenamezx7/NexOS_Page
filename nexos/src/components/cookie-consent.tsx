@@ -423,7 +423,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                     </p>
                   </div>
                   <span
-                    className="shrink-0 rounded-full bg-[#28c840]/15 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-[#28c840]"
+                    className="shrink-0 rounded-full bg-[var(--brand-lime)]/15 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--brand-lime)]"
                     aria-label={t('Sempre ativos')}
                   >
                     {t("Sempre on")}

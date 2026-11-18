@@ -1,5 +1,7 @@
 'use client';
 
+import { motionMedia } from '@/lib/motion-policy';
+
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { BrandWordmark } from './BrandWordmark';
 import { useScrollContext } from './SmoothScrollProvider';
@@ -18,13 +20,13 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
   const exitRef = useRef<(() => void) | null>(null);
   const completeRef = useRef<(() => void) | null>(null);
   const [phase, setPhase] = useState<'pending' | 'entering' | 'leaving'>('pending');
-  const [progress, setProgress] = useState(0);
+  const progressRef = useRef<HTMLSpanElement>(null);
   const { lenis } = useScrollContext();
 
   useLayoutEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (motionMedia('(prefers-reduced-motion: reduce)').matches) {
       dialog.close();
       onComplete(true);
       return;
@@ -67,7 +69,8 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
       leaving = true;
       recordMotion('presentation', 'leaving');
       cancelAnimationFrame(progressFrame);
-      setProgress(100);
+      if (progressRef.current) { progressRef.current.textContent = "100%"; progressRef.current.setAttribute("aria-valuenow", "100"); }
+      later(complete, exitDuration + 500);
       // Give the hero two paints to settle before the opaque cover starts fading.
       dialog.dataset.revealing = 'true';
       notify();
@@ -84,21 +87,24 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
       started = true;
       setPhase('entering');
       recordMotion('presentation', 'entering', `effectiveMotion=full; durationMs=${duration}`);
-      // Begin at the first paint, after hydration's synchronous work. Limit
-      // frame gaps so a busy frame cannot skip a visible part of the counter.
-      let previousFrame: number | null = null;
-      let elapsed = 0;
+      // Wall-clock timing must not stretch the opening on a slow CPU. Update only
+      // the counter node, rather than rerendering the wordmark once per frame.
+      let firstFrame: number | null = null;
+      let previousPercent = -1;
       const tick = (now: number) => {
         if (disposed || leaving) return;
-        if (previousFrame !== null) elapsed += Math.min(64, Math.max(0, now - previousFrame));
-        previousFrame = now;
-        if (elapsed >= duration) {
-          beginExit();
-          return;
+        firstFrame ??= now;
+        const elapsed = now - firstFrame;
+        if (elapsed >= duration) { beginExit(); return; }
+        const percent = Math.min(99, Math.floor(elapsed / duration * 100));
+        if (percent !== previousPercent && progressRef.current) {
+          progressRef.current.textContent = `${percent}%`;
+          progressRef.current.setAttribute('aria-valuenow', String(percent));
+          previousPercent = percent;
         }
-        setProgress(Math.min(99, Math.floor(elapsed / duration * 100)));
         progressFrame = requestAnimationFrame(tick);
       };
+      later(beginExit, duration + 300);
       progressFrame = requestAnimationFrame(tick);
     };
 
@@ -156,7 +162,7 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
       <div className={styles.stage}>
         <div className={styles.frame}>
           <BrandWordmark animated />
-          <span className={styles.progressNumber} role="progressbar" aria-label={t('Preparando a página')} aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress} data-presentation-percentage data-presentation-progress>{progress}%</span>
+          <span ref={progressRef} className={styles.progressNumber} role="progressbar" aria-label={t('Preparando a página')} aria-valuemin={0} aria-valuemax={100} aria-valuenow={0} data-presentation-percentage data-presentation-progress>0%</span>
         </div>
       </div>
        <button type="button" className={styles.skip} onClick={() => exitRef.current?.()}>{t('Pular apresentação')} <span aria-hidden="true">↗</span></button>

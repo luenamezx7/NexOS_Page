@@ -9,7 +9,7 @@
   border: 1px solid rgb(255 255 255 / 12%);
   border-radius: 32px;
   overflow: hidden;
-  background: radial-gradient(ellipse at 50% 42%, rgb(255 63 159 / 20%), transparent 72%), #121114;
+  background: radial-gradient(ellipse at 50% 42%, rgb(255 63 159 / 20%), transparent 72%), #000000;
   box-shadow: 0 0 32px rgb(255 255 255 / 6%), 0 0 64px rgb(255 255 255 / 3%);
 }
 .plates {

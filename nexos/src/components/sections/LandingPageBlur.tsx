@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import GradualBlur from '../ui/GradualBlur';
+import { isEmbeddedBrowser } from '@/lib/scroll-profile';
 import { usePresentationActive } from '@/lib/use-presentation-active';
 
 const subscribe = (callback: () => void) => {
@@ -23,7 +24,8 @@ export function LandingPageBlur() {
     return () => observer.disconnect();
   }, []);
 
-  if (entryOpen || quizVisible) return null;
+  const embedded = useSyncExternalStore(() => () => {}, () => isEmbeddedBrowser(navigator.userAgent), () => false);
+  if (entryOpen || quizVisible || embedded) return null;
   return <>
     <GradualBlur target="page" position="top" height={mobile ? 'clamp(48px, 9svh, 72px)' : 'clamp(72px, 12svh, 120px)'} strength={mobile ? 1.5 : 3}
       layers={mobile ? 2 : 4} curve="linear" exponential

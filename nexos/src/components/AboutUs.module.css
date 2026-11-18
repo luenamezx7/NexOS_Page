@@ -43,7 +43,7 @@
 .wordmark {
   display: block;
   width: fit-content;
-  color: #000;
+  color: #000000;
   font: 700 clamp(32px, 8cqi, 56px)/1 'Avenir Next', 'Helvetica Neue', Arial, sans-serif;
   letter-spacing: -.045em;
   font-synthesis: none;
@@ -117,3 +117,6 @@
   .servicesLink svg { transition: none; }
   .servicesLink:hover svg { transform: none; }
 }
+
+.story { text-align: center; }
+.story .body { margin-inline: auto; }

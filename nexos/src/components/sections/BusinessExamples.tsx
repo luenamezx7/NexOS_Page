@@ -14,8 +14,8 @@ const examples = [
 export function BusinessExamples() {
   const { t } = useLocale();
   return <section id="exemplos" aria-labelledby="examples-title" className={styles.section}><div className={styles.container}>
-    <p className={styles.eyebrow}>{t('EXEMPLOS ILUSTRATIVOS')}</p><h2 data-heading-static id="examples-title">{t('Como isso entra na sua rotina?')}</h2>
-    <p className={styles.lead}>{t('Situações para ajudar a reconhecer sua necessidade. Não são casos reais de clientes.')}</p>
+    <p className={styles.eyebrow}>{t('SOLUÇÕES PARA O SEU NEGÓCIO')}</p><h2 data-heading-static id="examples-title">{t('Como isso entra na sua rotina?')}</h2>
+    <p className={styles.lead}>{t('Encontre as soluções que combinam com seu segmento e sua rotina.')}</p>
     <div className={styles.catalogue} style={{ marginTop: 32 }}>{examples.map(([segment, need, combination]) => <article key={segment} className={styles.card}><h3 data-heading-static>{t(segment)}</h3><p><strong>{t(need)}</strong></p><p>{t(combination)}</p></article>)}</div>
     <p className={styles.note}>{t('São combinações possíveis, com escopos próprios. Elas não pressupõem integração automática nem contratação conjunta.')}</p>
   </div></section>;

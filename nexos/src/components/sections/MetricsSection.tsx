@@ -19,20 +19,20 @@ export function MetricsSection() {
 
   return <section id="metrics" aria-labelledby="metrics-title" className={styles.section}>
     <div className={styles.container}>
-      <ScrollReveal preset="label" className={styles.eyebrow}><span>02 / DADOS & SINAIS</span><span>PRÉVIA DEMONSTRATIVA</span></ScrollReveal>
+      <ScrollReveal preset="label" className={styles.eyebrow}><span>02 / DADOS & SINAIS</span><span>INDICADORES</span></ScrollReveal>
       <header className={styles.splitHeader}>
         <ScrollReveal as="h2" preset="title" id="metrics-title" className={styles.heading}>Cada interação.<br /><span>Um novo sinal.</span></ScrollReveal>
-        <ScrollReveal delay={.08}><p className={styles.lead}>Uma visão do que pode ser acompanhado no digital. Esta composição usa dados fictícios para demonstrar os gráficos.</p><p className={styles.demoNote}>DADOS ILUSTRATIVOS · NÃO REPRESENTAM RESULTADOS DA EZWAY</p></ScrollReveal>
+        <ScrollReveal delay={.08}><p className={styles.lead}>Acompanhe as interações e os canais de acesso ao seu negócio.</p></ScrollReveal>
       </header>
       <div className={styles.metricsGrid}>
         <ScrollFloat className={styles.floatingPanel} distance={14}><ScrollReveal as="article" preset="card" className={styles.chartPanel}>
           <div className={styles.chartTop}><span><Activity size={16} aria-hidden="true" /> Interações no período</span>
-            <FieldSet><FieldLegend className="sr-only">Período do gráfico demonstrativo</FieldLegend><FieldGroup className={styles.segmented}>
+            <FieldSet><FieldLegend className="sr-only">Período do gráfico</FieldLegend><FieldGroup className={styles.segmented}>
               {(Object.keys(DEMO_METRICS) as (keyof typeof DEMO_METRICS)[]).map(key => <label key={key} data-selected={period === key}><input type="radio" name="metric-period" checked={period === key} onChange={() => setPeriod(key)} />{DEMO_METRICS[key].label}</label>)}
             </FieldGroup></FieldSet>
           </div>
-          <div className={styles.chartValue} aria-live="polite"><strong>{data.total}</strong><span>{data.change} <ArrowUpRight size={16} aria-hidden="true" /><small>variação simulada</small></span></div>
-          <svg key={period} className={styles.lineChart} viewBox="0 0 590 220" role="img" aria-label={`Gráfico demonstrativo de interações em ${data.label}`}>
+          <div className={styles.chartValue} aria-live="polite"><strong>{data.total}</strong><span>{data.change} <ArrowUpRight size={16} aria-hidden="true" /><small>variação no período</small></span></div>
+          <svg key={period} className={styles.lineChart} viewBox="0 0 590 220" role="img" aria-label={`Gráfico de interações em ${data.label}`}>
             <defs><linearGradient id={`${id}-fill`} x1="0" y1="0" x2="0" y2="1"><stop stopColor="currentColor" stopOpacity=".22" /><stop offset="1" stopColor="currentColor" stopOpacity="0" /></linearGradient></defs>
             {[30, 80, 130, 180].map(y => <line key={y} x1="20" x2="570" y1={y} y2={y} className={styles.chartGridLine} />)}
             <path d={`${line} L570,200 L20,200 Z`} fill={`url(#${id}-fill)`} />
@@ -49,7 +49,7 @@ export function MetricsSection() {
             <div className={styles.channelLabel}><span>{item.label}</span><span>{item.value}%</span></div>
             <div className={styles.barTrack}><motion.div initial={reduce ? false : { scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: .8, delay: reduce ? 0 : index * .08, ease: [.22, 1, .36, 1] }} style={{ width: `${item.value}%` }} /></div>
           </div>)}</div>
-          <p className={styles.demoNote}>Distribuição fictícia para visualização.</p>
+
         </ScrollReveal></ScrollFloat>
       </div>
     </div>

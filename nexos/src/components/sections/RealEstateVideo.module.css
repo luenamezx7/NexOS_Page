@@ -4,7 +4,7 @@
 .description { max-width: 48ch; margin: 24px auto clamp(44px, 6vw, 72px); color: var(--text-secondary); font-size: clamp(16px, 1.5vw, 19px); line-height: 1.55; text-wrap: pretty; }
 .posterWrap { position: relative; isolation: isolate; max-width: 1050px; margin: auto; }
 .posterWrap::before { content: ''; position: absolute; z-index: -1; inset: 18% 14% -8%; border-radius: 50%; background: color-mix(in srgb, var(--palette-cta) 17%, transparent); filter: blur(56px); pointer-events: none; }
-.poster { position: relative; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 16px; background: var(--surface-raised); box-shadow: 0 32px 72px -44px rgb(5 20 9 / 40%), 0 0 0 1px color-mix(in srgb, var(--color-ink) 12%, transparent); }
+.poster { position: relative; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 16px; background: var(--surface-raised); box-shadow: 0 32px 72px -44px rgb(0 0 0 / 40%), 0 0 0 1px color-mix(in srgb, var(--color-ink) 12%, transparent); }
 .poster video, .image { width: 100%; height: 100%; object-fit: cover; }
 .disclaimer { margin: 20px 0 0; color: var(--text-secondary); font-size: 13px; line-height: 1.5; }
 @media (max-width: 767px) { .section { padding: 80px 20px; } .description { margin: 20px auto 44px; } .poster { border-radius: 12px; } .posterWrap::before { filter: blur(32px); } }
@@ -13,14 +13,14 @@
 
 /* Dissolve the photo itself into the local light surface, below the legible area. */
 .posterWrap::before { display: none; }
-.poster { border-radius: 24px 24px 0 0; box-shadow: none; background: transparent; mask-image: linear-gradient(to bottom, #000 0%, #000 52%, transparent 100%); }
-.info { position: absolute; left: 6%; top: 48%; max-width: min(320px, 88%); padding: 18px 22px; border: 1px solid rgb(255 255 255 / 20%); border-radius: 16px; background: rgb(15 15 18 / 90%); color: #fff; text-align: left; font-size: 14px; font-weight: 650; }
+.poster { border-radius: 24px 24px 0 0; box-shadow: none; background: transparent; mask-image: linear-gradient(to bottom, #000000 0%, #000000 52%, transparent 100%); }
+.info { position: absolute; left: 6%; top: 48%; max-width: min(320px, 88%); padding: 18px 22px; border: 1px solid rgb(255 255 255 / 20%); border-radius: 16px; background: rgb(0 0 0 / 90%); color: #fff; text-align: left; font-size: 14px; font-weight: 650; }
 .info span { display: block; margin-top: 6px; font-size: 12px; color: #dedbe0; font-weight: 400; }
 .disclaimer { margin-top: 32px; }
 @media (max-width: 767px) { .info { top: 40%; padding: 12px 16px; max-width: 78%; } }
 
 /* Keep native playback controls fully visible on the video variant. */
-.posterWrap[data-video='true'] .poster { mask-image: none; border-radius: 24px; background: #08090b; }
+.posterWrap[data-video='true'] .poster { mask-image: none; border-radius: 24px; background: #000000; }
 .posterWrap[data-video='true'] video { display: block; object-fit: contain; }
 .posterWrap[data-video='true'] .info { position: static; width: fit-content; max-width: 100%; margin: 16px auto 0; text-align: center; }
 @media (max-width: 767px) { .posterWrap[data-video='true'] .poster { border-radius: 16px; } }
