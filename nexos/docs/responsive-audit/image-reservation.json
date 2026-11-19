@@ -1,0 +1,44 @@
+[
+  {
+    "width": 320,
+    "before": {
+      "width": 270,
+      "height": 169,
+      "complete": false
+    },
+    "after": {
+      "width": 270,
+      "height": 169,
+      "complete": true
+    },
+    "stable": true
+  },
+  {
+    "width": 768,
+    "before": {
+      "width": 708,
+      "height": 443,
+      "complete": false
+    },
+    "after": {
+      "width": 708,
+      "height": 443,
+      "complete": true
+    },
+    "stable": true
+  },
+  {
+    "width": 1440,
+    "before": {
+      "width": 918,
+      "height": 574,
+      "complete": false
+    },
+    "after": {
+      "width": 918,
+      "height": 574,
+      "complete": true
+    },
+    "stable": true
+  }
+]

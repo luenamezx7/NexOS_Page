@@ -10,7 +10,7 @@
 .journey button[aria-pressed='true'] { background: #000000; color: #fff; border-color: #000000; }
 .journey button:focus-visible { outline: 3px solid #89325d; outline-offset: 4px; }
 .screen { width: 100%; max-width: 920px; margin: auto; border: 1px solid rgb(137 50 93 / 16%); border-radius: 16px; overflow: hidden; background: #000000; color: #fff; box-shadow: 0 0 40px rgb(255 116 189 / 12%); }
-.screenshot { display: block; width: 100%; height: auto; }
+.screenshot { display: block; width: 100%; height: auto; aspect-ratio: 8 / 5; }
 .demo figcaption { display: grid; gap: 6px; margin: 14px auto 0; text-align: center; font-size: 12px; line-height: 1.5; color: #655a64; }
 .explanation { min-height: 3.4em; max-width: 60ch; margin: 16px auto 0; text-align: center; color: #59525d; font-size: 16px; line-height: 1.65; }
 .container > a { display: flex; width: fit-content; margin: 24px auto 0; }

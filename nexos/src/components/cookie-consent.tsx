@@ -19,6 +19,7 @@ import { Cookie, X, ShieldCheck } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 import { useScrollLock } from './useScrollLock';
 import { useLocale } from '@/lib/locale';
+import styles from './CookieConsent.module.css';
 
 // ============================================================
 // ezway — Consentimento de Cookies (LGPD)
@@ -274,10 +275,10 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
             animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
             exit={reduce ? { opacity: 0 } : { opacity: 0, y: 16 }}
             transition={{ duration: 0.45, ease: FLUID_EASE }}
-            className="pointer-events-none fixed inset-x-0 bottom-0 z-[65] px-4 pb-4 md:px-6 md:pb-6"
+            className={`${styles.banner} pointer-events-none fixed inset-x-0 bottom-0 z-[65] px-4 pb-4 md:px-6 md:pb-6`}
           >
             <div
-              className={`pointer-events-auto mx-auto flex w-full max-w-3xl flex-col gap-4 rounded-2xl border p-5 shadow-[0_12px_40px_rgba(0,0,0,0.12)] md:flex-row md:items-center md:gap-5 md:p-6 ${
+              className={`${styles.bannerPanel} pointer-events-auto mx-auto flex w-full max-w-3xl flex-col gap-4 rounded-2xl border p-5 shadow-[0_12px_40px_rgba(0,0,0,0.12)] md:flex-row md:items-center md:gap-5 md:p-6 ${
                 isDark ? 'border-white/15 bg-black/95' : 'border-ink/15 bg-canvas/95'
               }`}
             >
@@ -360,7 +361,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
               animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
               exit={reduce ? { opacity: 0 } : { opacity: 0, y: 20, scale: 0.98 }}
               transition={{ duration: 0.45, ease: FLUID_EASE }}
-              className={`fixed inset-x-0 bottom-0 z-[71] mx-auto flex max-h-[92dvh] w-full max-w-xl flex-col overflow-hidden rounded-t-[24px] border shadow-[0_24px_80px_rgba(0,0,0,0.6)] backdrop-blur-[20px] will-change-transform md:inset-0 md:m-auto md:h-fit md:max-h-[88dvh] md:w-[min(520px,calc(100vw-2rem))] md:rounded-3xl ${
+              className={`${styles.preferences} fixed inset-x-0 bottom-0 z-[71] mx-auto flex max-h-[92dvh] w-full max-w-xl flex-col overflow-hidden rounded-t-[24px] border shadow-[0_24px_80px_rgba(0,0,0,0.6)] backdrop-blur-[20px] will-change-transform md:inset-0 md:m-auto md:h-fit md:max-h-[88dvh] md:w-[min(520px,calc(100vw-2rem))] md:rounded-3xl ${
                 isDark ? 'border-white/15 bg-black/95' : 'border-ink/15 bg-canvas/95'
               }`}
             >
@@ -395,7 +396,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                   type="button"
                   onClick={() => setPrefsOpen(false)}
                   aria-label={t('Fechar preferências de cookies')}
-                  className={`grid h-9 w-9 shrink-0 place-items-center rounded-full border transition focus-visible:outline-none focus-visible:ring-2 ${
+                  className={`${styles.close} grid h-9 w-9 shrink-0 place-items-center rounded-full border transition focus-visible:outline-none focus-visible:ring-2 ${
                     isDark
                       ? 'border-white/10 bg-white/[0.06] text-white/70 hover:bg-white/10 hover:text-white focus-visible:ring-white/30'
                       : 'border-ink/10 bg-ink/[0.04] text-ink/60 hover:bg-ink/10 hover:text-ink focus-visible:ring-ink/20'
@@ -407,7 +408,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
 
               <div
                 data-lenis-prevent
-                className="relative flex-1 touch-pan-y space-y-3 overflow-y-auto overscroll-contain px-6 py-6"
+                className={`${styles.preferencesBody} relative flex-1 touch-pan-y space-y-3 overflow-y-auto overscroll-contain px-6 py-6`}
                 style={{ overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch' }}
               >
                 {/* Necessários — sempre ativos */}

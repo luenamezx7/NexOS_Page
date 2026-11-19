@@ -1,0 +1,46 @@
+[
+  {
+    "width": 320,
+    "image": {
+      "width": 270,
+      "height": 169,
+      "aspect": "8 / 5",
+      "complete": true
+    },
+    "issues": [],
+    "violations": []
+  },
+  {
+    "width": 390,
+    "image": {
+      "width": 340,
+      "height": 213,
+      "aspect": "8 / 5",
+      "complete": true
+    },
+    "issues": [],
+    "violations": []
+  },
+  {
+    "width": 768,
+    "image": {
+      "width": 708,
+      "height": 443,
+      "aspect": "8 / 5",
+      "complete": true
+    },
+    "issues": [],
+    "violations": []
+  },
+  {
+    "width": 1440,
+    "image": {
+      "width": 713,
+      "height": 446,
+      "aspect": "8 / 5",
+      "complete": true
+    },
+    "issues": [],
+    "violations": []
+  }
+]

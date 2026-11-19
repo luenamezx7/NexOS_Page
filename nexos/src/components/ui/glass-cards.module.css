@@ -14,7 +14,7 @@
 .details { margin-top: 24px; font-size: 14px; line-height: 1.65; }
 .details summary { min-height: 44px; padding-block: 10px; width: fit-content; margin-inline: auto; cursor: pointer; font-weight: 600; text-decoration: underline; text-underline-offset: 5px; }
 .details summary:focus-visible { outline: 3px solid currentColor; outline-offset: 4px; border-radius: 4px; }
-.viewport:global([data-stacked='true']) { position: relative; width: min(100%, 640px); height: var(--chapter-height); margin: 24px auto 0; overflow: hidden; border-radius: 24px; }
+.viewport:global([data-stacked='true']) { position: relative; width: min(100%, var(--solution-card-width, 640px)); height: var(--chapter-height); margin: 24px auto 0; overflow: hidden; border-radius: 24px; }
 .viewport:global([data-stacked='true']) .stack { position: relative; display: block; height: 100%; }
 .viewport:global([data-stacked='true']) .card { position: absolute; inset: 0 0 auto; width: 100%; height: calc(var(--chapter-height) - var(--stack-offset, 36px)); z-index: var(--glass-order); will-change: transform; transform-origin: center top; }
 .card:global([data-active='true']) .surface { -webkit-backdrop-filter: blur(20px) saturate(145%); backdrop-filter: blur(20px) saturate(145%); }
@@ -27,7 +27,7 @@
  .content > p { font-size: 14px; line-height: 1.45; }
  .details { margin-top: 12px; }
 }
-@media (max-height: 600px) and (orientation: landscape) { .viewport:global([data-stacked='true']) { width: min(100%, 640px); margin-top: 12px; } .content h3 { min-height: 0; font-size: 22px; } .metadata { min-height: 0; margin: 0; } .metadata > span:first-child, .metadata .badge:empty { display: none; } }
+@media (max-height: 600px) and (orientation: landscape) { .viewport:global([data-stacked='true']) { width: min(100%, var(--solution-card-width, 640px)); margin-top: 12px; } .content h3 { min-height: 0; font-size: 22px; } .metadata { min-height: 0; margin: 0; } .metadata > span:first-child, .metadata .badge:empty { display: none; } }
 @media (prefers-reduced-motion: reduce) { .card { will-change: auto; } .surface { -webkit-backdrop-filter: none; backdrop-filter: none; } }
 
 :global(html[data-browser-profile='embedded']) .surface { -webkit-backdrop-filter: none; backdrop-filter: none; }

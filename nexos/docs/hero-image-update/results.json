@@ -1,0 +1,62 @@
+[
+  {
+    "width": 320,
+    "src": "/_next/image?url=%2Fimages%2Favatars%2FMan_wearing_white_outfit_pose_2fae7479_2K.png&w=3840&q=75",
+    "image": {
+      "left": 24,
+      "right": 296,
+      "top": 603.484375,
+      "width": 272,
+      "height": 364.078125
+    },
+    "ctaBottom": 567.484375,
+    "overflow": false,
+    "oldAvatar": false,
+    "limeCopy": false
+  },
+  {
+    "width": 390,
+    "src": "/_next/image?url=%2Fimages%2Favatars%2FMan_wearing_white_outfit_pose_2fae7479_2K.png&w=3840&q=75",
+    "image": {
+      "left": 24,
+      "right": 366,
+      "top": 528.875,
+      "width": 342,
+      "height": 457.78125
+    },
+    "ctaBottom": 492.875,
+    "overflow": false,
+    "oldAvatar": false,
+    "limeCopy": false
+  },
+  {
+    "width": 768,
+    "src": "/_next/image?url=%2Fimages%2Favatars%2FMan_wearing_white_outfit_pose_2fae7479_2K.png&w=3840&q=75",
+    "image": {
+      "left": 199,
+      "right": 559,
+      "top": 514.265625,
+      "width": 360,
+      "height": 481.875
+    },
+    "ctaBottom": 482.265625,
+    "overflow": false,
+    "oldAvatar": false,
+    "limeCopy": false
+  },
+  {
+    "width": 1440,
+    "src": "/_next/image?url=%2Fimages%2Favatars%2FMan_wearing_white_outfit_pose_2fae7479_2K.png&w=3840&q=75",
+    "image": {
+      "left": 535,
+      "right": 895,
+      "top": 558.1875,
+      "width": 360,
+      "height": 481.875
+    },
+    "ctaBottom": 526.1875,
+    "overflow": false,
+    "oldAvatar": false,
+    "limeCopy": false
+  }
+]

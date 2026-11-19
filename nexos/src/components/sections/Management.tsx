@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { LayoutGroup, motion } from 'motion/react';
 import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
@@ -28,7 +28,20 @@ export function Management() {
   const stageRef = useRef<HTMLDivElement>(null);
   const reduced = usePrefersReducedMotion();
   const [simulation, setSimulation] = useState<number | null>(null);
-  useManagementChapters(stageRef, setActive);
+  const simulationOpenRef = useRef(false);
+  const releaseFrame = useRef(0);
+  const selectScrollChapter = useCallback((index: number) => {
+    setActive(current => simulationOpenRef.current ? current : index);
+  }, []);
+  const closeSimulation = useCallback(() => {
+    setSimulation(null);
+    cancelAnimationFrame(releaseFrame.current);
+    releaseFrame.current = requestAnimationFrame(() => {
+      releaseFrame.current = requestAnimationFrame(() => { simulationOpenRef.current = false; });
+    });
+  }, []);
+  useEffect(() => () => cancelAnimationFrame(releaseFrame.current), []);
+  useManagementChapters(stageRef, selectScrollChapter);
   const step = journey[active];
   const solution = solutions.find(item => item.id === 'gestao')!;
   return <section id="gestao" aria-labelledby="management-title" className={styles.section}>
@@ -44,7 +57,13 @@ export function Management() {
       </figure>
       <div className={styles.summary}>
         <motion.p key={active} initial={reduced ? false : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduced ? 0 : motionTiming.selection, ease: motionEase }} className={styles.explanation}>{t(step.description)}</motion.p>
-        <button type="button" className={styles.simulate} data-management-simulate onClick={() => setSimulation(active)}>{t('Explorar gestão')} · {t(step.title)} <ArrowUpRight size={16} aria-hidden="true" /></button>
+        <button type="button" className={styles.simulate} data-management-simulate onClick={() => {
+          cancelAnimationFrame(releaseFrame.current);
+          simulationOpenRef.current = true;
+          // Commit the chapter the user opened after any queued scroll update.
+          setActive(active);
+          setSimulation(active);
+        }}>{t('Explorar gestão')} · {t(step.title)} <ArrowUpRight size={16} aria-hidden="true" /></button>
       </div>
       </div>
       <details id="comparacao" className={styles.more}>
@@ -57,6 +76,6 @@ export function Management() {
       </details>
       <ButtonWithIcon href={commercialHref(t(solution.message))} target="_blank" rel="noopener noreferrer" data-cta-section="gestao" data-cta-solution="gestao">{t(solution.cta)}</ButtonWithIcon>
     </div>
-    {simulation !== null && <ManagementSimulation initialChapter={simulation} onDismiss={() => setSimulation(null)} />}
+    {simulation !== null && <ManagementSimulation initialChapter={simulation} onDismiss={closeSimulation} />}
   </section>;
 }

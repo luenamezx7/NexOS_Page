@@ -1,0 +1,180 @@
+{
+  "url": "https://nexoslab.online/verificar?next=%2F",
+  "title": "Verificação de segurança | ezway",
+  "status": "Conclua a verificação abaixo para continuar.",
+  "issues": [
+    {
+      "code": "DeprecationIssue",
+      "details": {
+        "deprecationIssueDetails": {
+          "affectedFrame": {
+            "frameId": "331135A2A99FFEBB66664C0E8B64CABC"
+          },
+          "sourceCodeLocation": {
+            "scriptId": "10",
+            "url": "https://nexoslab.online/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5ca5d7a1be9f1d9",
+            "lineNumber": 0,
+            "columnNumber": 9906
+          },
+          "type": "FencedFrame"
+        }
+      }
+    },
+    {
+      "code": "DeprecationIssue",
+      "details": {
+        "deprecationIssueDetails": {
+          "affectedFrame": {
+            "frameId": "331135A2A99FFEBB66664C0E8B64CABC"
+          },
+          "sourceCodeLocation": {
+            "scriptId": "10",
+            "url": "https://nexoslab.online/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5ca5d7a1be9f1d9",
+            "lineNumber": 0,
+            "columnNumber": 9906
+          },
+          "type": "PersistentQuotaType"
+        }
+      }
+    },
+    {
+      "code": "PerformanceIssue",
+      "details": {
+        "performanceIssueDetails": {
+          "performanceIssueType": "DocumentCookie",
+          "sourceCodeLocation": {
+            "scriptId": "10",
+            "url": "https://nexoslab.online/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5ca5d7a1be9f1d9",
+            "lineNumber": 0,
+            "columnNumber": 9906
+          }
+        }
+      }
+    }
+  ],
+  "exceptions": [],
+  "messages": [
+    {
+      "type": "error",
+      "text": "Connecting to 'data:,' violates the following Content Security Policy directive: \"connect-src 'self' https://hagen.challenges.cloudflare.com https://brunhild.challenges.cloudflare.com https://*.alg13.dnstest.challenges.cloudflare.com https://*.mldsa44.dnstest.challenges.cloudflare.com https://dnstest.dev https://ca2.cloudflarecaptcha.com https://ca1.cloudflarecaptcha.com\". The action has been blocked.",
+      "location": {
+        "url": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/hdkvx/0x4AAAAAAFBm5wKaRRo9jP35/dark/fbE/new/flexible?lang=pt-br",
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "type": "error",
+      "text": "Connecting to 'data:,' violates the following Content Security Policy directive: \"connect-src 'self' https://hagen.challenges.cloudflare.com https://brunhild.challenges.cloudflare.com https://*.alg13.dnstest.challenges.cloudflare.com https://*.mldsa44.dnstest.challenges.cloudflare.com https://dnstest.dev https://ca2.cloudflarecaptcha.com https://ca1.cloudflarecaptcha.com\". The action has been blocked.",
+      "location": {
+        "url": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/hdkvx/0x4AAAAAAFBm5wKaRRo9jP35/dark/fbE/new/flexible?lang=pt-br",
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "type": "error",
+      "text": "Fetch API cannot load data:,. Refused to connect because it violates the document's Content Security Policy.",
+      "location": {
+        "url": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/hdkvx/0x4AAAAAAFBm5wKaRRo9jP35/dark/fbE/new/flexible?lang=pt-br",
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "type": "warning",
+      "text": "OTS parsing error: Size of decompressed WOFF 2.0 is less than compressed size",
+      "location": {
+        "url": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/hdkvx/0x4AAAAAAFBm5wKaRRo9jP35/dark/fbE/new/flexible?lang=pt-br",
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "type": "warning",
+      "text": "No available adapters.",
+      "location": {
+        "url": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/hdkvx/0x4AAAAAAFBm5wKaRRo9jP35/dark/fbE/new/flexible?lang=pt-br",
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "type": "error",
+      "text": "%c%d font-size:0;color:transparent NaN",
+      "location": {
+        "url": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/hdkvx/0x4AAAAAAFBm5wKaRRo9jP35/dark/fbE/new/flexible?lang=pt-br",
+        "lineNumber": 0,
+        "columnNumber": 646588
+      }
+    },
+    {
+      "type": "error",
+      "text": "%c%d font-size:0;color:transparent NaN",
+      "location": {
+        "url": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/hdkvx/0x4AAAAAAFBm5wKaRRo9jP35/dark/fbE/new/flexible?lang=pt-br",
+        "lineNumber": 0,
+        "columnNumber": 646588
+      }
+    },
+    {
+      "type": "error",
+      "text": "%c%o font-size:0;color:transparent {}",
+      "location": {
+        "url": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/hdkvx/0x4AAAAAAFBm5wKaRRo9jP35/dark/fbE/new/flexible?lang=pt-br",
+        "lineNumber": 0,
+        "columnNumber": 646588
+      }
+    },
+    {
+      "type": "error",
+      "text": "%c%o font-size:0;color:transparent {}",
+      "location": {
+        "url": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/hdkvx/0x4AAAAAAFBm5wKaRRo9jP35/dark/fbE/new/flexible?lang=pt-br",
+        "lineNumber": 0,
+        "columnNumber": 646588
+      }
+    },
+    {
+      "type": "warning",
+      "text": "%c%d font-size:0;color:transparent NaN",
+      "location": {
+        "url": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/hdkvx/0x4AAAAAAFBm5wKaRRo9jP35/dark/fbE/new/flexible?lang=pt-br",
+        "lineNumber": 0,
+        "columnNumber": 646588
+      }
+    },
+    {
+      "type": "warning",
+      "text": "%c%d font-size:0;color:transparent NaN",
+      "location": {
+        "url": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/hdkvx/0x4AAAAAAFBm5wKaRRo9jP35/dark/fbE/new/flexible?lang=pt-br",
+        "lineNumber": 0,
+        "columnNumber": 646588
+      }
+    },
+    {
+      "type": "warning",
+      "text": "%c%o font-size:0;color:transparent {}",
+      "location": {
+        "url": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/hdkvx/0x4AAAAAAFBm5wKaRRo9jP35/dark/fbE/new/flexible?lang=pt-br",
+        "lineNumber": 0,
+        "columnNumber": 646588
+      }
+    },
+    {
+      "type": "warning",
+      "text": "%c%o font-size:0;color:transparent {}",
+      "location": {
+        "url": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/hdkvx/0x4AAAAAAFBm5wKaRRo9jP35/dark/fbE/new/flexible?lang=pt-br",
+        "lineNumber": 0,
+        "columnNumber": 646588
+      }
+    }
+  ],
+  "violations": [],
+  "scripts": [
+    "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=ezwayEntryReady&render=explicit",
+    "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092"
+  ]
+}

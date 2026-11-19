@@ -71,6 +71,7 @@ for (const width of [390, 1440]) {
     await dialog.getByRole('button', { name: 'Reiniciar' }).click();
     await expect(dialog.getByLabel('Período')).toHaveValue('0');
     expect(writes).toEqual([]);
+    await expect(page.locator('[data-management-tab]').first()).toHaveAttribute('aria-pressed', 'true');
     await page.keyboard.press('Escape');
     await expect(dialog).toHaveCount(0);
     await expect(opener).toBeFocused();

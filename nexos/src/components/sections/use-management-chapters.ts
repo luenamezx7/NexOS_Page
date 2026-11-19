@@ -21,6 +21,7 @@ export function useManagementChapters(stageRef: RefObject<HTMLDivElement | null>
       media.add({ pinned: cinematicDesktopQuery, flow: '(min-width: 0px)' }, context => {
         const pinned = Boolean(context.conditions?.pinned);
         let chapter = -1;
+        let previousScroll = window.scrollY;
         if (pinned) stage.dataset.managementChapters = 'true';
         stage.dataset.managementMotion = 'scroll';
         ScrollTrigger.create({
@@ -28,11 +29,17 @@ export function useManagementChapters(stageRef: RefObject<HTMLDivElement | null>
           start: pinned ? 'top 110px' : 'top 75%', end: pinned ? () => `+=${Math.round((innerHeight - 110) * 1.8)}` : 'bottom 25%',
           invalidateOnRefresh: true, anticipatePin: 1,
           onUpdate: self => {
-            if (document.querySelector('dialog[open]')) return;
+            const scroll = self.scroll();
+            const moved = Math.abs(scroll - previousScroll) > .5;
+            previousScroll = scroll;
             const next = Math.min(2, Math.floor(self.progress * 3));
-            if (next === chapter) return;
+            const initial = chapter < 0;
+            const changed = next !== chapter;
             chapter = next;
-            onChapter(next);
+            // Modal mounting, focus restoration and scrollbar compensation must
+            // never replace a user's manually selected chapter behind a dialog.
+            if (document.querySelector('dialog[open], dialog[data-management-simulation]') || document.documentElement.style.overflow === 'hidden') return;
+            if (changed && (moved || initial)) onChapter(next);
           },
         });
         return () => { delete stage.dataset.managementChapters; delete stage.dataset.managementMotion; };

@@ -1438,7 +1438,11 @@ html:not(.dark) .waves-entry-stars { opacity: 0.28; }
 .account-content { --card: var(--panel-ground); --border: var(--panel-border); }
 .account-content > .page-intro { padding-bottom: 8px; }
 .account-content :where(input, p, h3, label) { overflow-wrap: anywhere; }
-@media (max-width: 1099px) { .page-header-nav { display: none; } }
+@media (max-width: 1099px) {
+  .page-header-nav { order: 3; flex-wrap: wrap; width: 100%; justify-content: center; gap: 2px; }
+  .page-header-nav a { flex: 1 1 auto; }
+  .interior-page :where(main[id], section[id]) { scroll-margin-top: 160px; }
+}
 @media (max-width: 767px) {
   .page-header { width: calc(100% - 24px); top: max(12px, env(safe-area-inset-top)); margin-top: 12px; padding-inline: 12px; gap: 8px; border-radius: 26px; }
   .page-container, .page-narrow, .page-footer { width: calc(100% - 32px); }
@@ -1635,7 +1639,7 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
 @media (max-width: 767px) { .landing-hero .hero-container { gap: 32px; padding: 116px 24px 56px; } .landing-hero .hero-heading { font-size: clamp(36px, 9vw, 54px); } .landing-hero .hero-description { font-size: 15px; } }
 
 /* Round only the top of a dark chapter immediately following a light one. */
-.landing-page { --dark-section-radius: 32px; --hero-handoff-surface: #f5f3f1; background: #f8f8fa; }
+.landing-page { --solution-card-width: 640px; --dark-section-radius: 32px; --hero-handoff-surface: #f5f3f1; background: #f8f8fa; }
 .landing-page [data-home-experience='real-estate-video'] + [data-home-experience='plate-management'],
 .landing-page [data-home-experience='process'] {
   border-radius: var(--dark-section-radius) var(--dark-section-radius) 0 0;
@@ -1656,7 +1660,7 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
 @media (max-width: 767px) { .landing-page { --dark-section-radius: 24px; } }
 
 /* Management-led opening: the first message stays readable without animation. */
-.landing-hero .hero-container { max-width: 960px; grid-template-columns: minmax(0, 1fr); align-items: center; gap: 32px; padding-bottom: 72px; z-index: auto; }
+.landing-hero .hero-container { max-width: 960px; grid-template-columns: minmax(0, 1fr); align-items: center; gap: 32px; padding-bottom: var(--hero-tail-space, 72px); z-index: auto; }
 .landing-hero .hero-copy { position: relative; z-index: 3; }
 .landing-hero .hero-copy, .landing-hero .hero-heading { text-align: center; }
 .landing-hero .hero-heading { max-width: 22ch; margin: 0 auto; font-size: clamp(38px, 4.15vw, 62px); }

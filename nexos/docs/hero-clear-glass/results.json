@@ -1,0 +1,50 @@
+[
+  {
+    "browser": "chrome",
+    "viewport": 390,
+    "width": 358,
+    "height": 338.765625,
+    "backdrop": "none",
+    "filter": "none",
+    "svg": 0,
+    "overflow": false
+  },
+  {
+    "browser": "chrome",
+    "viewport": 1440,
+    "width": 640,
+    "height": 356.59375,
+    "backdrop": "none",
+    "filter": "none",
+    "svg": 0,
+    "overflow": false
+  },
+  {
+    "browser": "chrome",
+    "errors": []
+  },
+  {
+    "browser": "webkit",
+    "viewport": 390,
+    "width": 358,
+    "height": 328.859375,
+    "backdrop": "none",
+    "filter": "none",
+    "svg": 0,
+    "overflow": false
+  },
+  {
+    "browser": "webkit",
+    "viewport": 1440,
+    "width": 640,
+    "height": 356.59375,
+    "backdrop": "none",
+    "filter": "none",
+    "svg": 0,
+    "overflow": false
+  },
+  {
+    "browser": "webkit",
+    "errors": []
+  }
+]

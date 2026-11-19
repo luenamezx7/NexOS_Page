@@ -754,4 +754,5 @@ export const es: Record<string, string> = {
   "Área da gestão": "Área de gestión",
   "Reiniciar": "Reiniciar",
   "Vídeo da ezway": "Vídeo de ezway",
+  "Funcionalidades previstas · em desenvolvimento": "Funciones previstas · en desarrollo",
 };

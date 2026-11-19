@@ -60,3 +60,8 @@
 
 .outgoing .messageMeta { color: var(--brand-lime-ink); }
 .outgoing .messageMeta svg { color: #255282; }
+
+.intro .description { max-width: 60ch; margin: 24px auto 0; font-size: 18px; text-align: center; }
+.details { display: block; max-width: 680px; text-align: center; }
+.capabilities { width: fit-content; max-width: 100%; margin-inline: auto; }
+.capabilities li { text-align: start; }

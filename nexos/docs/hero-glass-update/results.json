@@ -1,0 +1,92 @@
+[
+  {
+    "width": 320,
+    "glass": {
+      "x": 16,
+      "y": 627.484375,
+      "width": 288,
+      "height": 340.078125,
+      "bottom": 967.5625
+    },
+    "avatar": {
+      "width": 272,
+      "height": 364.078125
+    },
+    "coloredWidth": 288,
+    "blur": "blur(36px) saturate(1.8)",
+    "fadeOverlaps": true,
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "glass": {
+      "x": 16,
+      "y": 552.875,
+      "width": 358,
+      "height": 433.78125,
+      "bottom": 986.65625
+    },
+    "avatar": {
+      "width": 342,
+      "height": 457.78125
+    },
+    "coloredWidth": 358,
+    "blur": "blur(36px) saturate(1.8)",
+    "fadeOverlaps": true,
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "glass": {
+      "x": 59,
+      "y": 538.265625,
+      "width": 640,
+      "height": 457.875,
+      "bottom": 996.140625
+    },
+    "avatar": {
+      "width": 360,
+      "height": 481.875
+    },
+    "coloredWidth": 640,
+    "blur": "blur(36px) saturate(1.8)",
+    "fadeOverlaps": true,
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "glass": {
+      "x": 395,
+      "y": 582.1875,
+      "width": 640,
+      "height": 457.875,
+      "bottom": 1040.0625
+    },
+    "avatar": {
+      "width": 360,
+      "height": 481.875
+    },
+    "coloredWidth": 640,
+    "blur": "blur(36px) saturate(1.8)",
+    "fadeOverlaps": true,
+    "overflow": false
+  },
+  {
+    "width": 2560,
+    "glass": {
+      "x": 955,
+      "y": 589.359375,
+      "width": 640,
+      "height": 457.875,
+      "bottom": 1047.234375
+    },
+    "avatar": {
+      "width": 360,
+      "height": 481.875
+    },
+    "coloredWidth": 640,
+    "blur": "blur(36px) saturate(1.8)",
+    "fadeOverlaps": true,
+    "overflow": false
+  }
+]

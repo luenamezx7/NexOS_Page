@@ -5,6 +5,9 @@
   overflow: hidden;
   pointer-events: none;
   background: #000000 url('/media/gloved-hand-connecting-iphone-poster.jpg') 50% 50% / cover no-repeat;
+  /* Arrive at the shared light stage before the foreground's final dissolve.
+     This avoids asking one white overlay to both change scenes and hide edges. */
+  mask-image: linear-gradient(to bottom, #000000 42%, rgb(0 0 0 / .96) 50%, rgb(0 0 0 / .8) 59%, rgb(0 0 0 / .5) 69%, rgb(0 0 0 / .2) 78%, rgb(0 0 0 / .04) 85%, transparent 90%);
 }
 
 .video {
@@ -34,7 +37,7 @@
   position: absolute;
   right: 24px;
   bottom: 20px;
-  z-index: 2;
+  z-index: 3;
   display: grid;
   place-items: center;
   width: 44px;

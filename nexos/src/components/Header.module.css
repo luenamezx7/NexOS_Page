@@ -27,9 +27,9 @@
 .menuItem > svg:last-child:not(:first-child) { margin-left: auto; }
 .userName { padding: 10px 12px 14px; color: var(--muted-foreground); font-size: 12px; overflow-wrap: anywhere; }
 .accountError { padding: 10px 12px; font-size: 12px; color: var(--foreground); }
-.mobileDialog { position: fixed; inset: 0; width: 100%; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 8px; border: 0; background: transparent; color: var(--foreground); }
+.mobileDialog { position: fixed; inset: 0; width: 100%; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left)); border: 0; background: transparent; color: var(--foreground); }
 .mobileDialog::backdrop { background: #000000aa; backdrop-filter: blur(8px); }
-.mobilePanel { width: min(100%, 360px); max-height: calc(100dvh - 16px); overflow-y: auto; overscroll-behavior: contain; margin-left: auto; padding: 8px 18px 16px; border-radius: 28px; border: 1px solid var(--border); background: var(--popover); box-shadow: 0 24px 80px #00000055; animation: menu-enter 240ms var(--ease-fluid); }
+.mobilePanel { width: min(100%, 360px); max-height: 100%; overflow-y: auto; overscroll-behavior: contain; margin-left: auto; padding: 8px 18px 16px; border-radius: 28px; border: 1px solid var(--border); background: var(--popover); box-shadow: 0 24px 80px #00000055; animation: menu-enter 240ms var(--ease-fluid); }
 .mobileHeading { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 4px 0 12px; border-bottom: 1px solid var(--border); background: var(--popover); font: 600 11px/1.4 var(--font-sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted-foreground); }
 .closeButton { display: grid; place-items: center; width: 44px; height: 44px; color: var(--foreground); }
 .mobileNav { display: flex; flex-direction: column; padding-top: 8px; }

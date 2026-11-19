@@ -1,0 +1,40 @@
+[
+  {
+    "browser": "chrome",
+    "width": 390,
+    "mode": "fallback",
+    "filter": "none"
+  },
+  {
+    "browser": "chrome",
+    "width": 1440,
+    "mode": "active",
+    "filter": "url(\"#hero-glass-refraction\")"
+  },
+  {
+    "check": "actual-pixel-displacement",
+    "meanPixelDifference": 204.0039886039886
+  },
+  {
+    "browser": "chrome",
+    "errors": [],
+    "csp": []
+  },
+  {
+    "browser": "webkit",
+    "width": 390,
+    "mode": "fallback",
+    "filter": "none"
+  },
+  {
+    "browser": "webkit",
+    "width": 1440,
+    "mode": "fallback",
+    "filter": "none"
+  },
+  {
+    "browser": "webkit",
+    "errors": [],
+    "csp": []
+  }
+]

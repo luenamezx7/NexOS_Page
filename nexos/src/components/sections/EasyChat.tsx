@@ -34,7 +34,7 @@ export function EasyChat() {
   return <section id="easychat" aria-labelledby="easychat-title" className={styles.section}>
     <div className={styles.container}>
       <div className={styles.top}><span>{t('Assistente administrativo com IA')}</span><GlowingBadge variant="neutral" className={styles.statusBadge} dotColor="#ff3f9f" glowColor="rgb(255 63 159 / 28%)">{t('Em desenvolvimento')}</GlowingBadge></div>
-      <PhoneScrollHero titleComponent={<div className={styles.intro}><p className={styles.name}>{easychat.name}</p><h2 data-heading-static id="easychat-title" className={styles.heading}>{t('Menos tarefas.')} <span className={styles.secondaryLine}><HighlightedText multiline inView from="bottom" delay={.12}>{t('Mais tempo para o negócio.')}</HighlightedText></span></h2></div>}>
+      <PhoneScrollHero titleComponent={<div className={styles.intro}><p className={styles.name}>{easychat.name}</p><h2 data-heading-static id="easychat-title" className={styles.heading}>{t('Menos tarefas.')} <span className={styles.secondaryLine}><HighlightedText multiline inView from="bottom" delay={.12}>{t('Mais tempo para o negócio.')}</HighlightedText></span></h2><ScrollReveal as="p" className={styles.description}>{t('Uma ideia para organizar tarefas pelo WhatsApp com apoio de IA. Você revisa cada documento antes de compartilhar.')}</ScrollReveal></div>}>
         <figure className={styles.mockup} data-journey-visual>
           <div ref={conversationRef} className={styles.phonePreview} role="img" aria-label={t('Conversa do EasyChat com documento para revisar')}>
             <Iphone15Pro className={styles.device}>
@@ -51,10 +51,10 @@ export function EasyChat() {
               </div>
             </Iphone15Pro>
           </div>
-          <figcaption>{t('Prévia conceitual · funcionalidades previstas · em desenvolvimento')}</figcaption>
+          <figcaption>{t('Funcionalidades previstas · em desenvolvimento')}</figcaption>
         </figure>
       </PhoneScrollHero>
-      <div className={styles.details}><ScrollReveal as="p" className={styles.description}>{t('Uma ideia para organizar tarefas pelo WhatsApp com apoio de IA. Você revisa cada documento antes de compartilhar.')}</ScrollReveal><div><p className={styles.capabilityTitle}>{t('Funcionalidades previstas')}</p><ul className={styles.capabilities}>{capabilities.map(({ icon: Icon, label }) => <li key={label}><Icon size={18} aria-hidden="true" />{t(label)}</li>)}</ul></div></div>
+      <div className={styles.details}><div><p className={styles.capabilityTitle}>{t('Funcionalidades previstas')}</p><ul className={styles.capabilities}>{capabilities.map(({ icon: Icon, label }) => <li key={label}><Icon size={18} aria-hidden="true" />{t(label)}</li>)}</ul></div></div>
     </div>
   </section>;
 }

@@ -1,0 +1,72 @@
+[
+  {
+    "width": 320,
+    "fadeTop": 740.5625,
+    "fadeBottom": 1040.5625,
+    "fadeHeight": 300,
+    "avatarBottom": 967.5625,
+    "ctaBottom": 567.484375,
+    "heroBottom": 1039.5625,
+    "nextTop": 1039.5625,
+    "nextColor": "rgb(245, 243, 241)",
+    "fadeColor": "rgb(245, 243, 241)",
+    "mask": "linear-gradient(rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.024) 14%, rgba(0, 0, 0, 0.09) 28%, rgba(0, 0, 0, 0.22) 42%, rgba(0, 0, 0, 0.43) 56%, rgba(0, 0, 0, 0.67) 70%, rgba(0, 0, 0, 0.87) 83%, rgba(0, 0, 0, 0.97) 93%, rgb(0, 0, 0) 100%)",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "fadeTop": 716.46875,
+    "fadeBottom": 1059.65625,
+    "fadeHeight": 343.1875,
+    "avatarBottom": 986.65625,
+    "ctaBottom": 492.875,
+    "heroBottom": 1058.65625,
+    "nextTop": 1058.65625,
+    "nextColor": "rgb(245, 243, 241)",
+    "fadeColor": "rgb(245, 243, 241)",
+    "mask": "linear-gradient(rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.024) 14%, rgba(0, 0, 0, 0.09) 28%, rgba(0, 0, 0, 0.22) 42%, rgba(0, 0, 0, 0.43) 56%, rgba(0, 0, 0, 0.67) 70%, rgba(0, 0, 0, 0.87) 83%, rgba(0, 0, 0, 0.97) 93%, rgb(0, 0, 0) 100%)",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "fadeTop": 749.140625,
+    "fadeBottom": 1069.140625,
+    "fadeHeight": 320,
+    "avatarBottom": 996.140625,
+    "ctaBottom": 482.265625,
+    "heroBottom": 1068.140625,
+    "nextTop": 1068.140625,
+    "nextColor": "rgb(245, 243, 241)",
+    "fadeColor": "rgb(245, 243, 241)",
+    "mask": "linear-gradient(rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.024) 14%, rgba(0, 0, 0, 0.09) 28%, rgba(0, 0, 0, 0.22) 42%, rgba(0, 0, 0, 0.43) 56%, rgba(0, 0, 0, 0.67) 70%, rgba(0, 0, 0, 0.87) 83%, rgba(0, 0, 0, 0.97) 93%, rgb(0, 0, 0) 100%)",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "fadeTop": 673.0625,
+    "fadeBottom": 1113.0625,
+    "fadeHeight": 440,
+    "avatarBottom": 1040.0625,
+    "ctaBottom": 526.1875,
+    "heroBottom": 1112.0625,
+    "nextTop": 1112.0625,
+    "nextColor": "rgb(245, 243, 241)",
+    "fadeColor": "rgb(245, 243, 241)",
+    "mask": "linear-gradient(rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.024) 14%, rgba(0, 0, 0, 0.09) 28%, rgba(0, 0, 0, 0.22) 42%, rgba(0, 0, 0, 0.43) 56%, rgba(0, 0, 0, 0.67) 70%, rgba(0, 0, 0, 0.87) 83%, rgba(0, 0, 0, 0.97) 93%, rgb(0, 0, 0) 100%)",
+    "overflow": false
+  },
+  {
+    "width": 2560,
+    "fadeTop": 680.234375,
+    "fadeBottom": 1120.234375,
+    "fadeHeight": 440,
+    "avatarBottom": 1047.234375,
+    "ctaBottom": 533.359375,
+    "heroBottom": 1119.234375,
+    "nextTop": 1119.234375,
+    "nextColor": "rgb(245, 243, 241)",
+    "fadeColor": "rgb(245, 243, 241)",
+    "mask": "linear-gradient(rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.024) 14%, rgba(0, 0, 0, 0.09) 28%, rgba(0, 0, 0, 0.22) 42%, rgba(0, 0, 0, 0.43) 56%, rgba(0, 0, 0, 0.67) 70%, rgba(0, 0, 0, 0.87) 83%, rgba(0, 0, 0, 0.97) 93%, rgb(0, 0, 0) 100%)",
+    "overflow": false
+  }
+]

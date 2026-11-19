@@ -1,0 +1,102 @@
+[
+  {
+    "browser": "chrome",
+    "width": 320,
+    "tail": 72,
+    "fadePortion": 0.33998540835157287,
+    "mask": "none",
+    "surface": "rgb(245, 243, 241)",
+    "nextSurface": "rgb(245, 243, 241)",
+    "overflow": false
+  },
+  {
+    "browser": "chrome",
+    "width": 390,
+    "tail": 72,
+    "fadePortion": 0.3399890777527476,
+    "mask": "none",
+    "surface": "rgb(245, 243, 241)",
+    "nextSurface": "rgb(245, 243, 241)",
+    "overflow": false
+  },
+  {
+    "browser": "chrome",
+    "width": 768,
+    "tail": 72,
+    "fadePortion": 0.3400129701686122,
+    "mask": "none",
+    "surface": "rgb(245, 243, 241)",
+    "nextSurface": "rgb(245, 243, 241)",
+    "overflow": false
+  },
+  {
+    "browser": "chrome",
+    "width": 1440,
+    "tail": 72,
+    "fadePortion": 0.3400129701686122,
+    "mask": "none",
+    "surface": "rgb(245, 243, 241)",
+    "nextSurface": "rgb(245, 243, 241)",
+    "overflow": false
+  },
+  {
+    "browser": "chrome",
+    "width": 2560,
+    "tail": 72,
+    "fadePortion": 0.3400129701686122,
+    "mask": "none",
+    "surface": "rgb(245, 243, 241)",
+    "nextSurface": "rgb(245, 243, 241)",
+    "overflow": false
+  },
+  {
+    "browser": "webkit",
+    "width": 320,
+    "tail": 72,
+    "fadePortion": 0.35296738549278206,
+    "mask": "none",
+    "surface": "rgb(245, 243, 241)",
+    "nextSurface": "rgb(245, 243, 241)",
+    "overflow": false
+  },
+  {
+    "browser": "webkit",
+    "width": 390,
+    "tail": 72,
+    "fadePortion": 0.3502338173763229,
+    "mask": "none",
+    "surface": "rgb(245, 243, 241)",
+    "nextSurface": "rgb(245, 243, 241)",
+    "overflow": false
+  },
+  {
+    "browser": "webkit",
+    "width": 768,
+    "tail": 72,
+    "fadePortion": 0.3400129701686122,
+    "mask": "none",
+    "surface": "rgb(245, 243, 241)",
+    "nextSurface": "rgb(245, 243, 241)",
+    "overflow": false
+  },
+  {
+    "browser": "webkit",
+    "width": 1440,
+    "tail": 72,
+    "fadePortion": 0.3400129701686122,
+    "mask": "none",
+    "surface": "rgb(245, 243, 241)",
+    "nextSurface": "rgb(245, 243, 241)",
+    "overflow": false
+  },
+  {
+    "browser": "webkit",
+    "width": 2560,
+    "tail": 72,
+    "fadePortion": 0.3400129701686122,
+    "mask": "none",
+    "surface": "rgb(245, 243, 241)",
+    "nextSurface": "rgb(245, 243, 241)",
+    "overflow": false
+  }
+]

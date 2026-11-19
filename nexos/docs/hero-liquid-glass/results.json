@@ -1,0 +1,91 @@
+[
+  {
+    "browser": "chrome",
+    "viewport": 320,
+    "width": 288,
+    "height": 269.421875,
+    "top": 0.2599888416806146,
+    "avatarWidth": 272,
+    "engine": "material",
+    "filter": "blur(5px) saturate(1.3) url(\"#lg-mat-_R_1l1fclrdulb_-v3\")",
+    "svgFilters": 1,
+    "maps": [
+      "data:image/png;base64,iVB"
+    ],
+    "overflow": false,
+    "fadeOverlap": true
+  },
+  {
+    "browser": "chrome",
+    "viewport": 390,
+    "width": 358,
+    "height": 338.765625,
+    "top": 0.25998361662912145,
+    "avatarWidth": 342,
+    "engine": "material",
+    "filter": "blur(5px) saturate(1.3) url(\"#lg-mat-_R_1l1fclrdulb_-v4\")",
+    "svgFilters": 1,
+    "maps": [
+      "data:image/png;base64,iVB"
+    ],
+    "overflow": false,
+    "fadeOverlap": true
+  },
+  {
+    "browser": "chrome",
+    "viewport": 768,
+    "width": 640,
+    "height": 356.59375,
+    "top": 0.25998702983138783,
+    "avatarWidth": 360,
+    "engine": "material",
+    "filter": "blur(5px) saturate(1.3) url(\"#lg-mat-_R_1l1fclrdulb_-v5\")",
+    "svgFilters": 1,
+    "maps": [
+      "data:image/png;base64,iVB"
+    ],
+    "overflow": false,
+    "fadeOverlap": true
+  },
+  {
+    "browser": "chrome",
+    "viewport": 1440,
+    "width": 640,
+    "height": 356.59375,
+    "top": 0.25998702983138783,
+    "avatarWidth": 360,
+    "engine": "material",
+    "filter": "blur(5px) saturate(1.3) url(\"#lg-mat-_R_1l1fclrdulb_-v5\")",
+    "svgFilters": 1,
+    "maps": [
+      "data:image/png;base64,iVB"
+    ],
+    "overflow": false,
+    "fadeOverlap": true
+  },
+  {
+    "browser": "chrome",
+    "viewport": 2560,
+    "width": 640,
+    "height": 356.59375,
+    "top": 0.25998702983138783,
+    "avatarWidth": 360,
+    "engine": "material",
+    "filter": "blur(5px) saturate(1.3) url(\"#lg-mat-_R_1l1fclrdulb_-v7\")",
+    "svgFilters": 1,
+    "maps": [
+      "data:image/png;base64,iVB"
+    ],
+    "overflow": false,
+    "fadeOverlap": true
+  },
+  {
+    "browser": "chrome",
+    "errors": [],
+    "violations": []
+  },
+  {
+    "engine": "webkit",
+    "unavailable": "browserType.launch: Executable doesn't exist at /Users/henriqueemanuel/Library/Caches/ms-playwright/webkit-2248/pw_run.sh"
+  }
+]

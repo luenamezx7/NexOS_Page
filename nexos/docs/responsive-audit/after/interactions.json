@@ -1,0 +1,307 @@
+[
+  {
+    "label": "cookies-320x480",
+    "width": 320,
+    "height": 480,
+    "scrollWidth": 320,
+    "dialogs": [
+      {
+        "label": "Aviso de cookies",
+        "top": 135.625,
+        "bottom": 480,
+        "height": 344.375,
+        "scrollHeight": 344
+      }
+    ],
+    "controls": [
+      {
+        "text": "Recusar",
+        "top": 291,
+        "bottom": 335,
+        "left": 33,
+        "right": 287
+      },
+      {
+        "text": "Personalizar",
+        "top": 343,
+        "bottom": 387,
+        "left": 33,
+        "right": 287
+      },
+      {
+        "text": "Aceitar tudo",
+        "top": 395,
+        "bottom": 447,
+        "left": 33,
+        "right": 287
+      }
+    ]
+  },
+  {
+    "label": "cookies-844x390",
+    "width": 844,
+    "height": 390,
+    "scrollWidth": 844,
+    "dialogs": [
+      {
+        "label": "Aviso de cookies",
+        "top": 184,
+        "bottom": 390,
+        "height": 206,
+        "scrollHeight": 206
+      }
+    ],
+    "controls": [
+      {
+        "text": "Recusar",
+        "top": 201,
+        "bottom": 245,
+        "left": 657.109375,
+        "right": 789
+      },
+      {
+        "text": "Personalizar",
+        "top": 253,
+        "bottom": 297,
+        "left": 657.109375,
+        "right": 789
+      },
+      {
+        "text": "Aceitar tudo",
+        "top": 305,
+        "bottom": 357,
+        "left": 657.109375,
+        "right": 789
+      }
+    ]
+  },
+  {
+    "label": "cookies-667x320",
+    "width": 667,
+    "height": 320,
+    "scrollWidth": 667,
+    "dialogs": [
+      {
+        "label": "Aviso de cookies",
+        "top": 140.8125,
+        "bottom": 320,
+        "height": 179.1875,
+        "scrollHeight": 179
+      }
+    ],
+    "controls": [
+      {
+        "text": "Recusar",
+        "top": 235,
+        "bottom": 287,
+        "left": 33,
+        "right": 112.375
+      },
+      {
+        "text": "Personalizar",
+        "top": 235,
+        "bottom": 287,
+        "left": 120.375,
+        "right": 222.65625
+      },
+      {
+        "text": "Aceitar tudo",
+        "top": 235,
+        "bottom": 287,
+        "left": 230.65625,
+        "right": 362.546875
+      }
+    ]
+  },
+  {
+    "label": "cookies-320x240",
+    "width": 320,
+    "height": 240,
+    "scrollWidth": 320,
+    "dialogs": [
+      {
+        "label": "Aviso de cookies",
+        "top": 16,
+        "bottom": 240,
+        "height": 224,
+        "scrollHeight": 224
+      }
+    ],
+    "controls": [
+      {
+        "text": "Recusar",
+        "top": 171.375,
+        "bottom": 215.375,
+        "left": 33,
+        "right": 287
+      },
+      {
+        "text": "Personalizar",
+        "top": 223.375,
+        "bottom": 267.375,
+        "left": 33,
+        "right": 287
+      },
+      {
+        "text": "Aceitar tudo",
+        "top": 275.375,
+        "bottom": 327.375,
+        "left": 33,
+        "right": 287
+      }
+    ]
+  },
+  {
+    "label": "internal-navigation",
+    "visible": true
+  },
+  {
+    "label": "cookie-preferences-320",
+    "width": 320,
+    "height": 568,
+    "scrollWidth": 320,
+    "dialogs": [
+      {
+        "label": null,
+        "top": 45.453125,
+        "bottom": 568,
+        "height": 522.546875,
+        "scrollHeight": 1122
+      }
+    ],
+    "controls": [
+      {
+        "text": "Fechar preferências de cookies",
+        "top": 66.453125,
+        "bottom": 110.453125,
+        "left": 251,
+        "right": 295
+      },
+      {
+        "text": "Funcionais: desativado",
+        "top": 457.078125,
+        "bottom": 485.078125,
+        "left": 230,
+        "right": 278
+      },
+      {
+        "text": "Analytics: desativado",
+        "top": 603.015625,
+        "bottom": 631.015625,
+        "left": 230,
+        "right": 278
+      },
+      {
+        "text": "Marketing: desativado",
+        "top": 748.953125,
+        "bottom": 776.953125,
+        "left": 230,
+        "right": 278
+      },
+      {
+        "text": "Recusar tudo",
+        "top": 940.484375,
+        "bottom": 984.484375,
+        "left": 25,
+        "right": 295
+      },
+      {
+        "text": "Salvar escolhas",
+        "top": 992.484375,
+        "bottom": 1036.484375,
+        "left": 25,
+        "right": 295
+      },
+      {
+        "text": "Aceitar tudo",
+        "top": 1044.484375,
+        "bottom": 1089.140625,
+        "left": 25,
+        "right": 295
+      }
+    ]
+  },
+  {
+    "label": "preference-control-reachable",
+    "text": "Fechar preferências de cookies",
+    "visible": true
+  },
+  {
+    "label": "preference-control-reachable",
+    "text": "Funcionais: desativado",
+    "visible": true
+  },
+  {
+    "label": "preference-control-reachable",
+    "text": "Analytics: desativado",
+    "visible": true
+  },
+  {
+    "label": "preference-control-reachable",
+    "text": "Marketing: desativado",
+    "visible": true
+  },
+  {
+    "label": "preference-control-reachable",
+    "text": "Recusar tudo",
+    "visible": true
+  },
+  {
+    "label": "preference-control-reachable",
+    "text": "Salvar escolhas",
+    "visible": true
+  },
+  {
+    "label": "preference-control-reachable",
+    "text": "Aceitar tudo",
+    "visible": true
+  },
+  {
+    "label": "menu-trigger",
+    "count": 1
+  },
+  {
+    "label": "mobile-menu-320",
+    "width": 320,
+    "height": 568,
+    "scrollWidth": 320,
+    "dialogs": [
+      {
+        "label": null,
+        "top": 0,
+        "bottom": 568,
+        "height": 568,
+        "scrollHeight": 568
+      }
+    ],
+    "controls": [
+      {
+        "text": "Fechar menu",
+        "top": 21,
+        "bottom": 65,
+        "left": 251,
+        "right": 295
+      }
+    ]
+  },
+  {
+    "label": "menu-escape-focus",
+    "restored": true
+  },
+  {
+    "label": "keyboard-height-390x360",
+    "width": 390,
+    "height": 360,
+    "scrollWidth": 390,
+    "dialogs": [],
+    "controls": []
+  },
+  {
+    "label": "css-zoom-200",
+    "width": 640,
+    "height": 450,
+    "scrollWidth": 640,
+    "dialogs": [],
+    "controls": []
+  }
+]

@@ -29,6 +29,31 @@ for (const width of [320, 390, 768, 1440]) {
     const alignment = await page.locator('#main-content h2, #main-content h3').evaluateAll(nodes => nodes.filter(node => !node.closest('dialog')).map(node => ({ id: node.id, align: getComputedStyle(node).textAlign })));
     expect(alignment.filter(item => item.align !== 'center')).toEqual([]);
     await page.evaluate(() => document.fonts.ready);
+    const pairs = [
+      ['#hero-title', '.hero-description'],
+      ['#management-title', '#management-title + p'],
+      ['#ecosystem-title', '#ecossistema [class*="lead"]'],
+      ['#easychat-title', '#easychat [class*="intro"] > [class*="description"]'],
+      ['#plate-details-panel-uso h3', '#plate-details-panel-uso h3 + p'],
+      ['#plate-management-title', '#plate-management-title + p'],
+      ['#real-estate-video-title', '#real-estate-video-title + p'],
+      ['#delivery-title', '#delivery-process header p'],
+      ['#mascot-solutions-title', '#mascot-solutions [class*="intro"]'],
+      ['#about-title', '#about-title + p'],
+      ['#cta-title', '#cta-final [class*="ctaBottom"] > p'],
+      ['#instagram-title', '#instagram-title + p'],
+    ];
+    for (const [headingSelector, copySelector] of pairs) {
+      await page.locator(headingSelector).evaluate(el => scrollTo({ top: scrollY + el.getBoundingClientRect().top - innerHeight * .25, behavior: 'instant' }));
+      await page.waitForTimeout(700);
+      const heading = await page.locator(headingSelector).boundingBox();
+      const copy = await page.locator(copySelector).boundingBox();
+      expect(heading, headingSelector).not.toBeNull();
+      expect(copy, copySelector).not.toBeNull();
+      expect(Math.abs((heading!.x + heading!.width / 2) - (copy!.x + copy!.width / 2)), copySelector).toBeLessThan(3);
+      expect(copy!.y, copySelector).toBeGreaterThanOrEqual(heading!.y + heading!.height - 2);
+      await expect(page.locator(copySelector)).toHaveCSS('text-align', 'center');
+    }
     const section = page.locator('#easychat');
     const phone = page.locator('[data-phone-scroll]');
     await expect.poll(() => phone.evaluate(el => el.style.top)).not.toBe('');

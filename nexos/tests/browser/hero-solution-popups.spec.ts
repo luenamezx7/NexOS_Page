@@ -11,7 +11,7 @@ async function expectSettledWords(panel: Locator) {
 }
 
 for (const width of [320, 390, 430, 768, 1440]) {
-  test(`one rotating hero popup stays readable beside the avatar at ${width}px`, async ({ page }) => {
+  test(`rotating lime text stays readable in front of the avatar legs at ${width}px`, async ({ page }) => {
     const errors: string[] = [];
     page.on('pageerror', error => errors.push(error.message));
     await page.setViewportSize({ width, height: 900 });
@@ -24,8 +24,10 @@ for (const width of [320, 390, 430, 768, 1440]) {
     const avatar = page.locator('[class*=avatarFrame]');
     const avatarBox = await avatar.boundingBox();
     const panelBox = await panel.boundingBox();
-    expect(Math.abs((avatarBox!.y + avatarBox!.height / 2) - (panelBox!.y + panelBox!.height / 2))).toBeLessThan(2);
-    expect(panelBox!.x + panelBox!.width / 2).toBeGreaterThan(avatarBox!.x + avatarBox!.width / 2);
+    expect(panelBox!.y).toBeGreaterThan(avatarBox!.y + avatarBox!.height * .6);
+    expect(panelBox!.y + panelBox!.height).toBeLessThan(avatarBox!.y + avatarBox!.height);
+    expect(Math.abs((panelBox!.x + panelBox!.width / 2) - (avatarBox!.x + avatarBox!.width / 2))).toBeLessThan(2);
+    expect(await panel.evaluate(element => Number(getComputedStyle(element).zIndex) > Number(getComputedStyle(document.querySelector('#hero [class*="sectionFade"]')!).zIndex))).toBe(true);
     await expect(panel.locator('img')).toHaveCount(0);
     await expectSettledWords(panel);
     expect(await panel.evaluate(element => {
@@ -76,6 +78,8 @@ for (const [locale, heading, lastItem] of [
     await page.addInitScript(language => localStorage.setItem('easyway-language', language), locale);
     await page.goto('/');
     const panel = page.locator(panelSelector);
+    await expect(page.locator('dialog[data-presentation]')).toHaveCount(0, { timeout: 15000 });
+    await panel.scrollIntoViewIfNeeded();
     await expect(panel).toHaveAttribute('aria-label', heading);
     await expect(panel.getByRole('listitem')).toHaveCount(1);
     await expect(panel.getByRole('listitem')).toContainText(lastItem, { timeout: 15000 });
@@ -87,8 +91,8 @@ test('popups rotate through the sequence every three seconds and loop', async ({
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   const panel = page.locator(panelSelector);
-  await panel.scrollIntoViewIfNeeded();
   await expect(page.locator('dialog[data-presentation]')).toHaveCount(0, { timeout: 15000 });
+  await panel.scrollIntoViewIfNeeded();
   // Observe the live sequence, including the return to the first item.
   await expect(panel).toContainText(examples[0], { timeout: 15000 });
   for (const example of [...examples.slice(1), examples[0]]) {
@@ -97,7 +101,7 @@ test('popups rotate through the sequence every three seconds and loop', async ({
     await expectSettledWords(panel);
     const avatarBox = await page.locator('[class*=avatarFrame]').boundingBox();
     const popupBox = await panel.locator('[data-solution-popup]').boundingBox();
-    // Different card heights must stay centered beside the unchanged avatar.
-    expect(Math.abs((popupBox!.y + popupBox!.height / 2) - (avatarBox!.y + avatarBox!.height / 2))).toBeLessThan(2);
+    // Every label stays centred over the legs, independent of its line breaks.
+    expect((popupBox!.y + popupBox!.height / 2 - avatarBox!.y) / avatarBox!.height).toBeCloseTo(.76, 2);
   }
 });

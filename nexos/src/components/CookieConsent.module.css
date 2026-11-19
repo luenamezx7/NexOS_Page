@@ -1,0 +1,33 @@
+.banner {
+  padding-inline: max(16px, env(safe-area-inset-left)) max(16px, env(safe-area-inset-right));
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+}
+
+.bannerPanel {
+  max-height: calc(100dvh - max(16px, env(safe-area-inset-top)) - max(16px, env(safe-area-inset-bottom)));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Unlayered global paragraph rules otherwise override Tailwind's text sizes. */
+.bannerPanel p { font-size: 13px; line-height: 1.6; }
+.bannerPanel p:first-child { font-size: 14px; line-height: 1.4; }
+
+.preferences {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* A short viewport must scroll the entire sheet, including its actions. */
+.preferences > div { flex-shrink: 0; }
+.preferencesBody { flex: none; overflow: visible; }
+.preferences p { font-size: 12px; line-height: 1.6; }
+.preferences h2 { font-size: 18px; line-height: 1.3; }
+.preferences :global(#cookie-prefs-description) { margin-top: 4px; }
+.close { min-width: 44px; min-height: 44px; }
+.preferences button:not([role='switch']) { min-height: 44px; }
+
+@media (max-height: 480px) {
+  .bannerPanel { gap: 12px; padding: 16px; }
+}

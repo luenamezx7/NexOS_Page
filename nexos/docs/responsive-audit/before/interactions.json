@@ -1,0 +1,228 @@
+[
+  {
+    "label": "cookies-320x480",
+    "width": 320,
+    "height": 480,
+    "scrollWidth": 320,
+    "dialogs": [],
+    "controls": []
+  },
+  {
+    "label": "cookies-844x390",
+    "width": 844,
+    "height": 390,
+    "scrollWidth": 844,
+    "dialogs": [
+      {
+        "label": "Aviso de cookies",
+        "top": 160.00006103515625,
+        "bottom": 390.00006103515625,
+        "height": 230,
+        "scrollHeight": 230
+      }
+    ],
+    "controls": [
+      {
+        "text": "Recusar",
+        "top": 185.00006103515625,
+        "bottom": 229.00006103515625,
+        "left": 649.109375,
+        "right": 781
+      },
+      {
+        "text": "Personalizar",
+        "top": 237.00006103515625,
+        "bottom": 281.00006103515625,
+        "left": 649.109375,
+        "right": 781
+      },
+      {
+        "text": "Aceitar tudo",
+        "top": 289.00006103515625,
+        "bottom": 341.00006103515625,
+        "left": 649.109375,
+        "right": 781
+      }
+    ]
+  },
+  {
+    "label": "cookies-667x320",
+    "width": 667,
+    "height": 320,
+    "scrollWidth": 667,
+    "dialogs": [
+      {
+        "label": "Aviso de cookies",
+        "top": 119.35470581054688,
+        "bottom": 333.3547058105469,
+        "height": 214,
+        "scrollHeight": 214
+      }
+    ],
+    "controls": [
+      {
+        "text": "Recusar",
+        "top": 244.35470581054688,
+        "bottom": 296.3547058105469,
+        "left": 37,
+        "right": 116.375
+      },
+      {
+        "text": "Personalizar",
+        "top": 244.35470581054688,
+        "bottom": 296.3547058105469,
+        "left": 124.375,
+        "right": 226.65625
+      },
+      {
+        "text": "Aceitar tudo",
+        "top": 244.35470581054688,
+        "bottom": 296.3547058105469,
+        "left": 234.65625,
+        "right": 366.546875
+      }
+    ]
+  },
+  {
+    "label": "internal-navigation",
+    "visible": false
+  },
+  {
+    "label": "cookie-preferences-320",
+    "width": 320,
+    "height": 568,
+    "scrollWidth": 320,
+    "dialogs": [
+      {
+        "label": "Aviso de cookies",
+        "top": 143.90573120117188,
+        "bottom": 573.90576171875,
+        "height": 430.0000305175781,
+        "scrollHeight": 430
+      },
+      {
+        "label": null,
+        "top": 68.9383544921875,
+        "bottom": 584.891845703125,
+        "height": 515.9534912109375,
+        "scrollHeight": 609
+      }
+    ],
+    "controls": [
+      {
+        "text": "Recusar",
+        "top": 380.9057312011719,
+        "bottom": 424.9057312011719,
+        "left": 37,
+        "right": 283
+      },
+      {
+        "text": "Personalizar",
+        "top": 432.9057312011719,
+        "bottom": 476.9057312011719,
+        "left": 37,
+        "right": 283
+      },
+      {
+        "text": "Aceitar tudo",
+        "top": 484.9057312011719,
+        "bottom": 536.90576171875,
+        "left": 37,
+        "right": 283
+      },
+      {
+        "text": "Fechar preferências de cookies",
+        "top": 89.67337799072266,
+        "bottom": 125.2191390991211,
+        "left": 257.7508544921875,
+        "right": 293.2966003417969
+      },
+      {
+        "text": "Funcionais: desativado",
+        "top": 695.52490234375,
+        "bottom": 723.171630859375,
+        "left": 229.11676025390625,
+        "right": 276.5111083984375
+      },
+      {
+        "text": "Analytics: desativado",
+        "top": 910.7742309570312,
+        "bottom": 938.4208984375,
+        "left": 229.11676025390625,
+        "right": 276.5111083984375
+      },
+      {
+        "text": "Marketing: desativado",
+        "top": 1126.0235595703125,
+        "bottom": 1153.6702880859375,
+        "left": 229.11676025390625,
+        "right": 276.5111083984375
+      },
+      {
+        "text": "Recusar tudo",
+        "top": 432.8812561035156,
+        "bottom": 470.4017639160156,
+        "left": 26.703414916992188,
+        "right": 293.29661560058594
+      },
+      {
+        "text": "Salvar escolhas",
+        "top": 478.30084228515625,
+        "bottom": 515.8213500976562,
+        "left": 26.703414916992188,
+        "right": 293.29661560058594
+      },
+      {
+        "text": "Aceitar tudo",
+        "top": 523.7203979492188,
+        "bottom": 575.0643310546875,
+        "left": 26.703414916992188,
+        "right": 293.29661560058594
+      }
+    ]
+  },
+  {
+    "label": "menu-trigger",
+    "count": 1
+  },
+  {
+    "label": "mobile-menu-320",
+    "width": 320,
+    "height": 568,
+    "scrollWidth": 320,
+    "dialogs": [
+      {
+        "label": null,
+        "top": 0,
+        "bottom": 568,
+        "height": 568,
+        "scrollHeight": 568
+      }
+    ],
+    "controls": [
+      {
+        "text": "Fechar menu",
+        "top": 20.999114990234375,
+        "bottom": 64.99911499023438,
+        "left": 251,
+        "right": 295
+      }
+    ]
+  },
+  {
+    "label": "keyboard-height-390x360",
+    "width": 390,
+    "height": 360,
+    "scrollWidth": 390,
+    "dialogs": [],
+    "controls": []
+  },
+  {
+    "label": "css-zoom-200",
+    "width": 640,
+    "height": 450,
+    "scrollWidth": 640,
+    "dialogs": [],
+    "controls": []
+  }
+]
