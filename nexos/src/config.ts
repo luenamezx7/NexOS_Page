@@ -46,10 +46,10 @@ export const config: SiteConfig = {
   ],
   footer: {
     links: [
-      { label: 'Placa NFC + QR Code', href: '/placa-nfc' },
-      { label: 'Criação de sites', href: '/criacao-de-sites' },
-      { label: 'Landing pages', href: '/landing-pages' },
-      { label: 'Cardápio digital', href: '/cardapio-digital' },
+      { label: 'Placa NFC + QR Code', href: '/#showcase' },
+      { label: 'Criação de sites', href: '/#services' },
+      { label: 'Landing pages', href: '/#services' },
+      { label: 'Cardápio digital', href: '/#services' },
     ],
     legal: [
       { label: 'Política de Privacidade', href: '/privacidade' },

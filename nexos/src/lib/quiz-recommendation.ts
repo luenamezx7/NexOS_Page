@@ -3,10 +3,10 @@ import { LEAD_QUESTIONS } from './lead-quiz';
 export type QuizSolution = 'plate' | 'menu' | 'site' | 'landing' | 'easychat';
 
 export const QUIZ_SOLUTIONS: Record<QuizSolution, { title: string; reason: string; href: string; developing?: boolean }> = {
-  plate: { title: 'Placa NFC + QR Code', reason: 'Um acesso rápido ao seu link pode ajudar quem já está no seu espaço a encontrar o próximo passo.', href: '/placa-nfc' },
-  menu: { title: 'Cardápio digital', reason: 'Um cardápio fácil de abrir e consultar pode organizar a apresentação do que você oferece.', href: '/cardapio-digital' },
-  site: { title: 'Site vitrine', reason: 'Um espaço próprio pode reunir seus serviços, trabalhos e formas de contato.', href: '/criacao-de-sites' },
-  landing: { title: 'Landing page', reason: 'Uma página dedicada pode apresentar uma oferta e facilitar o contato de quem chega pela sua campanha.', href: '/landing-pages' },
+  plate: { title: 'Placa NFC + QR Code', reason: 'Um acesso rápido ao seu link pode ajudar quem já está no seu espaço a encontrar o próximo passo.', href: '/#showcase' },
+  menu: { title: 'Cardápio digital', reason: 'Um cardápio fácil de abrir e consultar pode organizar a apresentação do que você oferece.', href: '/#services' },
+  site: { title: 'Site vitrine', reason: 'Um espaço próprio pode reunir seus serviços, trabalhos e formas de contato.', href: '/#services' },
+  landing: { title: 'Landing page', reason: 'Uma página dedicada pode apresentar uma oferta e facilitar o contato de quem chega pela sua campanha.', href: '/#services' },
   easychat: { title: 'EasyChat', reason: 'Organizar tarefas administrativas pelo WhatsApp pode liberar tempo para o atendimento. Essa solução ainda está em desenvolvimento; converse com a equipe sobre alternativas disponíveis.', href: '/#easychat', developing: true },
 };
 

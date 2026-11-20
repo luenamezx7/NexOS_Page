@@ -5,7 +5,8 @@ test.use({ channel: process.env.PLAYWRIGHT_CHANNEL || undefined });
 test('login and account recovery describe access instead of orders', async ({ page }) => {
   await page.setViewportSize({ width: 1366, height: 900 });
   await page.goto('/portal/acesso');
-  const header = page.locator('header[data-page-header]');
+  const header = page.locator('[data-auth-identity]');
+  await expect(page.getByRole('banner')).toHaveCount(0);
   await expect(header.getByRole('navigation', { name: 'Navegação de páginas' })).toHaveCount(0);
   await expect(header.getByRole('link', { name: /voltar ao site/i })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Entrar na sua conta' })).toBeVisible();
@@ -18,3 +19,25 @@ test('login and account recovery describe access instead of orders', async ({ pa
   await expect(page.locator('main')).not.toContainText(/pedidos/i);
   await expect(header.getByRole('navigation', { name: 'Navegação de páginas' })).toHaveCount(0);
 });
+
+for (const path of ['/portal/acesso', '/admin-dashboard-su/secure-entry']) {
+  test(`login identity has only branding and a home link on ${path}`, async ({ page }, testInfo) => {
+    await page.addInitScript(() => localStorage.setItem('nexos-cookie-consent-v1', JSON.stringify({ necessary: true, functional: false, analytics: false, marketing: false, updatedAt: new Date().toISOString() })));
+    for (const width of [320, 1366]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto(path);
+      await expect(page.getByRole('banner')).toHaveCount(0);
+      const identity = page.locator('[data-auth-identity]');
+      await expect(identity.locator('img[src="/logo-ghost.svg"]')).toBeVisible();
+      await expect(identity.getByRole('link', { name: 'ezway — página inicial' })).toBeVisible();
+      await expect(identity.getByRole('link', { name: 'Voltar ao site' })).toHaveAttribute('href', '/');
+      await expect(identity.getByRole('link', { name: 'Voltar ao site' })).toBeVisible();
+      await expect(page.getByLabel('E-mail', { exact: true })).toBeVisible();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await expect(page.locator('section[aria-labelledby="login-title"]')).toHaveAttribute('data-reveal-state', 'visible');
+      await page.screenshot({ path: testInfo.outputPath(`login-${width}.png`) });
+    }
+    await page.locator('[data-auth-identity]').getByRole('link', { name: 'Voltar ao site' }).click();
+    await expect(page).toHaveURL(/\/$/);
+  });
+}

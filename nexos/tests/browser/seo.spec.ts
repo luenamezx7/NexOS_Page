@@ -3,7 +3,7 @@ import { enterPresentation } from './helpers/presentation';
 
 test.use({ channel: process.env.PLAYWRIGHT_CHANNEL || undefined });
 
-const servicePaths = ['/criacao-de-sites', '/landing-pages', '/cardapio-digital', '/placa-nfc'];
+const servicePaths: string[] = [];
 const publicPaths = ['/', ...servicePaths, '/privacidade', '/termos', '/lgpd', '/reembolso', '/cookies'];
 
 test('home entrega serviços e links no HTML, antes de qualquer interação', async ({ request }) => {

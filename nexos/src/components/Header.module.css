@@ -28,26 +28,21 @@
 .userName { padding: 10px 12px 14px; color: var(--muted-foreground); font-size: 12px; overflow-wrap: anywhere; }
 .accountError { padding: 10px 12px; font-size: 12px; color: var(--foreground); }
 .mobileDialog { position: fixed; inset: 0; width: 100%; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left)); border: 0; background: transparent; color: var(--foreground); }
-.mobileDialog::backdrop { background: #05070d66; }
-.mobilePanel { width: min(100%, 360px); max-height: 100%; overflow-y: auto; overscroll-behavior: contain; margin-left: auto; padding: 8px 18px 16px; border-radius: 28px; border: 1px solid var(--border); background: var(--popover); box-shadow: 0 24px 80px #00000055; }
+.mobileDialog::backdrop { background: #05070d66; opacity: 1; transition: opacity var(--panel-open-dur) var(--panel-ease); }
+.mobileDialog:has(.mobilePanel[data-open='false'])::backdrop { opacity: 0; transition-duration: var(--panel-close-dur); }
+@starting-style { .mobileDialog[open]::backdrop { opacity: 0; } }
+/* transitions.dev Panel reveal: negative travel enters from above. */
+.mobilePanel { --panel-translate-y: -48px; display: flex; flex-direction: column; width: min(100%, 360px); max-height: 100%; overflow: hidden; margin-left: auto; border-radius: 28px; border: 1px solid var(--border); background: var(--popover); box-shadow: 0 24px 80px #00000055; }
+.mobileContent { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 8px 18px 16px; }
 .mobileHeading { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 4px 0 12px; border-bottom: 1px solid var(--border); background: rgb(5 7 13 / 62%); backdrop-filter: blur(16px) saturate(135%); font: 600 11px/1.4 var(--font-sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted-foreground); }
 .closeButton { display: grid; place-items: center; width: 44px; height: 44px; color: var(--foreground); }
 .mobileNav { display: flex; flex-direction: column; padding-top: 8px; }
 .mobileNav > a:not(.mobileContactAction) { display: flex; align-items: center; min-height: 44px; padding-inline: 8px; border-radius: 8px; font: 550 16px/1.25 var(--font-sans); }
 .mobileNav > a:not(.mobileContactAction):hover { background: color-mix(in srgb, var(--color-ink) 7%, transparent); }
-.mobileSolutions { margin-top: 4px; padding-block: 4px; border-block: 1px solid var(--border); }
-.mobileSolutions summary { display: flex; align-items: center; justify-content: space-between; min-height: 44px; padding-inline: 8px; color: var(--text-secondary); font: 550 14px/1.3 var(--font-sans); cursor: pointer; list-style: none; }
-.mobileSolutions summary::-webkit-details-marker { display: none; }
-.mobileSolutions summary svg { transition: transform 180ms ease; }
-.mobileSolutions[open] summary svg { transform: rotate(180deg); }
-.mobileSolutions > div { display: grid; gap: 2px; margin: 4px 0 8px 8px; padding-left: 16px; border-left: 1px solid var(--border); }
-.mobileSolutions:not([open]) > div { display: none; }
-.mobileSolutions a { display: flex; align-items: center; min-height: 44px; padding-inline: 8px; border-radius: 8px; color: var(--text-secondary); font-size: 14px; }
-.mobileSolutions a:hover { background: color-mix(in srgb, var(--color-ink) 7%, transparent); color: var(--color-ink); }
 .mobileNav > .mobileContactAction { min-height: 44px; margin-top: 12px; padding-inline: 14px; font: 700 14px/1.2 var(--font-sans); }
 .expandedAccount { display: flex; flex-direction: column; gap: 4px; padding-top: 8px; margin-top: 12px; border-top: 1px solid var(--border); font-size: 14px; }
 .expandedAccount .accountLink { justify-content: flex-start; gap: 10px; width: 100%; height: auto; padding-inline: 8px; border: 0; background: transparent; }
-.expandedAccount .guestActions { display: grid; gap: 6px; margin-top: 10px; }
+.expandedAccount .guestActions { position: relative; display: grid; gap: 6px; margin-top: 10px; }
 .expandedAccount .guestActions a { justify-content: center; width: 100%; }
 .expandedAccount > :is(a, button) { min-height: 44px; display: flex; align-items: center; text-align: left; }
 .expandedAccount .accountLabel { position: static; width: auto; height: auto; margin: 0; overflow: visible; clip-path: none; white-space: normal; }
@@ -65,8 +60,12 @@
   .header { inset-inline: 12px; border-radius: 26px; }
   .bar { min-height: 60px; padding: 6px 12px; }
   .actions .accountSlot { display: none; }
-  .mobilePanel { padding: 8px 16px 16px; }
+  .mobileContent { padding: 8px 16px 16px; }
 }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .header { background: var(--popover); } }
 @media (prefers-reduced-transparency: reduce) { .header { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: var(--popover); } .mobileDialog::backdrop { backdrop-filter: none; background: var(--popover); } }
-@media (prefers-reduced-motion: reduce) { .header, .avatar { transition: none; } .mobilePanel { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .header, .avatar, .mobileDialog::backdrop { transition: none; } .mobilePanel { animation: none; } }
+
+
+.expandedAccountLoading { position: absolute; inset-inline-end: 8px; top: 0; display: grid; place-items: center; height: 44px; pointer-events: none; }
+.expandedAccountLoading .accountSkeleton { width: 22px; height: 22px; }

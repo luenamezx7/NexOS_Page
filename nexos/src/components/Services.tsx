@@ -1,5 +1,7 @@
 'use client';
 
+import { scheduleScrollRefresh } from '@/lib/schedule-scroll-refresh';
+
 import { ScrollFillText } from './ui/scroll-fill-headline';
 
 import { useEffect, useRef, useState } from 'react';
@@ -124,8 +126,8 @@ export function Services({ className = '', selectedUse }: { className?: string; 
       };
       paint(state.progress);
       root.dataset.screenTransition = 'ready';
-      ScrollTrigger.refresh();
-      void document.fonts.ready.then(() => { if (!disposed) ScrollTrigger.refresh(); });
+      scheduleScrollRefresh(ScrollTrigger);
+      void document.fonts.ready.then(() => { if (!disposed) scheduleScrollRefresh(ScrollTrigger); });
       recordMotion('servicesGsap', 'initialized');
       cleanup = () => {
         selectExampleRef.current = null;

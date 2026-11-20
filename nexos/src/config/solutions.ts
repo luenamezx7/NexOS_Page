@@ -67,8 +67,8 @@ export const solutions: Solution[] = [
     benefits: ['Reunir apresentação, serviços e contato em um só lugar.'], deliveries: ['Apresentação da empresa', 'Serviços e formas de contato'],
     limits: 'Páginas e funcionalidades são definidas no escopo. Loja, área restrita e integrações não estão automaticamente incluídas.',
     example: 'Uma empresa de serviços apresenta suas áreas de atuação e convida para uma conversa.', connection: 'Pode ser o destino de um biolink, NFC ou QR Code, conforme o projeto.',
-    availability: 'catalogue', source: 'src/config.ts: Desenvolvimento ezway; rota /criacao-de-sites.', asset: { src: '/ezway-demo-studio.jpg', alt: 'Site com apresentação de arquitetura e interiores' },
-    href: '/criacao-de-sites', cta: 'Conversar sobre meu site', message: 'Olá! Tenho interesse em um site para apresentar minha empresa e seus serviços.',
+    availability: 'catalogue', source: 'src/config.ts: Desenvolvimento ezway; seção de serviços na home.', asset: { src: '/ezway-demo-studio.jpg', alt: 'Site com apresentação de arquitetura e interiores' },
+    href: '/#services', cta: 'Conversar sobre meu site', message: 'Olá! Tenho interesse em um site para apresentar minha empresa e seus serviços.',
   },
   {
     id: 'portfolio', name: 'Portfólios', category: 'Apresentar', stage: 'Presença e acesso',
@@ -77,7 +77,7 @@ export const solutions: Solution[] = [
     limits: 'Organização, quantidade de projetos e atualizações são alinhadas no escopo.',
     example: 'Um prestador de serviços reúne seus projetos por tipo de trabalho.', connection: 'Pode receber acessos do site, de links ou de uma placa, sem sincronização automática.',
     availability: 'catalogue', source: 'src/config.ts: Desenvolvimento ezway; exemplos em Services.', asset: null,
-    href: '/criacao-de-sites', cta: 'Conversar sobre meu portfólio', message: 'Olá! Quero apresentar meus trabalhos em um portfólio digital.',
+    href: '/#services', cta: 'Conversar sobre meu portfólio', message: 'Olá! Quero apresentar meus trabalhos em um portfólio digital.',
   },
   {
     id: 'landing', name: 'Landing pages', category: 'Apresentar', stage: 'Presença e acesso',
@@ -85,8 +85,8 @@ export const solutions: Solution[] = [
     benefits: ['Concentrar a mensagem e deixar o próximo passo claro.'], deliveries: ['Página focada em um objetivo', 'Apresentação e chamada para ação'],
     limits: 'Não inclui automaticamente mídia paga, CRM ou automação e não garante conversão.',
     example: 'Uma página apresenta um serviço e convida o visitante a conversar.', connection: 'Pode ser destino de uma campanha ou de um link; integrações exigem escopo próprio.',
-    availability: 'catalogue', source: 'src/config.ts e rota /landing-pages.', asset: { src: '/ezway-demo-cafe.jpg', alt: 'Página de apresentação de uma cafeteria' },
-    href: '/landing-pages', cta: 'Conversar sobre minha página', message: 'Olá! Tenho interesse em uma landing page para um objetivo específico do meu negócio.',
+    availability: 'catalogue', source: 'src/config.ts e seção de serviços na home.', asset: { src: '/ezway-demo-cafe.jpg', alt: 'Página de apresentação de uma cafeteria' },
+    href: '/#services', cta: 'Conversar sobre minha página', message: 'Olá! Tenho interesse em uma landing page para um objetivo específico do meu negócio.',
   },
   {
     id: 'menu', name: 'Cardápios digitais', category: 'Apresentar', stage: 'Presença e acesso',
@@ -94,8 +94,8 @@ export const solutions: Solution[] = [
     benefits: ['Facilitar a consulta de categorias e descrições no celular.'], deliveries: ['Apresentação organizada de itens e informações'],
     limits: 'Pedidos, pagamentos, estoque e integrações não estão automaticamente incluídos.',
     example: 'Um estabelecimento apresenta categorias e descrições acessíveis por QR Code.', connection: 'Pode ser o destino de uma placa NFC, QR Code ou link.',
-    availability: 'catalogue', source: 'src/config.ts e rota /cardapio-digital.', asset: null,
-    href: '/cardapio-digital', cta: 'Conversar sobre meu cardápio', message: 'Olá! Quero organizar a apresentação dos itens do meu negócio em um cardápio digital.',
+    availability: 'catalogue', source: 'src/config.ts e seção de serviços na home.', asset: null,
+    href: '/#services', cta: 'Conversar sobre meu cardápio', message: 'Olá! Quero organizar a apresentação dos itens do meu negócio em um cardápio digital.',
   },
   {
     id: 'biolink', name: 'Biolinks', category: 'Conectar', stage: 'Presença e acesso',
@@ -111,7 +111,7 @@ export const solutions: Solution[] = [
     limits: 'NFC depende de compatibilidade e configuração do celular. O destino pode exigir internet. Personalização e entrega são alinhadas com a equipe.',
     example: 'Uma pessoa consulta o cardápio ou abre o contato a partir da placa.', connection: 'Pode levar a um site, cardápio, portfólio ou contato confirmado.',
     availability: 'catalogue', source: 'src/config.ts, public/nfcs e seção PlacaNFCSection.', asset: { src: '/nfcs/nfccardapio.svg', alt: 'Placa de cardápio com NFC e QR Code' },
-    href: '/placa-nfc', cta: 'Conversar sobre minha placa', message: 'Olá! Tenho interesse em uma placa NFC com QR Code para facilitar o acesso dos meus clientes.',
+    href: '/#showcase', cta: 'Conversar sobre minha placa', message: 'Olá! Tenho interesse em uma placa NFC com QR Code para facilitar o acesso dos meus clientes.',
   },
   {
     id: 'audiovisual', name: 'Conteúdo audiovisual com IA', category: 'Apresentar', stage: 'Presença e acesso',

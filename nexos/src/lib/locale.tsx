@@ -13,7 +13,7 @@ const LocaleContext = createContext<{ locale: Locale; setLocale: (locale: Locale
 });
 const STORAGE_KEY = 'easyway-language';
 const CHANGE_EVENT = 'easyway-language-change';
-export const publicTranslationPaths = new Set(['/', '/criacao-de-sites', '/landing-pages', '/cardapio-digital', '/placa-nfc']);
+export const publicTranslationPaths = new Set(['/']);
 const storedLocale = (): Locale => {
   try {
     const value = localStorage.getItem(STORAGE_KEY);

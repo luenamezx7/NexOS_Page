@@ -68,8 +68,8 @@ test('language changes and route navigation rebuild heading motion without hidin
     await page.locator('#cta-title').evaluate(heading => scrollTo({ top: scrollY + heading.getBoundingClientRect().bottom - innerHeight * .35, behavior: 'instant' }));
     await expect.poll(() => page.locator('#cta-title [data-scroll-fill-word]').last().evaluate(element => Number(getComputedStyle(element).opacity))).toBeGreaterThan(.99);
   }
-  await page.locator('footer a[href="/criacao-de-sites"]').first().click();
-  await expect(page).toHaveURL(/\/criacao-de-sites$/);
+  await page.getByRole('banner').getByRole('link', { name: 'Entrar', exact: true }).click();
+  await expect(page).toHaveURL(/\/portal\/acesso$/);
   await expect(page.locator('[data-heading-scroll]')).toHaveCount(0);
   await page.goBack();
   await expect(page.locator('[data-presentation]')).toHaveCount(0, { timeout: 15000 });

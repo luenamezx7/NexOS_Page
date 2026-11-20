@@ -1,5 +1,7 @@
 'use client';
 
+import { scheduleScrollRefresh } from '@/lib/schedule-scroll-refresh';
+
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { solutions } from '@/config/solutions';
@@ -40,8 +42,8 @@ export function Management() {
         });
       }, stage);
       cleanup = () => context.revert();
-      ScrollTrigger.refresh();
-      void document.fonts.ready.then(() => { if (!disposed) ScrollTrigger.refresh(); });
+      scheduleScrollRefresh(ScrollTrigger);
+      void document.fonts.ready.then(() => { if (!disposed) scheduleScrollRefresh(ScrollTrigger); });
     }).catch(() => cleanup());
     return () => { disposed = true; cleanup(); };
   }, [presenting, reduced]);

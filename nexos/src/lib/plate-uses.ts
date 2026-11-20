@@ -3,7 +3,7 @@ export const PLATE_USES = [
   {
     id: 'menu', name: 'Cardápio digital', caption: 'Seu cardápio na mesa.',
     description: 'Seu cliente aproxima ou escaneia a placa para consultar pratos, preços e informações no celular.',
-    demoUrl: 'https://nexoslab.online/cardapio-digital',
+    demoUrl: 'https://nexoslab.online/#services',
   },
   {
     id: 'instagram', name: 'Instagram', caption: 'Seu perfil a um gesto.',

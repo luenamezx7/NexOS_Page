@@ -1,5 +1,7 @@
 'use client';
 
+import { scheduleScrollRefresh } from '@/lib/schedule-scroll-refresh';
+
 import { useEffect, useRef, type CSSProperties, type ReactNode, type RefObject } from 'react';
 import { usePresentationActive } from '@/lib/use-presentation-active';
 import { motionError, recordMotion } from '@/lib/motion-diagnostics';
@@ -106,7 +108,7 @@ export function StackedCards({ items, stageRef }: { items: GlassCardData[]; stag
           delete viewport.dataset.stacked;
         };
       }, stage);
-      ScrollTrigger.refresh();
+      scheduleScrollRefresh(ScrollTrigger);
     }).catch(error => { revert(); recordMotion('glassCards', 'initialization-error', motionError(error)); });
     return () => { disposed = true; revert(); };
   }, [items.length, lenis, presenting, stageRef]);

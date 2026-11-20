@@ -25,6 +25,7 @@ let lockCount = 0;
 let prevBodyOverflow = '';
 let prevBodyPaddingRight = '';
 let prevHtmlOverflow = '';
+let prevHtmlGutter = '';
 
 function getScrollbarWidth(): number {
   if (typeof window === 'undefined') return 0;
@@ -36,16 +37,28 @@ function applyDomLock(): void {
   prevBodyOverflow = document.body.style.overflow;
   prevBodyPaddingRight = document.body.style.paddingRight;
   prevHtmlOverflow = document.documentElement.style.overflow;
+  prevHtmlGutter = document.documentElement.style.scrollbarGutter;
   const sw = getScrollbarWidth();
+  const stableGutter = getComputedStyle(document.documentElement).scrollbarGutter.includes('stable');
+  const canReserveGutter = CSS.supports('scrollbar-gutter', 'stable');
+  // A reserved root gutter already compensates for the scrollbar, including
+  // fixed headers. Adding body padding as well narrows the page a second time.
+  if (sw > 0 && !stableGutter && canReserveGutter) {
+    document.documentElement.style.scrollbarGutter = 'stable';
+  }
   document.body.style.overflow = 'hidden';
   document.documentElement.style.overflow = 'hidden';
-  if (sw > 0) document.body.style.paddingRight = `${sw}px`;
+  if (sw > 0 && !stableGutter && !canReserveGutter) {
+    const padding = parseFloat(getComputedStyle(document.body).paddingRight) || 0;
+    document.body.style.paddingRight = `${padding + sw}px`;
+  }
 }
 
 function releaseDomLock(): void {
   if (lockCount > 0) return;
   document.body.style.overflow = prevBodyOverflow;
   document.documentElement.style.overflow = prevHtmlOverflow;
+  document.documentElement.style.scrollbarGutter = prevHtmlGutter;
   document.body.style.paddingRight = prevBodyPaddingRight;
 }
 

@@ -11,8 +11,8 @@ import { LanguageSwitch } from './LanguageSwitch';
 import { publicTranslationPaths, useLocale } from '@/lib/locale';
 
 const PAGE_LINKS = [
-  { href: '/placa-nfc', label: 'Placa NFC' },
-  { href: '/criacao-de-sites', label: 'Serviços' },
+  { href: '/#showcase', label: 'Placa NFC' },
+  { href: '/#services', label: 'Serviços' },
   { href: '/portal/acesso', label: 'Minha conta' },
 ];
 

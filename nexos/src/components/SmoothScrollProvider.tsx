@@ -162,16 +162,21 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
         const [{ default: Lenis }, { ScrollTrigger }] = await Promise.all([import('lenis'), import('gsap/ScrollTrigger')]);
         if (disposed) return;
         const landing = document.querySelector<HTMLElement>('.landing-page');
+        const mobileTouch = matchMedia('(max-width: 767px) and (pointer: coarse)');
         instance = new Lenis({
           duration: 1.65, easing: t => 1 - Math.pow(1 - t, 3),
           smoothWheel: true, wheelMultiplier: .72,
           syncTouch: true, touchMultiplier: .82, syncTouchLerp: .065, touchInertiaExponent: 1.55,
           infinite: false, anchors: false, autoRaf: false, allowNestedScroll: true,
           respectReducedMotion: !FULL_MOTION,
-          virtualScroll: ({ event }) => {
+          virtualScroll: input => {
+            const { event } = input;
             if (event.defaultPrevented || ('touches' in event && event.touches.length > 1)) return false;
             const edge = landing?.dataset.edgeSpring;
-            return !edge || edge === 'ready';
+            if (edge && edge !== 'ready') return false;
+            // Modest extra travel on phones, without changing wheel or desktop input.
+            if (mobileTouch.matches && event.type.startsWith('touch')) input.deltaY *= 1.15;
+            return true;
           },
         });
         ScrollTrigger.config({ ignoreMobileResize: true });

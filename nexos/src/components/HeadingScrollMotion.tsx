@@ -1,5 +1,7 @@
 'use client';
 
+import { scheduleScrollRefresh } from '@/lib/schedule-scroll-refresh';
+
 import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { useEffect } from 'react';
 import { useLocale } from '@/lib/locale';
@@ -55,7 +57,7 @@ export function HeadingScrollMotion() {
         const height = root.offsetHeight;
         // The initial ResizeObserver delivery and fonts.ready often describe
         // the same layout. Avoid refreshing every trigger repeatedly at startup.
-        if (changed || width !== lastWidth || height !== lastHeight) ScrollTrigger.refresh();
+        if (changed || width !== lastWidth || height !== lastHeight) scheduleScrollRefresh(ScrollTrigger);
         lastWidth = width;
         lastHeight = height;
         recordMotion('headingGsap', 'initialized', `${headings.size} headings`);

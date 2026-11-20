@@ -1,5 +1,7 @@
 'use client';
 
+import { scheduleScrollRefresh } from '@/lib/schedule-scroll-refresh';
+
 import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { useEffect, useRef, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
@@ -34,8 +36,8 @@ export function PhoneScrollHero({ titleComponent, children, className }: { title
           .fromTo(phone, { top: () => innerWidth < 768 ? 24 : 40 }, { top: -16, ease: 'none', modifiers: { top: integer } }, 0);
       }, section);
       cleanup = () => context.revert();
-      ScrollTrigger.refresh();
-      void document.fonts.ready.then(() => { if (!disposed) ScrollTrigger.refresh(); });
+      scheduleScrollRefresh(ScrollTrigger);
+      void document.fonts.ready.then(() => { if (!disposed) scheduleScrollRefresh(ScrollTrigger); });
     }).catch(error => {
       cleanup();
       recordMotion('easychatPhone', 'initialization-error', motionError(error));

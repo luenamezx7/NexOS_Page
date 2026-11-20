@@ -6,3 +6,7 @@
 .option { display: flex; gap: 10px; min-height: 44px; padding-inline: 10px; cursor: pointer; }
 .option[data-highlighted] { background: var(--detail-accent); color: var(--detail-ink); }
 .check { margin-left: auto; }
+
+.switch > svg:last-child { transition: transform 250ms var(--dropdown-ease); }
+.switch[data-popup-open] > svg:last-child { transform: rotate(180deg); }
+@media (prefers-reduced-motion: reduce) { .switch > svg:last-child { transition: none; } }

@@ -11,6 +11,6 @@ export function CloudSky() {
 export function SiteAtmosphere() {
   const pathname = usePathname();
   // The landing owns its individual scenes.
-  if (pathname === '/') return null;
+  if (pathname === '/' || pathname === '/portal/acesso') return null;
   return <div className="site-atmosphere interior-atmosphere" aria-hidden="true"><BrandVeil variant="interior" /></div>;
 }

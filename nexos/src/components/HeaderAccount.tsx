@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { IdCard, LogOut, RefreshCw, ShieldCheck } from 'lucide-react';
+import { UserRound, LogOut, RefreshCw, ShieldCheck } from 'lucide-react';
 import { authClient, signOutAccount } from '@/lib/auth/client';
 import { ProfileOrb } from './ProfileOrb';
 import { NavigationGlass } from './NavigationGlass';
@@ -31,7 +31,7 @@ export function HeaderAccount({ expanded = false, onNavigate }: { expanded?: boo
   const loginLink = <Link href="/portal/acesso" prefetch={false} className={styles.accountLink} data-navigation-glass="control" onClick={onNavigate}><NavigationGlass />{t('Entrar')}</Link>;
 
   return <div className={expanded ? styles.expandedAccount : styles.accountSlot} data-account-state={state}>
-    {isPending ? <div className={styles.guestActions}>{loginLink}<span role="status" aria-label={t('Verificando sua sessão')}><Skeleton className={styles.accountSkeleton} /></span></div> : error ? <div className={styles.guestActions}>{loginLink}<button type="button" className={styles.accountLink} data-navigation-glass="control" onClick={() => void refetch()} title={t('Não foi possível verificar a sessão. Tentar novamente.')}><NavigationGlass /><RefreshCw size={20} aria-hidden="true" /><span className={styles.accountLabel}>{t('Verificar conta')}</span></button>{expanded && <p role="status" className={styles.accountError}>{t('Não foi possível verificar a sessão. Tentar novamente.')}</p>}</div> : !user ? <div className={styles.guestActions}>{loginLink}</div> : expanded ? <>
+    {isPending ? <div className={styles.guestActions}>{loginLink}<span role="status" className={expanded ? styles.expandedAccountLoading : undefined} aria-label={t('Verificando sua sessão')}><Skeleton className={styles.accountSkeleton} /></span></div> : error ? <div className={styles.guestActions}>{loginLink}<button type="button" className={styles.accountLink} data-navigation-glass="control" onClick={() => void refetch()} title={t('Não foi possível verificar a sessão. Tentar novamente.')}><NavigationGlass /><RefreshCw size={20} aria-hidden="true" /><span className={styles.accountLabel}>{t('Verificar conta')}</span></button>{expanded && <p role="status" className={styles.accountError}>{t('Não foi possível verificar a sessão. Tentar novamente.')}</p>}</div> : !user ? <div className={styles.guestActions}>{loginLink}</div> : expanded ? <>
       <div className={styles.userRow}>{avatar}<span>{user.name || t('Sua conta')}</span></div>
       <Link href="/conta" onClick={onNavigate}>{t('Minha conta')}</Link>
       <Link href="/portal/seguranca" onClick={onNavigate}>{t('Segurança da conta')}</Link>
@@ -42,7 +42,7 @@ export function HeaderAccount({ expanded = false, onNavigate }: { expanded?: boo
         <NavigationGlass variant="panel" />
         <DropdownMenuGroup>
           <p className={styles.userName}>{user.name || t('Sua conta')}</p>
-          <DropdownMenuItem render={<Link href="/conta" />} className={styles.menuItem}><IdCard /> {t('Minha conta')}</DropdownMenuItem>
+          <DropdownMenuItem render={<Link href="/conta" />} className={styles.menuItem}><UserRound aria-hidden="true" /> {t('Minha conta')}</DropdownMenuItem>
           <DropdownMenuItem render={<Link href="/portal/seguranca" />} className={styles.menuItem}><ShieldCheck /> {t('Segurança da conta')}</DropdownMenuItem>
           <DropdownMenuItem className={styles.menuItem} disabled={busy} closeOnClick={false} onClick={() => void logout()}><LogOut /> {t(busy ? 'Saindo…' : 'Sair da conta')}</DropdownMenuItem>
         </DropdownMenuGroup>

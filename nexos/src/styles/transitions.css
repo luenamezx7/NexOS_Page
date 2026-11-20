@@ -365,3 +365,18 @@
 @media (prefers-reduced-motion: reduce) {
   .t-panel-slide { transition: none !important; }
 }
+
+/* Header glass menus keep their surface mounted through the complete exit. */
+.t-dropdown[data-navigation-glass='panel'] {
+  --dropdown-open-dur: 300ms;
+  --dropdown-close-dur: 220ms;
+  transform: translateY(0) scale(1);
+}
+.t-dropdown[data-navigation-glass='panel'][data-starting-style] {
+  transform: translateY(-6px) scale(var(--dropdown-pre-scale));
+}
+.t-dropdown[data-navigation-glass='panel'][data-ending-style] {
+  transform: translateY(-6px) scale(var(--dropdown-closing-scale));
+  transition-duration: var(--dropdown-close-dur);
+  transition-timing-function: cubic-bezier(0.4, 0, 0.6, 1);
+}
