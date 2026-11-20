@@ -1,11 +1,10 @@
 'use client';
 
-import { motionMedia } from '@/lib/motion-policy';
+import { openDialogSurface, closeDialogSurface } from '@/lib/dialog-transition';
 
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import Image from 'next/image';
 import { ArrowUpRight, X } from 'lucide-react';
-import { gsap } from 'gsap';
 import { motion, useInView, useMotionValue, useSpring } from 'motion/react';
 import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { PLATE_USES, type PlateUse } from '@/lib/plate-uses';
@@ -80,31 +79,25 @@ export function PlateChooser({ onSelect }: { onSelect?: (name: string) => void }
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
-    const content = dialog.querySelector<HTMLElement>('[data-plate-dialog-content]');
     if (selected) {
       dialog.showModal();
+      openDialogSurface(dialog);
        dialog.querySelector<HTMLButtonElement>('button[data-close-plate]')?.focus({ preventScroll: true });
-      if (content && !motionMedia('(prefers-reduced-motion: reduce)').matches) {
-        gsap.fromTo(content, { autoAlpha: 0, y: 20, scale: .98 }, { autoAlpha: 1, y: 0, scale: 1, duration: .55, ease: 'power3.out', clearProps: 'all' });
-      }
     } else if (dialog.open) dialog.close();
-    return () => { if (content) gsap.killTweensOf(content); };
   }, [selected]);
 
   const close = () => {
     if (closingRef.current) return;
     closingRef.current = true;
     const dialog = dialogRef.current;
-    const content = dialog?.querySelector<HTMLElement>('[data-plate-dialog-content]');
     const finish = () => {
       dialog?.close();
       setSelected(null);
       triggerRef.current?.focus({ preventScroll: true });
       closingRef.current = false;
     };
-    if (!content || motionMedia('(prefers-reduced-motion: reduce)').matches) { finish(); return; }
-    gsap.killTweensOf(content);
-    gsap.to(content, { autoAlpha: 0, y: 10, scale: .985, duration: .2, ease: 'power2.in', onComplete: finish });
+    if (!dialog) { finish(); return; }
+    void closeDialogSurface(dialog).then(finish);
   };
 
   return <>
@@ -117,7 +110,7 @@ export function PlateChooser({ onSelect }: { onSelect?: (name: string) => void }
       </article>)}
     </div>
     <p className={styles.disclaimer}>{t('Nesta vitrine, os QR codes levam aos canais da ezway. Na sua placa, o destino e a personalização são definidos com você.')}</p>
-     <dialog ref={dialogRef} className={styles.dialog} tabIndex={-1} autoFocus aria-labelledby="plate-dialog-title" aria-describedby="plate-dialog-description" data-lenis-prevent onCancel={event => { event.preventDefault(); close(); }} onClose={() => { if (selected) { setSelected(null); triggerRef.current?.focus({ preventScroll: true }); } }} onClick={event => { if (event.target === event.currentTarget) close(); }}>
+     <dialog ref={dialogRef} className={`${styles.dialog} t-modal`} tabIndex={-1} autoFocus aria-labelledby="plate-dialog-title" aria-describedby="plate-dialog-description" data-lenis-prevent onCancel={event => { event.preventDefault(); close(); }} onClose={() => { if (selected) { setSelected(null); triggerRef.current?.focus({ preventScroll: true }); } }} onClick={event => { if (event.target === event.currentTarget) close(); }}>
       {selected && <div className={styles.dialogContent} data-plate-dialog-content>
         <button type="button" data-close-plate className={styles.close} aria-label={t('Fechar detalhes da placa')} onClick={close}><X size={22} /></button>
          <TiltingPlate plate={selected} qr={qrs[selected.id]} />

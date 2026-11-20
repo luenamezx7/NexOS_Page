@@ -28,3 +28,14 @@
   .related ul a { width: 100%; justify-content: space-between; }
 }
 @media (forced-colors: active) { .hero::before { display: none; } .proposal { background: Canvas !important; } }
+
+.content > section:global(.topography-glass) {
+  padding-block: clamp(40px, 6vw, 88px);
+}
+
+.content > section:global(.topography-glass) + section {
+  border-top: 1px solid var(--surface-line);
+}
+
+.applications > article { min-width: 0; }
+.questions details > summary { padding-inline: 8px; }

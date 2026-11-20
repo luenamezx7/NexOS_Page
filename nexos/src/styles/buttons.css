@@ -1,0 +1,151 @@
+/* Cnippet control tokens are monochrome and scoped away from the hero CTA. */
+@theme inline {
+  --color-destructive-foreground: var(--destructive-foreground);
+}
+:root { --destructive-foreground: var(--color-red-700); --button-radius: 999px; }
+.dark { --destructive-foreground: var(--color-red-400); }
+
+.cnippet-button {
+  --primary: #000;
+  --primary-foreground: #fff;
+  --secondary: #fff;
+  --secondary-foreground: #000;
+  --popover: #fff;
+  --foreground: var(--color-ink, #fff);
+  --input: #8b8b8b;
+  --accent: rgb(128 128 128 / 18%);
+  --ring: currentColor;
+  --background: transparent;
+  --palette-cta: #000;
+  --palette-cta-hover: #262626;
+  --palette-cta-ink: #fff;
+  min-height: 44px;
+  border-color: #808080;
+  border-radius: var(--button-radius);
+  text-decoration: none;
+}
+.cnippet-button[data-variant='outline'],
+.cnippet-button[data-variant='destructive-outline'] { --foreground: #000; }
+.cnippet-button[data-variant='ghost'],
+.cnippet-button[data-variant='link'] { border-color: transparent; }
+.cnippet-button:active:not(:disabled) { box-shadow: none; }
+.cnippet-button[data-loading] { color: transparent; }
+.cnippet-button:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.cnippet-button[aria-disabled='true'] { cursor: default; opacity: .64; }
+.cnippet-button > [data-slot='button-loading-indicator'] { color: var(--primary-foreground); }
+
+.site-shell :is(button, [role='button'], .btn-primary-nex, .btn-primary-glow, .primary-action, .btn-secondary-nex, .action-glass):not(#hero *) {
+  --palette-cta: #000;
+  --palette-cta-ink: #fff;
+  --palette-cta-hover: #262626;
+  --palette-action: #fff;
+  --detail-accent: #fff;
+  --detail-ink: #000;
+  --detail-text: currentColor;
+  --brand-lime: #fff;
+  --lime-400: #fff;
+  --lime-600: #000;
+  --text-on-lime: #fff;
+  --glow-lime: none;
+  --cta-volume: none;
+  --ring: currentColor;
+}
+
+.site-shell :is(.btn-primary-nex, .btn-primary-glow, .primary-action):not(#hero *) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid #808080;
+  border-radius: var(--button-radius);
+  background: #000;
+  color: #fff;
+  font: 500 14px/1.4 var(--font-sans);
+  text-decoration: none;
+  box-shadow: inset 0 1px #ffffff29;
+  transition: background-color 160ms, box-shadow 160ms;
+}
+.site-shell :is(.btn-primary-nex, .btn-primary-glow, .primary-action):not(#hero *)::before { display: none; }
+.site-shell :is(.btn-primary-nex, .btn-primary-glow, .primary-action):not(#hero *):is(:hover, :focus-visible) {
+  background: #262626;
+  color: #fff;
+  border-color: #808080;
+  box-shadow: none;
+  transform: none;
+}
+.site-shell :is(button, [role='button']):not(#hero *):focus-visible { outline-color: currentColor; }
+.site-shell button:not(#hero *)[aria-pressed='true'] { color: #fff; }
+.site-shell button:not(#hero *)[aria-pressed='true']:not([role='switch']) { background-color: #000; }
+@media (forced-colors: active) {
+  .cnippet-button, .site-shell :is(.btn-primary-nex, .btn-primary-glow, .primary-action):not(#hero *) {
+    background: ButtonFace;
+    color: ButtonText;
+    border-color: ButtonText;
+    box-shadow: none;
+  }
+}
+
+.site-shell .cnippet-button { border-radius: var(--button-radius); box-shadow: inset 0 1px #ffffff29; }
+.cnippet-button::before { border-radius: inherit; }
+
+/* Shared action shape; retain the hero's original CTA and toggle semantics. */
+.site-shell :is(button, [role='button'], .btn-primary-nex, .btn-primary-glow, .primary-action, .btn-secondary-nex, .action-glass, [data-navigation-glass='control']):not(#hero *):not([role='switch']):not([role='checkbox']):not([role='radio']) {
+  border-radius: var(--button-radius);
+}
+.site-shell .cnippet-button:is(:hover, :active) { box-shadow: none; transform: none; }
+.cnippet-button[data-variant='secondary'] > [data-slot='button-loading-indicator'],
+.cnippet-button[data-variant='outline'] > [data-slot='button-loading-indicator'],
+.cnippet-button[data-variant='destructive-outline'] > [data-slot='button-loading-indicator'] { color: #000; }
+.cnippet-button[data-variant='ghost'] > [data-slot='button-loading-indicator'],
+.cnippet-button[data-variant='link'] > [data-slot='button-loading-indicator'] { color: var(--foreground); }
+
+.site-shell button:not(#hero *) {
+  --brand-choice: #000;
+  --nex-pink: var(--color-ink, #fff);
+  --display-rose: var(--color-ink, #fff);
+}
+.site-shell button:not(#hero *):not(.cnippet-button) { --primary: var(--color-ink, #fff); }
+.site-shell button:not(#hero *) [data-metallic-surface] { display: none; }
+
+.site-shell :is(.btn-secondary-nex, .action-glass):not(#hero *) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid #808080;
+  border-radius: var(--button-radius);
+  background: #fff;
+  color: #000;
+  font: 500 14px/1.4 var(--font-sans);
+  box-shadow: none;
+}
+.site-shell :is(.btn-secondary-nex, .action-glass):not(#hero *):is(:hover, :focus-visible) {
+  background: #eee;
+  color: #000;
+  border-color: #808080;
+  box-shadow: none;
+}
+@media (forced-colors: active) {
+  .site-shell :is(.btn-secondary-nex, .action-glass):not(#hero *) { background: ButtonFace; color: ButtonText; border-color: ButtonText; }
+}
+
+/* Explicit variant surfaces also work in legacy sections with their own theme tokens. */
+.cnippet-button:is([data-variant='default'], [data-variant='destructive']) { background: #000; color: #fff; }
+.cnippet-button:is([data-variant='secondary'], [data-variant='outline'], [data-variant='destructive-outline']) { background: #fff; color: #000; }
+.cnippet-button:is([data-variant='ghost'], [data-variant='link']) { background: transparent; color: var(--color-ink, #fff); }
+.cnippet-button:is([data-variant='default'], [data-variant='destructive']):hover:not([aria-disabled='true']) { background: #262626; }
+.cnippet-button:is([data-variant='secondary'], [data-variant='outline'], [data-variant='destructive-outline']):hover:not([aria-disabled='true']) { background: #eee; }
+.cnippet-button[data-loading] { color: transparent; }
+.site-shell :is(.cnippet-button, .btn-primary-nex, .btn-primary-glow, .primary-action, .btn-secondary-nex, .action-glass):not(#hero *):focus-visible {
+  --ring: var(--color-ink, #000);
+  outline: 2px solid var(--color-ink, #000);
+  outline-offset: 3px;
+}
+@media (forced-colors: active) {
+  .cnippet-button[data-variant] { background: ButtonFace; color: ButtonText; }
+  .site-shell :is(.cnippet-button, .btn-primary-nex, .btn-primary-glow, .primary-action, .btn-secondary-nex, .action-glass):not(#hero *):focus-visible { outline-color: Highlight; }
+}

@@ -250,3 +250,11 @@
   .card { transition: none; }
 }
 @media (max-width: 767px) { .main { width: calc(100% - 32px); } }
+
+.header {
+  background: var(--color-canvas);
+  backdrop-filter: none;
+}
+
+.card, .panel { border-radius: 16px; }
+.meta { font-variant-numeric: tabular-nums; }

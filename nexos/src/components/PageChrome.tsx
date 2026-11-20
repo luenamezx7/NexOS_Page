@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { BrandMark } from './BrandMark';
+import { NavigationGlass } from './NavigationGlass';
 import { ProfileOrb } from './ProfileOrb';
 import { LanguageSwitch } from './LanguageSwitch';
 import { publicTranslationPaths, useLocale } from '@/lib/locale';
@@ -21,6 +22,7 @@ export function PageHeader({ children, accountOnly = false }: { children?: React
   const { t } = useLocale();
   return (
     <header className="page-header" role="banner" data-page-header>
+      <NavigationGlass />
       <a href="#main-content" className="page-skip-link">{t('Pular para o conteúdo')}</a>
        <Link href="/" className="page-header-brand" aria-label={`ezway — ${t('página inicial')}`}><BrandMark registered /></Link>
        {!accountOnly && <nav className="page-header-nav" aria-label={t('Navegação de páginas')}>

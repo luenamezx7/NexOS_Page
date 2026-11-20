@@ -1,5 +1,7 @@
 'use client';
 
+import { ScrollFillText } from './ui/scroll-fill-headline';
+
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { GradientWave } from './ui/gradient-wave';
@@ -66,21 +68,38 @@ export function Services({ className = '', selectedUse }: { className?: string; 
       const stage = root.querySelector<HTMLElement>('[data-services-journey]')!;
       const slides = [...(screenRef.current?.querySelectorAll<HTMLElement>('[data-macbook-slide]') ?? [])];
       const state = { progress: 0 };
+      const tokens = getComputedStyle(root);
+      const pageDistance = parseFloat(tokens.getPropertyValue('--page-slide-distance')) || 8;
+      const pageBlur = parseFloat(tokens.getPropertyValue('--page-blur')) || 3;
       let manualBoundary: number | null = null;
       let lastActive = -1;
       let readScrollProgress = () => state.progress;
+      let paintedProgress = 0;
+      let manualTween: ReturnType<typeof gsap.to> | undefined;
       const paint = (progress: number) => {
-        const position = progress * (examples.length - 1);
+        paintedProgress = Math.max(0, Math.min(1, progress));
+        const position = paintedProgress * (examples.length - 1);
+        const current = Math.min(examples.length - 1, Math.floor(position));
+        // Hold each screen long enough to read, then blend with zero velocity
+        // at both ends. The opaque lower layer prevents a brightness dip.
+        const hold = .24;
+        const fraction = Math.max(0, Math.min(1, (position - current - hold) / (1 - hold)));
+        const blend = fraction * fraction * (3 - 2 * fraction);
         slides.forEach((slide, index) => {
-          slide.style.opacity = String(Math.max(0, 1 - Math.abs(index - position)));
-          slide.style.removeProperty('transform');
+          const incoming = index === current + 1;
+          const outgoing = index === current;
+          const amount = incoming ? 1 - blend : outgoing ? blend : 1;
+          slide.style.opacity = incoming ? String(blend) : outgoing ? String(1 - blend) : '0';
+          slide.style.transform = `translate3d(${(incoming ? 1 : -1) * amount * pageDistance}px, 0, 0)`;
+          slide.style.filter = amount ? `blur(${amount * pageBlur}px)` : 'none';
         });
-        const focus = Math.round(position);
+        const focus = Math.min(examples.length - 1, current + (blend >= .5 ? 1 : 0));
         if (focus !== lastActive) { lastActive = focus; setActive(focus); }
       };
       const follow = () => {
         const chapter = Math.round(readScrollProgress() * (examples.length - 1));
         if (manualBoundary === chapter) return;
+        manualTween?.kill();
         manualBoundary = null;
         paint(state.progress);
       };
@@ -90,7 +109,7 @@ export function Services({ className = '', selectedUse }: { className?: string; 
           scrollTrigger: {
             id: 'services-screens', trigger: root, start: 'top top',
             end: () => `+=${Math.max(1, root.offsetHeight - stage.offsetHeight)}`,
-            scrub: .25, invalidateOnRefresh: true,
+            scrub: .85, invalidateOnRefresh: true,
             onRefresh: self => { state.progress = self.progress; follow(); root.dataset.artworkFocus = String(self.isActive); },
             onToggle: self => { root.dataset.artworkFocus = String(self.isActive); },
           },
@@ -98,18 +117,23 @@ export function Services({ className = '', selectedUse }: { className?: string; 
         readScrollProgress = () => animation.scrollTrigger?.progress ?? state.progress;
       }, root);
       selectExampleRef.current = index => {
+        manualTween?.kill();
         manualBoundary = Math.round(readScrollProgress() * (examples.length - 1));
-        paint(index / (examples.length - 1));
+        const selection = { progress: paintedProgress };
+        manualTween = gsap.to(selection, { progress: index / (examples.length - 1), duration: .85, ease: 'power2.inOut', onUpdate: () => paint(selection.progress) });
       };
       paint(state.progress);
+      root.dataset.screenTransition = 'ready';
       ScrollTrigger.refresh();
       void document.fonts.ready.then(() => { if (!disposed) ScrollTrigger.refresh(); });
       recordMotion('servicesGsap', 'initialized');
       cleanup = () => {
         selectExampleRef.current = null;
+        manualTween?.kill();
         context.revert();
-        slides.forEach(slide => { slide.style.removeProperty('opacity'); slide.style.removeProperty('transform'); });
+        slides.forEach(slide => { slide.style.removeProperty('opacity'); slide.style.removeProperty('transform'); slide.style.removeProperty('filter'); });
         delete root.dataset.artworkFocus;
+        delete root.dataset.screenTransition;
       };
     }).catch(error => {
       if (!disposed) recordMotion('servicesGsap', 'initialization-error', motionError(error));
@@ -120,14 +144,14 @@ export function Services({ className = '', selectedUse }: { className?: string; 
   return <section ref={ref} id="services" aria-labelledby="services-title" className={`${styles.journey} ${className}`}>
     <div className={`${styles.stage} ${styles.fixedStage}`} data-services-journey>
       <GradientWave className={styles.waveBackground} colors={waveColors} isPlaying={!presenting} noiseSpeed={.000008} noiseFrequency={[.00015, .0006]} deform={{ incline: .12, noiseAmp: 180, noiseFlow: 3 }} />
-      <h2 data-heading-static id="services-title" className={styles.journeyTitle}>{t('Sites, cardápios e páginas para o seu negócio.')}</h2>
+      <h2 data-heading-static data-scroll-fill-heading id="services-title" className={styles.journeyTitle}><ScrollFillText lines={[t('Sites, cardápios e páginas para o seu negócio.')]} /></h2>
       <div className={styles.fixedDevice} data-macbook-chassis>
         <div className={styles.device}>
           {/* Original chassis remains fixed while the screen contents change. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className={styles.macbookFrame} src="/mackbook_1.svg" alt="" width={2180} height={1324} draggable={false} />
-          <div ref={screenRef} className={styles.macbookScreen}>
-            {examples.map((example, index) => <div key={example.id} className={styles.screenSlide} data-macbook-slide data-active={active === index} aria-hidden={active !== index}>
+          <div ref={screenRef} className={`t-page-slide ${styles.macbookScreen}`} data-scroll-driven>
+            {examples.map((example, index) => <div key={example.id} className={`t-page ${styles.screenSlide}`} data-macbook-slide data-active={active === index} aria-hidden={active !== index}>
               {index === 0 ? <div className={styles.menuDemo}><div className={styles.demoNav}><strong>grão & casa</strong><span>{t('Cardápio digital')}</span></div><div className={styles.menuHero}><Image src={example.image} alt="" fill sizes="(max-width: 767px) 90vw, 720px" className={styles.screenImage} /><strong>{t('Uma pausa para o seu dia.')}</strong></div><div className={styles.menuItems}><h4 data-heading-static>{t('Cafés da casa')}</h4><p>{t('Café coado')} · {t('Cappuccino')} · {t('Espresso')}</p><span>{t('Itens e informações que o cliente pode consultar no próprio celular.')}</span></div></div> : index === 1 ? <Image src={example.image} alt={t(example.title)} fill sizes="(max-width: 767px) 90vw, 720px" quality={90} className={styles.screenImage} /> :
                 <div className={`${styles.demoScreen} ${index === 3 ? styles.demoLanding : ''}`}>
                   <div className={styles.demoNav}><span>{index === 2 ? 'atelier espaço' : 'grão & casa'}</span><span>{t(index === 2 ? 'Estúdio  /  Projetos  /  Contato' : 'Cafés  /  Sobre  /  Contato')}</span></div>

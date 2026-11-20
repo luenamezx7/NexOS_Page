@@ -1,45 +1,33 @@
-.section { --color-ink: #000000; --gradient-heading: linear-gradient(105deg, #000000, #51414d); padding: clamp(56px, 6vw, 88px) 24px; scroll-margin-top: 110px; background: var(--hero-handoff-surface, #f5f3f1); color: #000000; }
+.section {
+  --color-ink: #fff;
+  --gradient-heading: linear-gradient(105deg, #fff, #d9d8dc);
+  padding: clamp(56px, 6vw, 88px) 24px;
+  scroll-margin-top: 110px;
+  background: #000000;
+  color: #fff;
+}
 .container { max-width: 1120px; margin: auto; }
 .header { max-width: 760px; margin: auto; text-align: center; }
-.eyebrow { display: flex; align-items: center; justify-content: center; gap: 8px; color: #89325d; font-size: 12px; font-weight: 650; letter-spacing: .06em; }
-.header h2 { margin: 20px auto; max-width: 20ch; font: 650 clamp(34px, 4.5vw, 60px)/1.1 var(--font-display); letter-spacing: -.04em; }
-.header > p:last-child { font-size: 17px; color: #59525d; line-height: 1.65; }
-.journey { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; list-style: none; margin: 28px 0 20px; padding: 0; }
-.journey button { display: flex; gap: 8px; align-items: center; min-height: 44px; padding: 10px 16px; border: 1px solid #d8c9d2; border-radius: 24px; font-size: 13px; cursor: pointer; }
-.journey button span { font-size: 10px; opacity: .75; }
-.journey button[aria-pressed='true'] { background: #000000; color: #fff; border-color: #000000; }
-.journey button:focus-visible { outline: 3px solid #89325d; outline-offset: 4px; }
-.screen { width: 100%; max-width: 920px; margin: auto; border: 1px solid rgb(137 50 93 / 16%); border-radius: 16px; overflow: hidden; background: #000000; color: #fff; box-shadow: 0 0 40px rgb(255 116 189 / 12%); }
+.eyebrow { color: #fff; font-size: 12px; font-weight: 650; letter-spacing: .06em; }
+.header h2 {
+  margin: 20px auto;
+  max-width: 20ch;
+  font: 650 clamp(34px, 4.5vw, 60px)/1.1 var(--font-display);
+  letter-spacing: -.04em;
+}
+.header > p:last-child { font-size: 17px; color: #d9d8dc; line-height: 1.65; }
+.demo { max-width: 920px; margin: clamp(28px, 4vw, 48px) auto 0; }
+.screen {
+  display: block;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 20px;
+  background: #000;
+}
+.screen:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
 .screenshot { display: block; width: 100%; height: auto; aspect-ratio: 8 / 5; }
-.demo figcaption { display: grid; gap: 6px; margin: 14px auto 0; text-align: center; font-size: 12px; line-height: 1.5; color: #655a64; }
-.explanation { min-height: 3.4em; max-width: 60ch; margin: 16px auto 0; text-align: center; color: #59525d; font-size: 16px; line-height: 1.65; }
-.container > a { display: flex; width: fit-content; margin: 24px auto 0; }
-.more { max-width: 640px; margin: 20px auto 0; border-top: 1px solid #d8c9d2; scroll-margin-top: 110px; }
-.more summary { display: list-item; width: fit-content; margin: auto; padding: 14px 0; min-height: 44px; cursor: pointer; color: #655a64; font-size: 14px; }
-.more p { margin: 12px 0; color: #59525d; font-size: 14px; line-height: 1.6; }
-.moreLinks { display: flex; flex-wrap: wrap; gap: 8px 24px; }
-.moreLinks a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: #89325d; text-decoration: underline; text-underline-offset: 4px; font-size: 14px; }
-.more :is(a, summary):focus-visible { outline: 3px solid #89325d; outline-offset: 4px; }
-@media (max-width: 767px) { .journey { gap: 8px; }.journey button { padding: 10px 18px; font-size: 13px; } .screen { box-shadow: 0 0 24px rgb(255 116 189 / 10%); } }
-.demo figcaption a { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; width: fit-content; margin: auto; color: #89325d; font-weight: 650; text-decoration: underline; text-underline-offset: 4px; }
-.demo figcaption a:focus-visible { outline: 3px solid #89325d; outline-offset: 4px; border-radius: 4px; }
-
-.journey button { position: relative; isolation: isolate; }
-.journey button[aria-pressed='true'] { background: transparent; color: #fff; border-color: #000000; }
-.journey .selection { position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: #000000; opacity: 1; }
-.journey .tabLabel { font-size: 13px; opacity: 1; }
-.summary { text-align: center; }
-.simulate { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; margin-top: 12px; padding: 10px 16px; border: 1px solid #89325d; border-radius: 24px; color: #89325d; font-size: 13px; font-weight: 600; cursor: pointer; }
-.simulate:hover { background: #89325d; color: #fff; }
-.simulate:focus-visible { outline: 3px solid #89325d; outline-offset: 4px; }
-.stage[data-management-chapters='true'] { display: grid; grid-template-columns: .85fr 1.65fr; grid-template-areas: 'header demo' 'tabs demo' 'summary demo'; column-gap: 36px; align-content: center; min-height: min(680px, calc(100svh - 160px)); padding-block: 16px; }
-.stage[data-management-chapters='true'] .header { grid-area: header; text-align: center; margin: 0; }
-.stage[data-management-chapters='true'] .eyebrow { justify-content: center; }
-.stage[data-management-chapters='true'] .header h2 { margin-inline: auto; font-size: clamp(36px, 3.3vw, 48px); }
-.stage[data-management-chapters='true'] .header > p:last-child { font-size: 16px; }
-.stage[data-management-chapters='true'] .journey { grid-area: tabs; justify-content: center; gap: 6px; margin: 24px 0 0; }
-.stage[data-management-chapters='true'] .journey button { padding-inline: 12px; }
-.stage[data-management-chapters='true'] .demo { grid-area: demo; align-self: center; min-width: 0; }
-.stage[data-management-chapters='true'] .demo figcaption { font-size: 11px; }
-.stage[data-management-chapters='true'] .summary { grid-area: summary; text-align: center; }
-.stage[data-management-chapters='true'] .explanation { min-height: 3.4em; margin: 20px 0 0; text-align: center; font-size: 15px; }
+.action { display: flex; justify-content: center; margin-top: 28px; }
+@media (max-width: 767px) {
+  .screen { border-radius: 16px; }
+  .header > p:last-child { font-size: 16px; }
+}

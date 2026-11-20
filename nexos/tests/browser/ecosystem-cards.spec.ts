@@ -64,6 +64,28 @@ test('keyboard access reveals cards without disclosures and motion stays enabled
   await expect(page.locator('.pin-spacer:has(> [data-management-stage])')).toHaveCount(1);
 });
 
+test('cards start at the first chapter after the upstream management pin is enabled', async ({ page }) => {
+  await page.setViewportSize({ width: 500, height: 900 });
+  await page.goto('/#ecossistema');
+  const stage = page.locator('[data-ecosystem-stage]');
+  await expect(stage).toHaveAttribute('data-scroll-cards', 'true');
+  await expect(page.locator('html')).toHaveAttribute('data-scroll-engine', 'smooth');
+
+  // Management gains a pin at the desktop breakpoint, after cards already exist.
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await expect(page.locator('[data-management-stage]')).toHaveAttribute('data-management-chapters', 'true');
+  const start = await stage.evaluate(el => el.parentElement!.getBoundingClientRect().top + scrollY - 110);
+  await page.evaluate(y => window.scrollTo({ top: y + 2, behavior: 'instant' }), start);
+  await expect.poll(() => stage.evaluate(el => Math.round(el.getBoundingClientRect().top))).toBe(110);
+  await expect(page.locator('#ecossistema [data-solution="site"]')).toHaveAttribute('data-active', 'true');
+  await expect.poll(() => page.locator('[data-management-stage]').evaluate(el => el.getBoundingClientRect().bottom)).toBeLessThan(110);
+
+  await page.evaluate(y => window.scrollTo({ top: y + 1600, behavior: 'instant' }), start);
+  await expect(page.locator('#ecossistema [data-solution="site"]')).toHaveAttribute('data-active', 'false');
+  await page.evaluate(y => window.scrollTo({ top: y + 2, behavior: 'instant' }), start);
+  await expect(page.locator('#ecossistema [data-solution="site"]')).toHaveAttribute('data-active', 'true');
+});
+
 test.describe('animated cards on touch devices and short screens', () => {
   test.use({ hasTouch: true });
   for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }, { width: 768, height: 1024 }, { width: 844, height: 390 }, { width: 568, height: 320 }, { width: 1440, height: 700 }]) {

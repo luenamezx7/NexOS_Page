@@ -7,6 +7,7 @@ import { usePresentationActive } from '@/lib/use-presentation-active';
 import { motionError, recordMotion } from '@/lib/motion-diagnostics';
 
 const HEADINGS = 'h1, h2, h3, h4, h5, h6';
+const hasOwnMotion = (heading: Element) => heading.hasAttribute('data-heading-static') || heading.hasAttribute('data-scroll-fill-heading') || Boolean(heading.closest('dialog, [aria-hidden="true"], .sr-only'));
 
 /** One scroll animation per heading, including headings mounted by lazy sections. */
 export function HeadingScrollMotion() {
@@ -32,10 +33,10 @@ export function HeadingScrollMotion() {
         if (disposed) return;
         let changed = false;
         headings.forEach((revert, heading) => {
-          if (!root.contains(heading)) { revert(); headings.delete(heading); changed = true; }
+          if (!root.contains(heading) || hasOwnMotion(heading)) { revert(); headings.delete(heading); changed = true; }
         });
         root.querySelectorAll<HTMLElement>(HEADINGS).forEach(heading => {
-          if (headings.has(heading) || heading.hasAttribute('data-heading-static') || heading.closest('dialog, [aria-hidden="true"], .sr-only')) return;
+          if (headings.has(heading) || hasOwnMotion(heading)) return;
           const context = gsap.context(() => {
             gsap.fromTo(heading, { autoAlpha: .15, y: 24 }, {
               autoAlpha: 1, y: 0, ease: 'none',
@@ -63,9 +64,9 @@ export function HeadingScrollMotion() {
       const containsHeading = (node: Node) => node instanceof Element && (node.matches(HEADINGS) || !!node.querySelector(HEADINGS));
       const observer = new MutationObserver(records => {
         // Ignore character-by-character typing and other unrelated DOM updates.
-        if (records.some(record => [...record.addedNodes, ...record.removedNodes].some(containsHeading))) schedule();
+        if (records.some(record => record.type === 'attributes' || [...record.addedNodes, ...record.removedNodes].some(containsHeading))) schedule();
       });
-      observer.observe(root, { childList: true, subtree: true });
+      observer.observe(root, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-heading-static', 'data-scroll-fill-heading'] });
       const resize = new ResizeObserver(schedule);
       resize.observe(root);
       cleanup = () => {

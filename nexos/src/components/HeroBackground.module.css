@@ -1,0 +1,28 @@
+.background {
+  position: absolute;
+  inset: 8px 12px 24px;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: #101b17;
+  border-radius: 40px;
+}
+
+.image {
+  object-fit: cover;
+  object-position: 50% 50%;
+}
+
+.shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(0 0 0 / 20%) 0%, rgb(0 0 0 / 42%) 48%, rgb(0 0 0 / 56%) 78%, transparent 100%);
+}
+
+@media (max-width: 767px) {
+  .background {
+    inset: 8px 8px 24px;
+    border-radius: 28px;
+  }
+  .image { object-position: 56% 50%; }
+}

@@ -1,81 +1,67 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import dynamic from 'next/dynamic';
-import { LayoutGroup, motion } from 'motion/react';
-import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
-import { motionTiming, motionEase } from '@/lib/motion-presets';
-import { useManagementChapters } from './use-management-chapters';
+import { useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { ArrowUpRight } from 'lucide-react';
 import { solutions } from '@/config/solutions';
 import { commercialHref } from '@/lib/commercial';
 import { useLocale } from '@/lib/locale';
+import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
+import { usePresentationActive } from '@/lib/use-presentation-active';
+import { Button } from '../ui/cnippet-button';
 import styles from './Management.module.css';
-import ButtonWithIcon from '../ui/button-witn-icon';
 
-const ManagementSimulation = dynamic(() => import('./ManagementSimulation'));
-
-const journey = [
-  { title: 'Comercial', image: '/images/crm/pipeline.png', alt: 'Tela real do CRM: pipeline comercial com Retentativas, com dados sensíveis ocultados.', description: 'Acompanhe oportunidades e saiba quem precisa de retorno.' },
-  { title: 'Clientes', image: '/images/crm/clientes.png', alt: 'Tela real do CRM: lista de clientes, com dados sensíveis ocultados.', description: 'Consulte os dados e o histórico de cada cliente.' },
-  { title: 'Financeiro', image: '/images/crm/financeiro.png', alt: 'Tela real do CRM: visão financeira com receitas e custos, com dados sensíveis ocultados.', description: 'Veja receitas, custos e o que falta receber.' },
-];
+const loginImage = '/images/crm/controle-ezway-login.png';
 
 export function Management() {
   const { t } = useLocale();
-  const [active, setActive] = useState(0);
   const stageRef = useRef<HTMLDivElement>(null);
   const reduced = usePrefersReducedMotion();
-  const [simulation, setSimulation] = useState<number | null>(null);
-  const simulationOpenRef = useRef(false);
-  const releaseFrame = useRef(0);
-  const selectScrollChapter = useCallback((index: number) => {
-    setActive(current => simulationOpenRef.current ? current : index);
-  }, []);
-  const closeSimulation = useCallback(() => {
-    setSimulation(null);
-    cancelAnimationFrame(releaseFrame.current);
-    releaseFrame.current = requestAnimationFrame(() => {
-      releaseFrame.current = requestAnimationFrame(() => { simulationOpenRef.current = false; });
-    });
-  }, []);
-  useEffect(() => () => cancelAnimationFrame(releaseFrame.current), []);
-  useManagementChapters(stageRef, selectScrollChapter);
-  const step = journey[active];
+  const presenting = usePresentationActive();
+
+  useEffect(() => {
+    if (presenting || reduced) return;
+    let disposed = false;
+    let cleanup = () => {};
+    void Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(([{ gsap }, { ScrollTrigger }]) => {
+      const stage = stageRef.current;
+      if (disposed || !stage) return;
+      gsap.registerPlugin(ScrollTrigger);
+      const context = gsap.context(() => {
+        stage.querySelectorAll<HTMLElement>('[data-management-fade]').forEach(element => {
+          gsap.timeline({
+            scrollTrigger: {
+              trigger: element, start: 'clamp(top 95%)', end: 'clamp(bottom 5%)',
+              scrub: .35, invalidateOnRefresh: true,
+            },
+          })
+            .fromTo(element, { opacity: .2 }, { opacity: 1, duration: .18, ease: 'none' })
+            .to(element, { opacity: 1, duration: .64 })
+            .to(element, { opacity: .2, duration: .18, ease: 'none' });
+        });
+      }, stage);
+      cleanup = () => context.revert();
+      ScrollTrigger.refresh();
+      void document.fonts.ready.then(() => { if (!disposed) ScrollTrigger.refresh(); });
+    }).catch(() => cleanup());
+    return () => { disposed = true; cleanup(); };
+  }, [presenting, reduced]);
+
   const solution = solutions.find(item => item.id === 'gestao')!;
   return <section id="gestao" aria-labelledby="management-title" className={styles.section}>
-    <div className={styles.container}>
-      <div ref={stageRef} className={styles.stage} data-management-stage>
-      <header className={styles.header}><p className={styles.eyebrow}>{t('CONTROLE & GESTÃO')}</p><h2 data-heading-static id="management-title">{t('Seu negócio, mais organizado.')}</h2><p>{t('Acompanhe clientes, vendas e financeiro em um só lugar.')}</p></header>
-      <LayoutGroup id="management-selection"><ul className={styles.journey} aria-label={t('Veja o sistema na prática')}>{journey.map((item, index) => <li key={item.title}><button data-management-tab type="button" aria-pressed={active === index} aria-controls="management-demo" onClick={() => setActive(index)}>{active === index && <motion.span className={styles.selection} layoutId="management-pill" transition={{ duration: reduced ? 0 : motionTiming.selection, ease: motionEase }} aria-hidden="true" />}<span className={styles.tabLabel}>{t(item.title)}</span></button></li>)}</ul></LayoutGroup>
-      <figure className={styles.demo}>
-        <div id="management-demo" className={styles.screen} aria-live="polite" aria-atomic="true">
-          <Image src={step.image} alt={t(step.alt)} width={1200} height={750} sizes="(max-width: 968px) calc(100vw - 48px), 920px" quality={90} className={styles.screenshot} />
-        </div>
-        <figcaption><span>{t('Telas reais do CRM · dados sensíveis ocultados')}</span><a href={step.image} target="_blank" rel="noopener noreferrer">{t('Ampliar tela do CRM')} <ArrowUpRight size={14} aria-hidden="true" /></a></figcaption>
+    <div ref={stageRef} className={styles.container} data-management-stage>
+      <header className={styles.header} data-management-fade>
+        <p className={styles.eyebrow}>{t('CONTROLE & GESTÃO')}</p>
+        <h2 data-heading-static id="management-title">{t('Seu negócio, mais organizado.')}</h2>
+        <p>{t('Acompanhe clientes, vendas e financeiro em um só lugar.')}</p>
+      </header>
+      <figure className={styles.demo} data-management-fade>
+        <a id="management-demo" className={styles.screen} href={loginImage} target="_blank" rel="noopener noreferrer" aria-label={t('Ampliar tela do CRM')}>
+          <Image src={loginImage} alt={t('Tela de login do Controle · ezway')} width={2880} height={1800} sizes="(max-width: 968px) calc(100vw - 48px), 920px" quality={90} className={styles.screenshot} />
+        </a>
       </figure>
-      <div className={styles.summary}>
-        <motion.p key={active} initial={reduced ? false : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduced ? 0 : motionTiming.selection, ease: motionEase }} className={styles.explanation}>{t(step.description)}</motion.p>
-        <button type="button" className={styles.simulate} data-management-simulate onClick={() => {
-          cancelAnimationFrame(releaseFrame.current);
-          simulationOpenRef.current = true;
-          // Commit the chapter the user opened after any queued scroll update.
-          setActive(active);
-          setSimulation(active);
-        }}>{t('Explorar gestão')} · {t(step.title)} <ArrowUpRight size={16} aria-hidden="true" /></button>
+      <div className={styles.action} data-management-fade>
+        <Button variant="secondary" size="xl" render={<a href={commercialHref(t(solution.message))} target="_blank" rel="noopener noreferrer" />} data-cta-section="gestao" data-cta-solution="gestao">{t(solution.cta)}</Button>
       </div>
-      </div>
-      <details id="comparacao" className={styles.more}>
-        <summary>{t('Mais sobre a gestão')}</summary>
-        <p>{t('Oportunidades em Retentativas ficam separadas para um novo contato.')}</p>
-        <div className={styles.moreLinks}>
-          <a href="/images/crm/acompanhamento.png" target="_blank" rel="noopener noreferrer">{t('Ver tela de acompanhamentos')} <ArrowUpRight size={14} aria-hidden="true" /></a>
-          <a href="/images/crm/vendas.png" target="_blank" rel="noopener noreferrer">{t('Ver tela de vendas')} <ArrowUpRight size={14} aria-hidden="true" /></a>
-        </div>
-      </details>
-      <ButtonWithIcon href={commercialHref(t(solution.message))} target="_blank" rel="noopener noreferrer" data-cta-section="gestao" data-cta-solution="gestao">{t(solution.cta)}</ButtonWithIcon>
     </div>
-    {simulation !== null && <ManagementSimulation initialChapter={simulation} onDismiss={closeSimulation} />}
   </section>;
 }

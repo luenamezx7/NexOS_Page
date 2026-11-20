@@ -1,5 +1,6 @@
 .managementScene {
   position: relative;
+  z-index: 3;
   display: grid;
   place-items: center;
   width: 100%;
@@ -29,30 +30,38 @@
 }
 
 .glassCard {
+  --night-glass-tint: rgb(5 7 13 / 14%);
   position: absolute;
-  top: 26%;
-  bottom: 0;
+  top: 30%;
+  /* Background ends 24px above the hero base; leave an 8px glass inset. */
+  bottom: calc(32px - var(--hero-tail-space, 72px));
   left: 50%;
-  width: min(calc(100vw - 32px), var(--solution-card-width, 640px));
+  width: min(100%, var(--solution-card-width, 640px));
   transform: translateX(-50%);
   z-index: 0;
   overflow: hidden;
-  border: 1px solid rgb(255 255 255 / 26%);
+  border: 1px solid rgb(232 241 255 / 22%);
   border-radius: 24px;
-  /* Broad optical curvature bends the backdrop inward without frosting it. */
-  background: linear-gradient(135deg, rgb(255 255 255 / 6%), rgb(255 255 255 / 1%) 45%, rgb(255 255 255 / 3%));
-  -webkit-backdrop-filter: blur(1.5px);
-  backdrop-filter: blur(1.5px);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 45%), inset 1px 0 0 rgb(255 255 255 / 8%);
+  box-shadow: inset 0 1px 0 #ffffff26, inset 0 -1px 0 #bbd2ff14, 0 10px 32px -18px #0008;
   pointer-events: none;
 }
 
-.refractionDefinitions { position: absolute; width: 0; height: 0; pointer-events: none; }
-/* The filter blends blurred edges into a sharp centre using the static map. */
-.glassCard[data-refraction='active'] { backdrop-filter: url('#hero-glass-refraction'); }
+.glassCard :global(.navigation-glass) {
+  z-index: 0;
+  border-radius: inherit;
+  background: linear-gradient(125deg, rgb(225 238 255 / 10%), transparent 35%, rgb(178 201 255 / 4%) 75%, transparent), var(--night-glass-tint);
+  -webkit-backdrop-filter: blur(12px) saturate(115%);
+  backdrop-filter: blur(12px) saturate(115%);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glassCard :global(.navigation-glass) { background: #080a10; }
+}
 
 @media (prefers-reduced-transparency: reduce) {
-  .glassCard[data-refraction] { background: #48494a; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .glassCard { background: #080a10; box-shadow: none; }
+}
+@media (forced-colors: active) {
+  .glassCard { background: Canvas; border-color: CanvasText; box-shadow: none; }
 }
 
 .avatar {

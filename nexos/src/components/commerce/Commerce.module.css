@@ -74,7 +74,7 @@
 :global(.dark) .plateStage { border-color: var(--glass-line); background: radial-gradient(ellipse at 50% 36%, rgb(255 255 255 / 8%), transparent 67%), var(--glass-panel); box-shadow: var(--glass-shadow); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); }
 :global(.dark) .quantity, :global(.dark) .tabs button:not([aria-selected="true"]) { border-color: var(--glass-line); background: var(--glass-control); box-shadow: var(--glass-shadow); }
 :global(.dark) .quantity button:hover:not(:disabled) { background: rgb(255 170 216 / 13%); }
-:global(.dark) .tabs button[aria-selected="true"] { background: var(--palette-action); border-color: var(--palette-action); color: var(--palette-ink); box-shadow: var(--cta-volume); }
+:global(.dark) .tabs button[aria-selected="true"] { background: var(--palette-action); border-color: var(--palette-action); color: var(--detail-ink); box-shadow: var(--cta-volume); }
 @media (hover: hover) { :global(.dark) .tabs button:not([aria-selected="true"]):hover { border-color: var(--glass-line-hover); } }
 .detailGrid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; padding-block: 8px 24px; min-height: 232px; }
 .detailGrid h3 { font-size: var(--type-subheading); font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; }

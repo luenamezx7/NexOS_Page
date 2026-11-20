@@ -55,6 +55,8 @@ export function StackedCards({ items, stageRef }: { items: GlassCardData[]; stag
         const timeline = gsap.timeline({
           scrollTrigger: {
             id: 'ecosystem-cards', trigger: stage, pin: stage,
+            // Async effects and breakpoint changes can create upstream pins later.
+            refreshPriority: 1,
             start: () => `top ${clearance()}px`,
             end: () => `+=${Math.round(Math.max((viewportSize().height - clearance()) * 1.8, viewport.clientHeight * Math.max(1, cards.length - 1) * .9))}`,
             scrub: .65, invalidateOnRefresh: true, anticipatePin: 1, onRefreshInit: fit,

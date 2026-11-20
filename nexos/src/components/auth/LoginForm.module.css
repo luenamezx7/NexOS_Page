@@ -67,3 +67,16 @@
 @media (max-width: 359px) { .customer { padding-inline: 12px; } .header { gap: 8px; } .header img { max-width: 96px; } }
 @media (max-width: 767px) { .backLink { width: 44px; justify-content: center; gap: 0; font-size: 0; } }
 @media (prefers-reduced-transparency: reduce) { .header { background: var(--color-canvas); backdrop-filter: none; } .panel { background: var(--card); backdrop-filter: none; } }
+
+.customer {
+  background: radial-gradient(ellipse at 50% 0, #2b18364d, transparent 36rem), var(--color-canvas);
+}
+
+.panel { border-radius: 20px; }
+
+.customer :global(.field-input):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.magicLink { min-height: 44px; }

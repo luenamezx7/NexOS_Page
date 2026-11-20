@@ -1,4 +1,4 @@
-/** Embedded browsers keep native touch momentum; never add a second touch engine. */
+/** Embedded browsers need stable viewport measurements and lighter visual compositing. */
 export function isEmbeddedBrowser(userAgent: string): boolean {
   return /Instagram|FBAN|FBAV|FB_IAB|\bLine\/|TikTok|BytedanceWebview/i.test(userAgent);
 }

@@ -1,5 +1,7 @@
 'use client';
 
+import { ScrollFillText } from '../ui/scroll-fill-headline';
+
 import { useState } from 'react';
 import { TiltedGridHero } from '../ui/tilted-grid-hero';
 import { ScrollReveal } from '../ScrollReveal';
@@ -43,7 +45,7 @@ export function MascotSolutions() {
 
   return <section id="mascot-solutions" aria-labelledby="mascot-solutions-title" className={styles.section}>
     <div className={styles.container}>
-      <h2 id="mascot-solutions-title" className="mb-8 text-center text-3xl font-semibold md:text-5xl">{t('Suporte para o próximo passo.')}</h2>
+      <h2 id="mascot-solutions-title" data-heading-static data-scroll-fill-heading className="mb-8 text-center text-3xl font-semibold md:text-5xl"><ScrollFillText lines={[t('Suporte para o próximo passo.')]} /></h2>
       <ScrollReveal><p className={styles.intro}>{t('Da escolha da placa às dúvidas sobre o projeto, fale com a equipe da ezway.')}</p></ScrollReveal>
       <TiltedGridHero
         images={items.map(item => ({ src: supportImage(item.background, item.ink, item.title, item.description), alt: `${item.title} ${item.description}` }))}

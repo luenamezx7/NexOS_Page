@@ -1,0 +1,66 @@
+.section { --color-ink: #000; --text-secondary: #54545a; --palette-cta: #ff2994; --palette-cta-ink: #000; position: relative; overflow: clip; min-height: 100svh; padding: clamp(80px, 10vw, 144px) 24px; background: #f8f8fa; color: #000; color-scheme: light; scroll-margin-top: 104px; }
+.inner { display: grid; grid-template-columns: 1fr 1fr; grid-template-areas: "copy visual" "action visual"; align-items: center; column-gap: clamp(40px, 6vw, 88px); row-gap: 28px; width: min(100%, 1160px); margin-inline: auto; }
+.copy { grid-area: copy; align-self: end; min-width: 0; }
+.action { grid-area: action; align-self: start; }
+.section:global(#mini-sites) .title { margin: 0; background: none; color: #000; -webkit-text-fill-color: #000; font-size: clamp(48px, 6vw, 82px); font-weight: 650; line-height: 1; letter-spacing: -.06em; text-align: left; }
+.section:global(#mini-sites) .lead { margin: 28px 0 0; max-width: 18ch; font-size: clamp(25px, 3vw, 36px); line-height: 1.18; letter-spacing: -.035em; font-weight: 550; text-align: left; }
+.description { max-width: 44ch; margin-top: 24px; font-size: 16px; line-height: 1.75; color: #54545a; }
+.uses { display: grid; gap: 12px; padding: 0; margin: 28px 0 0; list-style: none; font-size: 14px; line-height: 1.5; }
+.uses li { display: flex; align-items: baseline; gap: 12px; }
+.uses li::before { content: ''; flex: 0 0 5px; height: 5px; border-radius: 50%; background: #ff2994; }
+.example { grid-area: visual; display: grid; justify-items: center; gap: 24px; min-width: 0; }
+.switcher { display: inline-flex; gap: 4px; padding: 4px; border: 1px solid #e7e7eb; border-radius: 999px; background: #f5f5f7; }
+.switcher button { min-width: 100px; min-height: 44px; padding: 8px 20px; border-radius: 999px; color: #54545a; font-size: 13px; cursor: pointer; }
+.switcher button[aria-pressed='true'] { background: #000; color: #fff; }
+.switcher button:focus-visible { outline: 2px solid #a7135e; outline-offset: 3px; }
+.mockups { position: relative; width: 100%; max-width: 600px; aspect-ratio: 1 / 1.08; }
+.phoneAnchor { position: absolute; top: 20px; left: 50%; width: min(49%, 252px); transform: translateX(-50%); }
+.phoneMotion { width: 100%; transform-origin: 50% 70%; }
+.leftPhone { z-index: 1; --preview-bg: #eaf0e8; --avatar-bg: #ceddc7; }
+.rightPhone { z-index: 2; --preview-bg: #f2e8ef; --avatar-bg: #e9c7da; }
+.centerPhone { z-index: 3; }
+.phoneAnchor :global([data-iphone15pro]) {
+  border-radius: 16% / 7.7%;
+  box-shadow: 0 5px 12px -2px rgb(0 0 0 / 22%), 0 24px 44px -12px rgb(0 0 0 / 34%), 0 44px 72px -24px rgb(0 0 0 / 22%);
+}
+.phoneAnchor :global([data-iphone15pro]) > img { filter: none; }
+.screenViewport { position: absolute; inset: 0; container-type: inline-size; }
+.screenContent { display: flex; flex-direction: column; height: 100%; padding: 17cqi 6cqi 10cqi; overflow: hidden; background: var(--preview-bg, #fbf7f5); color: #000; }
+.profile { text-align: center; }
+.avatar { display: grid; place-items: center; width: 18cqi; height: 18cqi; margin: 0 auto 4cqi; border-radius: 50%; background: var(--avatar-bg, #f8c4dc); color: #000; }
+.avatar svg { width: 8cqi; height: 8cqi; }
+.brand { font-size: 7cqi; font-weight: 650; letter-spacing: -.04em; }
+.bio { margin-top: 2cqi; font-size: 3.5cqi; line-height: 1.6; color: #626066; }
+.links { display: grid; gap: 3cqi; padding: 0; margin: 9cqi 0 0; list-style: none; }
+.links li { display: flex; align-items: center; gap: 3cqi; min-height: 16cqi; padding: 3cqi; border: 1px solid #e5dfdf; border-radius: 3.5cqi; background: #fff; font-size: 3.3cqi; font-weight: 550; }
+.links li:first-child { border-color: #000; background: #000; color: #fff; }
+.links li span { flex: 1; }
+.links svg { flex-shrink: 0; width: 5cqi; height: 5cqi; }
+.catalogue { display: grid; grid-template-columns: 1fr 1fr; gap: 3cqi; padding: 0; margin: 9cqi 0 0; list-style: none; }
+.catalogue li { min-width: 0; }
+.productArt, .serviceArt { display: grid; place-items: center; height: 35cqi; border-radius: 4cqi; color: #49323f; }
+.productArt svg, .serviceArt svg { width: 13cqi; height: 13cqi; }
+.productArt { background: #efd1df; }
+.serviceArt { background: #dbe4d7; }
+.catalogue li > span { display: block; margin-top: 3cqi; font-size: 3.8cqi; font-weight: 600; }
+.catalogue small { display: block; margin-top: 1cqi; font-size: 3cqi; color: #626066; }
+.exampleNote { margin-top: auto; padding-top: 7cqi; text-align: center; font-size: 3cqi; color: #777078; }
+@media (max-width: 767px) {
+  .inner { grid-template-columns: 1fr; grid-template-areas: "copy" "visual" "action"; row-gap: 36px; }
+  .section { padding-block: 80px; }
+  .description { max-width: 48ch; }
+  .mockups { max-width: 430px; aspect-ratio: .8; }
+  .phoneAnchor { width: 56%; }
+  .action { justify-self: center; }
+}
+
+.switcher {
+  max-width: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.switcher button { min-width: min(100px, 100%); }
+@media (forced-colors: active) {
+  .phoneAnchor :global([data-iphone15pro]) { box-shadow: none; }
+}

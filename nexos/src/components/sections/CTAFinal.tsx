@@ -7,6 +7,7 @@ import toqueEzway from '../../../public/media/toque-ezway.jpg';
 import styles from './Sections.module.css';
 import { ScrollReveal } from '../ScrollReveal';
 import { useLocale } from '@/lib/locale';
+import { ScrollFillText } from '../ui/scroll-fill-headline';
 
 export function CTAFinal() {
   const { t } = useLocale();
@@ -17,7 +18,7 @@ export function CTAFinal() {
     <span id="contact" className={styles.ctaAnchor} aria-hidden="true" />
     <div className={`${styles.container} ${styles.finalCta}`}>
       <div className={styles.ctaLayout}>
-           <h2 id="cta-title">{t('Vamos entender seu próximo passo?')}</h2>
+           <h2 id="cta-title" data-heading-static data-scroll-fill-heading><ScrollFillText lines={[t('Vamos entender seu próximo passo?')]} /></h2>
       </div>
       <div className={styles.ctaVisual} data-cta-visual>
         <div className={styles.ctaImageMotion}>

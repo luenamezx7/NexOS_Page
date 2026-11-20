@@ -47,7 +47,7 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
       return value.endsWith('ms') ? amount : value.endsWith('s') ? amount * 1000 : fallback;
     };
     const duration = durationInMs('--entry-duration', 1850);
-    const exitDuration = durationInMs('--exit-duration', 800);
+    const exitDuration = durationInMs('--exit-duration', 1100);
     const htmlOverflow = document.documentElement.style.overflow;
     const bodyOverflow = document.body.style.overflow;
     const notify = () => document.dispatchEvent(new Event('nexos-entry-change'));

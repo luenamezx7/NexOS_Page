@@ -1639,7 +1639,7 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
 @media (max-width: 767px) { .landing-hero .hero-container { gap: 32px; padding: 116px 24px 56px; } .landing-hero .hero-heading { font-size: clamp(36px, 9vw, 54px); } .landing-hero .hero-description { font-size: 15px; } }
 
 /* Round only the top of a dark chapter immediately following a light one. */
-.landing-page { --solution-card-width: 640px; --dark-section-radius: 32px; --hero-handoff-surface: #f5f3f1; background: #f8f8fa; }
+.landing-page { --solution-card-width: 640px; --dark-section-radius: 32px; --hero-handoff-surface: #000000; background: #f8f8fa; }
 .landing-page [data-home-experience='real-estate-video'] + [data-home-experience='plate-management'],
 .landing-page [data-home-experience='process'] {
   border-radius: var(--dark-section-radius) var(--dark-section-radius) 0 0;
@@ -1693,3 +1693,101 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
 
 /* OLED: dark surfaces stay pure black; borders retain separation. */
 .dark { --header-glass-background: #000000; --header-glass-filter: none; --glass-panel: #000000; --glass-control: #000000; --action-glass-background: #000000; }
+
+.landing-page #main-content h2[data-scroll-fill-heading] {
+  background: none;
+  background-clip: border-box;
+  -webkit-background-clip: border-box;
+  color: inherit;
+  -webkit-text-fill-color: currentColor;
+}
+
+.landing-page #main-content h2[data-scroll-fill-heading] :where(span, a) {
+  -webkit-text-fill-color: currentColor;
+}
+
+/* Night glass confines translucency and refraction to navigation. */
+.site-shell :is([data-header-state], [data-page-header]) {
+  --night-glass-tint: rgb(5 7 13 / 38%);
+  background: #080a10;
+  border-color: rgb(220 230 255 / 16%);
+  box-shadow: inset 0 1px 0 rgb(235 241 255 / 10%), 0 12px 32px -18px #000c;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .site-shell :is([data-header-state], [data-page-header]) {
+    background: linear-gradient(130deg, rgb(183 201 243 / 5%), transparent 46%), var(--night-glass-tint);
+    -webkit-backdrop-filter: blur(18px) saturate(115%);
+    backdrop-filter: blur(18px) saturate(115%);
+  }
+}
+
+.site-shell :is([data-header-state][data-scrolled='true'], [data-page-header]) {
+  --night-glass-tint: rgb(5 7 13 / 62%);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .site-shell :is([data-header-state], [data-page-header]) {
+    background: #080a10;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+.page-narrow :where(p, li) { text-wrap: pretty; }
+
+@media (forced-colors: active) {
+  .site-shell :is([data-header-state], [data-page-header]) {
+    background: Canvas;
+    border-color: CanvasText;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* Edge diagnostics should never invalidate inherited styles across the landing page. */
+@property --edge-top {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --edge-bottom {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+/* The optical layer stays below the live controls and never intercepts input. */
+.site-shell :is([data-header-state], [data-page-header]) {
+  isolation: isolate;
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-color: rgb(232 241 255 / 32%);
+  box-shadow: inset 0 1px 0 #ffffff52, inset 1px 0 0 #ffffff17, inset 0 -1px 0 #bbd2ff26, 0 10px 32px -18px #000a;
+}
+.navigation-glass-definitions { position: absolute; pointer-events: none; }
+.navigation-glass {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(125deg, #e1eeff17, transparent 35%, #b2c9ff08 75%, #fff1), var(--night-glass-tint);
+  -webkit-backdrop-filter: blur(16px) saturate(135%);
+  backdrop-filter: blur(16px) saturate(135%);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .navigation-glass { background: #080a10; }
+}
+@media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+  .navigation-glass { display: none; }
+  .site-shell :is([data-header-state], [data-page-header]) { background: #080a10; box-shadow: none; }
+}
+@media (forced-colors: active) {
+  .site-shell :is([data-header-state], [data-page-header]) { background: Canvas; border-color: CanvasText; }
+}

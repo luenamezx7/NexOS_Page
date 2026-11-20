@@ -7,6 +7,8 @@ import { useLocale } from '@/lib/locale';
 import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { motionEase, motionTiming } from '@/lib/motion-presets';
 import { useScrollLock } from '../useScrollLock';
+import { openDialogSurface, closeDialogSurface } from '@/lib/dialog-transition';
+import { ResizeTransition } from '../ui/resize-transition';
 import styles from './ManagementSimulation.module.css';
 
 const chapters = ['Comercial', 'Clientes', 'Financeiro'];
@@ -73,6 +75,7 @@ function DemoContent({ chapter }: { chapter: number }) {
 export default function ManagementSimulation({ initialChapter, onDismiss }: { initialChapter: number; onDismiss: () => void }) {
   const { t } = useLocale();
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const closing = useRef(false);
   const [chapter, setChapter] = useState(initialChapter);
   const [revision, setRevision] = useState(0);
   useScrollLock(true);
@@ -80,19 +83,25 @@ export default function ManagementSimulation({ initialChapter, onDismiss }: { in
     const dialog = dialogRef.current!;
     const opener = document.activeElement as HTMLElement | null;
     dialog.showModal();
+    openDialogSurface(dialog);
     return () => {
       dialog.close();
       if (opener?.isConnected) opener.focus({ preventScroll: true });
     };
   }, []);
-  return <dialog ref={dialogRef} className={styles.dialog} aria-labelledby="management-simulation-title" aria-describedby="management-simulation-notice" data-management-simulation data-lenis-prevent onCancel={event => { event.preventDefault(); onDismiss(); }}>
+  const close = () => {
+    if (closing.current || !dialogRef.current) return;
+    closing.current = true;
+    void closeDialogSurface(dialogRef.current).then(onDismiss);
+  };
+  return <dialog ref={dialogRef} className={`${styles.dialog} t-modal`} aria-labelledby="management-simulation-title" aria-describedby="management-simulation-notice" data-management-simulation data-lenis-prevent onCancel={event => { event.preventDefault(); close(); }}>
     <header className={styles.header}>
       <div><p className={styles.badge}>{t('Gestão')}</p><h2 id="management-simulation-title" data-heading-static>{t('Explore a gestão')}</h2></div>
-      <button type="button" className={styles.close} onClick={onDismiss} aria-label={t('Fechar gestão')}><X size={20} aria-hidden="true" /></button>
+      <button type="button" className={styles.close} onClick={close} aria-label={t('Fechar gestão')}><X size={20} aria-hidden="true" /></button>
     </header>
     <p id="management-simulation-notice" className={styles.notice}>{t('Nenhuma informação é enviada ao CRM.')}</p>
     <div className={styles.tabs} aria-label={t('Área da gestão')}>{chapters.map((label, index) => <button type="button" key={label} aria-pressed={chapter === index} onClick={() => setChapter(index)}>{t(label)}</button>)}</div>
-    <DemoContent chapter={chapter} key={revision} />
+    <ResizeTransition><DemoContent chapter={chapter} key={revision} /></ResizeTransition>
     <div className={styles.footer}><button type="button" className={styles.reset} onClick={() => setRevision(value => value + 1)}><RotateCcw size={16} aria-hidden="true" />{t('Reiniciar')}</button><span>{t('Sem conexão com seus dados reais')}</span></div>
   </dialog>;
 }

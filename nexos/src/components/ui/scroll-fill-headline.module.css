@@ -1,0 +1,6 @@
+.section { position: relative; width: 100%; overflow: hidden; background: #f8f8fa; color: #000; padding: clamp(96px, 12vw, 176px) 24px; }
+.section .headline { position: relative; max-width: 1100px; margin: 0 auto; font: 550 clamp(38px, 5.4vw, 80px)/1.12 var(--font-display); letter-spacing: -.045em; text-align: center; text-wrap: balance; }
+.text, .line { display: block; }
+.word { display: inline-block; }
+.floater { position: absolute; pointer-events: none; mix-blend-mode: multiply; filter: brightness(1.07) contrast(1.06); mask-image: radial-gradient(closest-side, #000 72%, transparent 100%); }
+@media (max-width: 767px) { .floater { display: none; } }

@@ -5,7 +5,7 @@
 .layout { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 7vw, 100px); align-items: center; }
 .copy { min-width: 0; }
 .name { font: 600 clamp(46px, 5.6vw, 80px)/1 var(--font-display); letter-spacing: -.055em; margin-bottom: 36px; }
-.name > span { display: block; margin: 14px 0 0 4px; font: 13px/1.5 var(--font-sans); letter-spacing: normal; color: var(--text-tertiary); }
+.name > span:not([data-scroll-fill]) { display: block; margin: 14px 0 0 4px; font: 13px/1.5 var(--font-sans); letter-spacing: normal; color: var(--text-tertiary); }
 .heading { max-width: 18ch; font: 600 clamp(30px, 3.1vw, 44px)/1.14 var(--font-display); letter-spacing: -.035em; }
 .description { margin-top: 24px; max-width: 44ch; color: var(--text-secondary); line-height: 1.8; font-size: 16px; }
 .capabilityTitle { margin-top: 28px; font-size: 14px; font-weight: 700; color: var(--color-ink); }
@@ -17,6 +17,11 @@
 .device { width: min(100%, 326px); height: auto; }
 .device :global(svg) { filter: drop-shadow(0 24px 28px rgb(0 0 0 / 22%)); }
 .phonePreview { position: relative; width: min(100%, 326px); }
+.phonePreview :global([data-iphone15pro]) {
+  border-radius: 16% / 7.7%;
+  box-shadow: 0 5px 12px -2px rgb(0 0 0 / 22%), 0 30px 56px -14px rgb(0 0 0 / 36%);
+}
+.phonePreview :global([data-iphone15pro]) > img { filter: none; }
 .phoneScreen { position: absolute; inset: 0; display: flex; flex-direction: column; min-width: 0; pointer-events: none; background: #000000; color: #e9edef; font: 12px/1.45 var(--font-sans); }
 .chatHeader { display: flex; align-items: center; gap: 7px; min-height: 80px; padding: 31px 10px 8px; background: #202c33; color: #d9e2e5; }
 .avatar { display: grid; place-items: center; flex: 0 0 26px; height: 26px; border-radius: 50%; background: var(--brand-lime); color: var(--brand-lime-ink); font-size: 13px; font-weight: 700; }
@@ -51,7 +56,7 @@
 .details .capabilityTitle { margin-top: 0; }
 @media (max-width: 767px) { .container { padding: 64px 24px; } .top { margin-bottom: 28px; flex-direction: column; align-items: center; } .layout { grid-template-columns: 1fr; gap: 40px; } .device { width: min(100%, 320px); } .name { margin-bottom: 28px; } .phonePreview { width: min(100%, 320px); } .intro { width: 100%; text-align: center; } .intro .heading { margin-inline: auto; } }
 @media (max-width: 767px) { .intro .heading { font-size: clamp(30px, 8vw, 44px); } .details { grid-template-columns: 1fr; } }
-@media (forced-colors: active) { .device :global(svg) { filter: none; } }
+@media (forced-colors: active) { .device :global(svg) { filter: none; } .phonePreview :global([data-iphone15pro]) { box-shadow: none; } }
 @media (prefers-reduced-motion: reduce) { .message { transition: none; transform: none !important; opacity: 1 !important; } }
 
 .name, .heading { text-align: center; margin-inline: auto; }

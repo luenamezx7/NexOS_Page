@@ -5,7 +5,7 @@ import { useInView } from 'motion/react';
 import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { easychat } from '@/config/easychat';
 import { ScrollReveal } from '../ScrollReveal';
-import { HighlightedText } from '../highlighted-text';
+import { ScrollFillText } from '../ui/scroll-fill-headline';
 import { Iphone15Pro } from '../ui/iphone-15-pro';
 import { PhoneScrollHero } from '../ui/phone-scroll-hero';
 import { GlowingBadge } from '../unlumen-ui/primitives/glowing-badge';
@@ -34,7 +34,7 @@ export function EasyChat() {
   return <section id="easychat" aria-labelledby="easychat-title" className={styles.section}>
     <div className={styles.container}>
       <div className={styles.top}><span>{t('Assistente administrativo com IA')}</span><GlowingBadge variant="neutral" className={styles.statusBadge} dotColor="#ff3f9f" glowColor="rgb(255 63 159 / 28%)">{t('Em desenvolvimento')}</GlowingBadge></div>
-      <PhoneScrollHero titleComponent={<div className={styles.intro}><p className={styles.name}>{easychat.name}</p><h2 data-heading-static id="easychat-title" className={styles.heading}>{t('Menos tarefas.')} <span className={styles.secondaryLine}><HighlightedText multiline inView from="bottom" delay={.12}>{t('Mais tempo para o negócio.')}</HighlightedText></span></h2><ScrollReveal as="p" className={styles.description}>{t('Uma ideia para organizar tarefas pelo WhatsApp com apoio de IA. Você revisa cada documento antes de compartilhar.')}</ScrollReveal></div>}>
+      <PhoneScrollHero titleComponent={<div className={styles.intro}><p className={styles.name}><ScrollFillText lines={[easychat.name]} /></p><h2 data-heading-static data-scroll-fill-heading id="easychat-title" className={styles.heading}><ScrollFillText lines={[t('Menos tarefas.'), t('Mais tempo para o negócio.')]} /></h2><ScrollReveal as="p" className={styles.description}>{t('Uma ideia para organizar tarefas pelo WhatsApp com apoio de IA. Você revisa cada documento antes de compartilhar.')}</ScrollReveal></div>}>
         <figure className={styles.mockup} data-journey-visual>
           <div ref={conversationRef} className={styles.phonePreview} role="img" aria-label={t('Conversa do EasyChat com documento para revisar')}>
             <Iphone15Pro className={styles.device}>

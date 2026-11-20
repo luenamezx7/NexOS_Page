@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useLayoutEffect, useMemo, useRef, type CSSProperties, type RefObject } from 'react';
+import { springValue } from 'motion';
+import { edgeSpringPhysics } from '@/lib/edge-spring';
 
 import './GradualBlur.css';
 
@@ -64,6 +66,8 @@ export interface GradualBlurProps {
   bloom?: number;
   bloomColor?: string;
   autoHide?: boolean;
+  /** Independent physical response to page scrolling at the top/bottom edge. */
+  scrollSpring?: boolean;
   container?: Element | string | RefObject<Element | null> | null;
   hoverIntensity?: number;
   duration?: number | string;
@@ -88,6 +92,7 @@ export default function GradualBlur({
   bloom = 0,
   bloomColor = 'var(--visor-lilac, #ffaad8)',
   autoHide = false,
+  scrollSpring = false,
   container,
   hoverIntensity = 1,
   duration = 0.3,
@@ -99,6 +104,50 @@ export default function GradualBlur({
   const rootRef = useRef<HTMLDivElement>(null);
   const edge = DIRECTIONS[position] ? position : 'bottom';
   const vertical = edge === 'top' || edge === 'bottom';
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root || !scrollSpring || target !== 'page' || !vertical) return;
+    const preference = matchMedia('(prefers-reduced-motion: reduce)');
+    // Each mounted edge owns its position and velocity; scrolling never renders React.
+    const depth = springValue<number>(0, edgeSpringPhysics);
+    const unsubscribe = depth.on('change', value => {
+      root.style.transform = `scaleY(${1 + value / 100})`;
+    });
+    let previousY = window.scrollY;
+    let previousTime = performance.now();
+    let release: ReturnType<typeof setTimeout> | undefined;
+    const reset = () => {
+      clearTimeout(release);
+      depth.jump(0);
+      previousY = window.scrollY;
+      previousTime = performance.now();
+    };
+    const onScroll = () => {
+      const now = performance.now();
+      const y = window.scrollY;
+      const velocity = (y - previousY) / Math.max(now - previousTime, 16);
+      previousY = y;
+      previousTime = now;
+      if (preference.matches || document.hidden) return;
+      const towardsEdge = edge === 'top' ? -velocity : velocity;
+      depth.set(Math.min(Math.max(towardsEdge * 6, 0), 18));
+      clearTimeout(release);
+      release = setTimeout(() => depth.set(0), 90);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    preference.addEventListener('change', reset);
+    document.addEventListener('visibilitychange', reset);
+    return () => {
+      clearTimeout(release);
+      window.removeEventListener('scroll', onScroll);
+      preference.removeEventListener('change', reset);
+      document.removeEventListener('visibilitychange', reset);
+      unsubscribe();
+      depth.destroy();
+      root.style.removeProperty('transform');
+    };
+  }, [scrollSpring, target, vertical, edge]);
 
   const stack = useMemo(() => {
     const count = Math.min(Math.max(Math.round(layers) || 1, 1), 16);
@@ -304,6 +353,7 @@ export default function GradualBlur({
     height: vertical ? depth : undefined,
     width: vertical ? (span ?? undefined) : depth,
     marginInline: span ? 'auto' : undefined,
+    transformOrigin: scrollSpring && vertical ? `center ${edge}` : undefined,
     ...style,
   };
 

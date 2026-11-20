@@ -26,6 +26,8 @@ export function useManagementChapters(stageRef: RefObject<HTMLDivElement | null>
         stage.dataset.managementMotion = 'scroll';
         ScrollTrigger.create({
           id: 'management-chapters', trigger: stage, pin: pinned ? stage : false,
+          // This upstream pin must contribute its spacing before later scenes refresh.
+          refreshPriority: 2,
           start: pinned ? 'top 110px' : 'top 75%', end: pinned ? () => `+=${Math.round((innerHeight - 110) * 1.8)}` : 'bottom 25%',
           invalidateOnRefresh: true, anticipatePin: 1,
           onUpdate: self => {

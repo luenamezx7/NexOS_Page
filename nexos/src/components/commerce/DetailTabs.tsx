@@ -5,6 +5,7 @@ import { motion } from 'motion/react';
 import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { Check } from 'lucide-react';
 import styles from './Commerce.module.css';
+import { ResizeTransition } from '../ui/resize-transition';
 
 export interface DetailTab {
   id: string;
@@ -30,14 +31,14 @@ export function DetailTabs({ id, tabs }: { id: string; tabs: DetailTab[] }) {
           }}>{tab.label}</button>
         ))}
       </div>
-      {tabs.map((tab, index) => (
+      <ResizeTransition>{tabs.map((tab, index) => (
         <div key={tab.id} role="tabpanel" id={`${id}-panel-${tab.id}`} aria-labelledby={`${id}-tab-${tab.id}`} tabIndex={0} hidden={active !== index}>
           {active === index && <motion.div initial={reduce ? false : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} className={styles.detailGrid}>
             <div><h3>{tab.title}</h3><p>{tab.description}</p></div>
             <ul>{tab.items.map(item => <li key={item}><Check size={16} aria-hidden="true" /><span>{item}</span></li>)}</ul>
           </motion.div>}
         </div>
-      ))}
+      ))}</ResizeTransition>
     </div>
   );
 }

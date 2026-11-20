@@ -15,15 +15,19 @@
 .socialButton:is(:hover, :focus-visible) svg { color: inherit; }
 .socialButton:focus-visible { outline: 2px solid var(--ring); outline-offset: 4px; }
 
-.closing { position: relative; z-index: 31; isolation: isolate; width: 100%; height: clamp(260px, 32vw, 450px); overflow: hidden; background: var(--bg-base); }
+.closing { position: relative; z-index: 31; isolation: isolate; width: 100%; height: clamp(260px, 32vw, 450px); overflow: hidden; overflow-anchor: none; background: #000; }
+.closingSurface { position: absolute; inset: 0; background: #000; }
 .closingCaption { position: absolute; top: clamp(64px, 8vw, 104px); left: 0; width: 100%; margin: 0; color: #bac4b7; font: 14px/1.7 var(--font-sans); text-align: center; }
-.wordmarkCrop { position: absolute; right: 0; bottom: 8px; left: 0; transform: translateY(4%); }
-.wordmarkLink { display: block; width: min(88%, 1200px); margin-inline: auto; border-radius: 8px; text-decoration: none; cursor: pointer; }
+/* Optical half of the glyphs: the logo font includes space above its ink. */
+.wordmarkCrop { position: absolute; bottom: 0; left: 50%; width: min(88%, 1200px); transform: translate(-50%, 32%); }
+.wordmarkLink { display: block; width: 72%; margin-left: 20%; border-radius: 8px; text-decoration: none; cursor: pointer; }
+/* Align visible artwork, accounting for the PNG's transparent margins and the logo's font metrics. */
+.closingAvatar { position: absolute; left: 0; bottom: -13%; width: 20%; height: 92%; object-fit: contain; object-position: right bottom; pointer-events: none; user-select: none; }
 .wordmarkLink:focus-visible { outline: 2px solid var(--highlight-soft); outline-offset: 6px; }
 .wordmarkFrame { width: 100%; container-type: inline-size; }
-:global(.landing-page) :global(#brand-closing) h2.gradientWordmark { background: linear-gradient(180deg, #fff 0%, #dedfde 42%, #8b918c 74%, #000000 100%); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; font-size: 30cqi; transition: filter 200ms ease; }
+:global(.landing-page) :global(#brand-closing) h2.gradientWordmark { background: none; -webkit-background-clip: text; background-clip: text; color: #fff; -webkit-text-fill-color: #fff; font-size: 30cqi; transition: filter 200ms ease; }
 .wordmarkLink:hover .gradientWordmark { filter: brightness(1.14); }
-:global(.landing-page) :global(#brand-closing) h2.gradientWordmark span { color: inherit; -webkit-text-fill-color: inherit; }
+:global(.landing-page) :global(#brand-closing) h2.gradientWordmark :is(span, sup) { color: inherit; -webkit-text-fill-color: inherit; }
 @media (max-width: 767px) {
   .socialSection { padding: 64px 24px 72px; }
   .socialInner { gap: 24px; }
@@ -33,7 +37,7 @@
   .socialInner > :last-child { width: 100%; }
   .socialButton { width: 100%; }
   .closing { height: 240px; }
-  .wordmarkLink { width: calc(100% - 24px); }
+  .wordmarkCrop { width: calc(100% - 24px); }
   .closingCaption { top: 56px; }
 }
 @media (prefers-reduced-motion: reduce) { .socialButton, .socialButton svg, .gradientWordmark { transition: none; } .socialButton:hover svg { transform: none; } }

@@ -3,7 +3,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useSyncExternalStore } from 'react';
 import ButtonWithIcon from './ui/button-witn-icon';
 import { TextType } from './ui/TextType';
-import { HeroVideo } from './HeroVideo';
+import { HeroBackground } from './HeroBackground';
 import { commercialHref } from '@/lib/commercial';
 import { diagnosticMessage } from '@/config/solutions';
 import { cn } from '@/lib/utils';
@@ -14,14 +14,9 @@ import { useLocale } from '@/lib/locale';
 import Image from 'next/image';
 import styles from './Hero.module.css';
 import { useHeroChoreography } from './use-hero-choreography';
-import { heroGlassMap } from '@/lib/hero-glass-map';
+import { NavigationGlass } from './NavigationGlass';
 
 const subscribeHydration = () => () => {};
-// Temporarily paused; preserve its optics and styling for later reuse.
-const SHOW_HERO_GLASS = false;
-const supportsGlassRefraction = () => SHOW_HERO_GLASS && /(?:Chrome|Chromium|Edg)\//.test(navigator.userAgent)
-  && !/iPhone|iPad|iPod/.test(navigator.userAgent)
-  && CSS.supports('backdrop-filter', 'url("#hero-glass-refraction")');
 const heroWords = {
   pt: ['conectado', 'impulsionado', 'otimizado'],
   en: ['connected', 'powered', 'optimized'],
@@ -33,7 +28,6 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
   const { t, locale } = useLocale();
   const scrollToSection = useSectionScroll();
   const navigationReady = useSyncExternalStore(subscribeHydration, () => true, () => false);
-  const refractionReady = useSyncExternalStore(subscribeHydration, supportsGlassRefraction, () => false);
   const entryOpen = usePresentationActive();
   const revealing = usePresentationRevealing();
   const showHero = !entryOpen || revealing;
@@ -64,7 +58,7 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
 
   return (
     <section ref={sectionRef} id="hero" tabIndex={-1} aria-labelledby="hero-title" data-home-experience="hero" data-managed-section-links data-nav-ready={navigationReady} className={cn('landing-hero oceanic-surface', styles.hero, className)}>
-      <HeroVideo active={showHero} />
+      <HeroBackground />
       <motion.div className="hero-container" data-hero-scroll>
         <div className="hero-copy">
            <p className="hero-eyebrow" data-hero-enter><span aria-hidden="true" /> {t('GESTÃO · ATENDIMENTO · PRESENÇA DIGITAL')}</p>
@@ -80,22 +74,9 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
            </div>
         </div>
         <div className={styles.managementScene} data-avatar-scene>
-          {SHOW_HERO_GLASS && <>
-          <svg className={styles.refractionDefinitions} aria-hidden="true" focusable="false">
-            <defs>
-              <filter id="hero-glass-refraction" filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox" x="0" y="0" width="1" height="1" colorInterpolationFilters="sRGB">
-                <feImage href={heroGlassMap} x="0" y="0" width="1" height="1" preserveAspectRatio="none" result="rim" />
-                <feDisplacementMap in="SourceGraphic" in2="rim" scale="0.24" xChannelSelector="R" yChannelSelector="G" result="refracted" />
-                <feGaussianBlur in="refracted" stdDeviation="0.025 0.045" edgeMode="duplicate" result="softened" />
-                <feColorMatrix in="rim" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 1 0 0" result="edgeMask" />
-                <feComposite in="softened" in2="edgeMask" operator="in" result="softEdges" />
-                <feComposite in="refracted" in2="edgeMask" operator="out" result="clearCentre" />
-                <feComposite in="softEdges" in2="clearCentre" operator="arithmetic" k2="1" k3="1" />
-              </filter>
-            </defs>
-          </svg>
-          <div className={styles.glassCard} aria-hidden="true" data-hero-glass data-refraction={refractionReady ? 'active' : 'fallback'} />
-          </>}
+          <div className={styles.glassCard} aria-hidden="true" data-hero-glass>
+            <NavigationGlass variant="card" />
+          </div>
           <div className={styles.avatarFrame} aria-hidden="true" data-avatar-stage data-avatar-figure>
             <Image
             className={styles.avatar}
@@ -104,12 +85,12 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
             width={1084}
             height={1451}
             sizes="(max-width: 407px) calc(100vw - 48px), 360px"
+            quality={90}
             preload
             />
           </div>
         </div>
       </motion.div>
-      <div className={styles.sectionFade} aria-hidden="true" />
     </section>
   );
 });

@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { useLocale } from '@/lib/locale';
 import styles from './RealEstateVideo.module.css';
 import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
-import { ScrollReveal } from '../ScrollReveal';
+import { ScrollFillText } from '../ui/scroll-fill-headline';
 
 /** Pass a real video URL when approved portfolio footage is available. */
 export function RealEstateVideo({ videoSrc, posterSrc = "/ezway-demo-studio.jpg" }: { videoSrc?: string; posterSrc?: string }) {
@@ -39,7 +39,7 @@ export function RealEstateVideo({ videoSrc, posterSrc = "/ezway-demo-studio.jpg"
 
   return <section className={styles.section} aria-labelledby="real-estate-video-title">
     <div className={styles.inner}>
-      <ScrollReveal as="h2" preset="title" id="real-estate-video-title" className={styles.title}>{t('Transpareça a verdadeira qualidade do seu trabalho.')}</ScrollReveal>
+      <h2 data-heading-static data-scroll-fill-heading id="real-estate-video-title" className={styles.title}><ScrollFillText lines={[t('Transpareça a verdadeira qualidade do seu trabalho.')]} /></h2>
       <p className={styles.description}>{t('Vídeos profissionais e imersivos com IA.')}</p>
       <div className={styles.posterWrap} data-video={Boolean(videoSrc)}>
         <div className={styles.poster}>

@@ -12,14 +12,14 @@ test('scroll chapters preserve a manual choice until the next boundary and clean
   await expect(stage).toHaveAttribute('data-management-chapters', 'true');
   const { start, length } = await stage.evaluate(el => ({ start: el.parentElement!.getBoundingClientRect().top + scrollY - 110, length: (innerHeight - 110) * 1.8 }));
   await page.evaluate(y => window.scrollTo({ top: y, behavior: 'instant' }), start + 40);
-  await expect(page.locator('#management-demo img')).toHaveAttribute('src', /pipeline/);
+  await expect(page.locator('#management-demo img')).toHaveAttribute('src', /controle-ezway-login\.png/);
   await page.locator('[data-management-tab]').filter({ hasText: 'Financeiro' }).click();
   await page.evaluate(y => window.scrollTo({ top: y, behavior: 'instant' }), start + 150);
-  await expect(page.locator('#management-demo img')).toHaveAttribute('src', /financeiro/);
+  await expect(page.locator('#management-demo img')).toHaveAttribute('src', /controle-ezway-login\.png/);
   await page.evaluate(y => window.scrollTo({ top: y, behavior: 'instant' }), start + length * .5);
-  await expect(page.locator('#management-demo img')).toHaveAttribute('src', /clientes/);
+  await expect(page.locator('#management-demo img')).toHaveAttribute('src', /controle-ezway-login\.png/);
   await page.evaluate(y => window.scrollTo({ top: y, behavior: 'instant' }), start + length * .9);
-  await expect(page.locator('#management-demo img')).toHaveAttribute('src', /financeiro/);
+  await expect(page.locator('#management-demo img')).toHaveAttribute('src', /controle-ezway-login\.png/);
   await expect.poll(() => stage.evaluate(el => Math.round(el.getBoundingClientRect().top))).toBe(110);
   expect(await stage.evaluate(el => el.getBoundingClientRect().bottom <= innerHeight)).toBe(true);
   await page.setViewportSize({ width: 390, height: 844 });
@@ -89,7 +89,7 @@ test('system motion preference does not disable chapter animation or management 
   await page.goto('/#gestao');
   await expect(page.locator('[data-management-stage]')).toHaveAttribute('data-management-chapters', 'true');
   await page.locator('[data-management-tab]').filter({ hasText: 'Financeiro' }).click();
-  await expect(page.locator('#management-demo img')).toHaveAttribute('src', /financeiro/);
+  await expect(page.locator('#management-demo img')).toHaveAttribute('src', /controle-ezway-login\.png/);
   await page.locator('[data-management-simulate]').click();
   await expect(page.locator('dialog[data-management-simulation]').getByLabel('Período')).toBeVisible();
   await page.keyboard.press('Escape');

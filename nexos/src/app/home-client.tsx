@@ -18,6 +18,9 @@ import { useLocale } from '@/lib/locale';
 import { RealEstateVideo } from '@/components/sections/RealEstateVideo';
 import { MotionDiagnosticsLoader } from '@/components/MotionDiagnosticsLoader';
 import { HeadingScrollMotion } from '@/components/HeadingScrollMotion';
+import { EdgeSpring } from '@/components/EdgeSpring';
+import { MiniSites } from '@/components/sections/MiniSites';
+import { MiniSitesIntro } from '@/components/sections/MiniSitesIntro';
 
 const Services = dynamic(() => import('@/components/Services').then(m => m.Services));
 const AboutUs = dynamic(() => import('@/components/AboutUs').then(m => m.AboutUs));
@@ -74,6 +77,7 @@ export default function HomeClient() {
     <main data-motion-detail={reduce ? 'reduced' : 'full'} className="landing-page w-full max-w-full overflow-x-clip bg-canvas text-ink">
       <HomepageJourneyMotion />
       <HeadingScrollMotion />
+      <EdgeSpring />
       <MotionDiagnosticsLoader />
       {entrance.visible && <BrandEntrance key={entrance.key} onComplete={handleEntranceComplete} />}
       <div>
@@ -88,6 +92,8 @@ export default function HomeClient() {
                <SectionBackground index={1} experience="solutions">
                   <Services selectedUse={selectedPlateUse} />
                </SectionBackground>
+               <MiniSitesIntro />
+               <MiniSites />
                <div className="chapter-surface-frame">
                <SectionBackground index={0} scene="product" experience="nfc">
                   <HeroBrandStrip />

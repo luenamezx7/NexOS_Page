@@ -28,10 +28,10 @@ export function LandingPageBlur() {
   if (entryOpen || quizVisible || embedded) return null;
   return <>
     <GradualBlur target="page" position="top" height={mobile ? 'clamp(48px, 9svh, 72px)' : 'clamp(72px, 12svh, 120px)'} strength={mobile ? 1.5 : 3}
-      layers={mobile ? 2 : 4} curve="linear" exponential
+      layers={mobile ? 2 : 4} curve="linear" exponential scrollSpring
       zIndex={40} className="landing-header-blur" />
     <GradualBlur target="page" position="bottom" height={mobile ? 'clamp(56px, 10svh, 84px)' : 'clamp(96px, 18svh, 160px)'} strength={mobile ? 1.8 : 4}
-      layers={mobile ? 2 : 4} curve="linear" exponential autoHide={!mobile}
+      layers={mobile ? 2 : 4} curve="linear" exponential autoHide={!mobile} scrollSpring
       zIndex={30} className="landing-edge-blur" />
   </>;
 }

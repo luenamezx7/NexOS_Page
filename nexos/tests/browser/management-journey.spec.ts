@@ -34,11 +34,11 @@ for (const width of [360, 390, 768, 1024, 1440]) {
     await expect(page.locator('#management-title')).toHaveCSS('background-image', /rgb\(25, 23, 28\)/);
     await page.locator('#gestao').screenshot({ path: `test-results/management-${width}.png` });
     await page.locator('#gestao [data-management-tab]').filter({ hasText: 'Financeiro' }).click();
-    await expect(page.locator('#management-demo img')).toHaveAttribute('src', /financeiro\.png/);
+    await expect(page.locator('#management-demo img')).toHaveAttribute('src', /controle-ezway-login\.png/);
     await expect.poll(() => page.locator('#management-demo img').evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
-    await expect(page.locator('#gestao figcaption')).toContainText('Telas reais do CRM');
+    await expect(page.locator('#gestao figcaption')).toContainText('Tela de login do Controle · ezway');
     await page.locator('#gestao [data-management-tab]').filter({ hasText: 'Comercial' }).click();
-    await expect(page.locator('#management-demo img')).toHaveAttribute('src', /pipeline\.png/);
+    await expect(page.locator('#management-demo img')).toHaveAttribute('src', /controle-ezway-login\.png/);
     await expect(page.locator('#gestao [data-management-tab]')).toHaveCount(3);
     await expect(page.locator('#comparacao')).toHaveJSProperty('open', false);
     await page.locator('#comparacao > summary').click();
@@ -77,7 +77,7 @@ test('essential opening and management content are readable without JavaScript',
   await page.goto('/');
   await expect(page.locator('#hero-title')).toHaveAttribute('aria-label', 'Seu negócio conectado em uma aproximação');
   await expect(page.locator('[data-typing-word]')).toContainText('conectado');
-  await expect(page.locator('#management-demo img')).toHaveAttribute('src', /pipeline\.png/);
+  await expect(page.locator('#management-demo img')).toHaveAttribute('src', /controle-ezway-login\.png/);
   await expect(page.locator('#hero a[data-cta-solution="diagnostico"]')).toHaveAttribute('href', /wa.me/);
   await context.close();
 });

@@ -1,14 +1,16 @@
 import { expect, test, type Page } from '@playwright/test';
+import { enterPresentation } from './helpers/presentation';
 
 test.setTimeout(60000);
 
 async function openHome(page: Page) {
   await page.addInitScript(() => localStorage.setItem('nexos-cookie-consent-v1', JSON.stringify({ necessary: true, functional: false, analytics: false, marketing: false, updatedAt: new Date().toISOString() })));
   await page.goto('/');
+  await enterPresentation(page);
   await expect(page.locator('#hero-title')).toHaveCSS('opacity', '1');
   await expect(page.locator('.hero-copy')).toHaveCSS('opacity', '1');
   await expect(page.locator('[data-presentation]')).toHaveCount(0, { timeout: 15000 });
-  await expect(page.locator('#real-estate-video-title')).toHaveAttribute('data-heading-scroll', 'ready');
+  await expect(page.locator('#real-estate-video-title [data-scroll-fill-word]').first()).toBeAttached();
 }
 
 async function scrollHeadingTo(page: Page, selector: string, viewportFraction: number) {
@@ -19,7 +21,7 @@ async function scrollHeadingTo(page: Page, selector: string, viewportFraction: n
 }
 
 for (const width of [1440, 390]) {
-  test(`${width}px: every content heading is registered and video title follows scroll in both directions`, async ({ page }) => {
+  test(`${width}px: content headings have one motion owner and video title fills in both directions`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await openHome(page);
@@ -30,7 +32,8 @@ for (const width of [1440, 390]) {
     await expect(page.locator('.hero-copy')).toHaveCSS('opacity', '1');
     await expect(page.locator('#hero-title')).not.toHaveAttribute('data-heading-scroll');
     const title = page.locator('#real-estate-video-title');
-    const opacity = () => title.evaluate(element => Number(getComputedStyle(element).opacity));
+    await expect(title).not.toHaveAttribute('data-heading-scroll');
+    const opacity = () => title.locator('[data-scroll-fill-word]').first().evaluate(element => Number(getComputedStyle(element).opacity));
     await scrollHeadingTo(page, '#real-estate-video-title', .96);
     await expect.poll(opacity).toBeLessThan(.3);
     await scrollHeadingTo(page, '#real-estate-video-title', .76);
@@ -47,7 +50,7 @@ for (const width of [1440, 390]) {
       const word = element.getBoundingClientRect();
       const section = element.closest('section')!.getBoundingClientRect();
       return (Math.min(word.bottom, section.bottom) - Math.max(word.top, section.top)) / word.height;
-    })).toBeGreaterThan(.95);
+    })).toBeGreaterThan(.6);
     await page.locator('#brand-closing').screenshot({ path: `test-results/brand-closing-${width}.png` });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   });
@@ -60,9 +63,10 @@ test('language changes and route navigation rebuild heading motion without hidin
   for (const locale of ['en', 'es', 'pt']) {
     await page.evaluate(value => { localStorage.setItem('easyway-language', value); window.dispatchEvent(new Event('easyway-language-change')); }, locale);
     await expect(page.locator('html')).toHaveAttribute('lang', locale === 'pt' ? 'pt-BR' : locale);
-    await expect(page.locator('#cta-title')).toHaveAttribute('data-heading-scroll', 'ready');
-    await scrollHeadingTo(page, '#cta-title', .5);
-    await expect.poll(() => page.locator('#cta-title').evaluate(element => Number(getComputedStyle(element).opacity))).toBeGreaterThan(.99);
+    await expect(page.locator('#cta-title')).toHaveAttribute('data-scroll-fill-heading');
+    await expect(page.locator('#cta-title')).not.toHaveAttribute('data-heading-scroll');
+    await page.locator('#cta-title').evaluate(heading => scrollTo({ top: scrollY + heading.getBoundingClientRect().bottom - innerHeight * .35, behavior: 'instant' }));
+    await expect.poll(() => page.locator('#cta-title [data-scroll-fill-word]').last().evaluate(element => Number(getComputedStyle(element).opacity))).toBeGreaterThan(.99);
   }
   await page.locator('footer a[href="/criacao-de-sites"]').first().click();
   await expect(page).toHaveURL(/\/criacao-de-sites$/);

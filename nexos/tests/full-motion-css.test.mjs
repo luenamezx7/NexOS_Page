@@ -26,3 +26,13 @@ test('configured CSS pipeline keeps motion enabled and preserves responsive rule
   assert.doesNotMatch(result.css, /transform: none/);
   assert.match(result.css, /animation: drift 4s infinite/);
 });
+
+test('transitions.dev keeps its reduced-motion guard', async () => {
+  const plugin = require('../scripts/postcss-full-motion.cjs');
+  const result = await postcss([plugin()]).process(
+    '@media (prefers-reduced-motion: reduce) { .t-input { animation: none !important; } }',
+    { from: new URL('../src/styles/transitions.css', import.meta.url).pathname },
+  );
+  assert.match(result.css, /prefers-reduced-motion: reduce/);
+  assert.match(result.css, /animation: none !important/);
+});

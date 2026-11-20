@@ -47,6 +47,7 @@ export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, 
   const [backup, setBackup] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState('');
+  const [passwordRejected, setPasswordRejected] = useState(false);
   const [captcha, setCaptcha] = useState('');
   const [captchaKey, setCaptchaKey] = useState(0);
   const security = useTurnstileConfig();
@@ -57,7 +58,7 @@ export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, 
   function finishLogin() { window.location.replace(destination); }
   async function guard(fn: () => Promise<void>) {
     if (busyRef.current) return;
-    busyRef.current = true; setBusy(true); setError(''); setMessage('');
+    busyRef.current = true; setBusy(true); setError(''); setMessage(''); setPasswordRejected(false);
     try { await fn(); }
     catch (err) { setError(authErrorMessage(err, 'Conexão indisponível. Tente novamente.')); }
     finally { setCaptcha(''); setCaptchaKey(v => v + 1); busyRef.current = false; setBusy(false); }
@@ -83,7 +84,7 @@ export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, 
         return;
       }
       const result = await authClient.signIn.email({ email, password: pass, fetchOptions });
-      if (result.error) { setError(authErrorMessage(result.error, 'Não foi possível entrar. Confira o e-mail, a senha e a confirmação do cadastro.')); return; }
+      if (result.error) { setPasswordRejected(['INVALID_EMAIL_OR_PASSWORD', 'INVALID_PASSWORD'].includes(result.error.code ?? '')); setError(authErrorMessage(result.error, 'Não foi possível entrar. Confira o e-mail, a senha e a confirmação do cadastro.')); return; }
       setPassword('');
       if (needsTwoFactor(result.data)) { setStep('totp'); return; }
       finishLogin();
@@ -139,8 +140,8 @@ export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, 
                 <Field><FieldLabel htmlFor="login-email">E-mail</FieldLabel><Input id="login-email" name="email" type="email" autoComplete="username webauthn" required maxLength={254} className="field-input" disabled={busy} /></Field>
                 {mode === 'login' && <Field>
                   <FieldLabel htmlFor="login-password">Senha</FieldLabel>
-                  <div className={styles.passwordControl}>
-                    <Input id="login-password" name="password" type={showPassword ? 'text' : 'password'} autoComplete="current-password" required minLength={1} maxLength={256} value={password} onChange={e => setPassword(e.target.value)} className="field-input" disabled={busy} />
+                  <div className={`t-input-wrap ${styles.passwordControl} ${passwordRejected ? 'is-error' : ''}`}>
+                    <Input id="login-password" name="password" type={showPassword ? 'text' : 'password'} autoComplete="current-password" required minLength={1} maxLength={256} value={password} onChange={e => { setPassword(e.target.value); setPasswordRejected(false); }} aria-invalid={passwordRejected || undefined} className={`field-input t-input ${passwordRejected ? 'is-error is-shaking' : ''}`} disabled={busy} />
                     <button type="button" onClick={() => setShowPassword(v => !v)} aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'} aria-pressed={showPassword} className={styles.passwordToggle}>{showPassword ? <EyeOff size={17} aria-hidden="true" /> : <Eye size={17} aria-hidden="true" />}</button>
                   </div>
                   {mode === 'login' && <button type="button" onClick={() => goMode('forgot')} className={styles.forgotLink}>Esqueceu a senha?</button>}

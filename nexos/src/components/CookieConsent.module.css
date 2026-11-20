@@ -31,3 +31,11 @@
 @media (max-height: 480px) {
   .bannerPanel { gap: 12px; padding: 16px; }
 }
+
+@media (min-width: 1200px) {
+  .bannerPanel {
+    max-width: 680px;
+    margin-inline-start: max(0px, calc((100vw - var(--page-width)) / 2 - 16px));
+    margin-inline-end: auto;
+  }
+}

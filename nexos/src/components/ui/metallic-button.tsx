@@ -4,7 +4,7 @@ import { motionMedia } from '@/lib/motion-policy';
 
 import { Sparkles } from 'lucide-react';
 import { forwardRef, useEffect, useRef, type ButtonHTMLAttributes } from 'react';
-import { cn } from '@/lib/utils';
+import { Button as CnippetButton } from './cnippet-button';
 import { FRAGMENT_SHADER, VERTEX_SHADER } from './metallic-button-shaders';
 import styles from './metallic-button.module.css';
 import { usePresentationActive } from '@/lib/use-presentation-active';
@@ -165,10 +165,11 @@ export interface MetallicButtonProps extends ButtonHTMLAttributes<HTMLButtonElem
 }
 
 export const MetallicButton = forwardRef<HTMLButtonElement, MetallicButtonProps>(function MetallicButton({ label = 'Continuar', viewMode = 'text', children, className, baseColor, sheenColor, bandCount, edgeBlur, flowAngle, zoom, warp, redFringe, blueFringe, idleSpeed, hoverSpeed, clickSpeed, disabled, type = 'button', ...props }, ref) {
-  return <button ref={ref} type={type} disabled={disabled} aria-label={viewMode === 'icon' ? label : undefined} className={cn('primary-action', styles.button, viewMode === 'icon' && styles.iconButton, className)} {...props}>
-    <MetallicSurface {...{ baseColor, sheenColor, bandCount, edgeBlur, flowAngle, zoom, warp, redFringe, blueFringe, idleSpeed, hoverSpeed, clickSpeed, disabled }} />
-    <span className={styles.content}>{viewMode === 'icon' ? <Sparkles size={16} aria-hidden="true" /> : children ?? label}</span>
-  </button>;
+  // Keep the existing API for callers while the button uses the shared model.
+  void [baseColor, sheenColor, bandCount, edgeBlur, flowAngle, zoom, warp, redFringe, blueFringe, idleSpeed, hoverSpeed, clickSpeed];
+  return <CnippetButton ref={ref} type={type} disabled={disabled} loading={props['aria-busy'] === true} aria-label={viewMode === 'icon' ? label : undefined} size={viewMode === 'icon' ? 'icon-xl' : 'xl'} className={className} {...props}>
+    {viewMode === 'icon' ? <Sparkles size={16} aria-hidden="true" /> : children ?? label}
+  </CnippetButton>;
 });
 
 export default MetallicButton;

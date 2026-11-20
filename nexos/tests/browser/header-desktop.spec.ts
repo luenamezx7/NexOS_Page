@@ -1,11 +1,16 @@
 import { expect, test } from '@playwright/test';
 
 test('desktop navigation and account actions never overlap in any language', async ({ page }) => {
+  test.setTimeout(120000);
+  // This is a layout check; do not depend on a live authentication database.
+  await page.route('**/api/auth/get-session**', route => route.fulfill({ json: null }));
   for (const width of [1200, 1280, 1366, 1440, 1920]) {
     await page.setViewportSize({ width, height: 850 });
     await page.goto('/');
+    await expect(page.locator('dialog[data-presentation]')).toHaveCount(0, { timeout: 15000 });
     const header = page.locator('header[data-header-state="assembled"]');
-    await expect(header.locator('[data-account-state="guest"]')).toBeVisible();
+    await expect(header.locator('[data-account-state="guest"]')).toBeVisible({ timeout: 15000 });
+    await page.evaluate(() => document.fonts.ready.then(() => undefined));
 
     for (const language of ['pt', 'en', 'es'] as const) {
       if (language !== 'pt') {

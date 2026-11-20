@@ -1,5 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import '@/styles/transitions.css';
+import '@/styles/buttons.css';
+import '@/styles/navigation-glass.css';
 import { SmoothScrollProvider } from '@/components/SmoothScrollProvider';
 import { CookieConsentProvider } from '@/components/cookie-consent';
 import { SiteAtmosphere } from '@/components/SiteAtmosphere';

@@ -1,6 +1,6 @@
 'use client';
 
-import { motionMedia } from '@/lib/motion-policy';
+import { FULL_MOTION, motionMedia } from '@/lib/motion-policy';
 
 import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
@@ -22,6 +22,7 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [lenis, setLenis] = useState<Lenis | null>(null);
   const [isScrolling, setIsScrolling] = useState(false);
+  const wakeScrollRef = useRef<() => void>(() => {});
   const cancelNavigationRef = useRef<(() => void) | null>(null);
   const userInteractedRef = useRef(false);
   const navigationPathRef = useRef(pathname);
@@ -74,10 +75,9 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     cancelNavigationRef.current?.();
     let cancelled = false;
     let raf = 0;
-    // Native smooth scrolling can keep animating after a touch/wheel interruption,
-    // pulling the page back to the anchor. On touch/native scroll, land directly;
-    // keep the interruptible Lenis animation only where Lenis owns the scroll.
-    const immediate = options.immediate || motionMedia('(prefers-reduced-motion: reduce)').matches || motionMedia('(pointer: coarse)').matches || isEmbeddedBrowser(navigator.userAgent);
+    // All devices share interruptible Lenis navigation. Before it loads, touch
+    // navigation lands directly so native momentum cannot fight an anchor jump.
+    const immediate = options.immediate || motionMedia('(prefers-reduced-motion: reduce)').matches || (!lenis && (motionMedia('(pointer: coarse)').matches || isEmbeddedBrowser(navigator.userAgent)));
     if (options.history !== 'none' && window.location.hash !== `#${id}`) {
       history.pushState(history.state, '', `#${encodeURIComponent(id)}`);
     }
@@ -108,7 +108,8 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
       finish();
     } else if (lenis) {
       lenis.resize();
-      lenis.scrollTo(y, { duration: 1, onComplete: finish });
+      lenis.scrollTo(y, { duration: 1.4, onComplete: finish });
+      wakeScrollRef.current();
     } else {
       window.scrollTo({ top: y, behavior: 'smooth' });
       const start = performance.now();
@@ -123,66 +124,88 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
   }, [lenis]);
 
   useEffect(() => {
-    // Keep the existing desktop smooth-scroll/ScrollTrigger integration.
-    // Touch devices continue to use the browser's compositor-driven scrolling.
-    const media = motionMedia('(pointer: fine) and (min-width: 0px)');
+    const root = document.documentElement;
     const embedded = isEmbeddedBrowser(navigator.userAgent);
-    document.documentElement.dataset.browserProfile = embedded ? 'embedded' : 'standard';
-    let disposed = false, instance: Lenis | null = null, raf = 0, scrolling = false, generation = 0;
+    root.dataset.browserProfile = embedded ? 'embedded' : 'standard';
+    let disposed = false, instance: Lenis | null = null, raf = 0, ticking = false, primeFrame = false, scrolling = false;
     let timeout: ReturnType<typeof setTimeout> | undefined;
     function stop() {
-      generation += 1;
       cancelAnimationFrame(raf); raf = 0; clearTimeout(timeout);
+      wakeScrollRef.current = () => {};
       instance?.destroy(); instance = null;
+      delete root.dataset.scrollEngine;
+      delete root.dataset.scrollRaf;
       setLenis(null); if (scrolling) setIsScrolling(false); scrolling = false;
+    }
+    function wake() {
+      if (disposed || !instance || raf || ticking || document.hidden) return;
+      // Prime from the RAF clock itself. Its timestamp may precede performance.now()
+      // under CPU pressure; mixing the clocks can produce a negative touch step.
+      primeFrame = true;
+      root.dataset.scrollRaf = 'active';
+      raf = requestAnimationFrame(frame);
     }
     function frame(time: number) {
       raf = 0;
-      if (disposed || !instance || document.hidden) return;
+      if (disposed || !instance || document.hidden) { root.dataset.scrollRaf = 'idle'; return; }
+      ticking = true;
+      if (primeFrame) { instance.time = time - 1000 / 60; primeFrame = false; }
       instance.raf(time);
-      raf = requestAnimationFrame(frame);
+      ticking = false;
+      if (instance.isScrolling === 'smooth') raf = requestAnimationFrame(frame);
+      else root.dataset.scrollRaf = 'idle';
     }
     async function setup() {
-      stop();
-      if (disposed) return;
-      if (pathname !== '/' || !media.matches || embedded) {
-        recordMotion('scroll', 'native', embedded ? 'embedded-browser' : pathname !== '/' ? 'route' : motionMedia('(prefers-reduced-motion: reduce)').matches ? 'reduced-motion' : 'viewport-or-pointer');
-        return;
-      }
-      const current = generation;
+      if (pathname !== '/') return;
       recordMotion('scroll', 'loading-lenis');
       try {
-        const { default: Lenis } = await import('lenis');
-        if (disposed || !media.matches || current !== generation) return;
-        instance = new Lenis({ duration: 1.2, easing: t => 1 - Math.pow(1 - t, 3), smoothWheel: true, syncTouch: false, wheelMultiplier: .9, infinite: false, anchors: false, autoRaf: false });
-        setLenis(instance);
-        const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+        const [{ default: Lenis }, { ScrollTrigger }] = await Promise.all([import('lenis'), import('gsap/ScrollTrigger')]);
+        if (disposed) return;
+        const landing = document.querySelector<HTMLElement>('.landing-page');
+        instance = new Lenis({
+          duration: 1.65, easing: t => 1 - Math.pow(1 - t, 3),
+          smoothWheel: true, wheelMultiplier: .72,
+          syncTouch: true, touchMultiplier: .82, syncTouchLerp: .065, touchInertiaExponent: 1.55,
+          infinite: false, anchors: false, autoRaf: false, allowNestedScroll: true,
+          respectReducedMotion: !FULL_MOTION,
+          virtualScroll: ({ event }) => {
+            if (event.defaultPrevented || ('touches' in event && event.touches.length > 1)) return false;
+            const edge = landing?.dataset.edgeSpring;
+            return !edge || edge === 'ready';
+          },
+        });
         ScrollTrigger.config({ ignoreMobileResize: true });
-        if (disposed || current !== generation) return;
+        instance.on('virtual-scroll', wake);
         instance.on('scroll', () => {
+          const edge = landing?.dataset.edgeSpring;
+          if (edge && edge !== 'ready') return;
           ScrollTrigger.update();
           if (!scrolling) { scrolling = true; setIsScrolling(true); }
           clearTimeout(timeout);
           timeout = setTimeout(() => { scrolling = false; setIsScrolling(false); }, 150);
+          wake();
         });
-        if (!document.hidden) raf = requestAnimationFrame(frame);
-        recordMotion('scroll', 'lenis-initialized');
+        wakeScrollRef.current = wake;
+        root.dataset.scrollEngine = 'smooth';
+        root.dataset.scrollRaf = 'idle';
+        setLenis(instance);
+        recordMotion('scroll', 'lenis-initialized', 'wheel-and-touch');
       } catch (error) {
-        if (!disposed && current === generation) { stop(); recordMotion('scroll', 'initialization-error', motionError(error)); }
+        if (!disposed) { stop(); recordMotion('scroll', 'initialization-error', motionError(error)); }
       }
     }
     function visibility() {
       cancelAnimationFrame(raf); raf = 0;
+      root.dataset.scrollRaf = 'idle';
       if (!document.hidden && instance) {
         instance.resize();
         instance.scrollTo(window.scrollY, { immediate: true });
-        raf = requestAnimationFrame(frame);
+        wake();
       }
     }
     void setup();
-    media.addEventListener('change', setup);
     document.addEventListener('visibilitychange', visibility);
-    return () => { disposed = true; stop(); media.removeEventListener('change', setup); document.removeEventListener('visibilitychange', visibility); };
+    return () => { disposed = true; stop(); document.removeEventListener('visibilitychange', visibility); };
   }, [pathname]);
 
   useEffect(() => {

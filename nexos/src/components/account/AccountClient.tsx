@@ -31,6 +31,7 @@ import { Input } from '@/components/ui/input';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
+import { SkeletonReveal } from '@/components/ui/skeleton-reveal';
 import { LogoutButton } from '@/components/LogoutButton';
 import { PageFooter, PageHeader } from '@/components/PageChrome';
 import { updateProfileAction } from '@/lib/account/actions';
@@ -56,12 +57,14 @@ function formatDateTime(date: string | null) {
   return new Intl.DateTimeFormat('pt-BR', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(date));
 }
 
-function AccountShell({ children, email }: { children: ReactNode; email?: string }) {
+function AccountShell({ children, email, loading = false }: { children?: ReactNode; email?: string; loading?: boolean }) {
   return <div className={`interior-page ${styles.shell}`}>
     <PageHeader accountOnly>{email && <><span className="page-session-email">{email}</span><LogoutButton /></>}</PageHeader>
     <main className={`page-container account-content ${styles.content}`} id="main-content">
       <div className={`page-intro ${styles.intro}`}><p className="page-kicker">ezway / Área do cliente</p><h1 className="page-title">Minha conta</h1><p>Seu espaço para cuidar dos seus dados e do acesso à ezway.</p></div>
-      {children}
+      <SkeletonReveal loading={loading} skeleton={<Card className={styles.card} role="status" aria-label="Carregando sua conta"><CardHeader><Skeleton className="h-6 w-40" /><Skeleton className="h-4 w-64 max-w-full" /></CardHeader><CardContent className="flex flex-col gap-4"><Skeleton className="h-12 w-full" /><Skeleton className="h-12 w-full" /><span className="sr-only">Carregando sua conta…</span></CardContent></Card>}>
+        {children}
+      </SkeletonReveal>
     </main>
     <PageFooter />
   </div>;
@@ -108,11 +111,7 @@ export default function ContaPage() {
     });
   }
 
-  if (loading) {
-    return (
-      <AccountShell><Card className={styles.card} role="status" aria-label="Carregando sua conta"><CardHeader><Skeleton className="h-6 w-40" /><Skeleton className="h-4 w-64 max-w-full" /></CardHeader><CardContent className="flex flex-col gap-4"><Skeleton className="h-12 w-full" /><Skeleton className="h-12 w-full" /><span className="sr-only">Carregando sua conta…</span></CardContent></Card></AccountShell>
-    );
-  }
+  if (loading) return <AccountShell loading />;
 
   if (!profile) {
     return (
