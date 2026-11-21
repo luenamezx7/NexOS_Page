@@ -9,7 +9,7 @@ const request = (path, options = {}) => fetch(new URL(path, origin), {
 });
 
 test('produção: nenhuma página é entregue antes da verificação Turnstile', async () => {
-  for (const path of ['/', '/portal/acesso', '/admin-dashboard-su/secure-entry', '/portal/redefinir', '/placa-nfc']) {
+  for (const path of ['/', '/portal/acesso', '/admin-dashboard-su/secure-entry', '/portal/redefinir']) {
     const response = await request(path);
     assert.equal(response.status, 303, path);
     const gate = new URL(response.headers.get('location'), origin);
@@ -17,6 +17,14 @@ test('produção: nenhuma página é entregue antes da verificação Turnstile',
     assert.equal(gate.searchParams.get('next'), path);
     assert.match(response.headers.get('cache-control'), /no-store/);
   }
+  const retired = await request('/placa-nfc');
+  assert.equal(retired.status, 308);
+  const destination = new URL(retired.headers.get('location'), origin);
+  assert.equal(destination.origin, origin);
+  assert.equal(destination.pathname + destination.hash, '/#showcase');
+  const redirected = await request(destination.pathname);
+  assert.equal(redirected.status, 303);
+  assert.equal(new URL(redirected.headers.get('location'), origin).pathname, '/verificar');
   const gate = await request('/verificar?next=%2F');
   assert.equal(gate.status, 200);
   const html = await gate.text();

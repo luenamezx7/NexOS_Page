@@ -2,7 +2,7 @@
 
 Plano: [documento mestre](./PLANO-MESTRE-REFATORACAO-DESIGN.md).
 
-## Retomada e publicação autorizada — 20/11/2026
+## Retomada e publicação autorizada — 20–21/11/2026
 
 - O usuário autorizou concluir a validação e publicar. A base é `41281a4`, com novo login, navegação direta e redirecionamentos das quatro páginas de serviços para a home.
 - Finalizados contraste do painel do login, raio dos botões, espaço de feedback e divisor entre senha e alternativas de acesso. Capturas atualizadas em 390, 820 e 1440 px.
@@ -12,6 +12,8 @@ Plano: [documento mestre](./PLANO-MESTRE-REFATORACAO-DESIGN.md).
 - Navegador Chrome: 41 cenários distintos aprovados entre as rodadas; repetição final de login/copy/diálogos: 22/22. Inclui erro de credenciais, rede, limites, senha visível, movimento reduzido, callback, responsividade, navegação, cabeçalho e perfil de scroll.
 - Publicação pelo Git na `main`, projeto Vercel `nex-os2/nexos`, raiz `nexos/`. O arquivo não rastreado `../.vercelignore` foi preservado fora deste commit.
 - Os registros abaixo são históricos e não comprovam o estado atual de produção. O build conserva o aviso de fallback de Google Sans; a rodada local não valida biometria física nem entrega de e-mail real.
+- Primeiro deploy desta retomada: `9b8a976`, READY, `nexos-khly9p331-nex-os2.vercel.app`, com domínio canônico e alias Vercel associados. Verificação de entrada no navegador aprovada. O smoke remoto foi alinhado ao redirecionamento permanente de `/placa-nfc` para a home, conferindo que a página de destino continua protegida pelo Turnstile.
+- Verificação remota após o alinhamento: 7/7 testes HTTP e 1/1 teste de navegador aprovados. Consulta dos logs de erro do primeiro deploy, nos dez minutos anteriores, retornou zero registros. Nenhuma conta criada ou e-mail real enviado.
 
 ## Situação
 
