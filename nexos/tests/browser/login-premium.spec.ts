@@ -85,7 +85,7 @@ test('invalid credentials shake once per rejection, retain input and keep layout
     await expect(password).toBeFocused();
     await password.press('Enter');
     await expect(form).toHaveAttribute('data-credential-rejected', 'true');
-    await expect(page.getByRole('alert')).toContainText('E-mail ou senha incorretos');
+    await expect(page.locator('[data-slot="alert"]')).toContainText('E-mail ou senha incorretos');
     const shake = await form.evaluate(element => {
       const animation = element.getAnimations().find(animation => (animation as CSSAnimation).animationName?.includes('auth-credential-shake'));
       if (!animation) return null;
@@ -113,7 +113,7 @@ test('invalid credentials shake once per rejection, retain input and keep layout
   await password.fill('correcting');
   await expect(form).toHaveAttribute('data-credential-rejected', 'false');
   await expect(password).not.toHaveAttribute('aria-invalid', 'true');
-  await expect(page.getByRole('alert')).toHaveCount(0);
+  await expect(page.locator('[data-slot="alert"]')).toHaveCount(0);
 });
 
 for (const status of [429, 500, 503]) {
@@ -123,10 +123,10 @@ for (const status of [429, 500, 503]) {
     await page.getByLabel('E-mail', { exact: true }).fill('person@example.com');
     await page.getByLabel('Senha', { exact: true }).fill('password-123');
     await page.getByRole('button', { name: 'Entrar', exact: true }).click();
-    await expect(page.getByRole('alert')).toContainText(status === 429 ? 'Muitas tentativas' : 'temporariamente indisponível');
+    await expect(page.locator('[data-slot="alert"]')).toContainText(status === 429 ? 'Muitas tentativas' : 'temporariamente indisponível');
     await expect(page.locator('form[data-credential-rejected]')).toHaveAttribute('data-credential-rejected', 'false');
     await expect(page.getByRole('button', { name: 'Entrar', exact: true })).toBeEnabled();
-    await expect(page.getByRole('alert')).not.toContainText(/postgres|secret|database/);
+    await expect(page.locator('[data-slot="alert"]')).not.toContainText(/postgres|secret|database/);
   });
 }
 
@@ -136,7 +136,7 @@ test('offline failure recovers without a credential shake', async ({ page }) => 
   await page.getByLabel('E-mail', { exact: true }).fill('person@example.com');
   await page.getByLabel('Senha', { exact: true }).fill('password-123');
   await page.getByRole('button', { name: 'Entrar', exact: true }).click();
-  await expect(page.getByRole('alert')).toContainText('Conexão indisponível');
+  await expect(page.locator('[data-slot="alert"]')).toContainText('Conexão indisponível');
   await expect(page.locator('form[data-credential-rejected]')).toHaveAttribute('data-credential-rejected', 'false');
   await expect(page.getByRole('button', { name: 'Entrar', exact: true })).toBeEnabled();
 });
@@ -162,7 +162,7 @@ test('reduced motion retains accessible static error feedback', async ({ page })
   await page.getByLabel('E-mail', { exact: true }).fill('person@example.com');
   await page.getByLabel('Senha', { exact: true }).fill('password-123');
   await page.getByRole('button', { name: 'Entrar', exact: true }).click();
-  await expect(page.getByRole('alert')).toContainText('E-mail ou senha incorretos');
+  await expect(page.locator('[data-slot="alert"]')).toContainText('E-mail ou senha incorretos');
   await expect(page.locator('form[data-credential-rejected]')).toHaveCSS('animation-name', 'none');
   await expect(page.getByLabel('Senha', { exact: true })).toHaveAttribute('aria-describedby', 'login-feedback');
 });

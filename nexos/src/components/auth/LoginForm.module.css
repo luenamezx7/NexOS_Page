@@ -109,6 +109,7 @@
   --destructive: #a53337;
   --destructive-foreground: #a53337;
   --auth-ease: cubic-bezier(.22, 1, .36, 1);
+  --button-radius: 12px;
   color-scheme: light;
   background: var(--color-canvas);
   padding-bottom: 0;
@@ -133,6 +134,7 @@
   animation: auth-surface-arrive 450ms var(--auth-ease) both;
 }
 .premiumStory {
+  --color-ink: #f8f8fa;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -143,7 +145,7 @@
   color: #f8f8fa;
 }
 .premiumStoryCopy { margin-top: 48px; }
-.premiumStoryCopy h2 { font-size: clamp(44px, 4.2vw, 58px); line-height: 1.08; font-weight: 600; letter-spacing: -.035em; text-wrap: balance; }
+.premiumStoryCopy h2 { color: #f8f8fa; font-size: clamp(44px, 4.2vw, 58px); line-height: 1.08; font-weight: 600; letter-spacing: -.035em; text-wrap: balance; }
 .premiumStoryCopy p { max-width: 30ch; margin-top: 28px; color: #bdbdc5; font-size: 16px; line-height: 1.7; text-wrap: pretty; }
 .premiumStoryFeatures { display: grid; gap: 18px; padding-top: 28px; border-top: 1px solid #ffffff21; }
 .premiumStoryFeatures li { display: flex; align-items: center; gap: 12px; color: #d4d4da; font-size: 13px; line-height: 1.5; }
@@ -198,7 +200,7 @@
 .premiumRoot .primarySubmit[data-success='true'] { cursor: progress; }
 .premiumRoot .primarySubmit:active:not(:disabled) { transform: scale(.985); }
 .premiumRoot .primarySubmit:focus-visible { outline: 2px solid #6d6d75; outline-offset: 4px; }
-.premiumRoot .feedback { display: grid; align-items: start; min-height: 80px; padding-top: 14px; }
+.premiumRoot .feedback { display: grid; align-items: center; min-height: 64px; }
 .premiumRoot .feedbackAlert { padding: 0; gap: 0; border: 0; border-radius: 0; color: var(--destructive); background: transparent; box-shadow: none; animation: auth-feedback-arrive 180ms ease-out both; }
 .premiumRoot .feedbackAlert :global([data-slot='alert-description']) { color: var(--destructive); font-size: 12px; line-height: 1.6; text-wrap: pretty; }
 .feedbackMessage { color: var(--text-secondary); font-size: 12px; line-height: 1.6; animation: auth-feedback-arrive 180ms ease-out both; }
@@ -258,3 +260,6 @@
 }
 
 .premiumRoot .panelWrap > :global([data-resize-transition]) { width: 100%; }
+
+.premiumRoot .alternateDivider { width: 100%; margin: 0; font-size: 11px; }
+.premiumRoot .alternateDivider :global([data-slot="separator"]) { background: #e4e4e8; }

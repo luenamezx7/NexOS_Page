@@ -4,8 +4,9 @@ module.exports = () => ({
   OnceExit(root, { list }) {
     root.walkAtRules('media', rule => {
       if (!/prefers-reduced-motion/.test(rule.params)) return;
-      // Keep the accessibility guards shipped with transitions.dev recipes.
-      if (rule.source?.input.file?.replace(/\\/g, '/').endsWith('/src/styles/transitions.css')) return;
+      // Preserve the guards for interaction recipes and authentication feedback.
+      const file = rule.source?.input.file?.replace(/\\/g, '/');
+      if (file?.endsWith('/src/styles/transitions.css') || file?.endsWith('/src/components/auth/LoginForm.module.css')) return;
       const alternatives = list.comma(rule.params).flatMap(query => {
         if (/\(\s*prefers-reduced-motion\s*:\s*reduce\s*\)/.test(query)) return [];
         return [query

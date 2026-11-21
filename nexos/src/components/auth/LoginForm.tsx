@@ -179,6 +179,7 @@ export function LoginForm({ audience = 'admin', confirmationError, callbackUrl, 
   const feedback = <div className={cn(userFlow && styles.feedback)} data-login-feedback>
     {feedbackError && <Alert id="login-feedback" variant="destructive" className={cn(userFlow && styles.feedbackAlert)} aria-atomic="true"><AlertDescription>{feedbackError}</AlertDescription></Alert>}
     {!feedbackError && message && <p id="login-feedback" role="status" aria-live="polite" className={styles.feedbackMessage}>{message}</p>}
+    {userFlow && !feedbackError && !message && step === 'credentials' && mode === 'login' && <FieldSeparator className={styles.alternateDivider} aria-hidden="true">ou</FieldSeparator>}
   </div>;
   const alternateAccess = step === 'credentials' && mode === 'login' && <div className={cn(userFlow && styles.alternateAccess)}>
     <button type="button" disabled={busy} onClick={() => void passkeyLogin()} className={styles.passkeyButton}><Fingerprint size={18} aria-hidden="true" /> Entrar com chave de acesso</button>

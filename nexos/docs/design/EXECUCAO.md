@@ -2,6 +2,17 @@
 
 Plano: [documento mestre](./PLANO-MESTRE-REFATORACAO-DESIGN.md).
 
+## Retomada e publicação autorizada — 20/11/2026
+
+- O usuário autorizou concluir a validação e publicar. A base é `41281a4`, com novo login, navegação direta e redirecionamentos das quatro páginas de serviços para a home.
+- Finalizados contraste do painel do login, raio dos botões, espaço de feedback e divisor entre senha e alternativas de acesso. Capturas atualizadas em 390, 820 e 1440 px.
+- Corrigido o processamento de CSS: as regras de movimento reduzido já previstas em `LoginForm.module.css` eram removidas pelo plugin de movimento completo. A exceção fica restrita ao formulário e às receitas de interação existentes; o comportamento cinematográfico da home permanece.
+- Atualizado o teste de diálogos para a vitrine de placas atual, cobrindo botão, Escape, retorno de foco e liberação do scroll. A simulação de gestão citada no histórico abaixo foi removida em alterações posteriores.
+- Build final e TypeScript aprovados. Lint global: zero erros e nove avisos preexistentes. Segurança: 9/9; compatibilidade de senha: 6/6; unidades: 7/7.
+- Navegador Chrome: 41 cenários distintos aprovados entre as rodadas; repetição final de login/copy/diálogos: 22/22. Inclui erro de credenciais, rede, limites, senha visível, movimento reduzido, callback, responsividade, navegação, cabeçalho e perfil de scroll.
+- Publicação pelo Git na `main`, projeto Vercel `nex-os2/nexos`, raiz `nexos/`. O arquivo não rastreado `../.vercelignore` foi preservado fora deste commit.
+- Os registros abaixo são históricos e não comprovam o estado atual de produção. O build conserva o aviso de fallback de Google Sans; a rodada local não valida biometria física nem entrega de e-mail real.
+
 ## Situação
 
 - Etapa 0 — **concluída:** documento mestre e acompanhamento gravados.

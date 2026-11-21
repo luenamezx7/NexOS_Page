@@ -31,23 +31,9 @@ for (const reduced of [false, true]) {
   });
 }
 
-test('official modal recipe closes plate and management dialogs and resizes their details', async ({ page }) => {
-  await page.goto('/#gestao');
+test('plate dialog closes by button and Escape and restores trigger focus', async ({ page }) => {
+  await page.goto('/#showcase');
   await expect(page.locator('dialog[data-presentation]')).toHaveCount(0, { timeout: 15000 });
-  const explore = page.locator('[data-management-simulate]');
-  await explore.click();
-  const management = page.locator('dialog[data-management-simulation]');
-  await expect(management).toHaveClass(/t-modal/);
-  await expect(management).toHaveClass(/is-open/);
-  await expect(management).toHaveCSS('opacity', '1');
-  const resize = management.locator('[data-resize-transition]');
-  await expect.poll(() => resize.evaluate(el => el.getBoundingClientRect().height)).toBeGreaterThan(100);
-  await expect(resize).toHaveCSS('transition-duration', '0.3s, 0.3s');
-  await management.getByRole('button', { name: 'Clientes', exact: true }).click();
-  await expect(management.getByText('Histórico de relacionamento', { exact: true })).toBeVisible();
-  await page.keyboard.press('Escape');
-  await expect(management).toHaveCount(0);
-  await expect(explore).toBeFocused();
   const plate = page.locator('[data-plate-option]').first().getByRole('button');
   await plate.click();
   const plateDialog = page.locator('dialog[aria-labelledby="plate-dialog-title"]');
@@ -56,6 +42,12 @@ test('official modal recipe closes plate and management dialogs and resizes thei
   await plateDialog.getByRole('button', { name: 'Fechar detalhes da placa' }).click();
   await expect(plateDialog).not.toBeVisible();
   await expect(plate).toBeFocused();
+  await plate.click();
+  await expect(plateDialog).toHaveCSS('opacity', '1');
+  await page.keyboard.press('Escape');
+  await expect(plateDialog).not.toBeVisible();
+  await expect(plate).toBeFocused();
+  expect(await page.evaluate(() => document.documentElement.style.overflow)).not.toBe('hidden');
 });
 
 for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }, { width: 820, height: 1180 }]) {
