@@ -13,7 +13,7 @@ import styles from './Header.module.css';
 import { useLocale } from '@/lib/locale';
 
 /** Session state comes exclusively from the existing Better Auth client. */
-export function HeaderAccount({ expanded = false, onNavigate }: { expanded?: boolean; onNavigate?: () => void }) {
+export function HeaderAccount({ expanded = false, onNavigate, open, onOpenChange }: { expanded?: boolean; onNavigate?: () => void; open?: boolean; onOpenChange?: (open: boolean) => void }) {
   const router = useRouter();
   const { t } = useLocale();
   const { data: session, isPending, error, refetch } = authClient.useSession();
@@ -31,12 +31,12 @@ export function HeaderAccount({ expanded = false, onNavigate }: { expanded?: boo
   const loginLink = <Link href="/portal/acesso" prefetch={false} className={styles.accountLink} data-navigation-glass="control" onClick={onNavigate}><NavigationGlass />{t('Entrar')}</Link>;
 
   return <div className={expanded ? styles.expandedAccount : styles.accountSlot} data-account-state={state}>
-    {isPending ? <div className={styles.guestActions}>{loginLink}<span role="status" className={expanded ? styles.expandedAccountLoading : undefined} aria-label={t('Verificando sua sessão')}><Skeleton className={styles.accountSkeleton} /></span></div> : error ? <div className={styles.guestActions}>{loginLink}<button type="button" className={styles.accountLink} data-navigation-glass="control" onClick={() => void refetch()} title={t('Não foi possível verificar a sessão. Tentar novamente.')}><NavigationGlass /><RefreshCw size={20} aria-hidden="true" /><span className={styles.accountLabel}>{t('Verificar conta')}</span></button>{expanded && <p role="status" className={styles.accountError}>{t('Não foi possível verificar a sessão. Tentar novamente.')}</p>}</div> : !user ? <div className={styles.guestActions}>{loginLink}</div> : expanded ? <>
+    {isPending ? <div className={styles.guestActions}>{loginLink}<span role="status" className={styles.expandedAccountLoading} aria-label={t('Verificando sua sessão')}><Skeleton className={styles.accountSkeleton} /></span></div> : error ? <div className={styles.guestActions}>{loginLink}<button type="button" className={styles.accountLink} data-navigation-glass="control" onClick={() => void refetch()} title={t('Não foi possível verificar a sessão. Tentar novamente.')}><NavigationGlass /><RefreshCw size={20} aria-hidden="true" /><span className={styles.accountLabel}>{t('Verificar conta')}</span></button>{expanded && <p role="status" className={styles.accountError}>{t('Não foi possível verificar a sessão. Tentar novamente.')}</p>}</div> : !user ? <div className={styles.guestActions}>{loginLink}</div> : expanded ? <>
       <div className={styles.userRow}>{avatar}<span>{user.name || t('Sua conta')}</span></div>
       <Link href="/conta" onClick={onNavigate}>{t('Minha conta')}</Link>
       <Link href="/portal/seguranca" onClick={onNavigate}>{t('Segurança da conta')}</Link>
       <button type="button" onClick={() => void logout()} disabled={busy}>{t(busy ? 'Saindo…' : 'Sair da conta')}</button>
-    </> : <DropdownMenu>
+    </> : <DropdownMenu open={open} onOpenChange={onOpenChange}>
       <DropdownMenuTrigger className={styles.avatarButton} data-navigation-glass="control" aria-label={t('Abrir opções da conta')}><NavigationGlass />{avatar}</DropdownMenuTrigger>
       <DropdownMenuContent align="end" sideOffset={14} className={styles.popup} data-navigation-glass="panel">
         <NavigationGlass variant="panel" />

@@ -1,4 +1,4 @@
-.switch { display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-width: 76px; min-height: 44px; padding: 4px 7px; border: 1px solid var(--header-glass-border, var(--border)); border-radius: 9px; color: var(--color-ink); background: transparent; font: 600 11px/1 var(--font-sans); letter-spacing: .025em; white-space: nowrap; cursor: pointer; }
+.switch { display: inline-flex; align-items: center; justify-content: center; gap: 5px; width: 80px; flex: 0 0 80px; min-height: 44px; padding: 4px 7px; border: 1px solid var(--header-glass-border, var(--border)); border-radius: 9px; color: var(--color-ink); background: transparent; font: 600 11px/1 var(--font-sans); letter-spacing: .025em; white-space: nowrap; cursor: pointer; }
 .switch:hover { border-color: var(--detail-accent); }
 .switch:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
 .flag { display: block; width: 22px; height: 16px; flex: none; border-radius: 2px; object-fit: cover; }

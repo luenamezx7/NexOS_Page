@@ -1,8 +1,7 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { X, ArrowUpRight } from 'lucide-react';
-import { useScroll, useMotionValueEvent } from 'motion/react';
 import { BrandMark } from './BrandMark';
 import { NavigationGlass } from './NavigationGlass';
 import { Button } from './ui/cnippet-button';
@@ -23,18 +22,26 @@ const NAV_ITEMS = [
   { label: 'EasyChat', href: '#easychat' },
 ];
 
+const subscribeScrolled = (notify: () => void) => {
+  window.addEventListener('scroll', notify, { passive: true });
+  return () => window.removeEventListener('scroll', notify);
+};
+const getScrolled = () => window.scrollY > 24;
+const getServerScrolled = () => false;
+
 export function Header() {
   const { t } = useLocale();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const scrolled = useSyncExternalStore(subscribeScrolled, getScrolled, getServerScrolled);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const closingMenu = useRef(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const destination = useRef<string | null>(null);
   const scrollToSection = useSectionScroll();
-  const { scrollY } = useScroll();
-  useMotionValueEvent(scrollY, 'change', y => setScrolled(previous => previous === (y > 24) ? previous : y > 24));
+  const sectionScrollRef = useRef(scrollToSection);
+  useEffect(() => { sectionScrollRef.current = scrollToSection; }, [scrollToSection]);
+  const [dropdown, setDropdown] = useState<'language' | 'account' | null>(null);
   useScrollLock(mobileOpen);
 
   const closeMenu = useCallback(() => {
@@ -56,6 +63,7 @@ export function Header() {
     const dialog = dialogRef.current;
     if (!dialog) return;
     if (mobileOpen) {
+      if (panelRef.current) panelRef.current.inert = false;
       dialog.showModal();
       if (panelRef.current) openDialogSurface(panelRef.current);
     }
@@ -65,14 +73,14 @@ export function Header() {
         const hash = destination.current;
         destination.current = null;
         // Wait until the scroll lock and native modal have both been released.
-        const frame = requestAnimationFrame(() => scrollToSection(hash));
+        const frame = requestAnimationFrame(() => sectionScrollRef.current(hash));
         return () => cancelAnimationFrame(frame);
       }
     }
-  }, [mobileOpen, scrollToSection]);
+  }, [mobileOpen]);
 
   useEffect(() => {
-    const desktop = matchMedia('(min-width: 1200px)');
+    const desktop = matchMedia('(min-width: 1280px)');
     const resize = () => { if (desktop.matches) closeMenu(); };
     desktop.addEventListener('change', resize);
     return () => desktop.removeEventListener('change', resize);
@@ -87,10 +95,10 @@ export function Header() {
           {NAV_ITEMS.map(item => <a key={item.href} href={item.href} className={styles.navLink} onClick={event => { event.preventDefault(); navigate(item.href); }}>{t(item.label)}</a>)}
         </nav>
         <div className={styles.actions}>
-          <HeaderAccount />
-          <LanguageSwitch />
+          <HeaderAccount open={dropdown === 'account'} onOpenChange={open => setDropdown(open ? 'account' : null)} />
+          <LanguageSwitch open={dropdown === 'language'} onOpenChange={open => setDropdown(open ? 'language' : null)} />
            <Button className={styles.contactAction} data-navigation-glass="control" render={<a href={commercialHref(t('Olá! Quero conversar sobre as soluções da ezway.'))} target="_blank" rel="noopener noreferrer" />}><NavigationGlass />{t('Conversar no WhatsApp')}</Button>
-           <button ref={triggerRef} type="button" className={styles.menuButton} data-navigation-glass="control" aria-label={t('Abrir menu')} aria-expanded={mobileOpen} aria-controls="mobile-navigation" onClick={() => setMobileOpen(true)}><NavigationGlass /><ListViewIcon isActive={mobileOpen} /></button>
+           <button ref={triggerRef} type="button" className={styles.menuButton} data-navigation-glass="control" aria-label={t('Abrir menu')} aria-expanded={mobileOpen} aria-controls="mobile-navigation" onClick={() => { setDropdown(null); setMobileOpen(true); }}><NavigationGlass /><ListViewIcon isActive={mobileOpen} /></button>
         </div>
       </div>
     </header>
@@ -101,7 +109,7 @@ export function Header() {
       if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
       else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
     }}>
-      <div ref={panelRef} className={`${styles.mobilePanel} t-panel-slide`} data-navigation-glass="panel">
+      <div ref={panelRef} className={styles.mobilePanel} data-navigation-glass="panel">
          <NavigationGlass variant="panel" />
          <div className={styles.mobileContent} data-mobile-menu-scroll>
          <div className={styles.mobileHeading}><span id="mobile-menu-title">{t('Explore a ezway')}</span><button type="button" className={styles.closeButton} data-navigation-glass="control" aria-label={t('Fechar menu')} onClick={closeMenu}><NavigationGlass /><X size={22} /></button></div>

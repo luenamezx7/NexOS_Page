@@ -9,7 +9,7 @@ const supportsRefraction = () => /(?:Chrome|Chromium|Edg)\//.test(navigator.user
   && CSS.supports('backdrop-filter', 'url("#navigation-glass")');
 
 /** Refracts only the backdrop. Navigation labels stay on an independent layer. */
-export function NavigationGlass({ variant = 'navigation' }: { variant?: 'navigation' | 'panel' | 'card' } = {}) {
+function RefractiveGlass({ variant = 'navigation' }: { variant?: 'navigation' | 'panel' | 'card' } = {}) {
   const id = `navigation-glass-${useId().replace(/:/g, '')}`;
   const refractive = useSyncExternalStore(subscribe, supportsRefraction, () => false);
 
@@ -36,7 +36,14 @@ export function NavigationGlass({ variant = 'navigation' }: { variant?: 'navigat
       className="navigation-glass"
       data-glass-variant={variant}
       data-refraction={refractive || undefined}
-      style={refractive ? { backdropFilter: `${variant === 'panel' ? 'blur(32px) ' : ''}url("#${id}") saturate(${variant === 'panel' ? '115' : '135'}%)` } : undefined}
+      style={refractive ? { backdropFilter: `${variant === 'card' ? '' : 'blur(14px) '}url("#${id}") saturate(${variant === 'card' ? '135' : '115'}%)` } : undefined}
     />
   </>;
+}
+
+/** Navigation frost is CSS-only: identical in SSR and the first hydrated frame.
+ * The hero card keeps its independent, intentionally refractive artwork. */
+export function NavigationGlass({ variant = 'navigation' }: { variant?: 'navigation' | 'panel' | 'card' } = {}) {
+  if (variant === 'card') return <RefractiveGlass variant="card" />;
+  return null;
 }

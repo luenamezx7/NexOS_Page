@@ -13,18 +13,18 @@ const languages: { code: Locale; name: string; flag: string }[] = [
   { code: 'es', name: 'Español', flag: '/flags/es.svg' },
 ];
 
-export function LanguageSwitch() {
+export function LanguageSwitch({ open, onOpenChange }: { open?: boolean; onOpenChange?: (open: boolean) => void } = {}) {
   const { locale, setLocale } = useLocale();
   const current = languages.find(language => language.code === locale)!;
 
-  return <DropdownMenu>
+  return <DropdownMenu open={open} onOpenChange={onOpenChange}>
     <DropdownMenuTrigger className={styles.switch} data-navigation-glass="control" aria-label={`${locale === 'en' ? 'Select language' : locale === 'es' ? 'Seleccionar idioma' : 'Selecionar idioma'}: ${current.name}`}>
       <NavigationGlass />
       <Image src={current.flag} alt="" width={22} height={16} unoptimized className={styles.flag} />
       <span>{current.code.toUpperCase()}</span>
       <ChevronDown size={13} aria-hidden="true" />
     </DropdownMenuTrigger>
-    <DropdownMenuContent align="end" className={styles.menu} data-navigation-glass="panel">
+    <DropdownMenuContent align="end" sideOffset={14} className={styles.menu} data-navigation-glass="panel">
       <NavigationGlass variant="panel" />
       <DropdownMenuGroup>
         {languages.map(language => <DropdownMenuItem key={language.code} className={styles.option} onClick={() => setLocale(language.code)} aria-current={locale === language.code ? 'true' : undefined}>

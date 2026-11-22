@@ -4,9 +4,15 @@ module.exports = () => ({
   OnceExit(root, { list }) {
     root.walkAtRules('media', rule => {
       if (!/prefers-reduced-motion/.test(rule.params)) return;
-      // Preserve the guards for interaction recipes and authentication feedback.
+      // Navigation and interaction feedback honor the actual OS preference.
       const file = rule.source?.input.file?.replace(/\\/g, '/');
-      if (file?.endsWith('/src/styles/transitions.css') || file?.endsWith('/src/components/auth/LoginForm.module.css')) return;
+      if ([
+        '/src/styles/transitions.css',
+        '/src/styles/navigation-glass.css',
+        '/src/components/Header.module.css',
+        '/src/components/LanguageSwitch.module.css',
+        '/src/components/auth/LoginForm.module.css',
+      ].some(path => file?.endsWith(path))) return;
       const alternatives = list.comma(rule.params).flatMap(query => {
         if (/\(\s*prefers-reduced-motion\s*:\s*reduce\s*\)/.test(query)) return [];
         return [query
