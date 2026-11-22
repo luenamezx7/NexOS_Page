@@ -65,7 +65,11 @@ export function Header() {
     if (mobileOpen) {
       if (panelRef.current) panelRef.current.inert = false;
       dialog.showModal();
-      if (panelRef.current) openDialogSurface(panelRef.current);
+      if (panelRef.current) {
+        openDialogSurface(panelRef.current);
+        // Native dialogs can remember the last focused item between openings.
+        panelRef.current.querySelector<HTMLButtonElement>('button')?.focus({ preventScroll: true });
+      }
     }
     else {
       dialog.close();
