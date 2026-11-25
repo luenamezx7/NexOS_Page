@@ -325,6 +325,6 @@
  .processStage .timeline p { font-size: 14px; line-height: 1.5; }
 }
 /* The selected rose remains branded and passes AA for small control text. */
-.processSwitch .segmented label[data-selected='true'] { color: #160a10; box-shadow: none; }
-:global(.dark) .processSwitch .segmented label[data-selected='true'] { color: #160a10; box-shadow: none; }
+.processSwitch .segmented label[data-selected='true'] { color: #000; box-shadow: none; }
+:global(.dark) .processSwitch .segmented label[data-selected='true'] { color: #000; box-shadow: none; }
 @media (forced-colors: active) { .processSwitch .segmented label[data-selected='true'], :global(.dark) .processSwitch .segmented label[data-selected='true'] { color: HighlightText; } }

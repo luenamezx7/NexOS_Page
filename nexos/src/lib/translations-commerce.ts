@@ -39,7 +39,7 @@ const copy: [string, string, string][] = [
   ['Retornos no radar', 'Follow-ups in sight', 'Seguimientos a la vista'],
   ['Vendas e financeiro à vista', 'Sales and finances in view', 'Ventas y finanzas a la vista'],
   ['Veja o sistema na prática', 'See the system in action', 'Mira el sistema en acción'],
-  ['Organize clientes, acompanhe vendas e cuide do financeiro. Da gestão à presença digital, encontre o próximo passo do seu negócio.', 'Organize customers, track sales and manage finances. From management to digital presence, find the next step for your business.', 'Organiza clientes, sigue las ventas y cuida las finanzas. De la gestión a la presencia digital, encuentra el próximo paso de tu negocio.'],
+  ['Organize clientes, vendas e financeiro. Criamos sites com SEO e GEO para ampliar a visibilidade do seu negócio no Google e nas buscas com IA.', 'Organize customers, sales and finances. We build websites with SEO and GEO to improve your business visibility on Google and in AI search.', 'Organiza clientes, ventas y finanzas. Creamos sitios con SEO y GEO para ampliar la visibilidad de tu negocio en Google y en las búsquedas con IA.'],
   ['Seu negócio, mais organizado.', 'Your business, more organized.', 'Tu negocio, más organizado.'],
   ['Acompanhe clientes, vendas e financeiro em um só lugar.', 'Track customers, sales and finances in one place.', 'Sigue clientes, ventas y finanzas en un solo lugar.'],
   ['Acompanhe oportunidades e saiba quem precisa de retorno.', 'Track opportunities and see who needs a follow-up.', 'Sigue oportunidades y descubre quién necesita seguimiento.'],

@@ -168,7 +168,7 @@ export function Services({ className = '', selectedUse }: { className?: string; 
       </div>
       <div className={styles.arcBottom}>
         <div className={styles.arcCaption} aria-live="polite"><span>{String(active + 1).padStart(2, '0')} / 04</span><h3 data-heading-static>{t(examples[active].title)}</h3><p>{t(examples[active].description)}</p></div>
-        <div className={styles.exampleLinks}>{examples.map((example, index) => <button key={example.id} type="button" aria-label={`${t('Ver solução')}: ${t(example.title)} (${index + 1})`} aria-pressed={active === index} onClick={() => {
+        <div className={styles.exampleLinks}>{examples.map((example, index) => <button key={example.id} type="button" aria-label={`${index + 1} ${t('Ver solução')}: ${t(example.title)}`} aria-pressed={active === index} onClick={() => {
           if (reducedMotion) { setActive(index); return; }
           selectExampleRef.current?.(index);
         }}><span aria-hidden="true">{index + 1}</span></button>)}</div>

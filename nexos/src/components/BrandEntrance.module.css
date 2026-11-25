@@ -42,9 +42,14 @@
 .dialog[data-phase='leaving'] .frame { animation-play-state: paused; }
 .shade { position: absolute; inset: 0; background: rgb(0 0 0 / 60%); pointer-events: none; }
 .reveal { width: 100%; aspect-ratio: 1; }
-.reveal:global([data-logo-reveal='loading']) [data-logo-fallback],
 .reveal:global([data-logo-reveal='playing']) [data-logo-fallback] { visibility: hidden; }
 .reveal:global([data-logo-reveal='complete']) [data-logo-fallback] { visibility: hidden; }
+.reveal:global([data-logo-reveal='loading']) [data-logo-fallback],
+.reveal:global([data-logo-reveal='fallback']) [data-logo-fallback] { visibility: visible; }
+@media (prefers-reduced-motion: no-preference) {
+  .reveal:global([data-logo-reveal='fallback']) [data-logo-fallback] { animation: brand-native-reveal 650ms cubic-bezier(.16, 1, .3, 1) both; }
+  @keyframes brand-native-reveal { from { opacity: .55; clip-path: inset(0 0 100% 0); } to { opacity: 1; clip-path: inset(0); } }
+}
 @media (forced-colors: active) {
   .dialog { background: Canvas; color: CanvasText; }
   .dialog > canvas, .shade, .reveal canvas { display: none; }

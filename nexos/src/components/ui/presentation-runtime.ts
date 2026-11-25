@@ -15,26 +15,52 @@ function startWorkerPresentation(dialog: HTMLDialogElement, silk: HTMLCanvasElem
   const foreground = () => ({ width: logo.clientWidth, height: logo.clientHeight, dpr: Math.min(devicePixelRatio || 1, 2) });
   let worker: Worker;
   try { worker = new Worker('/presentation-worker.js'); } catch { return; }
+  let failed = false;
+  let disposed = false;
+  let ready = false;
+  let watchdog: ReturnType<typeof setTimeout> | undefined;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const state = () => ({ background: background(), foreground: foreground(), reduced: reduced.matches, paused: document.hidden });
-  const resize = new ResizeObserver(() => worker.postMessage({ type: 'resize', ...state() }));
-  const sync = () => worker.postMessage({ type: 'pause', ...state() });
-  const fail = () => { host.dataset.logoReveal = 'fallback'; silk.dataset.silkState = 'fallback'; worker.terminate(); };
+  const resize = new ResizeObserver(() => { if (!failed && !disposed) worker.postMessage({ type: 'resize', ...state() }); });
+  const sync = () => { if (!failed && !disposed) worker.postMessage({ type: 'pause', ...state() }); };
+  const fail = (reason: string) => {
+    if (failed || disposed) return;
+    failed = true;
+    clearTimeout(watchdog);
+    host.dataset.logoReveal = 'fallback';
+    silk.dataset.silkState = 'fallback';
+    dialog.dataset.presentationMode = 'svg';
+    dialog.dataset.presentationFallback = reason;
+    logo.style.visibility = 'hidden';
+    silk.style.visibility = 'hidden';
+    resize.disconnect();
+    document.removeEventListener('visibilitychange', sync);
+    reduced.removeEventListener('change', sync);
+    worker.terminate();
+  };
   const registry = window.__ezwayPresentations ??= new WeakMap();
   const runtime: PresentationRuntime = { startedAt: performance.now(), mode: 'worker', dispose: () => {
+    disposed = true;
+    clearTimeout(watchdog);
     resize.disconnect(); document.removeEventListener('visibilitychange', sync); reduced.removeEventListener('change', sync);
     worker.terminate(); registry.delete(dialog);
   } };
   worker.onmessage = ({data}) => {
+    if (failed || disposed) return;
     if (data.type === 'ready') {
+      ready = true;
+      clearTimeout(watchdog);
+      dialog.dataset.presentationMode = 'worker';
+      silk.dataset.silkState = reduced.matches ? 'static' : 'running';
       runtime.startedAt = data.epoch - performance.timeOrigin;
       dialog.dispatchEvent(new Event('nexos-presentation-ready'));
-    } else if (data.type === 'state') {
+    } else if (data.type === 'state' && ready) {
       host.dataset.logoReveal = data.phase; host.dataset.eyeBlink = data.eye;
     } else if (data.type === 'metrics') runtime.metrics = { frames: data.frames, max: data.max, p95: data.p95 };
-    else if (data.type === 'failure') fail();
+    else if (data.type === 'failure') fail('worker-renderer');
   };
-  worker.onerror = fail;
+  worker.onerror = event => { event.preventDefault(); fail('worker-error'); };
+  worker.onmessageerror = () => fail('worker-message');
   try {
     const b = background(), f = foreground();
     silk.width = Math.max(1,Math.round(b.width*b.dpr)); silk.height = Math.max(1,Math.round(b.height*b.dpr));
@@ -43,12 +69,16 @@ function startWorkerPresentation(dialog: HTMLDialogElement, silk: HTMLCanvasElem
     registry.set(dialog, runtime);
     // The actual canvases are visible from the first worker draw; no DOM message
     // or React commit is needed to keep their frames moving during hydration.
-    silk.dataset.silkState = reduced.matches ? 'static' : 'running'; host.dataset.logoReveal = 'playing';
+    // Keep the native brand visible until the worker proves it can draw.
+    // Browser support for OffscreenCanvas says nothing about GPU readiness.
+    silk.dataset.silkState = 'loading'; host.dataset.logoReveal = 'loading';
+    dialog.dataset.presentationMode = 'loading';
+    watchdog = setTimeout(() => fail('worker-timeout'), 1800);
     worker.postMessage({ type: 'init', silk: silkOffscreen, logo: logoOffscreen, ...state() }, [silkOffscreen, logoOffscreen]);
     resize.observe(host); resize.observe(silk);
     document.addEventListener('visibilitychange', sync); reduced.addEventListener('change', sync);
     return runtime;
-  } catch { fail(); registry.set(dialog,runtime); return runtime; }
+  } catch { fail('worker-transfer'); registry.set(dialog,runtime); return runtime; }
 }
 
 let cachedLogo: LogoData | undefined;

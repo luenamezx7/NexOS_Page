@@ -22,6 +22,7 @@ import { HeadingScrollMotion } from '@/components/HeadingScrollMotion';
 import { EdgeSpring } from '@/components/EdgeSpring';
 import { MiniSites } from '@/components/sections/MiniSites';
 import { MiniSitesIntro } from '@/components/sections/MiniSitesIntro';
+import { LandingPageBlur } from '@/components/sections/LandingPageBlur';
 
 const Services = dynamic(() => import('@/components/Services').then(m => m.Services));
 const AboutUs = dynamic(() => import('@/components/AboutUs').then(m => m.AboutUs));
@@ -75,7 +76,7 @@ export default function HomeClient({ nonce }: { nonce?: string }) {
   useEffect(() => () => cancelAnimationFrame(focusRaf.current), []);
 
   return (
-    <main data-motion-detail={reduce ? 'reduced' : 'full'} className="landing-page w-full max-w-full overflow-x-clip bg-canvas text-ink">
+    <><LandingPageBlur /><main data-motion-detail={reduce ? 'reduced' : 'full'} className="landing-page w-full max-w-full overflow-x-clip bg-canvas text-ink">
       <HomepageJourneyMotion />
       <HeadingScrollMotion />
       <EdgeSpring />
@@ -130,6 +131,6 @@ export default function HomeClient({ nonce }: { nonce?: string }) {
           <BrandClosing />
         </div>
       </div>
-    </main>
+    </main></>
   );
 }

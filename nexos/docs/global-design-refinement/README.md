@@ -31,3 +31,44 @@ A opacidade inicial dos títulos com preenchimento por scroll passou de 0,16 par
 ## Validação
 
 Resultados finais e limitações são registrados após a rodada de navegador. Capturas por seção ficam em `test-results/global-design-refinement-*`; capturas selecionadas em `.impeccable/review/global/`.
+
+## Apresentação em hardware limitado
+
+Foi reproduzido um caso em que o worker aceita a inicialização mas não responde:
+o mascote alternativo ficava oculto durante toda a abertura. O teste validou o
+conteúdo efetivamente visível, e não apenas a presença do container no DOM.
+
+A versão corrigida mantém o SVG da marca visível em `loading`, só adota o desenho
+WebGL quando o worker confirma prontidão e aciona a alternativa animada após
+1,8 s sem confirmação. Falhas de download, mensagem, transferência ou renderização
+usam a mesma recuperação. A alternativa preserva a revelação e os olhos animados,
+sem exigir GPU. O worker interrompido é encerrado e seus observadores são limpos.
+O prazo de saída e a liberação de foco/scroll continuam independentes da GPU.
+
+O GradualBlur existente foi habilitado somente na borda inferior da viewport,
+como elemento irmão da página: três camadas, faixa de 44–72 px, sem listeners de
+scroll, interação ou animação extra de filtros. Acompanha todas as seções e fica
+abaixo dos diálogos. Não foi adicionado blur superior.
+
+## Resultado da validação
+
+- Build de produção e TypeScript: aprovados após as alterações finais.
+- Lint completo: zero erros; 39 avisos em código gerado/componentes existentes. A rodada final `eslint --quiet` passou. `git diff --check` passou.
+- Unitários: 10 aprovados. Segurança: 9 aprovados. Proteção de entrada: 9 aprovados. Nenhuma regra dessas áreas foi alterada.
+- Navegador Chrome: 17 regressões da pilha aprovada, 25 cenários do refinamento global/header/shader/notebook e 11 cenários finais de apresentação/blur aprovados em rodadas incrementais. As duas falhas intermediárias (referência de centralização no teste e transição residual do menu) foram corrigidas e revalidadas.
+- As dez larguras pedidas passaram: 320, 375, 390, 430, 768, 1024, 1280, 1440, 1920 e 2560 px. A pilha foi testada também em paisagem curta e reversões rápidas de scroll.
+- A recuperação da apresentação foi reproduzida antes da correção (mascote oculto com worker silencioso) e passou depois em quatro falhas simuladas com CPU 6× mais lenta. A versão WebGL normal, piscada, Retina, hidratação atrasada e bloqueio da thread principal também passaram.
+- Mensagens do EasyChat: revelação progressiva, digitação e repetição ao reentrar verificadas. Menu: fundo do título transparente, Escape e foco verificados. Placa: somente Instagram e alinhamento central dentro da vitrine verificados.
+- GradualBlur: posição fixa relativa à viewport, persistência entre seções e toque atravessando o overlay verificados.
+
+## Limites da evidência
+
+As verificações de navegador usaram Chrome em desktop e emulação mobile/touch. Não equivalem a testes em aparelhos físicos ou Safari/Firefox. A medição final com o gradual blur teve mediana e p95 de 16,7 ms nas amostras em velocidade normal, sem tarefas longas ou layout shifts. Com CPU 4× mais lenta, o p95 foi 49,9 ms no mobile e 33,4 ms no desktop, com tarefas longas pontuais; não há promessa de 60 fps universal. A abertura em worker teve p95 de 16,8 ms no teste final com thread principal bloqueada.
+
+O Lighthouse final (snapshot mobile, 390×844, movimento reduzido) registrou 100 em acessibilidade, boas práticas e SEO técnico: 41 auditorias passaram e nenhum achado permaneceu. Isso não comprova conformidade WCAG completa nem posicionamento em buscadores. O detector marcou somente dois gradientes tipográficos preservados pelo briefing.
+
+Persistem avisos de fallback de fonte Google Sans na build, licença Remotion e resolução de IP no servidor local. A build de produção amostrada não apresentou erros de runtime ou recursos HTTP falhos. O DevTools persistente no servidor Turbopack mostrou preloads 404 de chunks dinâmicos de QR/wave seguidos de carregamento do hash válido; isso não foi reproduzido na build de produção e não foi tratado como a causa do mascote vazio.
+
+A skill oficial `ChromeDevTools/chrome-devtools-mcp/skills/chrome-devtools` foi instalada em `~/.codex/skills/chrome-devtools`; suas instruções foram lidas e aplicadas. O instalador precisou usar Git após uma falha de certificados no download Python. Não foram desativadas verificações TLS.
+
+A descrição final do hero foi refinada com a confirmação do usuário sobre sites, SEO e GEO: “Organize clientes, vendas e financeiro. Criamos sites com SEO e GEO para ampliar a visibilidade do seu negócio no Google e nas buscas com IA.” As versões inglesa e espanhola também foram atualizadas.

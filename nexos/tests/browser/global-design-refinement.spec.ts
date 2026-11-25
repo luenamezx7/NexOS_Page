@@ -94,3 +94,12 @@ test('dark glass menu has no solid title patch and chat messages reveal on entry
  await phone.scrollIntoViewIfNeeded();
  await expect(messages.nth(3)).toHaveAttribute('data-message-visible','true',{timeout:7000});
 });
+
+test('gradual blur follows the viewport across sections and keeps touch targets usable',async({browser,baseURL})=>{
+ const context=await browser.newContext({baseURL,viewport:{width:390,height:844},hasTouch:true,reducedMotion:'reduce'});const page=await context.newPage();
+ await page.addInitScript(()=>localStorage.setItem('nexos-cookie-consent-v1',JSON.stringify({necessary:true,functional:false,analytics:false,marketing:false,updatedAt:new Date().toISOString()})));
+ await page.goto('/');await expect(page.locator('dialog[data-presentation]')).toHaveCount(0);
+ const blur=page.locator('.landing-edge-blur');await expect(blur).toHaveCSS('position','fixed');await expect(blur).toHaveCSS('pointer-events','none');await expect(blur.locator('[data-gradual-blur-layer]')).toHaveCount(3);
+ for(const id of ['gestao','easychat','showcase','comparacao','cta-final','brand-closing']){await page.locator('#'+id).scrollIntoViewIfNeeded();const box=await blur.boundingBox();expect(Math.abs(box!.y+box!.height-844)).toBeLessThan(1);}
+ const cta=page.locator('#cta-final [data-cta-section]');await cta.evaluate(el=>{el.scrollIntoView({block:'end',behavior:'instant'});el.addEventListener('click',event=>{event.preventDefault();el.setAttribute('data-touch-received','true')},{once:true})});const box=await cta.boundingBox();await page.touchscreen.tap(box!.x+box!.width/2,box!.y+box!.height/2);await expect(cta).toHaveAttribute('data-touch-received','true');await context.close();
+});

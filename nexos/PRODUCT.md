@@ -12,6 +12,7 @@ Donos de negócios que precisam organizar sua operação, apresentar seus servi�
 Apresentar as soluções da EZWAY com clareza: gestão, presença digital, placas NFC e o projeto EasyChat. Permitir que o visitante entenda o que pode contratar para sua necessidade e entre em contato pelo fluxo comercial existente.
 
 ## Capabilities and Constraints
+O usuário confirmou também a criação de sites e o trabalho com SEO e GEO para posicionamento digital; a descrição do hero comunica visibilidade no Google e nas buscas com IA, sem garantir posições.
 O catálogo local em `src/config/solutions.ts` define as entregas e os limites comerciais. Gestão apresenta clientes, vendas e financeiro; sites, portfólios, landing pages e cardápios são contratados conforme escopo. Placas NFC com QR Code abrem destinos definidos com a equipe. As demonstrações de gestão usam dados fictícios e não acessam o CRM. O EasyChat está em desenvolvimento: suas funcionalidades são previstas, não um serviço já disponível. Integrações e condições exigem confirmação específica. Não presumir plano único com todas as soluções, resultados garantidos ou sincronização automática.
 
 ## Brand Commitments

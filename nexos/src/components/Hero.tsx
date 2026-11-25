@@ -79,7 +79,7 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
                <span className="hero-title-line">{heroSentence[locale][0]}<span className={styles.titleAccent}>{heroSentence[locale][1]}</span>{heroSentence[locale][2]}</span>{' '}
                <span className="hero-title-line">{heroSentence[locale][3]}<span className={styles.titleAccent}>{heroSentence[locale][4]}</span></span>
              </h1>
-             <p className="hero-description" data-hero-enter>{t('Organize clientes, acompanhe vendas e cuide do financeiro. Da gestão à presença digital, encontre o próximo passo do seu negócio.')}</p>
+             <p className="hero-description" data-hero-enter>{t('Organize clientes, vendas e financeiro. Criamos sites com SEO e GEO para ampliar a visibilidade do seu negócio no Google e nas buscas com IA.')}</p>
            <div className="hero-actions" data-hero-enter>
               <ButtonWithIcon href={commercialHref(t(diagnosticMessage))} target="_blank" rel="noopener noreferrer" data-cta-section="hero" data-cta-solution="diagnostico">{t('Conversar sobre meu negócio')}</ButtonWithIcon>
               <a className="hero-secondary-action" href="#ecossistema" onClick={event => { event.preventDefault(); scrollToSection('#ecossistema'); }}>{t('Conhecer as soluções')}</a>
