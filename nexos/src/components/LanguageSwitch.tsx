@@ -18,7 +18,7 @@ export function LanguageSwitch({ open, onOpenChange }: { open?: boolean; onOpenC
   const current = languages.find(language => language.code === locale)!;
 
   return <DropdownMenu open={open} onOpenChange={onOpenChange}>
-    <DropdownMenuTrigger className={styles.switch} data-navigation-glass="control" aria-label={`${locale === 'en' ? 'Select language' : locale === 'es' ? 'Seleccionar idioma' : 'Selecionar idioma'}: ${current.name}`}>
+    <DropdownMenuTrigger className={styles.switch} data-navigation-glass="control" aria-label={`${current.code.toUpperCase()} — ${locale === 'en' ? 'Select language' : locale === 'es' ? 'Seleccionar idioma' : 'Selecionar idioma'}: ${current.name}`}>
       <NavigationGlass />
       <Image src={current.flag} alt="" width={22} height={16} unoptimized className={styles.flag} />
       <span>{current.code.toUpperCase()}</span>

@@ -12,6 +12,10 @@ async function open(page: Page) {
   await expect(page.locator('dialog[data-presentation]')).toHaveCount(0, { timeout: 20000 });
   await expect(page.locator('[data-ecosystem-stage]')).toHaveAttribute('data-scroll-cards', 'true');
   await expect(page.locator('[data-solution="site"][data-glass-card]')).toHaveAttribute('data-stack-progress');
+  // A real gesture cancels the page's startup hash restoration before this
+  // test drives the playhead programmatically (scrollTo is not a user gesture).
+  await page.keyboard.press('ArrowDown');
+  await page.waitForTimeout(180);
 }
 
 async function seek(page: Page, id: string) {

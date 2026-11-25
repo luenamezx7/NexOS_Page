@@ -16,7 +16,7 @@
   letter-spacing: -.04em;
 }
 .header > p:last-child { font-size: 17px; color: #d9d8dc; line-height: 1.65; }
-.demo { width: min(92%, 760px); margin: clamp(56px, 7vw, 96px) auto 0; }
+.demo { width: min(100%, 960px); margin: clamp(40px, 5vw, 72px) auto 0; }
 .screen {
   display: block;
   overflow: hidden;

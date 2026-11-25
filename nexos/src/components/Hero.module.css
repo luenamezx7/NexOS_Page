@@ -1,5 +1,5 @@
 .hero:global(.landing-hero) :global(.hero-container) {
-  padding-top: clamp(188px, 23svh, 248px);
+  padding-top: clamp(144px, 18svh, 200px);
   justify-items: center;
 }
 
@@ -29,7 +29,7 @@
 
 @media (max-width: 767px) {
   .hero:global(.landing-hero) :global(.hero-container) {
-    padding-top: clamp(160px, 21svh, 192px);
+    padding-top: clamp(132px, 17svh, 164px);
   }
   .eyebrow { margin-bottom: 20px; }
 }
@@ -53,52 +53,59 @@
 
 .avatarWord {
   position: absolute;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
   width: max-content;
-  gap: 84px;
   z-index: 0;
-  top: 42%;
+  top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
   font: 800 clamp(88px, 10vw, 144px)/1.1 var(--font-display);
-  letter-spacing: -.04em;
+  letter-spacing: -.05em;
   white-space: nowrap;
   color: #ffaad8;
   -webkit-text-fill-color: transparent;
   pointer-events: none;
 }
 
-.avatarWord > span {
+.presenceShape {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 84px;
+  transform: scale(.96, 1.4);
+  transform-origin: center;
+}
+
+.presenceShape > [data-shader-text] {
   background: var(--gradient-brand);
   background-size: 200% 100%;
   -webkit-background-clip: text;
   background-clip: text;
 }
 
-.avatarWord > [data-presence-half='left'] {
+.presenceShape > [data-presence-half='left'] {
   justify-self: end;
 }
 
-.avatarWord > [data-presence-half='right'] {
+.presenceShape > [data-presence-half='right'] {
   justify-self: start;
   background-position: right center;
 }
 
 .presenceShader { position: absolute; inset: 0; }
-.avatarWord:has(> [data-shader-state='ready']) > span { background-image: none; }
+.presenceShape:has(> [data-shader-state='ready']) > [data-shader-text] { background-image: none; }
 
 @media (max-width: 767px) {
   .avatarWord {
-    font-size: clamp(44px, 13.5vw, 72px);
-    gap: clamp(90px, 29vw, 120px);
-    top: 30%;
+    font-size: clamp(46px, 13.5vw, 80px);
+    top: 29%;
   }
+  .presenceShape { gap: clamp(72px, 23vw, 112px); transform: scale(.94, 1.55); }
+  .avatarFrame { width: min(100%, 326px); }
 }
 .avatarWord[data-reduced-motion='true'] { opacity: 1 !important; }
 @media (forced-colors: active) {
   .presenceShader { display: none !important; }
-  .avatarWord, .avatarWord > span {
+  .avatarWord, .presenceShape > [data-shader-text] {
     background: none;
     color: CanvasText;
     -webkit-text-fill-color: CanvasText;

@@ -19,7 +19,7 @@ Google Sans, preto, branco e o rosa do logotipo formam a base. A navegação usa
 
 ## Superfícies e controles
 
-- O hero usa o vídeo de produto com imagem de poster, camada de contraste e gradiente na divisa com a seção seguinte. Avatar e CTAs usam os componentes originais.
+- O hero usa a paisagem de montanhas, o personagem central e a palavra rosa granulada atrás dele. Uma camada interna alonga a tipografia verticalmente; o elemento externo ancora a composição e recebe a máscara de revelação. O fade preto mantém a divisa com a gestão. Os CTAs originais são preservados.
 - Header liquid glass noturno com borda translúcida de 1 px, reflexo interno discreto e mapa de deslocamento SVG no backdrop em Chromium. O fallback usa blur de 16 px. A opacidade sobe para 62% ao rolar e nas páginas internas. Sem suporte a blur ou com transparência reduzida, usa fundo sólido #080a10. Modos de alto contraste usam as cores do sistema. O dashboard mantém navegação opaca.
 - Ações compartilhadas em superfície sólida, contornada ou sem fundo conforme a hierarquia. Os CTAs de destaque usam o modelo original com seta circular e preenchimento animado. As escolhas de consentimento usam os modelos de origem. Preservar destino, nome acessível e disponibilidade de cada ação.
 - Portal com superfícies sólidas, bordas discretas, campos de 48 px e títulos de seção graduados. Manter visíveis os estados de erro, processamento e ausência de dados.
@@ -27,7 +27,7 @@ Google Sans, preto, branco e o rosa do logotipo formam a base. A navegação usa
 ## Motion
 
 - Usar 160 ms no feedback de controles e 250–400 ms nas transições de conteúdo. O conteúdo continua legível com movimento reduzido. As preferências já aprovadas para as cenas da home e os pop-ups seguem o documento mestre.
-- GSAP coordena as cenas de scroll existentes. Motion continua responsável por transições locais onde já é usado. Priorizar transform e opacidade, manter o gradiente na divisa do hero. O vídeo de produto aparece também na seção de demonstração.
+- GSAP coordena as cenas de scroll existentes. Motion continua responsável por transições locais onde já é usado. Priorizar transform e opacidade, manter o gradiente na divisa do hero. A antiga seção de vídeo foi substituída pela comparação Sem EZWAY × Com EZWAY, com pares por necessidade e CTA de diagnóstico.
 
 ## Referências e evidência
 
@@ -101,3 +101,21 @@ Os e-mails usam o mesmo material do código de acesso: fundo #eef0e9, cartão
 #f4faec, tinta #14200e, apoio #35452d e ação #204717. O layout é HTML compatível
 com e-mail, com estilos inline, sem shader, fontes remotas ou dependência de blur.
 `EMAIL_BRAND.banner` concentra a futura arte da marca; desativado não deixa lacuna.
+
+## Refinamento global — 24/11/2026
+
+A home mantém o vidro escurecido em todas as seções, inclusive superfícies claras.
+O título do menu fica em área fixa do painel, com fundo transparente, e o corpo
+rola separadamente. A vitrine NFC apresenta somente o design Instagram,
+centralizado, até que o usuário forneça as novas artes geral e de cardápio.
+
+Os CTAs da landing usam o raio compartilhado `--button-radius: 999px`, escala
+individual 1,035 no hover e 0,97 no pressionamento, com feedback de setas.
+Os botões originais do hero e os cards aprovados são exceções preservadas.
+A escala individual compõe com as transformações já controladas por GSAP.
+
+A preferência real de movimento reduzido chega ao CSS compilado e aos hooks.
+No modo normal, a conversa do EasyChat revela mensagens progressivamente,
+mostra digitação e reinicia quando o telefone volta à viewport. No modo reduzido,
+a conversa completa permanece estática. A gestão utiliza uma prévia ilustrativa
+navegável de clientes, vendas e financeiro, com dados fictícios identificados.

@@ -4,3 +4,4 @@
 .word { display: inline-block; }
 .floater { position: absolute; pointer-events: none; mix-blend-mode: multiply; filter: brightness(1.07) contrast(1.06); mask-image: radial-gradient(closest-side, #000 72%, transparent 100%); }
 @media (max-width: 767px) { .floater { display: none; } }
+@media (prefers-reduced-motion: reduce) { .word { opacity: 1 !important; } }

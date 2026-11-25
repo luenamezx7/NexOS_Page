@@ -16,7 +16,7 @@ import { PlateManagement } from '@/components/sections/PlateManagement';
 import { HomepageJourneyMotion } from '@/components/sections/HomepageJourneyMotion';
 import BrandEntrance from '@/components/BrandEntrance';
 import { useLocale } from '@/lib/locale';
-import { RealEstateVideo } from '@/components/sections/RealEstateVideo';
+import { BusinessComparison } from '@/components/sections/BusinessComparison';
 import { MotionDiagnosticsLoader } from '@/components/MotionDiagnosticsLoader';
 import { HeadingScrollMotion } from '@/components/HeadingScrollMotion';
 import { EdgeSpring } from '@/components/EdgeSpring';
@@ -103,7 +103,7 @@ export default function HomeClient({ nonce }: { nonce?: string }) {
                   <PlateManagement />
                </SectionBackground>
                </div>
-               <SectionBackground index={1} experience="real-estate-video"><RealEstateVideo videoSrc="/media/gloved-hand-connecting-iphone.mp4" posterSrc="/media/gloved-hand-connecting-iphone-poster.jpg" /></SectionBackground>
+               <BusinessComparison />
 
              <details className="business-examples-disclosure"><summary>{t('Soluções para cada negócio')}</summary><BusinessExamples /></details>
              <div className="chapter-surface-frame">

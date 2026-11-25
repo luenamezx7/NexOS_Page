@@ -46,3 +46,9 @@
 @media (max-width: 600px) { .grid { gap: 32px 16px; padding-top: 8px; } .shelf { padding: 0; border-radius: 16px; } .caption { padding-top: 16px; } .optionTitle { font-size: 16px; } .optionDescription { font-size: 12px; } .detailsAction { margin-top: 8px; } .dialogContent { grid-template-columns: 1fr; padding: 56px 20px 28px; gap: 22px; } .detailPlate { width: min(100%, 290px); } .detailCopy { gap: 12px; } .detailCopy h2 { font-size: 30px; } .detailCopy .detailCaption { font-size: 17px; } }
 @media (prefers-reduced-motion: reduce) { .plate, .plateImage, .detailsAction svg { animation: none; transition: none; } .plateButton:hover .plate, .plateButton:active .plate, .plateButton .detailsAction svg { transform: none; } .dialog[open]::backdrop { animation: none; } }
 @media (forced-colors: active) { .dialog { background: Canvas; color: CanvasText; border-color: CanvasText; box-shadow: none; } .dialog::backdrop { background: Canvas; backdrop-filter: none; } .qrArea { forced-color-adjust: none; } }
+
+/* One approved design on display until the replacement artwork is ready. */
+.grid:has(> .option:only-child) { grid-template-columns: minmax(0, 360px); justify-content: center; gap: 0; }
+.grid > .option:only-child .caption { text-align: center; }
+.grid > .option:only-child .detailsAction { justify-content: center; }
+.grid:has(> .option:only-child) + .disclaimer { max-width: 58ch; margin-inline: auto; text-align: center; }

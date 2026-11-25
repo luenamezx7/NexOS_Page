@@ -6,7 +6,7 @@ import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
 
-test('configured CSS pipeline keeps motion enabled and preserves responsive rules and forced colors', async () => {
+test('configured CSS pipeline preserves device motion preference, responsive rules and forced colors', async () => {
   const plugins = Object.entries(config.plugins).map(([name, options]) => require(name)(options));
   const result = await postcss(plugins).process(`
     @media (max-width: 767px) { .card { width: 100%; } }
@@ -20,17 +20,17 @@ test('configured CSS pipeline keeps motion enabled and preserves responsive rule
   root.walkAtRules('media', rule => media.push(rule.params));
   assert.ok(media.includes('(max-width: 767px)'));
   assert.ok(media.includes('(forced-colors: active)'));
-  assert.ok(media.every(query => !query.includes('prefers-reduced-motion')));
-  assert.ok(media.includes('(min-width: 768px)'));
-  assert.doesNotMatch(result.css, /animation: none/);
-  assert.doesNotMatch(result.css, /transform: none/);
+  assert.ok(media.some(query => query.includes('prefers-reduced-motion: reduce')));
+  assert.ok(media.some(query => query.includes('prefers-reduced-motion: no-preference')));
+  assert.match(result.css, /animation: none/);
+  assert.match(result.css, /transform: none/);
   assert.match(result.css, /animation: drift 4s infinite/);
 });
 
 for (const file of ['src/styles/transitions.css', 'src/styles/navigation-glass.css', 'src/components/Header.module.css', 'src/components/LanguageSwitch.module.css', 'src/components/auth/LoginForm.module.css']) {
   test(`${file} keeps its reduced-motion guard`, async () => {
-    const plugin = require('../scripts/postcss-full-motion.cjs');
-    const result = await postcss([plugin()]).process(
+    const plugins = Object.entries(config.plugins).map(([name, options]) => require(name)(options));
+    const result = await postcss(plugins).process(
       '@media (prefers-reduced-motion: reduce) { .t-input { animation: none !important; } }',
       { from: new URL(`../${file}`, import.meta.url).pathname },
     );

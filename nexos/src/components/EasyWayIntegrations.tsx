@@ -6,8 +6,10 @@ import { AnimatedBeam } from './ui/animated-beam';
 import styles from './EasyWayIntegrations.module.css';
 import { useLocale } from '@/lib/locale';
 
+const destinations: Record<string, string> = { discovery: '#showcase', contact: '#cta-final', routine: '#gestao', sales: '#gestao', presence: '#services' };
+
 function Point({ id, label, icon: Icon, nodeRef }: { id: string; label: string; icon: typeof Store; nodeRef: RefObject<HTMLDivElement | null> }) {
-  return <li className={styles.app} data-app={id}><div ref={nodeRef} className={styles.appIcon} data-integration-node><Icon strokeWidth={1.6} aria-hidden="true" /></div><span>{label}</span></li>;
+  return <li className={styles.app} data-app={id}><a href={destinations[id]} aria-label={label}><div ref={nodeRef} className={styles.appIcon} data-integration-node><Icon strokeWidth={1.6} aria-hidden="true" /></div><span>{label}</span></a></li>;
 }
 
 export function EasyWayIntegrations() {

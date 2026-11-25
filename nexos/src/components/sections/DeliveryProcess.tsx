@@ -22,7 +22,7 @@ export function DeliveryProcess() {
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end end'] });
   const { scrollYProgress: timelineProgress } = useScroll({ target: timelineRef, offset: ['start center', 'end center'] });
   useEffect(() => {
-    const media = motionMedia('(min-width: 768px) and (min-height: 700px) and (min-width: 0px)');
+    const media = motionMedia('(min-width: 768px) and (min-height: 700px) and (prefers-reduced-motion: no-preference)');
     const update = () => setPinned(media.matches);
     update();
     media.addEventListener('change', update);
@@ -51,7 +51,7 @@ export function DeliveryProcess() {
       </header>
         <p className={styles.processCounter} aria-hidden="true">{t('Etapa')} {String(activeStep + 1).padStart(2, '0')} / {String(DELIVERY_STEPS[kind].length).padStart(2, '0')}</p>
         <ol ref={timelineRef} className={styles.timeline} data-pinned={pinned} aria-label={t(kind === 'product' ? 'Processo do produto físico' : 'Processo do serviço digital')}>
-         {DELIVERY_STEPS[kind].map((step, i) => <li key={step.title} data-active={i === activeStep} aria-current={i === activeStep ? 'step' : undefined}>
+         {DELIVERY_STEPS[kind].map((step, i) => <li key={step.title} data-active={i === activeStep} data-complete={i < activeStep} aria-current={i === activeStep ? 'step' : undefined}>
           <span className={styles.stepMarker}>{String(i + 1).padStart(2, '0')}</span>
             <span className={styles.stepDetail}>{t(step.detail)}</span><h3>{t(step.title)}</h3><p>{t(step.body)}</p>{landingEvidence.durations[kind][i] && <small>{t('Prazo estimado')}: {landingEvidence.durations[kind][i]}</small>}
           <span className={styles.stepEnd} aria-hidden="true">{i === 3 ? <Check size={16} /> : <ArrowUpRight size={16} />}</span>

@@ -9,8 +9,7 @@ export function PlateManagement() {
   return <section id="plate-management" data-home-experience="plate-management" aria-labelledby="plate-management-title" className={styles.section}>
     <div className={styles.container}>
       <div className={styles.copy}>
-          <span className={styles.eyebrow}>{t('ATENDIMENTO · WHATSAPP')}</span>
-          <h2 id="plate-management-title">{t('Mudou de cardápio? Sua placa acompanha.')}</h2>
+          <h2 id="plate-management-title">{t('Mudou de destino? Sua placa acompanha.')}</h2>
             <p>{t('Precisa de outro destino para sua placa? Fale com a ezway no WhatsApp para conferir as opções disponíveis.')}</p>
           <a href={commercialHref(t('Olá! Quero trocar o link da minha placa.'))} target="_blank" rel="noopener noreferrer" className="btn-primary-nex">{t('Trocar o link da minha placa')} <ArrowUpRight size={17} aria-hidden="true" /></a>
       </div>

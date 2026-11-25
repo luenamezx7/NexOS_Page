@@ -70,3 +70,23 @@
 .details { display: block; max-width: 680px; text-align: center; }
 .capabilities { width: fit-content; max-width: 100%; margin-inline: auto; }
 .capabilities li { text-align: start; }
+
+/* The conversation is the centre; adjacent steps explain its actual sequence. */
+.mockup { position: relative; width: min(100%, 900px); }
+.workflow { position: absolute; left: calc(50% - 370px); top: 90px; display: grid; gap: 28px; width: 190px; padding: 0; margin: 0; list-style: none; text-align: left; }
+.workflow li { display: flex; gap: 12px; align-items: start; color: var(--text-secondary); }
+.workflow li:nth-child(2) { margin-top: 48px; }
+.workflow li:nth-child(3) { margin-top: 24px; }
+.workflow li > span { display: grid; place-items: center; flex: 0 0 28px; height: 28px; border-radius: 50%; border: 1px solid var(--surface-line); font-size: 12px; color: var(--text-secondary); transition: background-color 220ms, color 220ms, border-color 220ms; }
+.workflow li[data-ready='true'] > span { background: #ff80bc; border-color: #ff80bc; color: #240b18; }
+.workflow strong { display: block; font-size: 14px; color: var(--color-ink); font-weight: 550; }.workflow small { display: block; font-size: 12px; line-height: 1.65; margin-top: 4px; }
+@media (max-width: 1023px) { .workflow { position: static; display: flex; width: 100%; max-width: 520px; gap: 16px; order: 2; }.workflow li { flex: 1; flex-direction: column; gap: 8px; }.workflow li:nth-child(n) { margin-top: 0; }.workflow strong { font-size: 12px; }.workflow small { font-size: 11px; }.workflow li > span { flex-basis: auto; width: 28px; }.mockup figcaption { order: 3; } }
+@media (min-width: 1024px) { .workflow::after { content: ''; position: absolute; left: 14px; top: 30px; bottom: 48px; width: 1px; background: var(--surface-line); z-index: -1; } }
+.documentPreview { position: absolute; left: calc(50% + 202px); top: 180px; width: 200px; padding: 24px; border: 1px solid #ddd0d8; border-radius: 16px; background: #fff; color: #28212a; box-shadow: 0 20px 48px -32px #50334666; text-align: left; opacity: .65; transition: opacity 300ms; }
+.documentPreview[data-ready='true'] { opacity: 1; }.documentPreview > svg { color: #a81760; margin-bottom: 20px; }.documentPreview strong { display: block; font-size: 15px; line-height: 1.4; }.documentPreview > span { display: block; font-size: 11px; color: #625562; margin-top: 6px; }.documentPreview > div { display: grid; gap: 7px; margin-block: 24px; }.documentPreview i { height: 3px; background: #eee5eb; border-radius: 2px; }.documentPreview i:last-child { width: 65%; }.documentPreview p { font-size: 12px; line-height: 1.65; color: #625562; }
+@media (max-width: 1023px) { .documentPreview { display: none; } }
+.chatMessages { position: relative; }
+.typingIndicator { position: absolute; left: 10px; bottom: 16px; display: flex; align-items: center; gap: 4px; min-height: 28px; padding: 9px 12px; border-radius: 9px; background: #202c33; opacity: 0; transition: opacity 180ms ease; pointer-events: none; }
+.typingIndicator[data-typing='true'] { opacity: 1; }.typingIndicator i { width: 4px; height: 4px; border-radius: 50%; background: #bac9ce; }
+@media (prefers-reduced-motion: no-preference) { .typingIndicator[data-typing='true'] i { animation: chat-typing 700ms ease-in-out infinite alternate; }.typingIndicator i:nth-child(2) { animation-delay: 120ms !important; }.typingIndicator i:nth-child(3) { animation-delay: 240ms !important; } @keyframes chat-typing { to { translate: 0 -3px; opacity: .45; } } }
+@media (prefers-reduced-motion: reduce) { .typingIndicator { display: none; } }

@@ -31,6 +31,7 @@ const getServerScrolled = () => false;
 
 export function Header() {
   const { t } = useLocale();
+  const headerRef = useRef<HTMLElement>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const scrolled = useSyncExternalStore(subscribeScrolled, getScrolled, getServerScrolled);
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -43,6 +44,29 @@ export function Header() {
   useEffect(() => { sectionScrollRef.current = scrollToSection; }, [scrollToSection]);
   const [dropdown, setDropdown] = useState<'language' | 'account' | null>(null);
   useScrollLock(mobileOpen);
+
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const header = headerRef.current;
+      if (!header || dialogRef.current?.open) return;
+      const probe = document.elementFromPoint(innerWidth / 2, header.getBoundingClientRect().bottom + 8);
+      const section = probe?.closest('section[id]');
+      if (!section) return;
+      // The same dark glass material belongs to every section of this page.
+      header.dataset.navSurface = 'dark';
+      header.querySelectorAll<HTMLAnchorElement>('nav a[href]').forEach(link => {
+        if (link.hash === `#${section.id}`) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      });
+    };
+    const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
+    schedule();
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    return () => { cancelAnimationFrame(frame); window.removeEventListener('scroll', schedule); window.removeEventListener('resize', schedule); };
+  }, []);
 
   const closeMenu = useCallback(() => {
     if (closingMenu.current) return;
@@ -91,7 +115,7 @@ export function Header() {
   }, [closeMenu]);
 
   return <>
-    <header role="banner" className={styles.header} data-managed-section-links data-scrolled={scrolled} data-header-state="assembled">
+    <header ref={headerRef} role="banner" className={styles.header} data-managed-section-links data-scrolled={scrolled} data-header-state="assembled">
       <NavigationGlass />
       <div className={styles.bar}>
         <a href="#hero" aria-label={t('ezway, início')} className={styles.brand} onClick={event => { event.preventDefault(); navigate('#hero'); }}><BrandMark registered /></a>
@@ -115,8 +139,8 @@ export function Header() {
     }}>
       <div ref={panelRef} className={styles.mobilePanel} data-navigation-glass="panel">
          <NavigationGlass variant="panel" />
-         <div className={styles.mobileContent} data-mobile-menu-scroll>
          <div className={styles.mobileHeading}><span id="mobile-menu-title">{t('Explore a ezway')}</span><button type="button" className={styles.closeButton} data-navigation-glass="control" aria-label={t('Fechar menu')} onClick={closeMenu}><NavigationGlass /><X size={22} /></button></div>
+         <div className={styles.mobileContent} data-mobile-menu-scroll>
           <nav aria-label={t('Navegação móvel')} className={styles.mobileNav}>
             {NAV_ITEMS.map(item => <a key={item.href} href={item.href} onClick={event => { event.preventDefault(); navigate(item.href); }}>{t(item.label)}</a>)}
             <Button className={styles.mobileContactAction} data-navigation-glass="control" render={<a href={commercialHref(t('Olá! Quero conversar sobre as soluções da ezway.'))} target="_blank" rel="noopener noreferrer" />} onClick={closeMenu}><NavigationGlass />{t('Conversar no WhatsApp')} <ArrowUpRight size={18} aria-hidden="true" /></Button>

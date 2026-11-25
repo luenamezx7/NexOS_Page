@@ -86,18 +86,16 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
            </div>
         </div>
         <div className={styles.managementScene} data-avatar-scene>
-          <motion.span
+          <span
             className={styles.avatarWord}
             data-avatar-word
+            role="img"
             aria-label={avatarWord[locale].join('')}
             data-reduced-motion={reducedMotion}
-            initial={{ opacity: reducedMotion ? 1 : 0 }}
-            whileInView={showHero ? { opacity: 1 } : undefined}
-            viewport={{ once: true, amount: .7 }}
-            transition={{ duration: reducedMotion ? 0 : 1.1, ease: [.16, 1, .3, 1] }}
-          ><span data-shader-text data-presence-half="left" aria-hidden="true">{avatarWord[locale][0]}</span><span data-shader-text data-presence-half="right" aria-hidden="true">{avatarWord[locale][1]}</span>
+          ><span className={styles.presenceShape} data-presence-shape><span data-shader-text data-presence-half="left" aria-hidden="true">{avatarWord[locale][0]}</span><span data-shader-text data-presence-half="right" aria-hidden="true">{avatarWord[locale][1]}</span>
             <ShaderBackground key={locale} className={styles.presenceShader} colors={presenceColors} textMask paused={!showHero} />
-          </motion.span>
+            </span>
+          </span>
           <div className={styles.avatarFrame} aria-hidden="true" data-avatar-stage data-avatar-figure>
             <Image
             className={styles.avatar}

@@ -1,0 +1,50 @@
+[
+  {
+    "width": 390,
+    "cpu": 1,
+    "frames": 179,
+    "medianMs": 16.69999999999891,
+    "p95Ms": 16.799999999999272,
+    "longTasks": 0,
+    "maxLongTaskMs": 0,
+    "layoutShift": 0,
+    "errors": [],
+    "failedResources": []
+  },
+  {
+    "width": 390,
+    "cpu": 4,
+    "frames": 179,
+    "medianMs": 16.69999999999891,
+    "p95Ms": 33.399999999999636,
+    "longTasks": 4,
+    "maxLongTaskMs": 112,
+    "layoutShift": 0,
+    "errors": [],
+    "failedResources": []
+  },
+  {
+    "width": 1440,
+    "cpu": 1,
+    "frames": 179,
+    "medianMs": 16.69999999999891,
+    "p95Ms": 33.29999999999927,
+    "longTasks": 1,
+    "maxLongTaskMs": 81,
+    "layoutShift": 0,
+    "errors": [],
+    "failedResources": []
+  },
+  {
+    "width": 1440,
+    "cpu": 4,
+    "frames": 179,
+    "medianMs": 16.700000000000728,
+    "p95Ms": 133.3000000000029,
+    "longTasks": 34,
+    "maxLongTaskMs": 222,
+    "layoutShift": 0,
+    "errors": [],
+    "failedResources": []
+  }
+]

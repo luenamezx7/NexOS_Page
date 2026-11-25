@@ -36,7 +36,7 @@
 .mobilePanel { opacity: 0; transform: translateY(-6px); pointer-events: none; transition: opacity 160ms cubic-bezier(.22, 1, .36, 1), transform 160ms cubic-bezier(.22, 1, .36, 1); --panel-open-dur: 200ms; --panel-close-dur: 160ms; --panel-ease: cubic-bezier(.22, 1, .36, 1); display: flex; flex-direction: column; width: min(100%, 360px); max-height: 100%; overflow: hidden; margin-left: auto; border-radius: 28px; border: 1px solid var(--border); background: var(--popover); box-shadow: 0 24px 80px #00000055; }
 .mobilePanel[data-open="true"] { opacity: 1; transform: translateY(0); pointer-events: auto; transition-duration: 200ms; }
 .mobileContent { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 8px 18px 16px; }
-.mobileHeading { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 4px 0 12px; border-bottom: 1px solid var(--border); background: rgb(9 16 12 / 96%); font: 600 11px/1.4 var(--font-sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted-foreground); }
+.mobileHeading { position: relative; flex-shrink: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 8px 18px 0; padding: 4px 0 12px; border-bottom: 1px solid var(--border); background: transparent; font: 600 11px/1.4 var(--font-sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted-foreground); }
 .closeButton { display: grid; place-items: center; width: 44px; height: 44px; color: var(--foreground); }
 .mobileNav { display: flex; flex-direction: column; padding-top: 8px; }
 .mobileNav > a:not(.mobileContactAction) { display: flex; align-items: center; min-height: 44px; padding-inline: 8px; border-radius: 8px; font: 550 16px/1.25 var(--font-sans); }
@@ -66,7 +66,7 @@
 }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .header { background: var(--popover); } }
 @media (prefers-reduced-transparency: reduce) { .header { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: var(--popover); } .mobileDialog::backdrop { backdrop-filter: none; background: var(--popover); } }
-@media (prefers-reduced-motion: reduce) { .header, .avatar, .mobileDialog::backdrop { transition: none; } .mobilePanel, .mobilePanel[data-open="true"] { animation: none; transition: none; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .header, .avatar, .mobileDialog::backdrop { transition: none; } .mobilePanel, .mobilePanel[data-open="true"] { animation: none; transition: none !important; transform: none; } }
 
 
 .accountSlot[data-account-state="error"] .guestActions { gap: 0; }
@@ -77,3 +77,10 @@
 
 .accountSlot .expandedAccountLoading { inset-inline-end: -2px; top: -2px; height: 12px; }
 .accountSlot .expandedAccountLoading .accountSkeleton { width: 8px; height: 8px; }
+
+.navLink { position: relative; }
+.navLink::after { content: ''; position: absolute; bottom: 4px; left: 8px; right: 8px; height: 2px; border-radius: 2px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 180ms cubic-bezier(.22, 1, .36, 1); }
+.navLink[aria-current='location'] { color: var(--detail-text); }
+.navLink[aria-current='location']::after { transform: scaleX(1); }
+@media (hover: hover) { .navLink:hover::after { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) { .navLink::after { transition: none; } }

@@ -111,8 +111,16 @@ export function ShaderBackground({ className, colors, textMask = false, paused =
           const metrics = ctx.measureText(element.textContent || '');
           const ascent = metrics.fontBoundingBoxAscent ?? parseFloat(style.fontSize) * .8;
           const descent = metrics.fontBoundingBoxDescent ?? parseFloat(style.fontSize) * .2;
-          const baseline = rect.top - bounds.top + (rect.height - ascent - descent) / 2 + ascent;
-          ctx.fillText(element.textContent || '', rect.left - bounds.left, baseline);
+          // The mask shares the lettering's transformed coordinate space. Keep
+          // editorial stretching on its parent, independent of entry motion.
+          const scaleX = bounds.width / Math.max(1, canvas.clientWidth);
+          const scaleY = bounds.height / Math.max(1, canvas.clientHeight);
+          const baseline = (rect.height / scaleY - ascent - descent) / 2 + ascent;
+          ctx.save();
+          ctx.translate(rect.left - bounds.left, rect.top - bounds.top);
+          ctx.scale(scaleX, scaleY);
+          ctx.fillText(element.textContent || '', 0, baseline);
+          ctx.restore();
         });
       } else ctx.fillRect(0, 0, bounds.width, bounds.height);
       gl.bindTexture(gl.TEXTURE_2D, texture);

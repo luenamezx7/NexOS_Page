@@ -129,7 +129,7 @@
 .menuHero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, #000000ba, transparent); }
 .menuHero strong { position: absolute; z-index: 1; left: 6%; top: 26%; max-width: 12ch; color: #fff; font: 650 clamp(16px, 3vw, 36px)/1.1 var(--font-display); }
 .menuItems { padding: 4% 6%; }
-.menuItems h4 { color: inherit; font: 650 clamp(12px, 2vw, 26px)/1.2 var(--font-display); }
+.menuItems h3 { color: inherit; font: 650 clamp(12px, 2vw, 26px)/1.2 var(--font-display); }
 .menuItems p { margin-top: 3%; font-size: clamp(9px, 1.3vw, 16px); }
 .menuItems > span { display: block; margin-top: 3%; font-size: clamp(7px, 1vw, 12px); }
 

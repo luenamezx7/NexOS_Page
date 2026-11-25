@@ -8,6 +8,7 @@ import styles from './Sections.module.css';
 import { ScrollReveal } from '../ScrollReveal';
 import { useLocale } from '@/lib/locale';
 import { ScrollFillText } from '../ui/scroll-fill-headline';
+import { Button } from '../ui/cnippet-button';
 
 export function CTAFinal() {
   const { t } = useLocale();
@@ -26,7 +27,7 @@ export function CTAFinal() {
         </div>
       </div>
         <div className={styles.ctaBottom}><ScrollReveal as="p">{t('Conte o que precisa organizar na sua rotina. Vamos conversar sobre gestão, atendimento e presença digital para o seu negócio.')}</ScrollReveal><ScrollReveal className={styles.ctaActions} delay={.1}>
-         <a href={whatsapp} target="_blank" rel="noopener noreferrer" className={styles.textLink} data-cta-section="cta-final" data-cta-solution="diagnostico">{t('Conversar sobre meu negócio')} <ArrowUpRight size={16} aria-hidden="true" /></a>
+         <Button size="xl" variant="secondary" render={<a href={whatsapp} target="_blank" rel="noopener noreferrer" />} data-cta-section="cta-final" data-cta-solution="diagnostico">{t('Conversar sobre meu negócio')} <ArrowUpRight size={16} aria-hidden="true" /></Button>
       </ScrollReveal></div>
     </div>
   </section>;

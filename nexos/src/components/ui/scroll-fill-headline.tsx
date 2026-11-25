@@ -8,7 +8,7 @@ import styles from './scroll-fill-headline.module.css';
 
 function Word({ word, range, progress }: { word: string; range: [number, number]; progress: MotionValue<number> }) {
   // Inherit the section's ink so the same fill works on light and dark surfaces.
-  const opacity = useTransform(progress, range, [.16, 1]);
+  const opacity = useTransform(progress, range, [.6, 1]);
   return <motion.span style={{ opacity }} className={styles.word} data-scroll-fill-word>{word}</motion.span>;
 }
 

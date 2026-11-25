@@ -155,7 +155,7 @@ export function Services({ className = '', selectedUse }: { className?: string; 
           <img className={styles.macbookFrame} src="/mackbook_1.svg" alt="" width={2180} height={1324} draggable={false} />
           <div ref={screenRef} className={`t-page-slide ${styles.macbookScreen}`} data-scroll-driven>
             {examples.map((example, index) => <div key={example.id} className={`t-page ${styles.screenSlide}`} data-macbook-slide data-active={active === index} aria-hidden={active !== index}>
-              {index === 0 ? <div className={styles.menuDemo}><div className={styles.demoNav}><strong>grão & casa</strong><span>{t('Cardápio digital')}</span></div><div className={styles.menuHero}><Image src={example.image} alt="" fill sizes="(max-width: 767px) 90vw, 720px" className={styles.screenImage} /><strong>{t('Uma pausa para o seu dia.')}</strong></div><div className={styles.menuItems}><h4 data-heading-static>{t('Cafés da casa')}</h4><p>{t('Café coado')} · {t('Cappuccino')} · {t('Espresso')}</p><span>{t('Itens e informações que o cliente pode consultar no próprio celular.')}</span></div></div> : index === 1 ? <Image src={example.image} alt={t(example.title)} fill sizes="(max-width: 767px) 90vw, 720px" quality={90} className={styles.screenImage} /> :
+              {index === 0 ? <div className={styles.menuDemo}><div className={styles.demoNav}><strong>grão & casa</strong><span>{t('Cardápio digital')}</span></div><div className={styles.menuHero}><Image src={example.image} alt="" fill sizes="(max-width: 767px) 90vw, 720px" className={styles.screenImage} /><strong>{t('Uma pausa para o seu dia.')}</strong></div><div className={styles.menuItems}><h3 data-heading-static>{t('Cafés da casa')}</h3><p>{t('Café coado')} · {t('Cappuccino')} · {t('Espresso')}</p><span>{t('Itens e informações que o cliente pode consultar no próprio celular.')}</span></div></div> : index === 1 ? <Image src={example.image} alt={t(example.title)} fill sizes="(max-width: 767px) 90vw, 720px" quality={90} className={styles.screenImage} /> :
                 <div className={`${styles.demoScreen} ${index === 3 ? styles.demoLanding : ''}`}>
                   <div className={styles.demoNav}><span>{index === 2 ? 'atelier espaço' : 'grão & casa'}</span><span>{t(index === 2 ? 'Estúdio  /  Projetos  /  Contato' : 'Cafés  /  Sobre  /  Contato')}</span></div>
                   <div className={styles.demoPhoto}><Image src={example.image} alt={t(example.title)} fill sizes="(max-width: 767px) 90vw, 720px" quality={90} className={styles.screenImage} /></div>
@@ -168,10 +168,10 @@ export function Services({ className = '', selectedUse }: { className?: string; 
       </div>
       <div className={styles.arcBottom}>
         <div className={styles.arcCaption} aria-live="polite"><span>{String(active + 1).padStart(2, '0')} / 04</span><h3 data-heading-static>{t(examples[active].title)}</h3><p>{t(examples[active].description)}</p></div>
-        <div className={styles.exampleLinks}>{examples.map((example, index) => <button key={example.id} type="button" aria-label={`${t('Ver solução')}: ${t(example.title)}`} aria-pressed={active === index} onClick={() => {
+        <div className={styles.exampleLinks}>{examples.map((example, index) => <button key={example.id} type="button" aria-label={`${t('Ver solução')}: ${t(example.title)} (${index + 1})`} aria-pressed={active === index} onClick={() => {
           if (reducedMotion) { setActive(index); return; }
           selectExampleRef.current?.(index);
-        }}>{index + 1}</button>)}</div>
+        }}><span aria-hidden="true">{index + 1}</span></button>)}</div>
       </div>
     </div>
     <div className={styles.steps} aria-hidden="true">{examples.map(example => <div key={example.id} />)}</div>

@@ -128,6 +128,8 @@ export type TiltedGridHeroProps = {
   /** Content rendered above the band. */
   children?: React.ReactNode;
   paused?: boolean;
+  /** Signed user navigation; one increment advances exactly one tile. */
+  manualStep?: number;
   className?: string;
 };
 
@@ -143,6 +145,7 @@ export function TiltedGridHero({
   children,
   className,
   paused = false,
+  manualStep = 0,
   ...props
 }: React.ComponentProps<"div"> & TiltedGridHeroProps) {
   const ref = React.useRef<HTMLDivElement>(null);
@@ -217,6 +220,27 @@ export function TiltedGridHero({
 
   const share = aspectRatio / slices;
   const duration = columns * speed;
+  const previousStep = React.useRef(manualStep);
+  React.useEffect(() => {
+    const delta = manualStep - previousStep.current;
+    previousStep.current = manualStep;
+    if (!delta || !ref.current) return;
+    const animations = ref.current.getAnimations({ subtree: true }).filter(animation => animation instanceof CSSAnimation && animation.animationName === orbit);
+    const positions = animations.map(animation => ({ animation, from: Number(animation.currentTime ?? 0) }));
+    let frame = 0;
+    const start = performance.now();
+    const paint = (now: number) => {
+      const progress = reduce ? 1 : Math.min(1, (now - start) / 350);
+      const eased = 1 - (1 - progress) ** 3;
+      positions.forEach(({ animation, from }) => {
+        const time = from + delta * speed * 1000 * eased;
+        animation.currentTime = time < 0 ? time + duration * 1000 : time;
+      });
+      if (progress < 1) frame = requestAnimationFrame(paint);
+    };
+    frame = requestAnimationFrame(paint);
+    return () => cancelAnimationFrame(frame);
+  }, [manualStep, orbit, speed, duration, reduce]);
   const mask = `linear-gradient(90deg,transparent,#000 ${fade}%,#000 ${
     100 - fade
   }%,transparent)`;

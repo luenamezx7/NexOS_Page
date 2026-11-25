@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { ScrollReveal } from './ScrollReveal';
-import { ArrowUpRight, Nfc } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { config } from '@/config';
 import { MetallicSurface } from './ui/metallic-button';
 import { plateCommercialHref } from '@/lib/commercial';
@@ -13,7 +13,7 @@ import { useLocale } from '@/lib/locale';
 
 export function ProductShowcase({ className = '', onSelectUse }: { className?: string; onSelectUse?: (name: string) => void }) {
   const { t } = useLocale();
-  const [selectedUse, setSelectedUse] = useState<string>();
+  const [selectedUse, setSelectedUse] = useState<string>('Instagram');
   const placa = config.services.find(service => service.id === 'placa');
   if (!placa) return null;
 
@@ -22,7 +22,6 @@ export function ProductShowcase({ className = '', onSelectUse }: { className?: s
         <div className={styles.container}>
            <div className={styles.productGrid}>
               <div className={styles.productIntro}>
-                 <div className={`${styles.kicker} ${styles.currentSection}`}><Nfc size={16} aria-hidden="true" />{t('Placa Inteligente ezway')}</div>
                   <ScrollReveal as="h2" preset="title" id="showcase-title" className={styles.heading}>{t('O que seu cliente vai abrir')} <HighlightedText inView from="bottom" delay={.1}>{t('na placa?')}</HighlightedText></ScrollReveal>
               </div>
               <div className={styles.productVisual}><PlateChooser onSelect={name => { setSelectedUse(name); onSelectUse?.(name); }} /></div>

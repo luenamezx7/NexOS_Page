@@ -2,7 +2,8 @@
 
 import { ScrollFillText } from '../ui/scroll-fill-headline';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { TiltedGridHero } from '../ui/tilted-grid-hero';
 import { ScrollReveal } from '../ScrollReveal';
 import styles from './MascotSolutions.module.css';
@@ -41,6 +42,9 @@ function supportImage(background: string, ink: string, title: string, descriptio
 export function MascotSolutions() {
   const { t } = useLocale();
   const [paused, setPaused] = useState(false);
+  const [manualStep, setManualStep] = useState(0);
+  const gesture = useRef<{ x: number; y: number } | null>(null);
+  const advance = (direction: number) => { setPaused(true); setManualStep(value => value + direction); };
   const items = SUPPORT_CARDS.map(item => ({ ...item, title: t(item.title), description: t(item.description) }));
 
   return <section id="mascot-solutions" aria-labelledby="mascot-solutions-title" className={styles.section}>
@@ -49,10 +53,13 @@ export function MascotSolutions() {
       <ScrollReveal><p className={styles.intro}>{t('Da escolha da placa às dúvidas sobre o projeto, fale com a equipe da ezway.')}</p></ScrollReveal>
       <TiltedGridHero
         images={items.map(item => ({ src: supportImage(item.background, item.ink, item.title, item.description), alt: `${item.title} ${item.description}` }))}
-        paused={paused} className={styles.band} tileHeight={65} aspectRatio={1.45} axis={50} curve={62} fade={14} speed={5}
+        paused={paused} manualStep={manualStep} className={styles.band} tileHeight={65} aspectRatio={1.45} axis={50} curve={48} fade={10} speed={6}
+        onPointerDown={event => { gesture.current = { x: event.clientX, y: event.clientY }; }}
+        onPointerCancel={() => { gesture.current = null; }}
+        onPointerUp={event => { const start = gesture.current; gesture.current = null; if (!start) return; const dx = event.clientX - start.x, dy = event.clientY - start.y; if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) advance(dx < 0 ? 1 : -1); }}
         role="region" aria-label={t('Suporte da ezway')} aria-roledescription={t('Carrossel')}
       />
-      <button type="button" className={styles.pause} aria-pressed={paused} onClick={() => setPaused(value => !value)}>{t(paused ? 'Retomar animação' : 'Pausar animação')}</button>
+      <div className={styles.controls}><button type="button" aria-label={t('Suporte anterior')} onClick={() => advance(-1)}><ArrowLeft size={18} aria-hidden="true" /></button><button type="button" className={styles.pause} aria-pressed={paused} onClick={() => setPaused(value => !value)}>{t(paused ? 'Retomar animação' : 'Pausar animação')}</button><button type="button" aria-label={t('Próximo suporte')} onClick={() => advance(1)}><ArrowRight size={18} aria-hidden="true" /></button></div>
       {/* The faceted animation repeats decorative slices; expose each message just once. */}
       <ul className={styles.visuallyHidden}>{items.map(item => <li key={item.id}><strong>{item.title}</strong> {item.description}</li>)}</ul>
     </div>

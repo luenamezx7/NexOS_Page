@@ -137,3 +137,9 @@
   .span5 { grid-column: span 5; }
   .footerGrid { grid-template-columns: 1.4fr repeat(3, minmax(0, 1fr)); gap: 32px; }
 }
+
+.colLink { text-underline-offset: 5px; text-decoration-thickness: 1px; }
+.colLink:is(:hover, :focus-visible) { text-decoration: underline; }
+.colLinkArrow { transition: translate 180ms cubic-bezier(.22, 1, .36, 1); }
+@media (hover: hover) and (pointer: fine) { .colLink:hover .colLinkArrow { translate: 2px -2px; } }
+@media (prefers-reduced-motion: reduce) { .colLinkArrow { transition: none; translate: none !important; } }

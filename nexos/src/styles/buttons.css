@@ -149,3 +149,21 @@
   .cnippet-button[data-variant] { background: ButtonFace; color: ButtonText; }
   .site-shell :is(.cnippet-button, .btn-primary-nex, .btn-primary-glow, .primary-action, .btn-secondary-nex, .action-glass):not(#hero *):focus-visible { outline-color: Highlight; }
 }
+
+/* Landing interaction language. Individual scale composes with GSAP's transform
+   instead of competing for it. The original hero and approved stack are excluded. */
+.landing-page :is(.cnippet-button, [data-cta-section], .btn-primary-nex, .btn-secondary-nex, .primary-action):not(#hero *):not(#ecossistema *) {
+  transform-origin: center;
+  transition: scale 250ms cubic-bezier(.22, 1, .36, 1), background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+.landing-page :is(.cnippet-button, [data-cta-section], .btn-primary-nex, .btn-secondary-nex, .primary-action):not(#hero *):not(#ecossistema *):not(:disabled):not([aria-disabled='true']):active { scale: .97; }
+.landing-page :is(.cnippet-button, [data-cta-section]):not(#hero *):not(#ecossistema *) :is(.lucide-arrow-up-right, .lucide-arrow-right) { transition: translate 200ms cubic-bezier(.22, 1, .36, 1); }
+@media (hover: hover) and (pointer: fine) {
+  .landing-page :is(.cnippet-button, [data-cta-section], .btn-primary-nex, .btn-secondary-nex, .primary-action):not(#hero *):not(#ecossistema *):not(:disabled):not([aria-disabled='true']):hover { scale: 1.035; }
+  .landing-page :is(.cnippet-button, [data-cta-section]):not(#hero *):not(#ecossistema *):hover .lucide-arrow-up-right { translate: 2px -2px; }
+  .landing-page :is(.cnippet-button, [data-cta-section]):not(#hero *):not(#ecossistema *):hover .lucide-arrow-right { translate: 3px 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-page :is(.cnippet-button, [data-cta-section], .btn-primary-nex, .btn-secondary-nex, .primary-action):not(#hero *):not(#ecossistema *) { scale: none !important; transition: background-color 150ms, color 150ms, border-color 150ms; }
+  .landing-page :is(.cnippet-button, [data-cta-section]):not(#hero *) :is(.lucide-arrow-up-right, .lucide-arrow-right) { translate: none; transition: none; }
+}

@@ -40,7 +40,7 @@ export function HeadingScrollMotion() {
         root.querySelectorAll<HTMLElement>(HEADINGS).forEach(heading => {
           if (headings.has(heading) || hasOwnMotion(heading)) return;
           const context = gsap.context(() => {
-            gsap.fromTo(heading, { autoAlpha: .15, y: 24 }, {
+            gsap.fromTo(heading, { autoAlpha: .65, y: 24 }, {
               autoAlpha: 1, y: 0, ease: 'none',
               scrollTrigger: {
                 id: `heading-${heading.id || headings.size}`,

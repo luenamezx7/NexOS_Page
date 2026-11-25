@@ -121,3 +121,12 @@
   .faqSection .lead { font-size: 17px; }
   .faqFooter { grid-column: 2; }
 }
+
+/* Native details retains keyboard behaviour and keeps closed answers out of
+   the focus order. Browsers with intrinsic-size interpolation get both ways. */
+@supports (interpolate-size: allow-keywords) {
+  .faqItem { interpolate-size: allow-keywords; }
+  .faqItem::details-content { block-size: 0; overflow: clip; opacity: 0; transition: block-size 260ms cubic-bezier(.22, 1, .36, 1), opacity 180ms ease, content-visibility 260ms allow-discrete; }
+  .faqItem[open]::details-content { block-size: auto; opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) { .faqItem::details-content { transition: opacity 150ms; }.faqIcon { transition: background-color 150ms, color 150ms; } }

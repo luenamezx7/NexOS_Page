@@ -72,10 +72,13 @@ test('cards start at the first chapter after a responsive composition resize', a
   await expect(page.locator('dialog[data-presentation]')).toHaveCount(0, { timeout: 20000 });
   await expect(stage).toHaveAttribute('data-scroll-cards', 'true', { timeout: 20000 });
   await expect(page.locator('html')).toHaveAttribute('data-scroll-engine', 'smooth');
+  await page.keyboard.press('ArrowDown');
+  await page.waitForTimeout(180);
 
   // The card changes from a vertical composition to two columns at desktop.
   await page.setViewportSize({ width: 1440, height: 900 });
   await expect(stage).toHaveAttribute('data-scroll-cards', 'true');
+  await expect.poll(() => stage.evaluate(el => Math.abs(Number((el as HTMLElement).dataset.stackStart) - (el.parentElement!.getBoundingClientRect().top + scrollY - 110)))).toBeLessThan(1);
   const start = await stage.evaluate(el => el.parentElement!.getBoundingClientRect().top + scrollY - 110);
   await page.evaluate(y => window.scrollTo({ top: y + 2, behavior: 'instant' }), start);
   await expect.poll(() => stage.evaluate(el => Math.round(el.getBoundingClientRect().top))).toBe(110);

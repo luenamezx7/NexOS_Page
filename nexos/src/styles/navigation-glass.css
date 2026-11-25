@@ -106,3 +106,7 @@
   :root [data-navigation-glass='control']:is(:hover, [data-popup-open], [aria-expanded='true']),
   :root [data-navigation-glass='panel'] [role='menuitem'][data-highlighted] { background: Highlight; color: HighlightText; }
 }
+
+/* Stable dark glass on every section. Navigation feedback never changes geometry. */
+:root .landing-page [data-header-state] { transition: border-color 200ms ease, color 200ms ease; }
+@media (prefers-reduced-motion: reduce) { :root .landing-page [data-header-state] { transition: color 150ms; } }

@@ -26,6 +26,10 @@ const PLATE_IMAGES = {
   google: '/nfcs/nfcgoogle.svg',
 } as const;
 
+// Temporary showcase selection while the new general/menu artwork is prepared.
+// Keep the underlying catalogue and destinations intact.
+const showcasedPlates = PLATE_USES.filter(plate => plate.id === 'instagram');
+
 function PlateFace({ plate, qr, large = false }: { plate: PlateUse; qr?: string; large?: boolean }) {
   return <div className={styles.plate} data-plate-face={plate.id} data-large={large} aria-hidden="true">
     <Image src={PLATE_IMAGES[plate.id]} alt="" width={1000} height={1000} unoptimized className={styles.plateImage} sizes={large ? '(max-width: 600px) 290px, 350px' : '(max-width: 850px) 45vw, 24vw'} />
@@ -70,7 +74,7 @@ export function PlateChooser({ onSelect }: { onSelect?: (name: string) => void }
   useEffect(() => {
     let cancelled = false;
     void import('qrcode').then(async qr => {
-      const entries = await Promise.all(PLATE_USES.map(async plate => [plate.id, await qr.toDataURL(plate.demoUrl, { width: 320, margin: 4, color: { dark: '#111019', light: '#ffffff' } })] as const));
+      const entries = await Promise.all(showcasedPlates.map(async plate => [plate.id, await qr.toDataURL(plate.demoUrl, { width: 320, margin: 4, color: { dark: '#111019', light: '#ffffff' } })] as const));
       if (!cancelled) setQrs(Object.fromEntries(entries));
     });
     return () => { cancelled = true; };
@@ -102,8 +106,8 @@ export function PlateChooser({ onSelect }: { onSelect?: (name: string) => void }
 
   return <>
     <div ref={gridRef} className={styles.grid} data-plate-grid data-motion-active={visible && foreground && !presenting && !selected} aria-label={t('Escolha sua placa pelo uso')}>
-      {PLATE_USES.map(plate => <article key={plate.id} className={styles.option} data-plate-option={plate.id}>
-        <button type="button" className={styles.plateButton} aria-haspopup="dialog" aria-label={`${t('Ver placa')} ${t(plate.name)}`} onClick={event => { triggerRef.current = event.currentTarget; onSelect?.(plate.name); setSelected(plate); }}>
+      {showcasedPlates.map(plate => <article key={plate.id} className={styles.option} data-plate-option={plate.id}>
+        <button type="button" className={styles.plateButton} aria-haspopup="dialog" onClick={event => { triggerRef.current = event.currentTarget; onSelect?.(plate.name); setSelected(plate); }}>
           <span className={styles.shelf}><span className={styles.plateMotion} data-plate-motion><PlateFace plate={plate} qr={qrs[plate.id]} /></span></span>
           <span className={styles.caption} data-plate-caption><span className={styles.optionTitle}>{t(plate.name)}</span><span className={styles.optionDescription}>{t(plate.caption)}</span><span className={styles.detailsAction}>{t('Ver detalhes')} <ArrowUpRight size={16} aria-hidden="true" /></span></span>
         </button>

@@ -175,11 +175,14 @@
 .timeline { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; list-style: none; margin-top: 56px; }
 .timeline { position: relative; }
 .timeline .stepMarker { z-index: 1; }
-.timeline li { position: relative; min-width: 0; padding: 0 24px 32px 0; opacity: .25; filter: blur(2px); transform: scale(.97); transition: opacity .4s ease, filter .4s ease, transform .4s ease; }
+.timeline li { position: relative; min-width: 0; padding: 0 24px 32px 0; opacity: 1; transition: color .25s ease; }
 .timeline li[data-active='true'] { opacity: 1; filter: none; transform: none; }
 :global(.landing-page[data-motion-detail='light']) .timeline li { filter: none; }
 .timeline li::before { content: ''; position: absolute; top: 22px; left: 0; right: 0; height: 1px; background: color-mix(in srgb, var(--color-ink) 24%, var(--color-canvas)); }
 .timeline li:last-child::before { right: calc(100% - 44px); }
+.timeline li::after { content: ''; position: absolute; top: 22px; left: 0; right: 0; height: 2px; background: var(--palette-action); transform: scaleX(0); transform-origin: left; transition: transform 350ms cubic-bezier(.22, 1, .36, 1); }
+.timeline li[data-complete='true']::after { transform: scaleX(1); }
+.timeline li:last-child::after { display: none; }
 .stepMarker { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid color-mix(in srgb, var(--color-ink) 32%, var(--color-canvas)); border-radius: 50%; background: color-mix(in srgb, var(--color-ink) 12%, var(--color-canvas)); color: color-mix(in srgb, var(--color-ink) 65%, var(--color-canvas)); font: 600 13px var(--font-sans); margin-bottom: 32px; transition: background-color .35s ease, border-color .35s ease, color .35s ease, box-shadow .35s ease, transform .35s ease; }
 .timeline li[data-active='true'] .stepMarker { border-color: var(--palette-action); background: var(--palette-action); color: var(--palette-ink); transform: scale(1.08); box-shadow: 0 0 0 5px color-mix(in srgb, var(--palette-action) 16%, transparent), 0 0 18px color-mix(in srgb, var(--palette-action) 38%, transparent); }
 .stepDetail { display: block; font: 13px/1.5 var(--font-sans); color: var(--landing-muted); margin-bottom: 14px; }
@@ -269,6 +272,8 @@
   .timeline li { padding: 0 0 32px 68px; min-height: 180px; }
   .timeline li::before, .timeline li:last-child::before { top: 0; bottom: 0; height: auto; width: 1px; left: 22px; right: auto; }
   .timeline li:last-child::before { height: 44px; }
+  .timeline li::after { top: 0; bottom: 0; left: 22px; right: auto; width: 2px; height: auto; transform: scaleY(0); transform-origin: top; }
+  .timeline li[data-complete='true']::after { transform: scaleY(1); }
   .stepMarker { position: absolute; left: 0; top: 0; margin-bottom: 0; }
   .stepDetail { padding-top: 2px; margin-bottom: 12px; }
   .timeline h3 { font-size: 24px; }
@@ -319,3 +324,7 @@
  .processStage .stepMarker { margin-bottom: 12px; }
  .processStage .timeline p { font-size: 14px; line-height: 1.5; }
 }
+/* The selected rose remains branded and passes AA for small control text. */
+.processSwitch .segmented label[data-selected='true'] { color: #160a10; box-shadow: none; }
+:global(.dark) .processSwitch .segmented label[data-selected='true'] { color: #160a10; box-shadow: none; }
+@media (forced-colors: active) { .processSwitch .segmented label[data-selected='true'], :global(.dark) .processSwitch .segmented label[data-selected='true'] { color: HighlightText; } }

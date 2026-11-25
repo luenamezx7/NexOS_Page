@@ -20,6 +20,12 @@ export function useHeroChoreography(rootRef: RefObject<HTMLElement | null>, enab
           y: 0, opacity: 1, duration: motionTiming.entrance,
           stagger: .075, ease: 'power3.out', clearProps: 'transform,opacity',
         });
+        // The outer mask reveals the ink; the inner shape owns its permanent
+        // typographic stretching. Neither touches the avatar or the CTAs.
+        gsap.fromTo(root.querySelector('[data-avatar-word]'), { clipPath: 'inset(0 0 100% 0)' }, {
+          clipPath: 'inset(-30% -4% -30% -4%)', duration: .9, delay: .15,
+          ease: 'power3.out', clearProps: 'clipPath',
+        });
       }, root);
       revert = () => context.revert();
       recordMotion('heroChoreography', 'initialized', 'text-only; static avatar and popup');

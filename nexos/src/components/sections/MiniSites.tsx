@@ -5,6 +5,7 @@ import { ArrowUpRight, AtSign, MessageCircle, ShoppingBag } from 'lucide-react';
 import { useLocale } from '@/lib/locale';
 import { commercialHref } from '@/lib/commercial';
 import { usePresentationActive } from '@/lib/use-presentation-active';
+import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { motionError, recordMotion } from '@/lib/motion-diagnostics';
 import { Button } from '../ui/cnippet-button';
 import { Iphone15Pro } from '../ui/iphone-15-pro';
@@ -40,9 +41,10 @@ export function MiniSites() {
   const { t } = useLocale();
   const stageRef = useRef<HTMLDivElement>(null);
   const presenting = usePresentationActive();
+  const reduced = usePrefersReducedMotion();
 
   useEffect(() => {
-    if (presenting) return;
+    if (presenting || reduced) return;
     let disposed = false;
     let revert = () => {};
     void Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(([{ gsap }, { ScrollTrigger }]) => {
@@ -62,7 +64,7 @@ export function MiniSites() {
       revert = () => { context.revert(); delete stage.dataset.fanReady; };
     }).catch(error => recordMotion('miniSitesGsap', 'initialization-error', motionError(error)));
     return () => { disposed = true; revert(); };
-  }, [presenting]);
+  }, [presenting, reduced]);
 
   return <section id="mini-sites" className={styles.section} aria-labelledby="mini-sites-title">
     <div className={styles.inner}>
