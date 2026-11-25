@@ -1,3 +1,4 @@
+import { dismissPresentation } from './helpers/presentation';
 import { expect, test } from '@playwright/test';
 
 test.use({ channel: process.env.PLAYWRIGHT_CHANNEL || undefined });
@@ -5,7 +6,7 @@ test.use({ channel: process.env.PLAYWRIGHT_CHANNEL || undefined });
 async function openHome(page: import('@playwright/test').Page) {
   await page.goto('/');
   const presentation = page.locator('dialog[data-presentation]');
-  if (await presentation.isVisible()) await presentation.getByRole('button', { name: 'Pular apresentação' }).click();
+  if (await presentation.isVisible()) await dismissPresentation(page);
   await expect(presentation).toHaveCount(0);
 }
 
@@ -61,7 +62,7 @@ test('direct showcase link, reverse scroll and orientation keep four choices in 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/#showcase');
   const presentation = page.locator('dialog[data-presentation]');
-  if (await presentation.isVisible()) await presentation.getByRole('button', { name: 'Pular apresentação' }).click();
+  if (await presentation.isVisible()) await dismissPresentation(page);
   await expect(presentation).toHaveCount(0);
   await expect.poll(() => page.locator('#showcase').evaluate(el => Math.abs(el.getBoundingClientRect().top))).toBeLessThan(180);
   await page.locator('#services').scrollIntoViewIfNeeded();

@@ -9,7 +9,7 @@ async function main() {
   if (!key) throw new Error('RESEND_API_KEY ausente.');
   const resend = new Resend(key);
   const from = process.env.RESEND_FROM_EMAIL || 'NexOS <noreply@nexoslab.online>';
-  const templates = ['Boas-vindas', 'Confirmação de e-mail', 'Novo login', 'Magic Link', 'Redefinição de senha', 'Alerta 2FA', 'Notificação geral'];
+  const templates = ['Boas-vindas', 'Confirmação de e-mail', 'Novo login', 'Código de verificação', 'Redefinição de senha', 'Alerta 2FA', 'Notificação geral'];
   let passed = 0;
   for (const heading of templates) {
     try {

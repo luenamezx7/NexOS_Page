@@ -1,7 +1,7 @@
 .section {
   --color-ink: #fff;
   --gradient-heading: linear-gradient(105deg, #fff, #d9d8dc);
-  padding: clamp(56px, 6vw, 88px) 24px;
+  padding: clamp(112px, 12vw, 176px) 24px clamp(56px, 6vw, 88px);
   scroll-margin-top: 110px;
   background: #000000;
   color: #fff;
@@ -16,13 +16,14 @@
   letter-spacing: -.04em;
 }
 .header > p:last-child { font-size: 17px; color: #d9d8dc; line-height: 1.65; }
-.demo { max-width: 920px; margin: clamp(28px, 4vw, 48px) auto 0; }
+.demo { width: min(92%, 760px); margin: clamp(56px, 7vw, 96px) auto 0; }
 .screen {
   display: block;
   overflow: hidden;
   border: 1px solid rgb(255 255 255 / 18%);
   border-radius: 20px;
   background: #000;
+  box-shadow: 0 14px 60px -18px rgb(255 63 159 / 23%), 0 4px 28px -12px rgb(255 255 255 / 14%);
 }
 .screen:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
 .screenshot { display: block; width: 100%; height: auto; aspect-ratio: 8 / 5; }

@@ -17,18 +17,7 @@ export function AuthIdentity() {
   </div>;
 }
 
-export function AuthStory({ recovery = false, premium = false }: { recovery?: boolean; premium?: boolean }) {
-  if (premium) return <aside className={styles.premiumStory} aria-label={recovery ? 'Recuperação de acesso ezway' : 'Sua conta ezway'}>
-    <div className={styles.premiumStoryCopy}>
-      <h2>{recovery ? 'Recupere o acesso.' : 'Seu espaço.'}<br />{recovery ? 'Siga em frente.' : 'Seu acesso.'}</h2>
-      <p>{recovery ? 'Defina uma nova senha e volte a acessar sua conta com segurança.' : 'Entre na sua conta para atualizar seus dados e gerenciar a segurança do seu acesso.'}</p>
-    </div>
-    <ul className={styles.premiumStoryFeatures}>
-      <li><ShieldCheck size={18} aria-hidden="true" /><span>Acesso protegido</span></li>
-      <li><UserRound size={18} aria-hidden="true" /><span>Seus dados</span></li>
-      <li><KeyRound size={18} aria-hidden="true" /><span>Segurança da conta</span></li>
-    </ul>
-  </aside>;
+export function AuthStory({ recovery = false }: { recovery?: boolean }) {
   return <aside className={styles.story} aria-label={recovery ? 'Recuperação de acesso ezway' : 'Sua conta ezway'}>
     <p className={styles.storyLabel}>ezway / {recovery ? 'recuperação' : 'seu espaço digital'}</p>
     <ScrollReveal as="h2" preset="title" className={styles.storyHeading}>{recovery ? 'Recupere o acesso.' : 'Seu espaço.'}<br /><span className="brand-heading">{recovery ? 'Siga em frente.' : 'Seu acesso.'}</span></ScrollReveal>

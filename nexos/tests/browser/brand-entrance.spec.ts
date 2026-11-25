@@ -8,71 +8,24 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
-test('a apresentação automática usa a logo do fechamento e reaparece após F5', async ({ page }) => {
+test('a abertura mostra somente o mascote e reaparece após F5', async ({ page }) => {
   await page.goto('/#hero');
   const dialog = page.getByRole('dialog', { name: 'Apresentação ezway' });
   await expect(dialog).toBeVisible();
   await expect(dialog).toBeFocused();
-  const logo = dialog.getByText('ezway', { exact: true });
-  const way = logo.locator('span');
-  // The current wordmark uses a solid accent; the surrounding frame animates.
-  expect(await way.evaluate(el => getComputedStyle(el).color)).not.toBe(await logo.evaluate(el => getComputedStyle(el).color));
-  const family = await logo.evaluate(el => getComputedStyle(el).fontFamily);
+  await expect(dialog.getByRole('img', { name: 'Mascote ezway' })).toBeVisible();
+  await expect(dialog.getByRole('button')).toHaveCount(0);
+  await expect(dialog.getByRole('progressbar')).toHaveCount(0);
+  await expect(dialog.locator('[data-brand-way]')).toHaveCount(0);
   await expect(dialog).toHaveCount(0, { timeout: 10000 });
   await expect(page.locator('#hero')).toBeFocused();
-  await expect(page.locator('#hero')).toHaveCSS('outline-style', 'none');
-  await expect(page.locator('#brand-closing h2')).toHaveCSS('font-family', family);
   expect(await page.evaluate(() => document.body.style.overflow)).not.toBe('hidden');
-
   await page.reload();
   await expect(dialog).toBeVisible();
-  await dialog.getByRole('button', { name: 'Pular apresentação' }).click();
+  await expect(dialog).toBeFocused();
+  await page.keyboard.press('Escape');
   await expect(dialog).toHaveCount(0);
   await expect(page.locator('#hero')).toBeFocused();
-});
-
-test('o contador progride até 100% antes da abertura e reinicia ao repetir a apresentação', async ({ page }) => {
-  await page.goto('/');
-  const dialog = page.locator('dialog[data-presentation]');
-  const progress = dialog.locator('[data-presentation-progress]');
-  await expect(progress).toHaveAttribute('role', 'progressbar');
-  await expect(progress).toHaveAttribute('aria-valuemin', '0');
-  await expect(progress).toHaveAttribute('aria-valuemax', '100');
-  await expect(progress).toHaveAttribute('aria-valuenow', /\d+/);
-  const percentage = dialog.locator('[data-presentation-percentage]');
-  await expect(percentage).toBeVisible();
-  await expect(percentage).toHaveCSS('font-weight', '900');
-  await expect(percentage).toHaveCSS('font-family', /Satoshi/);
-  await expect(progress).toHaveCount(1);
-  await expect(dialog.locator('[class*=progressTrack], [class*=progressFill]')).toHaveCount(0);
-  const logoBounds = await dialog.getByText('ezway', { exact: true }).boundingBox();
-  const numberBounds = await percentage.boundingBox();
-  expect(numberBounds!.y).toBeGreaterThan(logoBounds!.y + logoBounds!.height);
-  expect(Math.abs(numberBounds!.x + numberBounds!.width / 2 - logoBounds!.x - logoBounds!.width / 2)).toBeLessThan(2);
-  await dialog.getByRole('button', { name: 'Pular apresentação' }).click();
-  await expect(progress).toHaveAttribute('aria-valuenow', '100');
-  await expect(percentage).toHaveText('100%');
-  await expect(dialog).toHaveCount(0);
-
-  // Observe the mount itself: by the time click() resolves, animation frames may
-  // already have advanced the counter beyond its initial 0%.
-  await page.evaluate(() => {
-    const values: string[] = [];
-    Object.assign(window, { presentationStartValues: values });
-    const observer = new MutationObserver(records => {
-      for (const record of records) for (const node of record.addedNodes) {
-        if (!(node instanceof Element)) continue;
-        const counter = node.matches('[data-presentation-percentage]') ? node : node.querySelector('[data-presentation-percentage]');
-        if (counter) { values.push(counter.getAttribute('aria-valuenow') || ''); observer.disconnect(); return; }
-      }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-  });
-  await page.getByRole('button', { name: 'Ver apresentação', exact: true }).click();
-  expect(await page.evaluate(() => (window as Window & { presentationStartValues?: string[] }).presentationStartValues)).toEqual(['0']);
-  await expect.poll(async () => Number(await progress.getAttribute('aria-valuenow'))).toBeGreaterThan(0);
-  await expect(progress).toHaveAttribute('aria-valuenow', '100');
-  await expect(dialog).toHaveCount(0);
 });
 
 test('recarregar mantém o hero alinhado durante a saída da apresentação', async ({ page }) => {
@@ -84,13 +37,15 @@ test('recarregar mantém o hero alinhado durante a saída da apresentação', as
     const rect = element.getBoundingClientRect();
     return { x: rect.x, width: rect.width, scrollWidth: document.documentElement.scrollWidth };
   });
-  await dialog.getByRole('button', { name: 'Pular apresentação' }).click();
+  await expect(dialog).toBeFocused();
+  await page.keyboard.press('Escape');
   await expect(dialog).toHaveCount(0);
   const beforeReload = await bounds();
   await page.reload();
   await expect(dialog).toBeVisible();
   const covered = await bounds();
-  await dialog.getByRole('button', { name: 'Pular apresentação' }).click();
+  await expect(dialog).toBeFocused();
+  await page.keyboard.press('Escape');
   await expect(dialog).toHaveCount(0);
   await expect.poll(bounds).toEqual(covered);
   expect(await bounds()).toEqual(beforeReload);
@@ -102,6 +57,7 @@ test('o controle do footer repete a nova apresentação e Escape revela o hero',
   await expect(dialog).toHaveCount(0, { timeout: 10000 });
   await page.getByRole('button', { name: 'Ver apresentação', exact: true }).click();
   await expect(dialog).toBeVisible();
+  await expect(dialog).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(dialog).toHaveCount(0);
   await expect(page.locator('#hero')).toBeFocused();
@@ -109,21 +65,19 @@ test('o controle do footer repete a nova apresentação e Escape revela o hero',
 });
 
 for (const theme of ['light', 'dark']) {
-  test(`${theme}: a entrada mobile mantém a experiência completa mesmo com reduce no sistema`, async ({ page }) => {
+  test(`${theme}: a entrada mobile mostra o mascote estático e libera a página com reduce`, async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.addInitScript(theme => localStorage.setItem('nexos-theme', theme), theme);
     await page.goto('/');
     const dialog = page.locator('dialog[data-presentation]');
     await expect(dialog).toBeVisible();
-    await expect(dialog.getByText('ezway', { exact: true }).locator('span')).toHaveCSS('animation-name', 'none');
-    await expect(dialog).toHaveCount(0, { timeout: 6000 });
-    await expect(page.locator('.landing-edge-blur, .landing-header-blur')).toHaveCount(2);
-    await expect(page.locator('#hero [data-hero-brand-strip]')).toHaveCount(0);
+    await expect(dialog.getByRole('img', { name: 'Mascote ezway' })).toBeVisible();
+    await expect(dialog).toHaveCount(0, { timeout: 8000 });
+    await expect(page.locator('#hero')).toBeFocused();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    await page.locator('#services').scrollIntoViewIfNeeded();
-    await expect(page.locator('.landing-edge-blur')).toHaveCount(1);
-    await expect(page.locator('.landing-header-blur')).toHaveCount(1);
+    await page.locator('#gestao').scrollIntoViewIfNeeded();
+    expect(await page.evaluate(() => document.body.style.overflow)).not.toBe('hidden');
   });
 }
 
@@ -142,7 +96,7 @@ test('sem JavaScript a apresentação não bloqueia o conteúdo', async ({ brows
     await page.goto(baseURL!);
     await expect(page.locator('[data-presentation]')).toBeHidden();
     await expect(page.locator('#hero h1')).toBeVisible();
-    await expect(page.locator('#hero a[href="#showcase"]')).toBeVisible();
+    await expect(page.locator('#hero a[href="#ecossistema"]')).toBeVisible();
   } finally {
     await context.close();
   }

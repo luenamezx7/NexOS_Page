@@ -497,3 +497,87 @@ test('operator provisioning stays server-only and preserves mailbox verification
   const rejected = await request('/admin/create-user', { email: 'blocked-provision@example.test', name: 'Blocked', password: PASSWORD }, new Jar(), { auth: operator });
   assert.ok([401, 403].includes(rejected.status));
 });
+
+test('email codes are hashed, single-use, expiring, non-enumerating and cannot register accounts', async () => {
+  const codes = [];
+  const restricted = createAuth({ ...authOptions, allowLegacyAuth: false, mail: { ...authOptions.mail, otp: async data => { codes.push(data); } } });
+  const email = 'email-code@example.test';
+  const signup = await request('/sign-up/email', { email, name: 'Email code fixture', password: PASSWORD });
+  const id = (await signup.json()).user.id;
+  await pool.query('update "user" set "emailVerified" = true where id = $1', [id]);
+  const send = address => request('/email-otp/send-verification-otp', { email: address, type: 'sign-in' }, new Jar(), { auth: restricted });
+  const verify = (otp, jar = new Jar(), address = email) => request('/sign-in/email-otp', { email: address, otp }, jar, { auth: restricted });
+  const sent = await send(email), missing = await send('missing-code@example.test');
+  assert.deepEqual(await sent.json(), await missing.json());
+  assert.equal(codes.length, 1);
+  const first = codes.at(-1).code;
+  assert.match(first, /^[0-9]{6}$/);
+  const record = await pool.query('select value from verification where identifier = $1', [`sign-in-otp-${email}`]);
+  assert.match(record.rows[0].value, /^[a-f0-9]{64}:0$/);
+  const wrong = first === '000000' ? '111111' : '000000';
+  assert.equal((await verify(wrong)).status, 400);
+  const jar = new Jar();
+  const successes = await Promise.all([verify(first, jar), verify(first)]);
+  assert.equal(successes.filter(response => response.status === 200).length, 1, 'Concurrent requests cannot reuse a code');
+  assert.equal((await verify(first)).status, 400);
+  const active = successes.find(response => response.status === 200);
+  assert.ok(active.headers.get('set-cookie')?.includes('HttpOnly'));
+  await send(email);
+  const expired = codes.at(-1).code;
+  await pool.query('update verification set "expiresAt" = $1 where identifier = $2', [new Date(Date.now() - 1000), `sign-in-otp-${email}`]);
+  assert.equal((await verify(expired)).status, 400);
+  await send(email);
+  const attemptsCode = codes.at(-1).code;
+  for (let attempt = 0; attempt < 5; attempt++) assert.equal((await verify(attemptsCode === '000000' ? '111111' : '000000')).status, 400);
+  assert.equal((await verify(attemptsCode)).status, 403);
+  assert.equal((await verify('123456', new Jar(), 'missing-code@example.test')).status, 400);
+  for (const path of ['/sign-in/magic-link', '/magic-link/verify?token=old', '/email-otp/check-verification-otp', '/email-otp/verify-email']) {
+    const response = await request(path, path.startsWith('/magic-link/') ? undefined : { email, type: 'sign-in', otp: '123456' }, new Jar(), { auth: restricted });
+    assert.equal(response.status, path.includes('magic-link') ? 404 : 403, path);
+  }
+});
+
+test('email code sign-in preserves MFA and bans', async () => {
+  let code;
+  const restricted = createAuth({ ...authOptions, allowLegacyAuth: false, mail: { ...authOptions.mail, otp: async data => { code = data.code; } } });
+  const email = 'email-code-mfa@example.test';
+  const signup = await request('/sign-up/email', { email, name: 'MFA email code', password: PASSWORD });
+  const id = (await signup.json()).user.id;
+  await pool.query('update "user" set "emailVerified" = true where id = $1', [id]);
+  const existing = await login(new Jar(), email);
+  const setup = await (await request('/two-factor/enable', { password: PASSWORD, issuer: 'ezway' }, existing)).json();
+  const secret = new TextDecoder().decode(base32.decode(new URL(setup.totpURI).searchParams.get('secret')));
+  assert.equal((await request('/two-factor/verify-totp', { code: await createOTP(secret).totp() }, existing)).status, 200);
+  await request('/email-otp/send-verification-otp', { email, type: 'sign-in' }, new Jar(), { auth: restricted });
+  const jar = new Jar();
+  const challenged = await request('/sign-in/email-otp', { email, otp: code }, jar, { auth: restricted });
+  assert.equal(challenged.status, 200);
+  assert.equal((await challenged.json()).twoFactorRedirect, true);
+  assert.equal(await (await request('/get-session', undefined, jar, { auth: restricted })).json(), null);
+  assert.equal((await request('/two-factor/verify-totp', { code: await createOTP(secret).totp() }, jar, { auth: restricted })).status, 200);
+  assert.equal((await (await request('/get-session', undefined, jar, { auth: restricted })).json()).user.id, id);
+  await pool.query('update "user" set banned = true where id = $1', [id]);
+  await request('/email-otp/send-verification-otp', { email, type: 'sign-in' }, new Jar(), { auth: restricted });
+  assert.equal((await request('/sign-in/email-otp', { email, otp: code }, new Jar(), { auth: restricted })).status, 403);
+});
+
+test('email code resend rotates the secret and respects CAPTCHA, CSRF and request limits', async () => {
+  const codes = [];
+  const options = { ...authOptions, allowLegacyAuth: false, mail: { ...authOptions.mail, otp: async data => { codes.push(data.code); } } };
+  const restricted = createAuth(options);
+  const email = 'email-code@example.test';
+  const send = (extra = {}) => request('/email-otp/send-verification-otp', { email, type: 'sign-in' }, new Jar(), { auth: restricted, ...extra });
+  assert.equal((await send()).status, 200);
+  assert.equal((await send()).status, 200);
+  const [oldCode, newCode] = codes;
+  if (oldCode !== newCode) assert.equal((await request('/sign-in/email-otp', { email, otp: oldCode }, new Jar(), { auth: restricted })).status, 400);
+  assert.equal((await request('/sign-in/email-otp', { email, otp: newCode }, new Jar(), { auth: restricted })).status, 200);
+  assert.equal((await send({ headers: { Origin: 'https://attacker.example' } })).status, 403);
+  const protectedAuth = createAuth({ ...options, captchaEnabled: true });
+  const blocked = await request('/email-otp/send-verification-otp', { email, type: 'sign-in' }, new Jar(), { auth: protectedAuth });
+  assert.ok([400, 503].includes(blocked.status));
+  const count = codes.length;
+  for (let i = 0; i < 3; i++) assert.equal((await send({ ip: '203.0.113.80' })).status, 200);
+  assert.equal((await send({ ip: '203.0.113.80' })).status, 429);
+  assert.equal(codes.length, count + 3);
+});

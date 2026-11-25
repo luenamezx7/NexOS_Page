@@ -1,28 +1,17 @@
 'use client';
 
-import { MetallicButton } from '@/components/ui/metallic-button';
-
-/**
- * Definição da nova senha a partir do link de recuperação.
- *
- * O token viaja na query e comprova posse do e-mail — é a autenticação deste
- * fluxo. Nenhuma sessão e nenhum segundo fator são exigidos, então uma conta
- * com MFA consegue recuperar o acesso.
- *
- * Design preservado do formulário anterior: mesmos contêineres e classes do
- * módulo `LoginForm.module.css`.
- */
 import { useRef, useState } from 'react';
-import Link from 'next/link';
 import { ArrowRight, Eye, EyeOff } from 'lucide-react';
-import { ScrollReveal } from '../ScrollReveal';
-import { PasswordStrengthMeter } from '@/components/auth/PasswordStrengthMeter';
+import { PasswordStrengthMeter } from './PasswordStrengthMeter';
 import { evaluatePassword } from '@/lib/auth/password-strength';
 import { authClient, authErrorMessage } from '@/lib/auth/client';
-import styles from '@/components/auth/LoginForm.module.css';
-import { AuthHeader, AuthStory } from './AuthFrame';
-import { PageFooter } from '../PageChrome';
-import { Card, CardHeader, CardContent, CardFooter } from '../ui/card';
+import { type AuthPhase } from './AuthTransition';
+import { CustomerAuthPanel } from './CustomerAuthPanel';
+import { Button } from '../ui/cnippet-button';
+import { Input } from '../ui/input';
+import { Field, FieldGroup, FieldLabel } from '../ui/field';
+import { Alert, AlertDescription } from '../ui/alert';
+import styles from './LoginForm.module.css';
 
 export function ResetPasswordForm({ token }: { token: string }) {
   const busyRef = useRef(false);
@@ -30,7 +19,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
   const [error, setError] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [done, setDone] = useState(false);
+  const [phase, setPhase] = useState<AuthPhase>('idle');
 
   async function handleSubmit(form: FormData) {
     if (busyRef.current) return;
@@ -46,7 +35,8 @@ export function ResetPasswordForm({ token }: { token: string }) {
       return;
     }
     busyRef.current = true;
-    setBusy(true);
+    setBusy(true); setPhase('loading');
+    let confirmed = false;
     try {
       const { error: err } = await authClient.resetPassword({ newPassword: pass, token });
       if (err) {
@@ -60,130 +50,34 @@ export function ResetPasswordForm({ token }: { token: string }) {
       }
       // Remove o token da barra de endereço: voltar não deve reenviar o formulário.
       window.history.replaceState(null, '', '/portal/redefinir');
-      setPassword('');
-      setDone(true);
+      confirmed = true;
+      setPhase('success');
     } catch (err) {
       setError(authErrorMessage(err, 'Conexão indisponível. Tente novamente.'));
     } finally {
-      busyRef.current = false;
-      setBusy(false);
+      if (!confirmed) { busyRef.current = false; setBusy(false); setPhase('error'); }
     }
   }
 
-  return (
-    <main className={styles.customer}>
-       <AuthHeader accountOnly />
-
-      <div className={styles.content} id="main-content">
-        <AuthStory recovery />
-        <ScrollReveal as="section" preset="card"
-          className={styles.panelWrap}
-          aria-labelledby="reset-title"
-        >
-          <Card className={`${styles.panel} ${styles.recoveryPanel}`}>
-          <CardHeader className={`${styles.panelHeader} ${styles.recoveryHeader}`}>
-          <p className={styles.overline}>Recuperar acesso</p>
-          <div className={styles.title}>
-            <h1 id="reset-title" className={styles.heading}>
-              {done ? 'Senha atualizada' : 'Defina nova senha'}
-            </h1>
+  return <CustomerAuthPanel title="Defina nova senha" titleId="reset-title" description="Escolha uma senha forte. O link de recuperação confirma que é você." phase={phase} onConfirmed={() => window.location.replace('/portal/acesso')}>
+    <form onSubmit={event => { event.preventDefault(); void handleSubmit(new FormData(event.currentTarget)); }}>
+      <FieldGroup className={styles.formGroup}>
+        <Field>
+          <div className={styles.fieldLabelRow}><FieldLabel htmlFor="reset-password">Nova senha</FieldLabel></div>
+          <div className={styles.resetPasswordControl}>
+            <Input id="reset-password" name="password" type={showPassword ? 'text' : 'password'} autoComplete="new-password" required minLength={12} maxLength={256} value={password} onChange={event => setPassword(event.target.value)} aria-describedby="reset-password-help reset-password-strength" className="field-input" readOnly={busy} />
+            <button type="button" disabled={busy} onClick={() => setShowPassword(value => !value)} aria-controls="reset-password" aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'} aria-pressed={showPassword} className={styles.resetPasswordToggle}>{showPassword ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}</button>
           </div>
-          <p className={styles.description}>
-            {done
-              ? 'Sua senha foi alterada. Entre com a nova senha para continuar.'
-              : 'Escolha uma senha forte. O link de recuperação confirma que é você.'}
-          </p>
-          </CardHeader>
-          <CardContent className={styles.panelContent}>
-
-          {done ? (
-            <div className="flex flex-col gap-4">
-              <MetallicButton type="button" onClick={() => window.location.replace('/portal/acesso')} className="w-full">
-                Ir para o login
-                <ArrowRight size={16} />
-              </MetallicButton>
-            </div>
-          ) : (
-            <form className="flex flex-col gap-6" onSubmit={(e) => { e.preventDefault(); void handleSubmit(new FormData(e.currentTarget)); }}>
-              <div className="flex flex-col gap-2">
-                <label htmlFor="reset-password" className="text-sm font-medium">
-                  Nova senha
-                </label>
-                <div className="relative">
-                  <input
-                    id="reset-password"
-                    name="password"
-                    type={showPassword ? 'text' : 'password'}
-                    autoComplete="new-password"
-                    required
-                    minLength={12}
-                    maxLength={256}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    aria-describedby="reset-password-help reset-password-strength"
-                    className="field-input w-full !pr-14"
-                    disabled={busy}
-                    autoFocus
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((v) => !v)}
-                    aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
-                    aria-pressed={showPassword}
-                    className="absolute inset-y-0 right-0 px-4 focus-visible:outline-2"
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-                <p id="reset-password-help" className="text-sm text-ink/75">
-                  Mínimo de 12 caracteres, com maiúscula, minúscula, número e símbolo.
-                </p>
-                <PasswordStrengthMeter password={password} id="reset-password-strength" />
-              </div>
-              <div className="flex flex-col gap-2">
-                <label htmlFor="reset-confirm" className="text-sm font-medium">
-                  Confirmar nova senha
-                </label>
-                <input
-                  id="reset-confirm"
-                  name="confirmPassword"
-                  type="password"
-                  autoComplete="new-password"
-                  minLength={12}
-                  maxLength={256}
-                  required
-                  disabled={busy}
-                  className="field-input w-full"
-                />
-              </div>
-              <MetallicButton type="submit" disabled={busy} className="w-full">
-                {busy ? 'Salvando…' : 'Salvar nova senha'}
-                <ArrowRight size={16} />
-              </MetallicButton>
-              <Link href="/portal/acesso" className="self-start text-sm underline underline-offset-4">
-                Voltar ao login
-              </Link>
-            </form>
-          )}
-
-          {error && (
-            <p className="mt-6 rounded-lg border border-ink/20 p-3 text-sm" role="alert" aria-live="assertive">
-              {error}
-            </p>
-          )}
-          </CardContent>
-          <CardFooter className={styles.panelFooter}>
-          <p className="text-sm leading-relaxed text-ink/75">
-            Precisa de ajuda?{' '}
-            <a href="mailto:nexosperformance@gmail.com" className="underline underline-offset-4">
-              Fale com a ezway
-            </a>
-          </p>
-          </CardFooter>
-          </Card>
-        </ScrollReveal>
-      </div>
-      <PageFooter />
-    </main>
-  );
+          <p id="reset-password-help" className={styles.mfaDescription}>Mínimo de 12 caracteres, com maiúscula, minúscula, número e símbolo.</p>
+          <PasswordStrengthMeter password={password} id="reset-password-strength" />
+        </Field>
+        <Field>
+          <div className={styles.fieldLabelRow}><FieldLabel htmlFor="reset-confirm">Confirmar nova senha</FieldLabel></div>
+          <Input id="reset-confirm" name="confirmPassword" type="password" autoComplete="new-password" required minLength={12} maxLength={256} readOnly={busy} className="field-input" />
+        </Field>
+        <Button type="submit" disabled={busy} loading={false} className={styles.primarySubmit}>Salvar nova senha<ArrowRight size={18} aria-hidden="true" /></Button>
+      </FieldGroup>
+    </form>
+    {error && <Alert variant="destructive" className={styles.resetFeedback} aria-live="assertive"><AlertDescription>{error}</AlertDescription></Alert>}
+  </CustomerAuthPanel>;
 }

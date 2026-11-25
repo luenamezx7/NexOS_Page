@@ -113,6 +113,7 @@ export function GradientWave({ colors = defaultColors, isPlaying = true, classNa
     resize.observe(host);
     reduce.addEventListener('change', sync);
     document.addEventListener('visibilitychange', sync);
+    window.addEventListener('resize', measure);
     canvas.addEventListener('webglcontextlost', lost);
     canvas.addEventListener('webglcontextrestored', restored);
     syncRef.current = sync;
@@ -122,6 +123,7 @@ export function GradientWave({ colors = defaultColors, isPlaying = true, classNa
       observer.disconnect(); resize.disconnect();
       reduce.removeEventListener('change', sync);
       document.removeEventListener('visibilitychange', sync);
+      window.removeEventListener('resize', measure);
       canvas.removeEventListener('webglcontextlost', lost);
       canvas.removeEventListener('webglcontextrestored', restored);
       rendererRef.current?.dispose(); rendererRef.current = null;

@@ -1,3 +1,4 @@
+import { dismissPresentation } from './helpers/presentation';
 import { expect, test } from '@playwright/test';
 
 for (const locale of ['pt', 'en', 'es'] as const) {
@@ -9,7 +10,7 @@ for (const locale of ['pt', 'en', 'es'] as const) {
     }, locale);
     await page.goto('/#contact');
     const presentation = page.locator('dialog[data-presentation][open]');
-    if (await presentation.count()) await presentation.getByRole('button', { name: 'Pular apresentação' }).click();
+    if (await presentation.count()) await dismissPresentation(page);
     await expect(page.locator('#contact')).toHaveCount(1);
     await expect(page.locator('#contact')).toBeAttached();
     await expect(page.locator('[role="group"][aria-label*="Pergunta"], #contact [role="progressbar"]')).toHaveCount(0);

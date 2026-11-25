@@ -305,8 +305,6 @@
 /* Supporting copy follows the same centre axis as its presentation heading. */
 .splitHeader .lead { margin-inline: auto; text-align: center; }
 .processSwitch { margin-inline: auto; }
-.brandCta .ctaBottom { align-items: center; text-align: center; }
-.brandCta .ctaBottom > p { margin-inline: auto; }
 
 /* A section introduction is one centred column, never copy beside its heading. */
 .processStage .splitHeader { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; gap: 16px; }

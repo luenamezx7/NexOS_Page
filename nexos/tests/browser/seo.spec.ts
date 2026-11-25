@@ -1,3 +1,4 @@
+import { dismissPresentation } from './helpers/presentation';
 import { expect, test } from '@playwright/test';
 import { enterPresentation } from './helpers/presentation';
 
@@ -253,11 +254,11 @@ test('apresentação pode ser revista e encerrada por Escape ou pelo botão de p
   await expect(cookies).toHaveCount(0);
   await page.getByRole('button', { name: 'Ver apresentação', exact: true }).click();
   await expect(page.getByRole('dialog', { name: /Apresentação ezway/ })).toBeVisible();
-  await page.keyboard.press('Escape');
+  await dismissPresentation(page);
   await expect(page.getByRole('dialog', { name: /Apresentação ezway/ })).toHaveCount(0);
   await expect(page.locator('#hero')).toBeFocused();
   await page.getByRole('button', { name: 'Ver apresentação', exact: true }).click();
-  await page.getByRole('button', { name: /Pular apresentação/ }).click();
+  await dismissPresentation(page);
   await expect(page.getByRole('dialog', { name: /Apresentação ezway/ })).toHaveCount(0);
   await expect(page.locator('#hero')).toBeFocused();
 });

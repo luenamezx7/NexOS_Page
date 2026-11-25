@@ -8,6 +8,8 @@ import { motionError, recordMotion } from '@/lib/motion-diagnostics';
 import { useScrollContext } from '../SmoothScrollProvider';
 import styles from './glass-cards.module.css';
 import { createStableViewport } from '@/lib/scroll-profile';
+import { useNativeReducedMotion } from '@/lib/use-native-reduced-motion';
+import { createCardStory } from '../sections/ecosystem-card-motion';
 
 export interface GlassCardData {
   id: string;
@@ -24,11 +26,13 @@ export interface GlassCardData {
 export function StackedCards({ items, stageRef }: { items: GlassCardData[]; stageRef: RefObject<HTMLDivElement | null> }) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const presenting = usePresentationActive();
+  const reduced = useNativeReducedMotion();
   const { lenis } = useScrollContext();
+  const contentKey = items.map(item => `${item.id}:${item.title}:${item.description}`).join('|');
   useEffect(() => {
     const stage = stageRef.current;
     const viewport = viewportRef.current;
-    if (!stage || !viewport || presenting) return;
+    if (!stage || !viewport || presenting || reduced) return;
     let disposed = false;
     let revert = () => {};
     void Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(([{ gsap }, { ScrollTrigger }]) => {
@@ -54,6 +58,7 @@ export function StackedCards({ items, stageRef }: { items: GlassCardData[]; stag
         cards.forEach((card, index) => gsap.set(card, { y: index ? viewport.clientHeight + 24 : 0, scale: 1, transformOrigin: 'center top' }));
         let active = -1;
         const activationTimes = [0];
+        const arrivals = [0];
         const timeline = gsap.timeline({
           scrollTrigger: {
             id: 'ecosystem-cards', trigger: stage, pin: stage,
@@ -62,6 +67,10 @@ export function StackedCards({ items, stageRef }: { items: GlassCardData[]; stag
             start: () => `top ${clearance()}px`,
             end: () => `+=${Math.round(Math.max((viewportSize().height - clearance()) * 1.8, viewport.clientHeight * Math.max(1, cards.length - 1) * .9))}`,
             scrub: .65, invalidateOnRefresh: true, anticipatePin: 1, onRefreshInit: fit,
+            onRefresh(trigger) {
+              stage.dataset.stackStart = String(trigger.start);
+              stage.dataset.stackEnd = String(trigger.end);
+            },
           },
           onUpdate() {
             let next = 0;
@@ -71,17 +80,23 @@ export function StackedCards({ items, stageRef }: { items: GlassCardData[]; stag
             cards.forEach((card, index) => { card.dataset.active = String(index === active); });
           },
         });
-        timeline.addLabel('card-0', 0).to({}, { duration: .35 });
+        timeline.addLabel('card-0', 0).to({}, { duration: 1.5 });
         for (let index = 1; index < cards.length; index++) {
-          const start = .35 + (index - 1) * 1.35;
-          activationTimes.push(start + .5);
-          timeline.fromTo(cards[index], { y: () => viewport.clientHeight + 24 }, { y: () => index * peek(), duration: 1, ease: 'none', immediateRender: false }, start);
+          const start = 1.5 + (index - 1) * 1.9;
+          arrivals.push(start + .45);
+          activationTimes.push(start + .55);
+          timeline.fromTo(cards[index], { y: () => viewport.clientHeight + 24 }, { y: () => index * peek(), duration: .8, ease: 'none', immediateRender: false }, start);
           cards.slice(0, index).forEach((card, older) => timeline.fromTo(card,
             { scale: Math.max(.78, 1 - (index - older - 1) * .04) },
-            { scale: Math.max(.78, 1 - (index - older) * .04), duration: 1, ease: 'none', immediateRender: false }, start));
-          timeline.addLabel(`card-${index}`, start + 1);
+            { scale: Math.max(.78, 1 - (index - older) * .04), duration: .8, ease: 'none', immediateRender: false }, start));
+          timeline.addLabel(`card-${index}`, start + 1.75);
         }
-        timeline.to({}, { duration: .35 });
+        cards.forEach((card, index) => {
+          timeline.add(createCardStory(gsap, card, card.dataset.solution!), arrivals[index]);
+        });
+        timeline.to({}, { duration: .25 });
+        timeline.addLabel('card-0', 1.35);
+        cards.forEach((card, index) => { card.dataset.stackProgress = String(timeline.labels[`card-${index}`] / timeline.duration()); });
         cards[0].dataset.active = 'true';
         const revealFocus = (event: FocusEvent) => {
           const card = (event.target as HTMLElement).closest<HTMLElement>('[data-glass-card]');
@@ -101,31 +116,30 @@ export function StackedCards({ items, stageRef }: { items: GlassCardData[]; stag
         return () => {
           stage.removeEventListener('focusin', revealFocus);
           viewport.scrollTop = 0;
-          cards.forEach(card => { card.style.removeProperty('transform'); delete card.dataset.active; });
+          cards.forEach(card => { card.style.removeProperty('transform'); delete card.dataset.active; delete card.dataset.stackProgress; });
           stage.style.removeProperty('--chapter-height');
           stage.style.removeProperty('--stack-offset');
           delete stage.dataset.scrollCards;
+          delete stage.dataset.stackStart; delete stage.dataset.stackEnd;
           delete viewport.dataset.stacked;
         };
       }, stage);
       scheduleScrollRefresh(ScrollTrigger);
     }).catch(error => { revert(); recordMotion('glassCards', 'initialization-error', motionError(error)); });
     return () => { disposed = true; revert(); };
-  }, [items.length, lenis, presenting, stageRef]);
+  }, [items.length, contentKey, lenis, presenting, reduced, stageRef]);
 
-  return <div ref={viewportRef} className={styles.viewport} data-ecosystem-viewport>
+  return <div ref={viewportRef} className={styles.viewport} data-ecosystem-viewport data-stack-reduced={reduced}>
     <div className={styles.stack} data-ecosystem-track>
       {items.map((item, index) => <article tabIndex={0} aria-label={item.title} key={item.id} data-glass-card data-glass-dark={Boolean(item.ink) || undefined} data-solution={item.id} className={styles.card} style={{ '--glass-color': item.color, '--glass-ink': item.ink ?? '#19171c', '--glass-order': index } as CSSProperties}>
-        <div className={styles.border} aria-hidden="true" />
         <div className={styles.surface}>
-          <div className={styles.reflection} aria-hidden="true" />
-          <div className={styles.shine} aria-hidden="true" />
-          <div className={styles.texture} aria-hidden="true" />
           <div className={styles.content} data-glass-copy>
-            <div className={styles.metadata}><span>{item.category}</span><span className={styles.badge}>{item.badge}</span></div>
-            <h3 data-heading-static>{item.title}</h3>
-            <p>{item.description}</p>
-            {item.children && <div className={styles.details}>{item.children}</div>}
+            <div className={styles.intro} data-card-intro>
+              {item.badge && <span className={styles.badge} data-card-reveal>{item.badge}</span>}
+              <h3 data-heading-static aria-label={item.title}>{item.title.split(' ').map((word, wordIndex) => <span key={wordIndex} className={styles.titleWord} aria-hidden="true"><span data-card-reveal>{word}</span>{' '}</span>)}</h3>
+              <p data-card-reveal>{item.description}</p>
+            </div>
+            {item.children && <div className={styles.details} data-card-visual>{item.children}</div>}
           </div>
         </div>
       </article>)}

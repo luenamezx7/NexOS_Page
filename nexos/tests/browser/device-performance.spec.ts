@@ -1,3 +1,4 @@
+import { dismissPresentation } from './helpers/presentation';
 import { expect, test } from '@playwright/test';
 
 async function enter(page: import('@playwright/test').Page) {
@@ -5,7 +6,7 @@ async function enter(page: import('@playwright/test').Page) {
   await page.goto('/');
   const intro = page.locator('dialog[data-presentation]');
   await expect(intro).toBeVisible();
-  await intro.getByRole('button', { name: 'Pular apresentação' }).click();
+  await dismissPresentation(page);
   await expect(intro).toHaveCount(0);
 }
 

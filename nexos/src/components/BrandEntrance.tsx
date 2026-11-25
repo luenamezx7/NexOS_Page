@@ -3,7 +3,11 @@
 import { motionMedia } from '@/lib/motion-policy';
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { BrandWordmark } from './BrandWordmark';
+import { GlassIconReveal } from './ui/liquid-glass-logo-reveal';
+import { presentationBootstrap } from './ui/presentation-bootstrap.generated';
+import { startPresentationRuntime } from './ui/presentation-runtime';
+import { mascotRevealArtwork } from './ui/mascot-reveal-artwork';
+import { SilkBackground } from './auth/SilkBackground';
 import { useScrollContext } from './SmoothScrollProvider';
 import styles from './BrandEntrance.module.css';
 import { useLocale } from '@/lib/locale';
@@ -11,16 +15,16 @@ import { recordMotion } from '@/lib/motion-diagnostics';
 
 interface BrandEntranceProps {
   onComplete: (entered: boolean) => void;
+  nonce?: string;
 }
 
 /** Server-rendered cover prevents the hero flashing before the opening fade. */
-export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
+export default function BrandEntrance({ onComplete, nonce }: BrandEntranceProps) {
   const { t } = useLocale();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const exitRef = useRef<(() => void) | null>(null);
   const completeRef = useRef<(() => void) | null>(null);
   const [phase, setPhase] = useState<'pending' | 'entering' | 'leaving'>('pending');
-  const progressRef = useRef<HTMLSpanElement>(null);
   const { lenis } = useScrollContext();
 
   useLayoutEffect(() => {
@@ -31,22 +35,22 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
       onComplete(true);
       return;
     }
+    const runtime = startPresentationRuntime(dialog);
     let disposed = false;
     let completed = false;
     let leaving = false;
     let started = false;
     let frame = 0;
-    let progressFrame = 0;
     const timers = new Set<ReturnType<typeof setTimeout>>();
     const computed = getComputedStyle(dialog);
-    // The CSS compiler may normalize 1850ms to 1.85s. Preserve the unit.
+    // The CSS compiler may normalize milliseconds to seconds. Preserve the unit.
     const durationInMs = (property: string, fallback: number) => {
       const value = computed.getPropertyValue(property).trim();
       const amount = parseFloat(value);
       if (!Number.isFinite(amount) || amount <= 0) return fallback;
       return value.endsWith('ms') ? amount : value.endsWith('s') ? amount * 1000 : fallback;
     };
-    const duration = durationInMs('--entry-duration', 1850);
+    const duration = durationInMs('--entry-duration', 5000);
     const exitDuration = durationInMs('--exit-duration', 1100);
     const htmlOverflow = document.documentElement.style.overflow;
     const bodyOverflow = document.body.style.overflow;
@@ -68,8 +72,6 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
       if (disposed || completed || leaving) return;
       leaving = true;
       recordMotion('presentation', 'leaving');
-      cancelAnimationFrame(progressFrame);
-      if (progressRef.current) { progressRef.current.textContent = "100%"; progressRef.current.setAttribute("aria-valuenow", "100"); }
       later(complete, exitDuration + 500);
       // Give the hero two paints to settle before the opaque cover starts fading.
       dialog.dataset.revealing = 'true';
@@ -82,30 +84,20 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
         });
       });
     };
+    let entryTimer: ReturnType<typeof setTimeout> | undefined;
+    const scheduleEnd = () => {
+      if (entryTimer) { clearTimeout(entryTimer); timers.delete(entryTimer); }
+      entryTimer = later(beginExit, Math.max(0, duration - (runtime ? performance.now() - runtime.startedAt : 0)));
+    };
+    dialog.addEventListener('nexos-presentation-ready', scheduleEnd);
     const start = () => {
       if (disposed || completed || leaving || started) return;
       started = true;
       setPhase('entering');
       recordMotion('presentation', 'entering', `effectiveMotion=full; durationMs=${duration}`);
-      // Wall-clock timing must not stretch the opening on a slow CPU. Update only
-      // the counter node, rather than rerendering the wordmark once per frame.
-      let firstFrame: number | null = null;
-      let previousPercent = -1;
-      const tick = (now: number) => {
-        if (disposed || leaving) return;
-        firstFrame ??= now;
-        const elapsed = now - firstFrame;
-        if (elapsed >= duration) { beginExit(); return; }
-        const percent = Math.min(99, Math.floor(elapsed / duration * 100));
-        if (percent !== previousPercent && progressRef.current) {
-          progressRef.current.textContent = `${percent}%`;
-          progressRef.current.setAttribute('aria-valuenow', String(percent));
-          previousPercent = percent;
-        }
-        progressFrame = requestAnimationFrame(tick);
-      };
-      later(beginExit, duration + 300);
-      progressFrame = requestAnimationFrame(tick);
+      // Preserve the existing wall-clock deadline, independently of GPU readiness.
+      scheduleEnd();
+
     };
 
     exitRef.current = beginExit;
@@ -125,10 +117,13 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
     return () => {
       disposed = true;
       cancelAnimationFrame(frame);
-      cancelAnimationFrame(progressFrame);
       timers.forEach(clearTimeout);
+      dialog.removeEventListener('nexos-presentation-ready', scheduleEnd);
       exitRef.current = null;
       completeRef.current = null;
+      // Strict Mode replays effects while retaining the same DOM. Keep that
+      // running renderer; dispose only when the dialog actually leaves the tree.
+      queueMicrotask(() => { if (!dialog.isConnected) runtime?.dispose(); });
       dialog.close();
       document.documentElement.style.overflow = htmlOverflow;
       document.body.style.overflow = bodyOverflow;
@@ -150,6 +145,7 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
       open
       tabIndex={-1}
       data-presentation
+      suppressHydrationWarning
       data-phase={phase}
       data-lenis-prevent
        aria-label={t('Apresentação ezway')}
@@ -159,13 +155,15 @@ export default function BrandEntrance({ onComplete }: BrandEntranceProps) {
         if (phase === 'leaving' && event.target === event.currentTarget && event.propertyName === 'opacity') completeRef.current?.();
       }}
     >
+      <SilkBackground />
+      <div className={styles.shade} aria-hidden="true" />
       <div className={styles.stage}>
         <div className={styles.frame}>
-          <BrandWordmark animated />
-          <span ref={progressRef} className={styles.progressNumber} role="progressbar" aria-label={t('Preparando a página')} aria-valuemin={0} aria-valuemax={100} aria-valuenow={0} data-presentation-percentage data-presentation-progress>0%</span>
+          <GlassIconReveal logo="/logo-ghost.svg" fallbackMarkup={mascotRevealArtwork} cutoutLightDetails label={t('Mascote ezway')} className={styles.reveal} />
         </div>
       </div>
-       <button type="button" className={styles.skip} onClick={() => exitRef.current?.()}>{t('Pular apresentação')} <span aria-hidden="true">↗</span></button>
     </dialog>
+    {/* Parser-time startup is intentional: the same engines are adopted by React. */}
+    <script nonce={nonce} dangerouslySetInnerHTML={{ __html: presentationBootstrap }} />
   </>;
 }

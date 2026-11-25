@@ -1,0 +1,33 @@
+.marquee {
+  position: relative;
+  isolation: isolate;
+  height: 260px;
+  overflow: clip;
+  background: #000;
+}
+
+.visual { position: absolute; inset: 0; }
+
+.staticLogos::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, #000, transparent 25%, transparent 75%, #000),
+    linear-gradient(90deg, #000, transparent 18%, transparent 82%, #000);
+}
+
+.staticLogos {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(24px, 6vw, 80px);
+  height: 100%;
+}
+.staticLogos img { width: 76px; height: 76px; object-fit: contain; }
+
+@media (max-width: 767px) {
+  .marquee { height: 180px; }
+  .staticLogos img { width: 48px; height: 48px; }
+}

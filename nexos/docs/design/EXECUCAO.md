@@ -2,6 +2,26 @@
 
 Plano: [documento mestre](./PLANO-MESTRE-REFATORACAO-DESIGN.md).
 
+## Alinhamento da home e fundo do MacBook — 21/11/2026
+
+- Removido o bloco de abas da placa: “Como funciona”, “Sua marca” e “Para seu espaço”, com seus respectivos textos.
+- Retirada a centralização global de títulos e parágrafos. A abertura da placa acompanha o centro da vitrine; atendimento, sobre, FAQ e contato seguem o eixo de leitura à esquerda, com ações e textos relacionados no mesmo alinhamento.
+- Fundo do MacBook com rosa `#ff3f9f` do wordmark e variações do mesmo matiz. WebGL com antialias, resolução até DPR 2, orçamento de pixels limitado e malha mais fina para suavizar bordas e facetas.
+- Cinco testes existentes aprovados no Chrome: transições reversíveis do MacBook em 390/1366 px e responsividade em PT/EN/ES. Revisão geométrica de cinco seções em 320/390/768/1440 px sem overflow, com capturas inspecionadas em celular e desktop. Canvas retina confirmado em 2796 × 1800 para área CSS de 1398 × 900, antialias ativo.
+- Lint dos arquivos TypeScript alterados, tipos e build aprovados. O build reportou aviso de compactação de cache e o fallback de Google Sans já conhecido. Alterações locais, sem novo deploy.
+
+## Portal Silk, código por e-mail e templates — 21/11/2026
+
+- Implementação local autorizada, sem novo deploy. Login final com apenas um painel centralizado; logotipo e mascote dentro dele. Removidos o painel lateral e os elementos externos de navegação/rodapé do acesso do cliente.
+- Shader Silk WebGL1 com os uniforms fornecidos, DPR até 2, resize, pausa em aba oculta, fallback e recuperação de contexto. Corrigidos somente os dois erros de transcrição do GLSL. Conta e segurança usam a mesma moldura e o vidro claro esverdeado.
+- Componente OTP em `src/components/ui`, com colagem, autofill, teclado, feedback animado e movimento reduzido. Substitui o link mágico no login; o código é validado pelo Better Auth no servidor, com HMAC no armazenamento, dez minutos, cinco tentativas, uso único, CAPTCHA de envio, limites de requisição e MFA preservado. Nenhum serviço novo nem migração.
+- E-mails de acesso, confirmação, recuperação, boas-vindas e notificações compartilham `src/emails/layout.tsx`. O banner futuro é opcional e centralizado em `EMAIL_BRAND.banner`, sem placeholder quando ausente.
+- Redefinição de senha atualizada para o mesmo painel centralizado, Silk e vidro claro, incluindo sucesso, link ausente e erro de expiração. Composição compartilhada em `CustomerAuthPanel.tsx`. Nova rodada: 13 testes de recuperação/regressão aprovados no Chrome, de 320 a 1440 px; build, tipos e lint dos arquivos alterados aprovados.
+- Build e tipos aprovados. Lint dos arquivos alterados aprovado; lint global anterior com zero erros e nove avisos preexistentes. Segurança 9/9 e unidades 7/7. Servidor: 17 regressões e três cenários novos de OTP aprovados entre as rodadas, em schema isolado removido ao final.
+- Chrome: 36 cenários distintos do portal/login aprovados entre as rodadas, mais seis de código por e-mail e dois de recuperação/MFA. Teste autenticado local aprovado em 390, 820, 1440 e 1920 px, incluindo edição/cancelamento, carregamento/erro e logout; conta temporária removida. Perfil e envio de e-mail das fixtures não usam dados reais.
+- Templates: seis testes de renderização aprovados, com dez capturas em 320/600 px sem overflow. Não houve disparo de mensagens para usuários reais nem teste de entrega em caixa postal.
+- Limitação: WebKit instalado estava incompleto; a tentativa de reinstalação encontrou restrição de espaço e não concluiu. Safari/iPhone físico não foi homologado. Builds terminaram com sucesso, mas a gravação da cache Turbopack em disco reportou falta de espaço; aviso preexistente de fallback de Google Sans permanece.
+
 ## Retomada e publicação autorizada — 20–21/11/2026
 
 - O usuário autorizou concluir a validação e publicar. A base é `41281a4`, com novo login, navegação direta e redirecionamentos das quatro páginas de serviços para a home.

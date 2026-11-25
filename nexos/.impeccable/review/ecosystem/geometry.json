@@ -1,0 +1,534 @@
+[
+  {
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "id": "site",
+    "active": "true",
+    "card": {
+      "x": 235,
+      "y": 280.796875,
+      "width": 960,
+      "height": 659
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "id": "menu",
+    "active": "true",
+    "card": {
+      "x": 235,
+      "y": 286.796875,
+      "width": 960,
+      "height": 659
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "id": "nfc",
+    "active": "true",
+    "card": {
+      "x": 235,
+      "y": 292.796875,
+      "width": 960,
+      "height": 659
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "id": "portfolio",
+    "active": "true",
+    "card": {
+      "x": 235,
+      "y": 298.796875,
+      "width": 960,
+      "height": 659
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "id": "landing",
+    "active": "true",
+    "card": {
+      "x": 235,
+      "y": 304.796875,
+      "width": 960,
+      "height": 659
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "id": "easychat",
+    "active": "true",
+    "card": {
+      "x": 235,
+      "y": 310.796875,
+      "width": 960,
+      "height": 659
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "id": "suporte",
+    "active": "true",
+    "card": {
+      "x": 235,
+      "y": 316.796875,
+      "width": 960,
+      "height": 659
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "id": "site",
+    "active": "true",
+    "card": {
+      "x": 16,
+      "y": 232.875,
+      "width": 358,
+      "height": 551
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "id": "menu",
+    "active": "true",
+    "card": {
+      "x": 16,
+      "y": 238.875,
+      "width": 358,
+      "height": 551
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "id": "nfc",
+    "active": "true",
+    "card": {
+      "x": 16,
+      "y": 244.875,
+      "width": 358,
+      "height": 551
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "id": "portfolio",
+    "active": "true",
+    "card": {
+      "x": 16,
+      "y": 250.875,
+      "width": 358,
+      "height": 551
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "id": "landing",
+    "active": "true",
+    "card": {
+      "x": 16,
+      "y": 256.875,
+      "width": 358,
+      "height": 551
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "id": "easychat",
+    "active": "true",
+    "card": {
+      "x": 16,
+      "y": 262.875,
+      "width": 358,
+      "height": 551
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "id": "suporte",
+    "active": "true",
+    "card": {
+      "x": 16,
+      "y": 268.875,
+      "width": 358,
+      "height": 551
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 320,
+      "height": 568
+    },
+    "id": "site",
+    "active": "true",
+    "card": {
+      "x": 16,
+      "y": 173.015625,
+      "width": 288,
+      "height": 335
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 320,
+      "height": 568
+    },
+    "id": "menu",
+    "active": "true",
+    "card": {
+      "x": 16,
+      "y": 179.015625,
+      "width": 288,
+      "height": 335
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 320,
+      "height": 568
+    },
+    "id": "nfc",
+    "active": "true",
+    "card": {
+      "x": 16,
+      "y": 185.015625,
+      "width": 288,
+      "height": 335
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 320,
+      "height": 568
+    },
+    "id": "portfolio",
+    "active": "true",
+    "card": {
+      "x": 16,
+      "y": 191.015625,
+      "width": 288,
+      "height": 335
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 320,
+      "height": 568
+    },
+    "id": "landing",
+    "active": "true",
+    "card": {
+      "x": 16,
+      "y": 197.015625,
+      "width": 288,
+      "height": 335
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 320,
+      "height": 568
+    },
+    "id": "easychat",
+    "active": "true",
+    "card": {
+      "x": 16,
+      "y": 203.015625,
+      "width": 288,
+      "height": 335
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 320,
+      "height": 568
+    },
+    "id": "suporte",
+    "active": "true",
+    "card": {
+      "x": 16,
+      "y": 209.015625,
+      "width": 288,
+      "height": 335
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 844,
+      "height": 390
+    },
+    "id": "site",
+    "active": "true",
+    "card": {
+      "x": 24,
+      "y": 150.546875,
+      "width": 786,
+      "height": 189.1875
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 844,
+      "height": 390
+    },
+    "id": "menu",
+    "active": "true",
+    "card": {
+      "x": 24,
+      "y": 154.8468780517578,
+      "width": 786,
+      "height": 189.18748474121094
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 844,
+      "height": 390
+    },
+    "id": "nfc",
+    "active": "true",
+    "card": {
+      "x": 24,
+      "y": 159.14688110351562,
+      "width": 786,
+      "height": 189.1875
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 844,
+      "height": 390
+    },
+    "id": "portfolio",
+    "active": "true",
+    "card": {
+      "x": 24,
+      "y": 163.44686889648438,
+      "width": 786,
+      "height": 189.1875
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 844,
+      "height": 390
+    },
+    "id": "landing",
+    "active": "true",
+    "card": {
+      "x": 24,
+      "y": 167.7468719482422,
+      "width": 786,
+      "height": 189.18751525878906
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 844,
+      "height": 390
+    },
+    "id": "easychat",
+    "active": "true",
+    "card": {
+      "x": 24,
+      "y": 172.046875,
+      "width": 786,
+      "height": 189.1875
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 844,
+      "height": 390
+    },
+    "id": "suporte",
+    "active": "true",
+    "card": {
+      "x": 24,
+      "y": 176.3468780517578,
+      "width": 786,
+      "height": 189.18748474121094
+    },
+    "introInside": true,
+    "visualInside": true,
+    "overflow": false,
+    "animations": 0,
+    "errors": []
+  }
+]

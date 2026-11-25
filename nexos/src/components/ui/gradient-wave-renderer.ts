@@ -23,6 +23,7 @@ export class Gradient {
   private count = 0;
   private width = 0;
   private height = 0;
+  private pixelRatio = 0;
   private time = 0;
   private last = 0;
   private drawnAt = 0;
@@ -32,7 +33,7 @@ export class Gradient {
   private fps: number;
 
   constructor(private canvas: HTMLCanvasElement, options: WaveOptions, private lowPower: boolean) {
-    const gl = canvas.getContext('webgl', { antialias: false, alpha: false, depth: false, powerPreference: 'low-power' });
+    const gl = canvas.getContext('webgl', { antialias: true, alpha: false, depth: false, powerPreference: 'low-power' });
     if (!gl) throw new Error('WebGL unavailable');
     this.gl = gl;
     this.fps = lowPower ? 24 : 30;
@@ -104,18 +105,21 @@ export class Gradient {
   resize(width: number, height: number) {
     const w = Math.max(1, Math.round(width));
     const h = Math.max(1, Math.round(height));
-    if (w === this.width && h === this.height) return;
-    this.width = w; this.height = h;
-    // A soft background does not need retina resolution or a full-screen multi-pass effect.
-    const scale = Math.min(1, Math.sqrt((this.lowPower ? 450000 : 900000) / (w * h)));
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    if (w === this.width && h === this.height && dpr === this.pixelRatio) return;
+    this.width = w; this.height = h; this.pixelRatio = dpr;
+    // Keep curved edges sharp on retina displays, with a bounded pixel budget.
+    const maxSize = this.gl.getParameter(this.gl.MAX_RENDERBUFFER_SIZE) as number;
+    const scale = Math.min(dpr, Math.sqrt((this.lowPower ? 4000000 : 8000000) / (w * h)), maxSize / w, maxSize / h);
     this.canvas.width = Math.max(1, Math.round(w * scale));
     this.canvas.height = Math.max(1, Math.round(h * scale));
     const gl = this.gl;
     gl.viewport(0, 0, this.canvas.width, this.canvas.height);
     gl.useProgram(this.program);
     gl.uniform2f(this.uniform('u_resolution'), w, h);
-    const xs = Math.min(40, Math.max(12, Math.ceil(w * .02)));
-    const ys = Math.min(52, Math.max(16, Math.ceil(h * .05)));
+    // A finer mesh prevents visible triangular facets in the color waves.
+    const xs = Math.min(160, Math.max(32, Math.ceil(w / 12)));
+    const ys = Math.min(128, Math.max(32, Math.ceil(h / 12)));
     const points = new Float32Array((xs + 1) * (ys + 1) * 2);
     const indices = new Uint16Array(xs * ys * 6);
     for (let y = 0; y <= ys; y++) {

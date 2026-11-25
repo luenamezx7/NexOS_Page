@@ -4,84 +4,12 @@
 .lead { max-width: 60ch; margin: 24px auto 0; color: #59525d; font-size: 18px; line-height: 1.65; text-align: center; }
 .detail { display: grid; gap: 12px; padding: 12px 0; }
 .note { max-width: 72ch; margin: 32px auto 24px; text-align: center; font-size: 15px; line-height: 1.65; color: #59525d; }
-.stage { --chapter-height: calc(100svh - 320px); }
+.stage { --solution-card-width: 960px; --chapter-height: calc(100svh - 320px); }
 .stage[data-scroll-cards='true'] { padding-block: 8px 16px; }
 @media (max-width: 767px) { .section { padding-inline: 16px; } .lead { font-size: 16px; } .stage[data-scroll-cards='true'] > h2 { margin-top: 0; font-size: 32px; } .stage[data-scroll-cards='true'] .lead { margin-top: 12px; line-height: 1.5; } }
 @media (max-height: 600px) and (orientation: landscape) { .stage[data-scroll-cards='true'] { padding-block: 0 8px; } .stage[data-scroll-cards='true'] > h2 { margin: 0; font-size: 26px; } .stage[data-scroll-cards='true'] .lead { margin-top: 8px; font-size: 12px; line-height: 1.3; } }
-
-.browserScene, .phoneScene, .productScene, .supportScene {
-  position: relative;
-  min-width: 0;
-  width: 100%;
-  height: 100%;
-  min-height: 150px;
-}
-.browserScene { display: grid; align-items: center; padding: 12px 0 4px; perspective: 1000px; }
-.browser { width: 100%; border: 1px solid #19171c33; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 20px 36px -22px #25142575; transform: rotateX(3deg); }
-.browserBar { display: flex; align-items: center; gap: 5px; height: 28px; padding: 0 10px; background: #fff; color: #57505a; font-size: 10px; line-height: 1; }
-.browserBar i { width: 5px; height: 5px; border-radius: 50%; background: #c6c0c9; }
-.browserBar span { margin-inline: auto; padding-right: 25px; }
-.browserImage { position: relative; width: 100%; aspect-ratio: 1.8; max-height: 250px; }
-.browserImage img { object-fit: cover; object-position: top; }
-
-.phoneScene { display: flex; justify-content: center; overflow: hidden; padding-top: 4px; }
-.phoneScene .phone { flex: none; width: min(61%, 210px); --color-ink: #fff; --color-canvas: #19171c; --surface-raised: #242026; --surface-inset: #121014; }
-.phoneScreen { min-height: 100%; padding: 30px 16px 12px; background: #f8f6f2; color: #252128; font: 12px/1.5 var(--font-sans); text-align: start; }
-.phoneHeader { display: grid; gap: 2px; padding: 8px 0; font-size: 17px; font-weight: 700; border-bottom: 1px solid #25212818; }
-.phoneHeader > span { font-size: 9px; font-weight: 500; }
-.menuPhoto { position: relative; height: 100px; margin: 12px 0; overflow: hidden; border-radius: 6px; }
-.menuPhoto img { object-fit: cover; }
-.menuScreen > strong { display: block; margin-block: 12px 4px; }
-.menuRow { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #25212820; }
-.messages { display: grid; gap: 10px; padding-top: 14px; }
-.messages p { padding: 9px; border-radius: 9px 9px 9px 0; background: #fff; font-size: 11px; line-height: 1.5; }
-.messages p:first-child { margin-left: 10px; border-radius: 9px 9px 0; background: #e1edce; }
-.file { display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 8px; background: #fff; font-size: 10px; }
-.file svg { flex: none; }
-.file small { display: block; margin-top: 4px; font-size: 9px; }
-
-.productScene { display: grid; place-items: center; padding-bottom: 24px; }
-.plate { object-fit: contain; padding: 0 8% 30px; filter: drop-shadow(0 15px 16px #0008); }
-.scan { position: absolute; inset: auto auto 0; display: flex; align-items: center; gap: 8px; color: #ece8ed; font-size: 12px; }
-
-.supportScene { display: flex; flex-direction: column; justify-content: center; gap: 20px; max-width: 320px; margin: auto; text-align: start; }
-.team { display: flex; gap: 12px; align-items: center; padding-bottom: 16px; border-bottom: 1px solid #19171c30; }
-.team > span { font-weight: 700; font-size: 20px; }
-.team strong { display: block; font-size: 12px; font-weight: 500; }
-.process { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
-.process li { display: flex; align-items: center; gap: 12px; font-size: 14px; }
-.process li > span { display: grid; place-items: center; width: 26px; height: 26px; border: 1px solid #19171c40; border-radius: 50%; }
-@media (prefers-reduced-motion: no-preference) {
-  :global([data-glass-card][data-active='true']) :is(.browser, .phone, .plate, .supportScene) {
-    animation: preview-arrive 500ms cubic-bezier(.22, 1, .36, 1) both;
-  }
-}
-@keyframes preview-arrive { from { opacity: .55; translate: 0 12px; } to { opacity: 1; translate: 0 0; } }
-@media (max-height: 700px) {
-  .browserScene, .phoneScene, .productScene, .supportScene { min-height: 90px; }
-  .supportScene { gap: 10px; }
-  .team { padding-bottom: 8px; }
-  .process { gap: 6px; }
-}
-@media (max-height: 450px) and (orientation: landscape) {
-  .browserBar { height: 20px; }
-  .browserImage { max-height: 100px; }
-  .process { gap: 3px; }
-  .process li { font-size: 11px; }
-  .process li > span { width: 18px; height: 18px; }
-  .team { display: none; }
-}
-
-.browserScene { align-items: start; padding-top: 8px; }
-.browserImage { aspect-ratio: 1.45; max-height: 320px; }
-.browserCopy { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 12px; padding: 20px; background: linear-gradient(90deg, #080a0cd9, #080a0c22); color: #fff; text-align: start; }
-.browserCopy > span { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; }
-.browserCopy strong { max-width: 12ch; font-size: clamp(21px, 2.5vw, 30px); line-height: 1.1; font-weight: 600; letter-spacing: -.03em; }
-@media (max-height: 700px) {
-  .browserImage { aspect-ratio: 1.8; max-height: 210px; }
-}
-@media (max-height: 450px) and (orientation: landscape) {
-  .browserImage { max-height: 100px; }
-  .browserCopy { padding: 10px; gap: 6px; }
-  .browserCopy strong { font-size: 17px; }
+/* On short pinned screens the summary yields space to the actual service
+   demonstrations, while remaining available in the reading order. */
+@media (max-height: 650px) {
+  .stage[data-scroll-cards='true'] .lead { position: absolute; width: 1px; height: 1px; padding: 0; margin: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 }

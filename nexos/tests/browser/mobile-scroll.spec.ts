@@ -1,3 +1,4 @@
+import { dismissPresentation } from './helpers/presentation';
 import { expect, test } from '@playwright/test';
 
 test('mobile sections remain readable with lightweight blur and scroll animations', async ({ page }) => {
@@ -9,7 +10,7 @@ test('mobile sections remain readable with lightweight blur and scroll animation
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('/');
-  await page.getByRole('button', { name: /Pular apresentação/ }).click();
+  await dismissPresentation(page);
   await expect(page.locator('[data-presentation]')).toHaveCount(0);
 
   for (const id of ['showcase', 'services', 'plate-management', 'easychat', 'delivery-process', 'plans', 'contact', 'cta-final']) {

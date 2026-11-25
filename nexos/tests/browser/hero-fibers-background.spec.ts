@@ -1,3 +1,4 @@
+import { dismissPresentation } from './helpers/presentation';
 import { expect, test } from '@playwright/test';
 
 test.use({ channel: process.env.PLAYWRIGHT_CHANNEL || undefined });
@@ -9,7 +10,7 @@ for (const theme of ['light', 'dark']) {
       await page.addInitScript(theme => localStorage.setItem('nexos-theme', theme), theme);
       await page.goto('/');
       const intro = page.locator('dialog[data-presentation]');
-      if (await intro.isVisible()) await intro.getByRole('button', { name: 'Pular apresentação' }).click();
+      if (await intro.isVisible()) await dismissPresentation(page);
       await expect(intro).toHaveCount(0);
       const hero = page.locator('#hero');
       await expect(hero.locator('.hero-gradient-blend')).toHaveCount(0);
@@ -36,7 +37,7 @@ test('reduced motion keeps the fibers static without restoring the gradient', as
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
   const intro = page.locator('dialog[data-presentation]');
-  if (await intro.isVisible()) await intro.getByRole('button', { name: 'Pular apresentação' }).click();
+  if (await intro.isVisible()) await dismissPresentation(page);
   await expect(intro).toHaveCount(0);
   await expect(page.locator('#hero .hero-fibers canvas')).toBeVisible();
   await expect(page.locator('#hero .hero-gradient-blend')).toHaveCount(0);

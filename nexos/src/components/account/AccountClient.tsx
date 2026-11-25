@@ -36,6 +36,7 @@ import { LogoutButton } from '@/components/LogoutButton';
 import { PageFooter, PageHeader } from '@/components/PageChrome';
 import { updateProfileAction } from '@/lib/account/actions';
 import styles from './AccountClient.module.css';
+import { ClientPortalSurface } from '@/components/auth/ClientPortalSurface';
 
 interface Profile {
   email: string;
@@ -58,16 +59,16 @@ function formatDateTime(date: string | null) {
 }
 
 function AccountShell({ children, email, loading = false }: { children?: ReactNode; email?: string; loading?: boolean }) {
-  return <div className={`interior-page ${styles.shell}`}>
+  return <ClientPortalSurface><div className={`interior-page ${styles.shell}`}>
     <PageHeader accountOnly>{email && <><span className="page-session-email">{email}</span><LogoutButton /></>}</PageHeader>
     <main className={`page-container account-content ${styles.content}`} id="main-content">
-      <div className={`page-intro ${styles.intro}`}><p className="page-kicker">ezway / Área do cliente</p><h1 className="page-title">Minha conta</h1><p>Seu espaço para cuidar dos seus dados e do acesso à ezway.</p></div>
-      <SkeletonReveal loading={loading} skeleton={<Card className={styles.card} role="status" aria-label="Carregando sua conta"><CardHeader><Skeleton className="h-6 w-40" /><Skeleton className="h-4 w-64 max-w-full" /></CardHeader><CardContent className="flex flex-col gap-4"><Skeleton className="h-12 w-full" /><Skeleton className="h-12 w-full" /><span className="sr-only">Carregando sua conta…</span></CardContent></Card>}>
+      <div className={`page-intro ${styles.intro}`}><h1 className="page-title">Minha conta</h1><p>Seu espaço para cuidar dos seus dados e do acesso à ezway.</p></div>
+      <SkeletonReveal loading={loading} skeleton={<Card data-portal-glass className={styles.card} role="status" aria-label="Carregando sua conta"><CardHeader><Skeleton className="h-6 w-40" /><Skeleton className="h-4 w-64 max-w-full" /></CardHeader><CardContent className="flex flex-col gap-4"><Skeleton className="h-12 w-full" /><Skeleton className="h-12 w-full" /><span className="sr-only">Carregando sua conta…</span></CardContent></Card>}>
         {children}
       </SkeletonReveal>
     </main>
     <PageFooter />
-  </div>;
+  </div></ClientPortalSurface>;
 }
 
 export default function ContaPage() {
@@ -126,9 +127,9 @@ export default function ContaPage() {
     <AccountShell email={profile.email}>
       <div className={styles.grid}>
         <section aria-labelledby="profile-title" className={styles.profile}>
-          <Card className={styles.card}>
+          <Card data-portal-glass className={styles.card}>
             <CardHeader className={styles.cardHead}>
-              <div><p className={styles.eyebrow}>01 / Pessoal</p><CardTitle id="profile-title">Seu perfil</CardTitle><CardDescription>Informações para identificar e contatar você.</CardDescription></div>
+              <div><CardTitle id="profile-title">Seu perfil</CardTitle><CardDescription>Informações para identificar e contatar você.</CardDescription></div>
               <Button variant="secondary" size="sm" onClick={() => { setEditingProfile(!editingProfile); setSaveError(''); }}><Pencil data-icon="inline-start" aria-hidden="true" />{editingProfile ? 'Cancelar' : 'Editar'}</Button>
             </CardHeader>
             <CardContent>
@@ -148,8 +149,8 @@ export default function ContaPage() {
           </Card>
         </section>
         <section aria-labelledby="security-title" className={styles.security}>
-          <Card className={styles.card}>
-            <CardHeader><p className={styles.eyebrow}>02 / Proteção</p><CardTitle id="security-title">Segurança</CardTitle><CardDescription>O essencial sobre o acesso à sua conta.</CardDescription></CardHeader>
+          <Card data-portal-glass className={styles.card}>
+            <CardHeader><CardTitle id="security-title">Segurança</CardTitle><CardDescription>O essencial sobre o acesso à sua conta.</CardDescription></CardHeader>
             <CardContent className={styles.securityContent}>
               <div className={styles.statusRow}><ShieldCheck aria-hidden="true" /><div><strong>E-mail {profile.emailConfirmed ? 'confirmado' : 'não confirmado'}</strong><p>{profile.emailConfirmed ? 'Seu endereço foi verificado.' : 'Confirme seu endereço para proteger sua conta.'}</p></div>{profile.emailConfirmed && <Check aria-hidden="true" />}</div>
               <div className={styles.statusRow}><KeyRound aria-hidden="true" /><div><strong>Verificação em duas etapas</strong><p>{profile.twoFactorEnabled ? 'Ativa' : 'Ainda não configurada'}</p></div></div>
@@ -159,8 +160,8 @@ export default function ContaPage() {
           </Card>
         </section>
         <section aria-labelledby="privacy-title" className={styles.privacy}>
-          <Card className={styles.card}>
-            <CardHeader><p className={styles.eyebrow}>03 / Transparência</p><CardTitle id="privacy-title">Privacidade e seus dados</CardTitle><CardDescription>Você mantém o controle das suas informações.</CardDescription></CardHeader>
+          <Card data-portal-glass className={styles.card}>
+            <CardHeader><CardTitle id="privacy-title">Privacidade e seus dados</CardTitle><CardDescription>Você mantém o controle das suas informações.</CardDescription></CardHeader>
             <CardContent className={styles.privacyContent}><p>Consulte seus dados, solicite uma correção, portabilidade ou exclusão conforme a LGPD. Suas informações são protegidas e acessíveis apenas à equipe autorizada.</p><Link href="/privacidade">Conhecer nossa política de privacidade <span aria-hidden="true">↗</span></Link></CardContent>
           </Card>
         </section>

@@ -15,7 +15,8 @@ import { motionError, recordMotion } from '@/lib/motion-diagnostics';
 import siteArtwork from '../../design-/rebrand-nexos/nfcs/CONTEXT-AI-VIDEOS/imgg1.png';
 import styles from './DigitalSolutions.module.css';
 
-const waveColors = ['#f8f8fa', '#ffe2f1', '#d1c5f1', '#ffaad8'] as const;
+// Pink from BrandMark's way, with lighter and deeper tones of the same hue.
+const waveColors = ['#ff3f9f', '#ffb8db', '#e92387', '#ff70b7'] as const;
 
 const examples = [
   { id: 'menu', title: 'Cardápio digital', description: 'Itens e informações que o cliente pode consultar no próprio celular.', image: '/ezway-demo-cafe.jpg' },

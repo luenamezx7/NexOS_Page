@@ -1,3 +1,4 @@
+import { dismissPresentation } from './helpers/presentation';
 import { expect, test, type Page } from '@playwright/test';
 
 async function openHome(page: Page) {
@@ -7,7 +8,7 @@ async function openHome(page: Page) {
   await page.goto('/#hero');
   const presentation = page.locator('dialog[data-presentation][open]');
   if (await presentation.count()) {
-    await presentation.getByRole('button', { name: 'Pular apresentação' }).click();
+    await dismissPresentation(page);
     await expect(presentation).toHaveCount(0);
   }
   await page.evaluate(() => document.fonts.ready);

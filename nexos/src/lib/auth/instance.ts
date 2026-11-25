@@ -1,16 +1,16 @@
 import 'server-only';
 import { consumeLimit } from '@/lib/rate-limit';
-import { randomUUID } from 'node:crypto';
+import { createHmac, randomUUID } from 'node:crypto';
 import { betterAuth } from 'better-auth';
 import { APIError, createAuthMiddleware, getSessionFromCtx } from 'better-auth/api';
 import { nextCookies } from 'better-auth/next-js';
-import { twoFactor, admin as adminPlugin, captcha, magicLink } from 'better-auth/plugins';
+import { twoFactor, admin as adminPlugin, captcha, magicLink, emailOTP } from 'better-auth/plugins';
 import { passkey } from '@better-auth/passkey';
 import { createAccessControl } from 'better-auth/plugins/access';
 import { PostgresDialect } from 'kysely';
 import type { Pool } from 'pg';
 import { createPool } from './db';
-import { sendVerificationEmail, sendResetPasswordEmail, sendMagicLinkEmail } from './mailer';
+import { sendVerificationEmail, sendResetPasswordEmail, sendMagicLinkEmail, sendLoginCodeEmail } from './mailer';
 import { verifyMigratedPassword } from './password';
 import { evaluatePassword } from './password-strength';
 import { isTurnstileEnforced } from '@/lib/turnstile';
@@ -36,7 +36,7 @@ function socialProviders() {
 }
 
 const ac = createAccessControl({ adminPanel: ['view', 'manageUsers', 'impersonate'] as const });
-const CAPTCHA_PATHS = ['/sign-in/email', '/sign-up/email', '/request-password-reset', '/send-verification-email', '/sign-in/magic-link'];
+const CAPTCHA_PATHS = ['/sign-in/email', '/sign-up/email', '/request-password-reset', '/send-verification-email', '/sign-in/magic-link', '/email-otp/send-verification-otp'];
 
 /** Injeção explícita somente para testes isolados; getAuth usa o ambiente real. */
 export interface AuthTestOptions {
@@ -55,6 +55,7 @@ export interface AuthTestOptions {
     verification: typeof sendVerificationEmail;
     reset: typeof sendResetPasswordEmail;
     magic: typeof sendMagicLinkEmail;
+    otp?: typeof sendLoginCodeEmail;
   };
 }
 
@@ -64,7 +65,7 @@ export function createAuth(test: AuthTestOptions = {}) {
   const captchaEnabled = test.captchaEnabled ?? isTurnstileEnforced();
   const turnstileSecret = process.env.TURNSTILE_SECRET_KEY?.trim();
   const notifications = test.notifications !== false;
-  const mail = test.mail ?? { verification: sendVerificationEmail, reset: sendResetPasswordEmail, magic: sendMagicLinkEmail };
+  const mail = { verification: sendVerificationEmail, reset: sendResetPasswordEmail, magic: sendMagicLinkEmail, otp: sendLoginCodeEmail, ...test.mail };
   const broker = test.allowLegacyAuth ? (test.supabaseOAuth ?? (test.pool ? null : supabaseOAuthConfig())) : null;
   return betterAuth({
     appName: 'ezway',
@@ -96,11 +97,20 @@ export function createAuth(test: AuthTestOptions = {}) {
     session: { expiresIn: 172800, updateAge: 86400, cookieCache: { enabled: false } },
     hooks: {
       before: createAuthMiddleware(async ctx => {
+        if (!test.allowLegacyAuth && (ctx.path === '/sign-in/magic-link' || ctx.path.startsWith('/magic-link/'))) {
+          throw new APIError('FORBIDDEN', { message: 'Entre com o código enviado ao seu e-mail.' });
+        }
+        if (ctx.path.startsWith('/email-otp/') && (ctx.path !== '/email-otp/send-verification-otp' || ctx.body?.type !== 'sign-in')) {
+          throw new APIError('FORBIDDEN', { message: 'Operação de código não disponível.' });
+        }
+        if (ctx.path === '/sign-in/email-otp' && (typeof ctx.body?.otp !== 'string' || !/^[0-9]{6}$/.test(ctx.body.otp))) {
+          throw new APIError('BAD_REQUEST', { code: 'INVALID_OTP', message: 'Código inválido ou expirado.' });
+        }
         if (!test.allowLegacyAuth && (ctx.path.startsWith('/sign-up') || ctx.path === '/sign-in/social' || ctx.path.startsWith('/sign-in/supabase') || ctx.path.startsWith('/callback/') || ctx.path.startsWith('/supabase/callback') || ctx.path.startsWith('/link-social'))) {
           throw new APIError('FORBIDDEN', { code: 'PUBLIC_REGISTRATION_DISABLED', message: 'Utilize o acesso por e-mail da sua conta.' });
         }
-        if (!test.pool && ['/sign-in/email', '/request-password-reset', '/sign-in/magic-link'].includes(ctx.path) && typeof ctx.body?.email === 'string') {
-          const max = ctx.path === '/sign-in/email' ? 10 : 3;
+        if (!test.pool && ['/sign-in/email', '/request-password-reset', '/sign-in/magic-link', '/email-otp/send-verification-otp', '/sign-in/email-otp'].includes(ctx.path) && typeof ctx.body?.email === 'string') {
+          const max = ['/sign-in/email', '/sign-in/email-otp'].includes(ctx.path) ? 10 : 3;
           try {
             const result = await consumeLimit(`account${ctx.path}`, ctx.body.email.trim().toLowerCase(), max, 900);
             if (!result.allowed) throw new APIError('TOO_MANY_REQUESTS', { code: 'TOO_MANY_REQUESTS', message: 'Muitas tentativas. Tente novamente mais tarde.' }, { 'Retry-After': String(result.retryAfter) });
@@ -163,6 +173,8 @@ export function createAuth(test: AuthTestOptions = {}) {
         '/sign-in/email': { window: 900, max: 10 }, '/sign-up/email': { window: 900, max: 3 },
         '/request-password-reset': { window: 900, max: 3 }, '/send-verification-email': { window: 900, max: 3 },
         '/sign-in/magic-link': { window: 900, max: 3 },
+        '/email-otp/send-verification-otp': { window: 900, max: 3 },
+        '/sign-in/email-otp': { window: 300, max: 5 },
         '/sign-in/supabase': { window: 60, max: 10 },
         '/two-factor/verify-totp': { window: 300, max: 5 },
         '/two-factor/verify-backup-code': { window: 300, max: 5 },
@@ -174,8 +186,15 @@ export function createAuth(test: AuthTestOptions = {}) {
       adminPlugin({ defaultRole: 'user', adminRoles: ['admin'], roles: {
         user: ac.newRole({}), admin: ac.newRole({ adminPanel: ['view', 'manageUsers', 'impersonate'] }),
       } }),
-      magicLink({ expiresIn: 600, storeToken: 'hashed', disableSignUp: true,
-        sendMagicLink: async ({ email, url }) => mail.magic({ to: email, url }) }),
+      ...(test.allowLegacyAuth ? [magicLink({ expiresIn: 600, storeToken: 'hashed', disableSignUp: true,
+        sendMagicLink: async ({ email, url }) => mail.magic({ to: email, url }) })] : []),
+      emailOTP({ otpLength: 6, expiresIn: 600, allowedAttempts: 5, disableSignUp: true,
+        storeOTP: { hash: async code => createHmac('sha256', secret).update(code).digest('hex') },
+        sendVerificationOTP: async ({ email, otp, type }) => {
+          if (type !== 'sign-in') throw new APIError('FORBIDDEN', { message: 'Operação não disponível.' });
+          await mail.otp({ to: email, code: otp });
+        },
+      }),
       passkey({ rpName: 'ezway', rpID: new URL(site).hostname, origin: site,
         authenticatorSelection: { residentKey: 'required', userVerification: 'required' },
         registration: { afterVerification: async ({ verification }) => {

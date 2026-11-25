@@ -14,3 +14,10 @@ export async function enterPresentation(page: Page) {
   await page.keyboard.press('End');
   await expect(dialog).toHaveCount(0, { timeout: 20000 });
 }
+
+/** The cover is server-rendered; wait until its keyboard handler is mounted. */
+export async function dismissPresentation(page: Page) {
+  const dialog = page.locator('dialog[data-presentation]');
+  await expect(dialog).toBeFocused();
+  await page.keyboard.press('Escape');
+}

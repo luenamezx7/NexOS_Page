@@ -2,7 +2,6 @@
 
 import { forwardRef, useEffect, useImperativeHandle, useRef, useSyncExternalStore } from 'react';
 import ButtonWithIcon from './ui/button-witn-icon';
-import { TextType } from './ui/TextType';
 import { HeroBackground } from './HeroBackground';
 import { commercialHref } from '@/lib/commercial';
 import { diagnosticMessage } from '@/config/solutions';
@@ -14,18 +13,30 @@ import { useLocale } from '@/lib/locale';
 import Image from 'next/image';
 import styles from './Hero.module.css';
 import { useHeroChoreography } from './use-hero-choreography';
-import { NavigationGlass } from './NavigationGlass';
+import { GlowingBadge } from './unlumen-ui/primitives/glowing-badge';
+import { ShaderBackground } from './ui/simplex-noise-bubblegum';
 
 const subscribeHydration = () => () => {};
-const heroWords = {
-  pt: ['conectado', 'impulsionado', 'otimizado'],
-  en: ['connected', 'powered', 'optimized'],
-  es: ['conectado', 'impulsado', 'optimizado'],
+const subscribeReducedMotion = (onChange: () => void) => {
+  const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+  media.addEventListener('change', onChange);
+  return () => media.removeEventListener('change', onChange);
+};
+const getReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const avatarWord = { pt: ['Pres', 'ença'], en: ['Pres', 'ence'], es: ['Pres', 'encia'] } as const;
+const presenceColors: [number, number, number][] = [
+  [1, 63 / 255, 159 / 255], [1, 116 / 255, 189 / 255],
+  [1, 170 / 255, 216 / 255], [1, 116 / 255, 189 / 255], [1, 63 / 255, 159 / 255],
+];
+const heroSentence = {
+  pt: ['Conectamos ', 'IA', ' ao seu negócio', 'e ampliamos seus ', 'resultados'],
+  en: ['We connect ', 'AI', ' to your business', 'and grow your ', 'results'],
+  es: ['Conectamos ', 'IA', ' a tu negocio', 'y ampliamos tus ', 'resultados'],
 } as const;
-const heroSentence = { pt: ['Seu negócio', 'em uma aproximação'], en: ['Your business', 'with a single tap'], es: ['Tu negocio', 'con un solo toque'] } as const;
 
 export const Hero = forwardRef<HTMLElement, { className?: string }>(function Hero({ className = '' }, ref) {
   const { t, locale } = useLocale();
+  const reducedMotion = useSyncExternalStore(subscribeReducedMotion, getReducedMotion, () => false);
   const scrollToSection = useSectionScroll();
   const navigationReady = useSyncExternalStore(subscribeHydration, () => true, () => false);
   const entryOpen = usePresentationActive();
@@ -61,11 +72,12 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
       <HeroBackground />
       <motion.div className="hero-container" data-hero-scroll>
         <div className="hero-copy">
-           <p className="hero-eyebrow" data-hero-enter><span aria-hidden="true" /> {t('GESTÃO · ATENDIMENTO · PRESENÇA DIGITAL')}</p>
-             <h1 id="hero-title" data-heading-static data-hero-enter className="hero-heading" aria-label={`${heroSentence[locale][0]} ${heroWords[locale][0]} ${heroSentence[locale][1]}`}>
-               <span className="hero-title-line" aria-hidden="true">{heroSentence[locale][0]}</span>
-               <TextType key={locale} text={heroWords[locale]} />
-               <span className="hero-title-line" aria-hidden="true">{heroSentence[locale][1]}</span>
+           <p className={styles.eyebrow} data-hero-enter>
+             <GlowingBadge variant="neutral" className={styles.eyebrowBadge} dotColor="#ff3f9f" glowColor="rgb(255 63 159 / 28%)">{t('GESTÃO · ATENDIMENTO · PRESENÇA DIGITAL')}</GlowingBadge>
+           </p>
+             <h1 id="hero-title" data-heading-static data-hero-enter className="hero-heading">
+               <span className="hero-title-line">{heroSentence[locale][0]}<span className={styles.titleAccent}>{heroSentence[locale][1]}</span>{heroSentence[locale][2]}</span>{' '}
+               <span className="hero-title-line">{heroSentence[locale][3]}<span className={styles.titleAccent}>{heroSentence[locale][4]}</span></span>
              </h1>
              <p className="hero-description" data-hero-enter>{t('Organize clientes, acompanhe vendas e cuide do financeiro. Da gestão à presença digital, encontre o próximo passo do seu negócio.')}</p>
            <div className="hero-actions" data-hero-enter>
@@ -74,9 +86,18 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
            </div>
         </div>
         <div className={styles.managementScene} data-avatar-scene>
-          <div className={styles.glassCard} aria-hidden="true" data-hero-glass>
-            <NavigationGlass variant="card" />
-          </div>
+          <motion.span
+            className={styles.avatarWord}
+            data-avatar-word
+            aria-label={avatarWord[locale].join('')}
+            data-reduced-motion={reducedMotion}
+            initial={{ opacity: reducedMotion ? 1 : 0 }}
+            whileInView={showHero ? { opacity: 1 } : undefined}
+            viewport={{ once: true, amount: .7 }}
+            transition={{ duration: reducedMotion ? 0 : 1.1, ease: [.16, 1, .3, 1] }}
+          ><span data-shader-text data-presence-half="left" aria-hidden="true">{avatarWord[locale][0]}</span><span data-shader-text data-presence-half="right" aria-hidden="true">{avatarWord[locale][1]}</span>
+            <ShaderBackground key={locale} className={styles.presenceShader} colors={presenceColors} textMask paused={!showHero} />
+          </motion.span>
           <div className={styles.avatarFrame} aria-hidden="true" data-avatar-stage data-avatar-figure>
             <Image
             className={styles.avatar}
@@ -91,6 +112,7 @@ export const Hero = forwardRef<HTMLElement, { className?: string }>(function Her
           </div>
         </div>
       </motion.div>
+      <div className={styles.sectionFade} aria-hidden="true" />
     </section>
   );
 });

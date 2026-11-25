@@ -152,7 +152,7 @@
 
 /* Full-bleed decoration inside the existing sticky viewport; consumes no flex row. */
 .fixedStage { isolation: isolate; }
-.waveBackground { opacity: .85; }
-.waveBackground::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, #f8f8faad, #ffffff00 38%, #f8f8facc); }
+.waveBackground { opacity: 1; }
+.waveBackground::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, #fff2f8b3, #fff2f800 38%, #fff2f8cc); }
 .fixedStage .fixedDevice { z-index: 1; }
 @media (forced-colors: active) { .macbookFrame { filter: none; } }

@@ -1,11 +1,11 @@
 .dialog {
-  --entry-duration: 1850ms;
+  --entry-duration: 5000ms;
   --entry-fade-duration: 700ms;
   --exit-duration: 1100ms;
   position: fixed;
   inset: 0;
   z-index: 60;
-  width: 100%;
+  width: 100vw;
   max-width: none;
   height: 100dvh;
   max-height: none;
@@ -14,8 +14,8 @@
   border: 0;
   overflow: hidden;
   overscroll-behavior: contain;
-  background: var(--color-canvas);
-  color: var(--color-ink);
+  background: #030503;
+  color: #fff;
   opacity: 1;
   transition: opacity var(--exit-duration) cubic-bezier(.4, 0, .2, 1);
   animation: brand-cover-lifetime calc(var(--entry-duration) + var(--exit-duration)) step-end forwards;
@@ -30,49 +30,32 @@
   place-items: center;
   min-height: 100%;
   padding: 40px 24px;
-  background: radial-gradient(ellipse 45% 45% at 50% 52%, color-mix(in srgb, var(--visor-violet) 7%, transparent), transparent 82%);
+  z-index: 1;
+  width: 100vw;
 }
 .frame {
-  width: min(74vw, 1020px);
-  container-type: inline-size;
-  opacity: 0;
+  width: min(480px, 100%, calc(100dvh - 80px));
+  opacity: 1;
+  animation: brand-frame-enter var(--entry-fade-duration) cubic-bezier(.16, 1, .3, 1) both;
   transition: opacity var(--exit-duration) cubic-bezier(.4, 0, .2, 1);
 }
-.dialog[data-phase='entering'] .frame, .dialog[data-phase='leaving'] .frame { animation: brand-frame-enter var(--entry-fade-duration) cubic-bezier(.16, 1, .3, 1) both; }
 .dialog[data-phase='leaving'] .frame { animation-play-state: paused; }
-.progressNumber {
-  display: block;
-  margin-top: clamp(20px, 4vh, 40px);
-  color: var(--pink-soft);
-  font: 900 clamp(44px, 7vw, 88px)/1 "Satoshi", var(--font-sans);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -.05em;
-  text-align: center;
+.shade { position: absolute; inset: 0; background: rgb(0 0 0 / 60%); pointer-events: none; }
+.reveal { width: 100%; aspect-ratio: 1; }
+.reveal:global([data-logo-reveal='loading']) [data-logo-fallback],
+.reveal:global([data-logo-reveal='playing']) [data-logo-fallback] { visibility: hidden; }
+.reveal:global([data-logo-reveal='complete']) [data-logo-fallback] { visibility: hidden; }
+@media (forced-colors: active) {
+  .dialog { background: Canvas; color: CanvasText; }
+  .dialog > canvas, .shade, .reveal canvas { display: none; }
+  .reveal [data-logo-fallback] { visibility: visible !important; background: CanvasText !important; }
 }
-.skip {
-  position: absolute;
-  right: max(24px, env(safe-area-inset-right));
-  bottom: max(24px, env(safe-area-inset-bottom));
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 44px;
-  padding: 8px 12px;
-  border-radius: 12px;
-  background: transparent;
-  color: var(--text-tertiary);
-  font: 11px/1.5 var(--font-sans);
-  opacity: 0;
-  transition: color 180ms ease, background-color 180ms ease, opacity var(--entry-fade-duration) ease;
-}
-.dialog[data-phase='entering'] .skip, .dialog[data-phase='leaving'] .skip { opacity: 1; }
-.skip:hover { background: color-mix(in srgb, var(--visor-violet) 7%, transparent); color: var(--color-ink); }
-.skip:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
-@media (max-width: 767px) { .frame { width: 86vw; } }
-@media (forced-colors: active) { .dialog { background: Canvas; color: CanvasText; } .stage { background: none; } .progressNumber { color: CanvasText; } }
 
 /* CSS starts before hydration; the cover expires even if client chunks arrive late. */
 @keyframes brand-frame-enter { from { opacity: 0; } to { opacity: 1; } }
 @keyframes brand-cover-lifetime { from { visibility: visible; } to { visibility: hidden; pointer-events: none; } }
 
-@media (prefers-reduced-motion: reduce) { .dialog { visibility: hidden; animation: none; transition: none; pointer-events: none; }.frame { animation: none; transition: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .frame { animation: none; }
+  .reveal :global(.eye-ezway-intro-blink), .reveal :global(.ezway-intro-fire-motion) { animation: none !important; }
+}

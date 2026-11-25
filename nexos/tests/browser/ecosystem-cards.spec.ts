@@ -39,7 +39,7 @@ test('glass cards stack while the stage is pinned, then normal scrolling resumes
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('keyboard access reveals cards without disclosures and motion stays enabled across preference changes', async ({ page }) => {
+test('keyboard reveals cards and native motion preferences switch between the stack and readable flow', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
   await expect(page.locator('dialog[data-presentation]')).toHaveCount(0, { timeout: 15000 });
@@ -56,24 +56,26 @@ test('keyboard access reveals cards without disclosures and motion stays enabled
   await expect(page.locator('#ecossistema [data-solution="nfc"]')).toBeFocused();
   await expect(page.locator('#ecossistema details, #ecossistema summary')).toHaveCount(0);
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await expect(stage).toHaveAttribute('data-scroll-cards', 'true');
-  expect(await stage.evaluate(el => !!el.closest('.pin-spacer'))).toBe(true);
+  await expect(stage).not.toHaveAttribute('data-scroll-cards');
+  await expect(page.locator('[data-ecosystem-viewport]')).toHaveAttribute('data-stack-reduced', 'true');
+  expect(await stage.evaluate(el => !!el.closest('.pin-spacer'))).toBe(false);
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await expect(stage).toHaveAttribute('data-scroll-cards', 'true');
   await expect(page.locator('.pin-spacer:has(> [data-ecosystem-stage])')).toHaveCount(1);
-  await expect(page.locator('.pin-spacer:has(> [data-management-stage])')).toHaveCount(1);
+  await expect(page.locator('.pin-spacer:has(> [data-management-stage])')).toHaveCount(0);
 });
 
-test('cards start at the first chapter after the upstream management pin is enabled', async ({ page }) => {
+test('cards start at the first chapter after a responsive composition resize', async ({ page }) => {
   await page.setViewportSize({ width: 500, height: 900 });
   await page.goto('/#ecossistema');
   const stage = page.locator('[data-ecosystem-stage]');
-  await expect(stage).toHaveAttribute('data-scroll-cards', 'true');
+  await expect(page.locator('dialog[data-presentation]')).toHaveCount(0, { timeout: 20000 });
+  await expect(stage).toHaveAttribute('data-scroll-cards', 'true', { timeout: 20000 });
   await expect(page.locator('html')).toHaveAttribute('data-scroll-engine', 'smooth');
 
-  // Management gains a pin at the desktop breakpoint, after cards already exist.
+  // The card changes from a vertical composition to two columns at desktop.
   await page.setViewportSize({ width: 1440, height: 900 });
-  await expect(page.locator('[data-management-stage]')).toHaveAttribute('data-management-chapters', 'true');
+  await expect(stage).toHaveAttribute('data-scroll-cards', 'true');
   const start = await stage.evaluate(el => el.parentElement!.getBoundingClientRect().top + scrollY - 110);
   await page.evaluate(y => window.scrollTo({ top: y + 2, behavior: 'instant' }), start);
   await expect.poll(() => stage.evaluate(el => Math.round(el.getBoundingClientRect().top))).toBe(110);

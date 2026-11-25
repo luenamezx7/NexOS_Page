@@ -1,65 +1,20 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ResetPasswordForm } from '@/components/auth/ResetPasswordForm';
-import { MetallicSurface } from '@/components/ui/metallic-button';
-import { AuthHeader, AuthStory } from '@/components/auth/AuthFrame';
+import { CustomerAuthPanel } from '@/components/auth/CustomerAuthPanel';
+import { Button } from '@/components/ui/cnippet-button';
 import styles from '@/components/auth/LoginForm.module.css';
-import { PageFooter } from '@/components/PageChrome';
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 
-/**
- * Página de redefinição de senha.
- *
- * A autenticação é o próprio link: o Better Auth entrega um token JWT na query
- * (`?token=`) e a troca acontece sem sessão pré-existente. Nada aqui depende
- * de sessão do Supabase nem de privilégio administrativo — por isso MFA não
- * bloqueia a recuperação.
- */
-export const metadata: Metadata = {
-  title: 'Redefinir senha | ezway',
-  robots: { index: false, follow: false },
-};
+/** The recovery token proves mailbox ownership; this flow requires no session or MFA. */
+export const metadata: Metadata = { title: 'Redefinir senha | ezway', robots: { index: false, follow: false } };
 export const dynamic = 'force-dynamic';
 
 export default async function ResetPasswordPage({ searchParams }: { searchParams: Promise<{ token?: string | string[] }> }) {
   const params = await searchParams;
   const raw = params.token;
   const token = (Array.isArray(raw) ? raw[0] : raw)?.trim() ?? '';
-
   if (token) return <ResetPasswordForm token={token} />;
-
-  return (
-    <main className={styles.customer}>
-       <AuthHeader accountOnly />
-      <div className={styles.content} id="main-content">
-      <AuthStory recovery />
-      <section className={styles.panelWrap} aria-labelledby="reset-link-title">
-        <Card className={`${styles.panel} ${styles.recoveryPanel}`}>
-        <CardHeader className={`${styles.panelHeader} ${styles.recoveryHeader}`}>
-        <p className={styles.overline}>Recuperação</p>
-        <h1 id="reset-link-title" className={styles.heading}>Link necessário</h1>
-        <p className="text-sm leading-relaxed text-ink/70">
-          Para redefinir a senha é preciso o link enviado por e-mail. Ele é de uso único e expira em
-          pouco tempo. Peça um novo em “Esqueceu a senha”.
-        </p>
-        </CardHeader>
-        <CardContent className={styles.panelContent}>
-        <Link href="/portal/acesso" className="btn-primary-nex justify-center">
-          <MetallicSurface /><span className="metallic-content">Pedir um novo link</span>
-        </Link>
-        </CardContent>
-        <CardFooter className={styles.panelFooter}>
-        <p className="text-xs text-ink/55">
-          Suporte ·{' '}
-          <a href="mailto:nexosperformance@gmail.com" className="underline underline-offset-4">
-            nexosperformance@gmail.com
-          </a>
-        </p>
-        </CardFooter>
-        </Card>
-      </section>
-      </div>
-      <PageFooter />
-    </main>
-  );
+  return <CustomerAuthPanel title="Link necessário" titleId="reset-link-title" description="Para redefinir a senha, use o link enviado por e-mail. Ele é de uso único e expira em 1 hora. Peça um novo em “Esqueceu a senha”.">
+    <Button render={<Link href="/portal/acesso" />} className={styles.primarySubmit}>Pedir um novo link</Button>
+  </CustomerAuthPanel>;
 }

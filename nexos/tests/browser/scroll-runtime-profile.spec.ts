@@ -1,3 +1,4 @@
+import { dismissPresentation } from './helpers/presentation';
 import { test, expect } from '@playwright/test';
 
 test('scroll runtime profile preserves full motion', async ({ page, browserName }, testInfo) => {
@@ -12,9 +13,8 @@ test('scroll runtime profile preserves full motion', async ({ page, browserName 
   await cdp.send('Performance.enable');
   const initial = await cdp.send('Performance.getMetrics');
   await page.goto('/');
-  const skip = page.getByRole('button', { name: 'Pular apresentação' });
-  await expect(skip).toBeVisible();
-  await skip.click();
+  await expect(page.locator('dialog[data-presentation]')).toBeVisible();
+  await dismissPresentation(page);
   await expect(page.locator('dialog[data-presentation]')).toHaveCount(0);
   await expect(page.locator('[data-heading-scroll="ready"]').first()).toBeAttached();
   await page.evaluate(() => document.fonts.ready);

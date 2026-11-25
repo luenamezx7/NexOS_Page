@@ -4,12 +4,14 @@ import Link from 'next/link';
 import { ShieldCheck } from 'lucide-react';
 import { LEGAL_DOCS, getLegalDoc } from './legal-content';
 import { CloudflareEmailBoundary } from './CloudflareEmailBoundary';
+import { ClientPortalSurface } from './auth/ClientPortalSurface';
 import { PageFooter, PageHeader } from './PageChrome';
 
 export function LegalPage({ slug }: { slug: string }) {
   const doc = getLegalDoc(slug);
 
   return (
+    <ClientPortalSurface>
     <CloudflareEmailBoundary>
     <div className="interior-page">
     <PageHeader />
@@ -53,6 +55,7 @@ export function LegalPage({ slug }: { slug: string }) {
     <PageFooter />
     </div>
     </CloudflareEmailBoundary>
+    </ClientPortalSurface>
   );
 }
 

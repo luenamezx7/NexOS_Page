@@ -72,7 +72,7 @@ test('invalid credentials shake once per rejection, retain input and keep layout
   await page.goto('/portal/acesso');
   const email = page.getByLabel('E-mail', { exact: true });
   const password = page.getByLabel('Senha', { exact: true });
-  const submit = page.getByRole('button', { name: 'Entrar', exact: true });
+  const submit = page.locator('form[data-credential-rejected] button[type=submit]');
   const form = page.locator('form[data-credential-rejected]');
   await email.fill('person@example.com');
   await password.fill('incorrect-password');
@@ -82,8 +82,8 @@ test('invalid credentials shake once per rejection, retain input and keep layout
     await password.press('Enter');
     await expect(submit).toHaveAttribute('aria-busy', 'true');
     await expect(password).toHaveAttribute('readonly');
-    await expect(password).toBeFocused();
-    await password.press('Enter');
+    await expect(page.locator('[data-auth-card]')).toBeFocused();
+    await page.locator('form[data-credential-rejected]').evaluate(form => (form as HTMLFormElement).requestSubmit());
     await expect(form).toHaveAttribute('data-credential-rejected', 'true');
     await expect(page.locator('[data-slot="alert"]')).toContainText('E-mail ou senha incorretos');
     const shake = await form.evaluate(element => {

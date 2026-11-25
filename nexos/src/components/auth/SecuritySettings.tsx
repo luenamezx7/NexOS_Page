@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { authClient, authErrorMessage } from '@/lib/auth/client';
 import { setFirstPassword } from '@/lib/auth/security-actions';
 import { evaluatePassword } from '@/lib/auth/password-strength';
+import { AuthTransition, type AuthPhase } from './AuthTransition';
 import { PasswordStrengthMeter } from './PasswordStrengthMeter';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/Button';
@@ -19,6 +20,8 @@ interface SavedPasskey { id: string; name?: string | null; createdAt?: Date | st
 
 export function SecuritySettings({ enabled: initialEnabled, hasPassword: initialPassword, isAdmin, callbackUrl }: Props) {
   const lock = useRef(false);
+  const [passwordPhase, setPasswordPhase] = useState<AuthPhase>('idle');
+  const passwordConfirmed = useRef<(() => void) | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
@@ -64,21 +67,28 @@ export function SecuritySettings({ enabled: initialEnabled, hasPassword: initial
     {error && <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert>}
     {message && <Alert role="status"><AlertDescription>{message}</AlertDescription></Alert>}
     {isAdmin && !enabled && <Alert><AlertDescription>Operadores precisam ativar o autenticador para acessar o painel administrativo.</AlertDescription></Alert>}
-    <Card className={styles.passwordCard}>
+    <Card data-portal-glass data-auth-card tabIndex={-1} className={styles.passwordCard}>
+      <AuthTransition phase={passwordPhase} onComplete={() => passwordConfirmed.current?.()} pendingLabel="Salvando nova senha. Aguarde." successLabel="Senha atualizada.">
       <CardHeader><CardTitle>Senha</CardTitle><CardDescription>{hasPassword ? 'Confirme a senha atual para escolher uma nova. As outras sessões serão encerradas.' : 'Sua conta usa acesso sem senha. Você também pode cadastrar uma senha.'}</CardDescription></CardHeader>
       <CardContent><form onSubmit={e => {
         e.preventDefault(); const element = e.currentTarget; const form = new FormData(element);
         void guard(async () => {
           if (newPassword !== String(form.get('confirm') ?? '')) { setError('As senhas precisam ser iguais.'); return; }
           if (!evaluatePassword(newPassword).acceptable) { setError('Use 12+ caracteres, maiúscula, minúscula, número e símbolo.'); return; }
-          if (!hasPassword) {
-            const result = await setFirstPassword(newPassword);
-            if (!result.ok) { setError(result.error ?? 'Não foi possível definir a senha.'); return; }
-            setHasPassword(true);
-          } else {
-            const result = await authClient.changePassword({ currentPassword, newPassword, revokeOtherSessions: true });
-            if (result.error) throw result.error;
-          }
+          setPasswordPhase('loading');
+          try {
+            if (!hasPassword) {
+              const result = await setFirstPassword(newPassword);
+              if (!result.ok) throw new Error(result.error ?? 'Não foi possível definir a senha.');
+            } else {
+              const result = await authClient.changePassword({ currentPassword, newPassword, revokeOtherSessions: true });
+              if (result.error) throw result.error;
+            }
+          } catch (err) { setPasswordPhase('error'); throw err; }
+          await new Promise<void>(resolve => { passwordConfirmed.current = resolve; setPasswordPhase('success'); });
+          passwordConfirmed.current = null;
+          setPasswordPhase('idle');
+          setHasPassword(true);
           setCurrentPassword(''); setNewPassword(''); setMessage('Senha atualizada. Guarde-a em um gerenciador de senhas.');
           element.reset();
         });
@@ -88,8 +98,9 @@ export function SecuritySettings({ enabled: initialEnabled, hasPassword: initial
         <Field data-disabled={busy}><FieldLabel htmlFor="password-confirm">Confirmar nova senha</FieldLabel><Input id="password-confirm" name="confirm" type="password" autoComplete="new-password" required minLength={12} maxLength={256} disabled={busy} /></Field>
         <Button type="submit" disabled={busy}>{hasPassword ? 'Trocar senha' : 'Definir senha'}</Button>
       </FieldGroup></form></CardContent>
+      </AuthTransition>
     </Card>
-    <Card className={styles.authenticatorCard}>
+    <Card data-portal-glass className={styles.authenticatorCard}>
       <CardHeader><CardTitle>Aplicativo autenticador (2FA)</CardTitle><CardDescription>{enabled ? 'Ativo. Novos acessos exigem o segundo fator, inclusive por Google, GitHub, Magic Link e Passkey.' : 'Use Google Authenticator, 1Password ou outro aplicativo TOTP.'}</CardDescription></CardHeader>
       <CardContent className="flex flex-col gap-5">
         {!enabled && !qr && <form onSubmit={e => { e.preventDefault(); void guard(async () => {
@@ -130,7 +141,7 @@ export function SecuritySettings({ enabled: initialEnabled, hasPassword: initial
         {enabled && callbackUrl && <Link href={callbackUrl} className="text-sm underline underline-offset-4">Continuar para o destino solicitado</Link>}
       </CardContent>
     </Card>
-    <Card className={styles.keysCard}>
+    <Card data-portal-glass className={styles.keysCard}>
       <CardHeader><CardTitle>Chaves de acesso</CardTitle><CardDescription>Entre com Touch ID, Face ID, Windows Hello ou uma chave de segurança. A ezway não recebe seus dados biométricos.</CardDescription></CardHeader>
       <CardContent className="flex flex-col gap-5">
         <form className={styles.keysForm} onSubmit={e => { e.preventDefault(); const name = String(new FormData(e.currentTarget).get('name') ?? '').trim(); void guard(async () => {

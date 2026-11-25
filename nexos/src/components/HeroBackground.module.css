@@ -11,12 +11,13 @@
 .image {
   object-fit: cover;
   object-position: 50% 50%;
+  filter: saturate(1.4);
 }
 
 .shade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgb(0 0 0 / 20%) 0%, rgb(0 0 0 / 42%) 48%, rgb(0 0 0 / 56%) 78%, transparent 100%);
+  background: linear-gradient(180deg, rgb(0 0 0 / 20%) 0%, rgb(0 0 0 / 42%) 48%, rgb(0 0 0 / 56%) 78%, #000 100%);
 }
 
 @media (max-width: 767px) {

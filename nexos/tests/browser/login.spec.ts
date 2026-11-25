@@ -73,18 +73,18 @@ test('signup validates passwords and shows email confirmation', async ({ page })
   await expect(page.getByRole('button', { name: 'Reenviar e-mail de confirmação' })).toBeVisible();
 });
 
-test('forgot password and magic link submit to current endpoints; errors never stick busy state', async ({ page }) => {
+test('forgot password and email code submit to current endpoints; errors never stick busy state', async ({ page }) => {
   await page.route('**/api/auth/request-password-reset', route => route.fulfill({ json: { status: true } }));
-  await page.route('**/api/auth/sign-in/magic-link', route => route.fulfill({ status: 503, json: { code: 'EMAIL_UNAVAILABLE' } }));
+  await page.route('**/api/auth/email-otp/send-verification-otp', route => route.fulfill({ status: 503, json: { code: 'EMAIL_UNAVAILABLE' } }));
   await page.goto('/portal/acesso');
   await page.getByRole('button', { name: 'Esqueceu a senha?', exact: true }).click();
   await page.getByLabel('E-mail', { exact: true }).fill('customer@example.test');
   await page.getByRole('button', { name: 'Enviar link de redefinição' }).click();
   await expect(page.getByRole('status').filter({ hasText: 'Se houver uma conta ativa' })).toBeVisible();
   await page.getByRole('button', { name: 'Voltar ao login' }).click();
-  await page.getByRole('button', { name: 'Entrar por link de e-mail' }).click();
+  await page.getByRole('button', { name: 'Entrar com código por e-mail' }).click();
   await page.getByLabel('E-mail', { exact: true }).fill('customer@example.test');
-  await page.getByRole('button', { name: 'Enviar link de acesso' }).click();
+  await page.getByRole('button', { name: 'Enviar código de verificação' }).click();
   await expect(page.locator('[data-slot="alert"]')).toContainText('temporariamente indisponível');
-  await expect(page.getByRole('button', { name: 'Enviar link de acesso' })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Enviar código de verificação' })).toBeEnabled();
 });

@@ -19,7 +19,7 @@ export function PasswordStrengthMeter({ password, id }: { password: string; id?:
   if (!password) return null;
   const { score, label, requirements } = evaluatePassword(password);
   return (
-    <div id={id} className="space-y-2" aria-live="polite">
+    <div id={id} className="space-y-2" aria-live="polite" data-password-strength>
       <div className="flex gap-1" role="presentation">
         {BAR_COLORS.map((color, index) => (
           <span
@@ -33,7 +33,7 @@ export function PasswordStrengthMeter({ password, id }: { password: string; id?:
       </p>
       <ul className="grid gap-1 text-xs text-ink/70 sm:grid-cols-2">
         {requirements.map((req) => (
-          <li key={req.id} className={req.met ? 'text-emerald-600 dark:text-emerald-400' : undefined}>
+          <li key={req.id} data-met={req.met} className={req.met ? 'text-emerald-600 dark:text-emerald-400' : undefined}>
             <span aria-hidden="true">{req.met ? '✓' : '○'}</span> {req.label}
           </li>
         ))}

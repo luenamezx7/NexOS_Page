@@ -78,3 +78,26 @@ O componente fornecido foi integrado em src/components/ui/cnippet-button.tsx, co
 O modelo usa preto e branco. Primário é preto com texto branco e secundário é branco com texto preto. Bordas neutras definem o contorno e o raio é 8 px. Alvos do produto têm altura mínima de 44 px. O componente Button legado encaminha suas propriedades ao novo modelo. Os botões de formulário, consentimento e CTAs compartilham a linguagem. A ação rosa original do hero conserva seu componente e comportamento.
 
 Os tokens e adaptações monocromáticas ficam em src/styles/buttons.css. O arquivo global principal permanece src/app/globals.css e os componentes seguem o alias shadcn @/components/ui. O demo de variantes está em src/components/ui/cnippet-button-demo.tsx.
+
+
+## Portal Silk e e-mails — 21/11/2026
+
+Na home, o alinhamento pertence à composição de cada seção: aberturas de vitrine
+centralizadas; blocos de leitura com texto e ação à esquerda. O fundo animado do
+MacBook usa o rosa `#ff3f9f` do “way”, com tons claros e profundos do mesmo matiz,
+antialias e resolução adaptada à densidade da tela até DPR 2.
+
+O portal do cliente usa um card externo com margem de 16–32 px e cantos de
+24–32 px. O shader Silk fornecido usa WebGL1 puro, DPR até 2, cursor desligado,
+pausa em aba oculta e quadro estático com movimento reduzido. A entrada contém
+somente um painel centralizado com logotipo e mascote dentro dele; não exibe
+história lateral, cabeçalho separado ou rodapé externo. Conta e segurança mantêm
+seus controles em vidro claro esverdeado, com campos mais densos e texto escuro.
+A refração discreta atua no backdrop em Chromium; os demais usam o fosco CSS.
+A redefinição de senha segue a mesma composição centralizada, incluindo os
+estados de confirmação, link ausente e link expirado.
+
+Os e-mails usam o mesmo material do código de acesso: fundo #eef0e9, cartão
+#f4faec, tinta #14200e, apoio #35452d e ação #204717. O layout é HTML compatível
+com e-mail, com estilos inline, sem shader, fontes remotas ou dependência de blur.
+`EMAIL_BRAND.banner` concentra a futura arte da marca; desativado não deixa lacuna.

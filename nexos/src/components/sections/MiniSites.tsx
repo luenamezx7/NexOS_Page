@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { ArrowUpRight, AtSign, MessageCircle, ShoppingBag } from 'lucide-react';
 import { useLocale } from '@/lib/locale';
 import { commercialHref } from '@/lib/commercial';
@@ -38,7 +38,6 @@ function MiniSiteScreen({ mode }: { mode: PreviewMode }) {
 
 export function MiniSites() {
   const { t } = useLocale();
-  const [mode, setMode] = useState<PreviewMode>('links');
   const stageRef = useRef<HTMLDivElement>(null);
   const presenting = usePresentationActive();
 
@@ -78,10 +77,6 @@ export function MiniSites() {
         </ul>
       </div>
       <div className={styles.example}>
-        <div className={styles.switcher} role="group" aria-label={t('Escolha a prévia do Mini-Site')}>
-          <button type="button" aria-pressed={mode === 'links'} aria-controls="mini-site-preview" onClick={() => setMode('links')}>{t('Links')}</button>
-          <button type="button" aria-pressed={mode === 'catalogue'} aria-controls="mini-site-preview" onClick={() => setMode('catalogue')}>{t('Catálogo')}</button>
-        </div>
         <div ref={stageRef} className={styles.mockups} data-mini-site-mockups>
           <div className={`${styles.phoneAnchor} ${styles.leftPhone}`} aria-hidden="true">
             <div className={styles.phoneMotion} data-mini-site-side="left"><Iphone15Pro><MiniSiteScreen mode="catalogue" /></Iphone15Pro></div>
@@ -90,7 +85,7 @@ export function MiniSites() {
             <div className={styles.phoneMotion} data-mini-site-side="right"><Iphone15Pro><MiniSiteScreen mode="links" /></Iphone15Pro></div>
           </div>
           <div id="mini-site-preview" className={`${styles.phoneAnchor} ${styles.centerPhone}`} role="group" aria-label={t('Exemplo ilustrativo de Mini-Site')}>
-            <Iphone15Pro><MiniSiteScreen mode={mode} /></Iphone15Pro>
+            <Iphone15Pro><MiniSiteScreen mode="links" /></Iphone15Pro>
           </div>
         </div>
       </div>

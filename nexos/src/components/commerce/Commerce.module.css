@@ -17,9 +17,10 @@
 .sectionNav a { color: var(--commerce-muted); }
 .sectionNav a:hover { color: var(--commerce-accent); }
 .currentSection { font-weight: 600; }
+.productIntro .currentSection { justify-content: center; }
 .currentSection svg { color: var(--detail-text); }
 .productGrid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
-.productGrid .productIntro { max-width: 780px; }
+.productGrid .productIntro { width: 100%; max-width: 780px; margin-inline: auto; text-align: center; }
 .productGrid .productVisual { width: 100%; }
 .productGrid .purchase { max-width: 640px; width: 100%; margin-inline: auto; }
 .kicker { margin-bottom: 16px; color: var(--text-tertiary); font: 500 14px/1.6 var(--font-sans); }

@@ -10,6 +10,8 @@ import 'server-only';
 
 import { getResend, FROM_EMAIL } from '@/lib/emails/resend';
 import { WelcomeEmail } from '@/emails/welcome';
+import { EmailLayout } from '@/emails/layout';
+import { createElement } from 'react';
 
 interface SendEmailResult {
   success: boolean;
@@ -59,7 +61,7 @@ export async function sendWelcomeEmail(
 }
 
 /**
- * Envia email customizado com React Email
+ * Envia conteúdo customizado dentro do layout de marca. Recebe o corpo, não um documento HTML completo.
  */
 export async function sendCustomEmail(
   email: string,
@@ -71,7 +73,7 @@ export async function sendCustomEmail(
       from: FROM_EMAIL,
       to: [email],
       subject,
-      react,
+      react: createElement(EmailLayout, { preheader: subject }, react),
     });
 
     if (error) {

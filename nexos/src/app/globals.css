@@ -1675,9 +1675,8 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
 
 .business-examples-disclosure { background: #f5f3f1; color: #000000; }.business-examples-disclosure > summary { width: min(100% - 48px, 1180px); margin: auto; padding: 24px 0; min-height: 44px; cursor: pointer; font-size: 15px; }.business-examples-disclosure > summary:focus-visible { outline: 3px solid #89325d; outline-offset: 4px; }
 
-/* Presentation headings share their content's centre axis; UI fields keep their own layout. */
-.landing-page #main-content :is(h2, h3):not(dialog *) { margin-inline: auto; text-align: center; text-wrap: balance; }
-.landing-page #main-content :is(h2, h3):not(dialog *) + p { margin-inline: auto; text-align: center; }
+/* Each section owns its reading axis; headings retain balanced wrapping. */
+.landing-page #main-content :is(h2, h3):not(dialog *) { text-wrap: balance; }
 .landing-hero .hero-copy { display: flex; flex-direction: column; align-items: center; }
 .landing-hero .hero-heading { width: 100%; }
 .landing-hero .hero-description { width: min(100%, 50ch); }

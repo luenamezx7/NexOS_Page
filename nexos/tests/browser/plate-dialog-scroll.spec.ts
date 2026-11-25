@@ -1,3 +1,4 @@
+import { dismissPresentation } from './helpers/presentation';
 import { expect, test } from '@playwright/test';
 
 for (const width of [390, 1366]) {
@@ -5,7 +6,7 @@ for (const width of [390, 1366]) {
     await page.setViewportSize({ width, height: 850 });
     await page.goto('/');
     const intro = page.locator('dialog[data-presentation]');
-    if (await intro.isVisible()) await intro.getByRole('button', { name: 'Pular apresentação' }).click();
+    if (await intro.isVisible()) await dismissPresentation(page);
     await expect(intro).toHaveCount(0);
     const rejectCookies = page.getByRole('button', { name: 'Recusar', exact: true });
     if (await rejectCookies.isVisible()) await rejectCookies.click();

@@ -32,7 +32,7 @@ export function securityPlugin(notifications = true): BetterAuthPlugin {
           await ctx.context.internalAdapter.createVerificationValue({ identifier: `2fa-attempts-${identifier}`, value: '0', expiresAt });
           const cookie = ctx.context.createAuthCookie('two_factor', { maxAge: 600 });
           await ctx.setSignedCookie(cookie.name, identifier, ctx.context.secret, cookie.attributes);
-          if (ctx.path === '/passkey/verify-authentication') return ctx.json({ twoFactorRedirect: true });
+          if (ctx.path === '/passkey/verify-authentication' || ctx.path === '/sign-in/email-otp') return ctx.json({ twoFactorRedirect: true });
           const url = new URL(loginPathFor(destination), ctx.context.baseURL);
           url.searchParams.set('mfa', 'required');
           url.searchParams.set('callbackUrl', destination);

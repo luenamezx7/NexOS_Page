@@ -1,0 +1,24 @@
+{
+  "deployment": "dpl_Fu3U6BZiQPvXBQCK6JKetU8ijx4S",
+  "url": "https://nexos-513x0xq8g-nex-os2.vercel.app",
+  "production": "https://nexoslab.online",
+  "state": "READY",
+  "scope": "full local version, including pre-existing changes as explicitly requested",
+  "healthHTTP": 200,
+  "homeEffectiveURL": "https://nexoslab.online/verificar?next=%2F",
+  "sourceMatches": {
+    "package.json": true,
+    "package-lock.json": true,
+    "src/app/home-client.tsx": true,
+    "src/app/page.tsx": true,
+    "src/components/BrandEntrance.tsx": true,
+    "src/components/Header.tsx": true,
+    "src/components/Header.module.css": true,
+    "src/components/NavigationGlass.tsx": true,
+    "src/styles/navigation-glass.css": true,
+    "src/components/auth/LoginForm.tsx": true,
+    "src/components/auth/EmailCodeChallenge.tsx": true,
+    "src/components/ui/presentation-runtime.ts": true,
+    "scripts/postcss-full-motion.cjs": true
+  }
+}

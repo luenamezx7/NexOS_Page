@@ -133,23 +133,6 @@
   box-shadow: 0 18px 64px -44px #25252c30;
   animation: auth-surface-arrive 450ms var(--auth-ease) both;
 }
-.premiumStory {
-  --color-ink: #f8f8fa;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 64px;
-  padding: 64px 52px 48px;
-  border-radius: 27px 0 0 27px;
-  background: #1c1c1f;
-  color: #f8f8fa;
-}
-.premiumStoryCopy { margin-top: 48px; }
-.premiumStoryCopy h2 { color: #f8f8fa; font-size: clamp(44px, 4.2vw, 58px); line-height: 1.08; font-weight: 600; letter-spacing: -.035em; text-wrap: balance; }
-.premiumStoryCopy p { max-width: 30ch; margin-top: 28px; color: #bdbdc5; font-size: 16px; line-height: 1.7; text-wrap: pretty; }
-.premiumStoryFeatures { display: grid; gap: 18px; padding-top: 28px; border-top: 1px solid #ffffff21; }
-.premiumStoryFeatures li { display: flex; align-items: center; gap: 12px; color: #d4d4da; font-size: 13px; line-height: 1.5; }
-.premiumStoryFeatures svg { color: #d4d4da; stroke-width: 1.5; }
 .premiumRoot .panelWrap { align-self: center; justify-self: center; max-width: none; padding: 48px 56px 36px; }
 .premiumRoot .panel { max-width: 400px; margin-inline: auto; gap: 0; padding: 0; border: 0; border-radius: 0; background: #fff; color: var(--color-ink); box-shadow: none; }
 .premiumRoot .panelHeader, .premiumRoot .panelContent, .premiumRoot .panelFooter { padding: 0; }
@@ -158,11 +141,7 @@
 .premiumRoot .formStack { gap: 0; }
 .premiumRoot .formGroup { gap: 20px; }
 .premiumRoot .fieldLabelRow { display: flex; align-items: center; justify-content: space-between; min-height: 28px; }
-.premiumRoot .passwordField { display: grid; grid-template-columns: minmax(0, 1fr) 44px; row-gap: 8px; column-gap: 0; }
-.premiumRoot .passwordField .fieldLabelRow { grid-column: 1; grid-row: 1; }
-.premiumRoot .passwordField .passwordControl { grid-column: 1 / -1; grid-row: 2; }
-.premiumRoot .passwordField > .passwordToggle { grid-column: 2; grid-row: 1; margin-block: -8px; }
-.premiumRoot .passwordField .passwordMeta { grid-column: 1 / -1; grid-row: 3; }
+.premiumRoot .passwordField { display: flex; flex-direction: column; gap: 8px; }
 .premiumRoot form label { color: #303034; font-size: 13px; font-weight: 550; }
 .premiumRoot :global(.field-input) {
   min-height: 52px;
@@ -177,14 +156,14 @@
   caret-color: #202023;
   transition: border-color 180ms var(--auth-ease), box-shadow 180ms var(--auth-ease), background-color 180ms var(--auth-ease);
 }
-.premiumRoot .passwordControl :global(.field-input) { padding-right: 15px; }
+.premiumRoot .passwordControl :global(.field-input) { padding-right: 56px; }
 .premiumRoot :global(.field-input)::placeholder { color: #73737a; opacity: 1; }
 .premiumRoot :global(.field-input):is(:focus, :focus-visible) { outline: 2px solid transparent; outline-offset: 2px; border-color: #74747d; background: #fff; box-shadow: 0 0 0 3px #24242d12; }
 .premiumRoot :global(.field-input)[aria-invalid='true'] { border-color: #b4474b; }
 .premiumRoot :global(.field-input)[aria-invalid='true']:focus { box-shadow: 0 0 0 3px #a5333712; }
 .premiumRoot :global(.field-input):read-only { cursor: progress; }
 .premiumRoot :global(.field-input):-webkit-autofill { -webkit-text-fill-color: #202023; caret-color: #202023; -webkit-box-shadow: 0 0 0 1000px #f7f8fb inset; }
-.premiumRoot .passwordToggle { position: relative; inset: auto; flex: 0 0 44px; width: 44px; height: 44px; border-radius: 8px; color: #62626a; transition: color 160ms ease, background-color 160ms ease; }
+.premiumRoot .passwordToggle { position: absolute; inset: auto 4px auto auto; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 8px; color: #62626a; transition: color 160ms ease, background-color 160ms ease; }
 .premiumRoot .passwordToggle[aria-pressed='true'] { color: #202023; background: #eeeeef; }
 .visibilityIcon { display: grid; place-items: center; width: 20px; height: 20px; }
 .visibilityIcon svg { grid-area: 1 / 1; transition: opacity 160ms ease, transform 160ms var(--panel-ease); }
@@ -230,12 +209,11 @@
   .premiumRoot .passwordToggle:hover { background: #eeeeef; color: #202023; }
   .premiumRoot :is(.magicLink, .forgotLink, .returnLogin):hover { color: #202023; }
 }
-@media (max-width: 1050px) and (min-width: 960px) { .premiumRoot .panelWrap { padding-inline: 36px; } .premiumStory { padding-inline: 36px; } }
+@media (max-width: 1050px) and (min-width: 960px) { .premiumRoot .panelWrap { padding-inline: 36px; }  }
 @media (max-width: 959px) {
   .premiumRoot .identity { width: calc(100% - 40px); max-width: 520px; margin-top: 20px; }
   .premiumRoot .content { display: block; width: calc(100% - 32px); max-width: 520px; min-height: 0; margin: 24px auto 32px; border-radius: 24px; }
-  .premiumStory { display: none; }
-  .premiumRoot .panelWrap { padding: 32px; }
+    .premiumRoot .panelWrap { padding: 32px; }
   .premiumRoot .heading { font-size: 30px; }
   .premiumRoot > :global(.page-footer) { width: calc(100% - 40px); max-width: 520px; gap: 12px; }
   .premiumRoot > :global(.page-footer) nav { gap: 8px 16px; }
@@ -263,3 +241,180 @@
 
 .premiumRoot .alternateDivider { width: 100%; margin: 0; font-size: 11px; }
 .premiumRoot .alternateDivider :global([data-slot="separator"]) { background: #e4e4e8; }
+
+/* Silk customer entry: one authentication panel, centered in the inset canvas. */
+:global([data-client-portal]) .premiumRoot {
+  --color-ink: #14200e;
+  --foreground: #14200e;
+  --text-secondary: #35452d;
+  --muted-foreground: #35452d;
+  --ring: #254e18;
+  --destructive: #912e25;
+  display: flex;
+  justify-content: center;
+  min-height: calc(100svh - 64px);
+  padding: 24px 0;
+  background: transparent;
+}
+:global([data-client-portal]) .premiumRoot .content {
+  display: block;
+  flex: 0 0 auto;
+  width: calc(100% - 32px);
+  max-width: 480px;
+  min-height: 0;
+  margin: 0 auto;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  animation: none;
+}
+:global([data-client-portal]) .premiumRoot .panelWrap { padding: 0; }
+:global([data-client-portal]) .premiumRoot .panel {
+  max-width: 480px;
+  padding: 32px 40px 24px;
+  border-radius: 28px;
+  border: 1px solid #ffffffc2;
+  background: linear-gradient(135deg, #ffffff38, #effbd318 55%, #fff9), rgb(244 251 233 / 84%);
+  color: #14200e;
+  -webkit-backdrop-filter: var(--portal-filter, blur(14px) saturate(115%));
+  backdrop-filter: var(--portal-filter, blur(14px) saturate(115%));
+  box-shadow: inset 0 1px 0 #fffffff0, inset 1px 0 0 #ffffff66, inset 0 -1px 0 #36572624, 0 18px 44px -32px #14250c90;
+}
+.loginBrand { display: flex; align-items: center; justify-content: center; width: fit-content; margin: 0 auto 20px; min-height: 44px; }
+:global([data-client-portal]) .premiumRoot .loginBrand img { filter: none; }
+.loginBack { display: flex; justify-content: center; align-items: center; min-height: 40px; margin-top: 4px; color: #35452d; font-size: 12px; text-underline-offset: 4px; }
+.loginBack:hover { text-decoration: underline; }
+:global([data-client-portal]) .premiumRoot form label { color: #24371b; }
+:global([data-client-portal]) .premiumRoot :global(.field-input) { border-color: #50663e70; background: rgb(249 253 242 / 94%); color: #14200e; caret-color: #254e18; }
+:global([data-client-portal]) .premiumRoot :global(.field-input)::placeholder { color: #485a3c; }
+:global([data-client-portal]) .premiumRoot :global(.field-input):is(:focus, :focus-visible) { border-color: #254e18; outline: 2px solid #254e18; outline-offset: 3px; background: #f9fdf2; box-shadow: none; }
+:global([data-client-portal]) .premiumRoot :global(.field-input):-webkit-autofill { -webkit-text-fill-color: #14200e; caret-color: #254e18; -webkit-box-shadow: 0 0 0 1000px #eff7e4 inset; }
+:global([data-client-portal]) .premiumRoot :is(.description, .forgotLink, .magicLink, .returnLogin, .passwordToggle) { color: #35452d; }
+:global([data-client-portal]) .premiumRoot .passwordToggle:is(:hover, [aria-pressed='true']) { color: #14200e; background: #d9e9c7; }
+:global([data-client-portal]) .premiumRoot .primarySubmit { border-color: #183b12; background: linear-gradient(145deg, #ffffff24, #ffffff00 50%), #204717; color: #f5ffe9; box-shadow: inset 0 1px 0 #ffffff60, 0 5px 14px -8px #152d1190; }
+:global([data-client-portal]) .premiumRoot .primarySubmit:hover:not(:disabled) { background-color: #2b5720; }
+:global([data-client-portal]) .premiumRoot .primarySubmit[data-loading] { color: transparent; }
+:global([data-client-portal]) .premiumRoot .passkeyButton { color: #24371b; border-color: #50663e66; background: linear-gradient(145deg, #ffffff70, #e6f2d54d), rgb(245 252 234 / 80%); box-shadow: inset 0 1px 0 #ffffffe0; }
+:global([data-client-portal]) .premiumRoot .panelFooter nav { justify-content: center; }
+:global([data-client-portal]) .premiumRoot .panelFooter nav a { color: #35452d; }
+:global([data-client-portal]) .premiumRoot .alternateDivider { color: #35452d; }
+:global([data-client-portal]) .premiumRoot .alternateDivider :global([data-slot='separator']) { background: #35452d45; }
+:global([data-client-portal]) .premiumRoot :is(button, a):focus-visible { outline-color: #254e18; }
+@media (max-width: 1023px) { :global([data-client-portal]) .premiumRoot { min-height: calc(100svh - 48px); } }
+@media (max-width: 599px) {
+  :global([data-client-portal]) .premiumRoot { min-height: calc(100svh - 32px); padding-block: 24px; }
+  :global([data-client-portal]) .premiumRoot .panel { padding: 28px 24px 20px; border-radius: 24px; }
+}
+@media (max-width: 359px) {
+  :global([data-client-portal]) .premiumRoot .panel { padding-inline: 18px; }
+  :global([data-client-portal]) .premiumRoot .heading { font-size: 25px; }
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :global([data-client-portal]) .premiumRoot .panel { background: #eaf3dd; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  :global([data-client-portal]) .premiumRoot .panel { background: #eaf3dd; -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+@media (forced-colors: active) {
+  :global([data-client-portal]) .premiumRoot :is(.panel, .primarySubmit, .passkeyButton, :global(.field-input)) { background: Canvas; color: CanvasText; border-color: CanvasText; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  :global([data-client-portal]) .premiumRoot :is(.heading, .description, .loginBack, .forgotLink, .magicLink, .returnLogin) { color: CanvasText; }
+}
+
+:global([data-client-portal]) .premiumRoot .description { margin-bottom: 20px; }
+:global([data-client-portal]) .premiumRoot .formGroup { gap: 16px; }
+:global([data-client-portal]) .premiumRoot .feedback { min-height: 48px; }
+:global([data-client-portal]) .premiumRoot .panelFooter { margin-top: 12px; }
+:global([data-client-portal]) .premiumRoot .panelFooter nav { padding-top: 10px; }
+.codeRecipient { color: var(--text-secondary); font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+.codeRecipient strong { color: var(--color-ink); font-weight: 600; }
+.codeActions { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; }
+.codeActions button { min-height: 44px; color: var(--text-secondary); font-size: 12px; text-decoration: underline; text-underline-offset: 4px; }
+.codeActions button:disabled { opacity: .6; cursor: not-allowed; text-decoration: none; }
+.customer :global([data-email-code-challenge]) :global([data-otp-input]) { margin-inline: auto; }
+.resetPasswordControl { position: relative; }
+.premiumRoot .resetPasswordControl :global(.field-input) { padding-right: 52px; }
+.resetPasswordToggle { position: absolute; inset: 4px 4px 4px auto; display: grid; place-items: center; width: 44px; border-radius: 8px; color: var(--text-secondary); }
+.resetPasswordToggle:hover { background: #d9e9c7; color: #14200e; }
+.resetFeedback { margin-top: 20px; }
+
+@media (forced-colors: none) {
+  :global([data-client-portal][data-portal-theme='dark']) .premiumRoot {
+    --color-ink: #f1f6ef;
+    --foreground: #f1f6ef;
+    --text-secondary: #b5c2b3;
+    --muted-foreground: #b5c2b3;
+    --ring: #c4dec1;
+    --destructive: #ffb8ad;
+    --surface-inset: #080e0b;
+    --surface-raised: #263329;
+    --background: #090f0b;
+    --card: #101912;
+    --card-foreground: #f1f6ef;
+    --border: #c5ddbf33;
+    --input: #c5ddbf38;
+    --field-surface: #090f0b;
+    --destructive-foreground: #ffb8ad;
+    color-scheme: dark;
+  }
+  :global([data-client-portal][data-portal-theme='dark']) .premiumRoot ::selection { background: #b6d0ab; color: #101b0e; }
+  :global([data-client-portal][data-portal-theme='dark']) .premiumRoot .capsLockHint { color: #e8c58c; }
+  :global([data-client-portal][data-portal-theme='dark']) .premiumRoot .panel {
+    background: var(--night-material-background);
+    color: #f1f6ef;
+    border-color: var(--night-material-border);
+    box-shadow: var(--night-material-shadow);
+  }
+  :global([data-client-portal][data-portal-theme='dark']) .premiumRoot .loginBrand img { filter: invert(1); }
+  :global([data-client-portal][data-portal-theme='dark']) .premiumRoot form label { color: #e1ebdd; }
+  :global([data-client-portal][data-portal-theme='dark']) .premiumRoot :global(.field-input) {
+    background: rgb(4 9 6 / 82%);
+    color: #f1f6ef;
+    caret-color: #e3eddf;
+    border-color: #c5ddbf38;
+    box-shadow: inset 0 1px 3px #0005, 0 1px 0 #ffffff08;
+  }
+  :global([data-client-portal][data-portal-theme='dark']) .premiumRoot :global(.field-input)::placeholder { color: #9bac98; }
+  :global([data-client-portal][data-portal-theme='dark']) .premiumRoot :global(.field-input):is(:focus, :focus-visible) {
+    background: #0b140d;
+    border-color: #c4dec1;
+    outline-color: #c4dec1;
+    box-shadow: none;
+  }
+  :global([data-client-portal][data-portal-theme='dark']) .premiumRoot :global(.field-input):-webkit-autofill { -webkit-text-fill-color: #f1f6ef; caret-color: #e3eddf; -webkit-box-shadow: 0 0 0 1000px #0c150e inset; }
+  :global([data-client-portal][data-portal-theme='dark']) .premiumRoot :is(.description, .forgotLink, .magicLink, .returnLogin, .passwordToggle, .loginBack) { color: #b5c2b3; }
+  :global([data-client-portal][data-portal-theme='dark']) .premiumRoot .passwordToggle:is(:hover, [aria-pressed='true']) { color: #f1f6ef; background: #d3edc714; }
+  :global([data-client-portal][data-portal-theme='dark']) .premiumRoot .primarySubmit {
+    background: linear-gradient(145deg, #ffffff20, #ffffff00 60%), #e3eddf;
+    border-color: #e3eddf;
+    color: #0d160e;
+    box-shadow: inset 0 1px 0 #fff8, 0 8px 20px -12px #000b;
+  }
+  :global([data-client-portal][data-portal-theme='dark']) .premiumRoot .primarySubmit:hover:not(:disabled) { background-color: #f0f6ec; }
+  :global([data-client-portal][data-portal-theme='dark']) .premiumRoot .primarySubmit[data-loading] { color: transparent; }
+  :global([data-client-portal][data-portal-theme='dark']) .premiumRoot .passkeyButton {
+    background: linear-gradient(145deg, #ffffff0c, #ffffff00 70%), rgb(17 28 19 / 75%);
+    color: #e1ebdd;
+    border-color: #c5ddbf38;
+    box-shadow: inset 0 1px 0 #ffffff14;
+  }
+  :global([data-client-portal][data-portal-theme='dark']) .premiumRoot .passkeyButton:hover:not(:disabled) { background-color: #213024; border-color: #c5ddbf66; }
+  :global([data-client-portal][data-portal-theme='dark']) .premiumRoot .panelFooter nav a,
+  :global([data-client-portal][data-portal-theme='dark']) .premiumRoot .alternateDivider { color: #a7b6a4; }
+  :global([data-client-portal][data-portal-theme='dark']) .premiumRoot .alternateDivider :global([data-slot='separator']) { background: #c5ddbf29; }
+  :global([data-client-portal][data-portal-theme='dark']) .premiumRoot :is(button, a):focus-visible { outline-color: #c4dec1; }
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :global([data-client-portal][data-portal-theme='dark']) .premiumRoot .panel { background: #101912; }
+}
+@media (prefers-reduced-transparency: reduce) and (forced-colors: none) {
+  :global([data-client-portal][data-portal-theme='dark']) .premiumRoot .panel { background: #101912; -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+
+/* Keep the existing card geometry while its contents authenticate. */
+.panel[data-auth-card] { position: relative; }
+.panel[data-auth-card]:focus { outline: none; }
+
+@media (forced-colors: none) {
+  :global([data-client-portal][data-portal-theme='dark']) .premiumRoot .resetPasswordToggle:hover { background: #d3edc714; color: #f1f6ef; }
+}

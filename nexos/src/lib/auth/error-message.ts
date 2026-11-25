@@ -33,6 +33,9 @@ const ACTIONABLE_STATUS: Record<number, string> = {
   503: 'Serviço temporariamente indisponível. Tente novamente em alguns instantes.',
 };
 const ACTIONABLE_CODES: Record<string, string> = {
+  INVALID_OTP: 'Código inválido, expirado ou já usado. Confira o código mais recente.',
+  OTP_EXPIRED: 'Este código expirou. Solicite um novo código.',
+  TOO_MANY_ATTEMPTS: 'Limite de tentativas atingido. Solicite um novo código.',
   INVALID_CODE: 'Código inválido ou expirado. Tente novamente.',
   INVALID_BACKUP_CODE: 'Código de recuperação inválido ou já usado.',
   INVALID_TWO_FACTOR_COOKIE: 'O desafio de segurança expirou. Entre novamente.',

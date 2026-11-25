@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { Header } from '@/components/Header';
 import { Hero } from '@/components/Hero';
+import { HeroToolsMarquee } from '@/components/HeroToolsMarquee';
 import { Management } from '@/components/sections/Management';
 import { BusinessExamples } from '@/components/sections/BusinessExamples';
 import { Ecosystem } from '@/components/sections/Ecosystem';
@@ -36,7 +37,7 @@ const DeliveryProcess = dynamic(() => import('@/components/sections/DeliveryProc
 const PlacaNFCSection = dynamic(() => import('@/components/sections/PlacaNFCSection').then(m => m.PlacaNFCSection));
 const CTAFinal = dynamic(() => import('@/components/sections/CTAFinal').then(m => m.CTAFinal));
 
-export default function HomeClient() {
+export default function HomeClient({ nonce }: { nonce?: string }) {
   const { t } = useLocale();
   const reduce = usePrefersReducedMotion();
   const [entrance, setEntrance] = useState({ visible: true, key: 0 });
@@ -79,13 +80,14 @@ export default function HomeClient() {
       <HeadingScrollMotion />
       <EdgeSpring />
       <MotionDiagnosticsLoader />
-      {entrance.visible && <BrandEntrance key={entrance.key} onComplete={handleEntranceComplete} />}
+      {entrance.visible && <BrandEntrance nonce={nonce} key={entrance.key} onComplete={handleEntranceComplete} />}
       <div>
          <a href="#main-content" className="skip-link">{t('Pular para o conteúdo')}</a>
         <Header />
         <div className="relative">
           <div id="main-content" tabIndex={-1} className="relative">
                <Hero ref={heroRef} />
+               <HeroToolsMarquee />
                <Management />
                <Ecosystem />
                <SectionBackground index={3} experience="easychat"><EasyChat /></SectionBackground>

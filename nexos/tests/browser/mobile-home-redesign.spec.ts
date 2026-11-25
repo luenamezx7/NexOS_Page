@@ -1,3 +1,4 @@
+import { dismissPresentation } from './helpers/presentation';
 import { expect, test } from '@playwright/test';
 
 test.use({ channel: process.env.PLAYWRIGHT_CHANNEL || undefined });
@@ -8,7 +9,7 @@ for (const width of [320, 390]) {
     await page.addInitScript(() => localStorage.setItem('nexos-cookie-consent-v1', JSON.stringify({ necessary: true, functional: false, analytics: false, marketing: false, updatedAt: new Date().toISOString() })));
     await page.goto('/');
     const intro = page.locator('dialog[data-presentation]');
-    if (await intro.isVisible()) await intro.getByRole('button', { name: 'Pular apresentação' }).click();
+    if (await intro.isVisible()) await dismissPresentation(page);
     await expect(intro).toHaveCount(0);
 
     const header = page.getByRole('banner');
@@ -60,7 +61,7 @@ test('short mobile viewport preserves the headline, subtitle and CTA', async ({ 
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
   const intro = page.locator('dialog[data-presentation]');
-  if (await intro.isVisible()) await intro.getByRole('button', { name: 'Pular apresentação' }).click();
+  if (await intro.isVisible()) await dismissPresentation(page);
   await expect(intro).toHaveCount(0);
   const hero = page.locator('#hero');
   await expect(hero.locator('.hero-fibers canvas')).toBeVisible();

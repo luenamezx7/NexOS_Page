@@ -1,3 +1,4 @@
+import { dismissPresentation } from './helpers/presentation';
 import { test, expect } from '@playwright/test';
 
 test('obsolete checkout pages and payment APIs are absent', async ({ request }) => {
@@ -19,7 +20,7 @@ test('service detail CTAs lead directly to the commercial team', async ({ page }
 test('landing offers have no public prices and the chosen use is sent to commercial', async ({ page }) => {
   await page.goto('/#showcase');
   const presentation = page.locator('dialog[data-presentation]');
-  if (await presentation.isVisible()) await presentation.getByRole('button', { name: 'Pular apresentação' }).click();
+  if (await presentation.isVisible()) await dismissPresentation(page);
   await expect(page.locator('main')).not.toContainText(/R\$|por mês|por unidade|desconto aplicado/);
   await expect(page.getByTestId('plate-total')).toHaveCount(0);
   await expect(page.locator('#services')).toContainText('Escopo, valores e condições são alinhados com o comercial');

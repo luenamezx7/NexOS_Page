@@ -1,0 +1,10 @@
+{
+  "engine": "Chrome",
+  "input": "Playwright touchscreen emulation (hasTouch=true)",
+  "tapOpenClose": true,
+  "reopenEscape": true,
+  "initialGlass": {
+    "background": "rgba(9, 16, 12, 0.36)",
+    "filter": "blur(18px) saturate(1.35)"
+  }
+}

@@ -62,6 +62,26 @@ Consulte `AUTH-DEPLOY.md`, `AUTH-VALIDATION.md` e `EMAIL-SETUP.md`.
 O contato comercial usa `POST /api/contact` e o quiz envia leads ao Notion.
 Não há checkout Asaas implementado nas rotas atuais.
 
+## Portal e e-mails
+
+O portal do cliente usa o fundo Silk em WebGL1 e superfícies claras esverdeadas.
+O login tem somente o painel centralizado, com a identidade da marca dentro dele.
+A redefinição de senha compartilha esse visual em todos os estados do fluxo.
+A alternativa por e-mail envia um código de seis dígitos, válido por dez minutos
+com até cinco tentativas; a verificação ocorre no servidor e mantém MFA quando
+configurado. Links mágicos antigos não autenticam na configuração normal.
+O envio usa o Resend já configurado, sem um serviço adicional ou migração de banco.
+
+Todos os templates de e-mail compartilham `src/emails/layout.tsx`, inclusive
+boas-vindas e notificações. O banner futuro será configurado em `EMAIL_BRAND.banner`
+nesse arquivo, com URL pública, texto alternativo e dimensões. Enquanto `null`,
+nenhuma imagem ou espaço reservado é renderizado. E-mails customizados internos
+recebem apenas o conteúdo do corpo e são envolvidos pelo mesmo layout.
+
+Validação local dos templates, sem envio: `node --import tsx --test tests/email-templates.test.mjs`.
+O teste `tests/portal-authenticated-ui.test.mjs` aceita apenas URL local, usa uma
+conta descartável, captura os e-mails em memória e remove a fixture ao terminar.
+
 ## Verificação
 
 ```sh

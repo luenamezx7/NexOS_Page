@@ -2,8 +2,10 @@
 
 import { motionMedia } from '@/lib/motion-policy';
 
-import { useEffect, useRef, type RefObject } from 'react';
+import { useEffect, useId, useRef, type RefObject } from 'react';
+import { getPresentationRuntime } from './presentation-runtime';
 import { cn } from '@/lib/utils';
+import { createGlassRenderer, glassEnd, glassSettings, loadGlassLogo, type GlassTuning } from './glass-logo-engine';
 
 /**
  * Glass-tile reveal adapted for photographic NFC plates from the 21st.dev
@@ -171,4 +173,89 @@ export function LiquidGlassLogoReveal({ imageRef, className }: LiquidGlassLogoRe
   }, [imageRef]);
 
   return <span ref={hostRef} className={cn('pointer-events-none absolute inset-0', className)} aria-hidden="true" data-glass-reveal="idle"><canvas ref={canvasRef} className="block size-full" /></span>;
+}
+
+/** White mascot reveal. The presentation owns the clock, exit and focus. */
+export interface GlassIconRevealProps {
+  logo: string;
+  fallbackLogo?: string;
+  fallbackMarkup?: string;
+  cutoutLightDetails?: boolean;
+  className?: string;
+  label?: string;
+  tileSize?: number;
+  tuning?: Partial<GlassTuning>;
+}
+
+export function GlassIconReveal({ logo, fallbackLogo = logo, fallbackMarkup, cutoutLightDetails = false, className, label = 'Mascote ezway', tileSize = 256, tuning }: GlassIconRevealProps) {
+  const hostRef = useRef<HTMLDivElement>(null);
+  const logoCanvasRef = useRef<HTMLCanvasElement>(null);
+  const maskId = useId().replace(/:/g, '');
+  const tuningKey = JSON.stringify(tuning ?? {});
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host) return;
+    const owner = host.closest<HTMLDialogElement>('[data-presentation]');
+    if (owner && getPresentationRuntime(owner)) return;
+    const settings = { ...glassSettings, tileSize, ...JSON.parse(tuningKey) };
+    const canvas = logoCanvasRef.current;
+    if (!canvas) return;
+    canvas.setAttribute('aria-hidden', 'true');
+    canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block';
+    let renderer: ReturnType<typeof createGlassRenderer> = null;
+    let disposed = false, ready = false, visible = true, lost = false;
+    let frame = 0;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+    const dialog = host.closest<HTMLDialogElement>('[data-presentation]');
+    const value = dialog ? getComputedStyle(dialog).getPropertyValue('--entry-duration').trim() : '5000ms';
+    const duration = (parseFloat(value) || 5000) * (value.endsWith('ms') ? 1 : 1000);
+    // Anchored before texture preparation, so a late asset cannot extend the opening.
+    const started = performance.now();
+    const stop = () => { cancelAnimationFrame(frame); frame = 0; };
+    const fail = () => { stop(); ready = false; host.dataset.logoReveal = 'fallback'; renderer?.dispose(); renderer = null; };
+    const draw = (now: number) => {
+      frame = 0;
+      if (disposed || lost || !ready || !renderer || document.hidden || !visible) return;
+      const elapsed = Math.min(1, Math.max(0, (now - started) / Math.min(duration, 2200)));
+      renderer.render(reduced.matches ? glassEnd(settings) : elapsed * glassEnd(settings), settings);
+      host.dataset.logoReveal = elapsed < 1 && !reduced.matches ? 'playing' : 'complete';
+      if (elapsed < 1 && !reduced.matches) frame = requestAnimationFrame(draw);
+    };
+    const sync = () => {
+      stop();
+      if (!disposed && ready && visible && !document.hidden && !lost) frame = requestAnimationFrame(draw);
+    };
+    const initialize = async () => {
+      try {
+        // Build the alpha field before allocating GPU resources, and reuse it on replay.
+        const data = await loadGlassLogo(logo, cutoutLightDetails);
+        if (disposed || lost) return;
+        renderer = createGlassRenderer(canvas);
+        if (!renderer) { fail(); return; }
+        renderer.setLogo(data); ready = true; sync();
+      } catch { if (!disposed) fail(); }
+    };
+    const onLost = (event: Event) => { event.preventDefault(); lost = true; fail(); };
+    const onRestored = () => { lost = false; void initialize(); };
+    const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); });
+    const resize = new ResizeObserver(sync);
+    observer.observe(host); resize.observe(host);
+    document.addEventListener('visibilitychange', sync);
+    reduced.addEventListener('change', sync);
+    canvas.addEventListener('webglcontextlost', onLost);
+    canvas.addEventListener('webglcontextrestored', onRestored);
+    host.dataset.logoReveal = 'loading';
+    void initialize();
+    return () => {
+      disposed = true; stop(); observer.disconnect(); resize.disconnect();
+      document.removeEventListener('visibilitychange', sync); reduced.removeEventListener('change', sync);
+      canvas.removeEventListener('webglcontextlost', onLost); canvas.removeEventListener('webglcontextrestored', onRestored);
+      renderer?.dispose();
+    };
+  }, [logo, cutoutLightDetails, tileSize, tuningKey]);
+
+  return <div ref={hostRef} suppressHydrationWarning role="img" aria-label={label} data-logo-reveal="loading" className={cn('relative isolate overflow-hidden select-none', className)}>
+    <canvas ref={logoCanvasRef} suppressHydrationWarning data-logo-canvas aria-hidden="true" className="absolute inset-0 block size-full" />
+    <span data-logo-fallback suppressHydrationWarning aria-hidden="true" style={{ position: 'absolute', inset: 0, margin: 'auto', width: 'min(139px, 31.1%)', height: 'min(139px, 31.1%)', background: fallbackMarkup ? undefined : '#fff', mask: fallbackMarkup ? undefined : `url("${fallbackLogo}") center / contain no-repeat`, WebkitMask: fallbackMarkup ? undefined : `url("${fallbackLogo}") center / contain no-repeat` }} dangerouslySetInnerHTML={fallbackMarkup ? { __html: fallbackMarkup.replaceAll('__MASCOT_MASK__', maskId) } : undefined} />
+  </div>;
 }

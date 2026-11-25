@@ -34,5 +34,4 @@
 /* Continue the NFC chapter directly, without a second vertically centred opening. */
 .container { align-items: start; padding-top: 24px; }
 
-.copy { justify-items: center; text-align: center; }
-.copy p { margin-inline: auto; }
+.copy { text-align: start; }

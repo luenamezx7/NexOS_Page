@@ -1,3 +1,4 @@
+import { dismissPresentation } from './helpers/presentation';
 import { expect, test } from '@playwright/test';
 
 // Prefer the bundled browser in CI; allow locally installed Chrome when it is unavailable.
@@ -134,7 +135,7 @@ test('keeps current brand accents and localized hero content in all three langua
 test('fills the green top progress line when scrolling and resets at the start', async ({ page }) => {
   await page.goto('/');
   const intro = page.locator('dialog[data-presentation]');
-  if (await intro.isVisible()) await intro.getByRole('button', { name: 'Pular apresentação' }).click();
+  if (await intro.isVisible()) await dismissPresentation(page);
   await expect(intro).toHaveCount(0);
   const progress = page.getByRole('progressbar', { name: 'Progresso da página' });
   await expect(progress).toBeVisible();

@@ -6,17 +6,10 @@ import { ArrowUpRight, Nfc } from 'lucide-react';
 import { config } from '@/config';
 import { MetallicSurface } from './ui/metallic-button';
 import { plateCommercialHref } from '@/lib/commercial';
-import { DetailTabs, type DetailTab } from './commerce/DetailTabs';
 import { PlateChooser } from './commerce/PlateChooser';
 import { HighlightedText } from './highlighted-text';
 import styles from './commerce/Commerce.module.css';
 import { useLocale } from '@/lib/locale';
-
-const DETAILS: DetailTab[] = [
-  { id: 'uso', label: 'Como funciona', title: 'Um gesto. Seu negócio conectado.', description: 'Aproxime um celular compatível com NFC ou use a câmera para ler o QR Code. O cliente abre o link que você escolheu.', items: ['NFC e QR Code na mesma placa', 'Acesso ao seu cardápio, portfólio ou redes sociais', 'Uma experiência simples no balcão, na mesa ou na recepção'] },
-  { id: 'marca', label: 'Sua marca', title: 'A placa também fala por você.', description: 'Converse com a ezway para definir a identidade da sua placa e o destino do link.', items: ['Nome e identidade do seu negócio', 'Link personalizável', 'Atendimento para alinhar a personalização'] },
-  { id: 'lotes', label: 'Para seu espaço', title: 'Um ou vários pontos de contato.', description: 'Conte à equipe onde pretende usar as placas para alinhar personalização, valores e frete.', items: ['Mesas, balcões ou recepções', 'Proposta conforme a necessidade do seu negócio', 'Valores e condições definidos com o comercial'] },
-];
 
 export function ProductShowcase({ className = '', onSelectUse }: { className?: string; onSelectUse?: (name: string) => void }) {
   const { t } = useLocale();
@@ -48,9 +41,6 @@ export function ProductShowcase({ className = '', onSelectUse }: { className?: s
                 <p className={styles.hint}>{t('A placa e o destino digital podem ser contratados separadamente.')}</p>
               </div>
             </div>
-        <div className={`${styles.container} ${styles.productDetailsContainer}`}>
-           <ScrollReveal><DetailTabs id="plate-details" tabs={DETAILS.map(tab => ({ ...tab, label: t(tab.label), title: t(tab.title), description: t(tab.description), items: tab.items.map(t) }))} /></ScrollReveal>
-        </div>
       </section>
   );
 }

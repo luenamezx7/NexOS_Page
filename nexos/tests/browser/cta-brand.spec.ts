@@ -1,3 +1,4 @@
+import { dismissPresentation } from './helpers/presentation';
 import { expect, test } from '@playwright/test';
 
 test.use({ channel: process.env.PLAYWRIGHT_CHANNEL || undefined });
@@ -7,7 +8,7 @@ for (const width of [390, 1366]) {
     await page.setViewportSize({ width, height: 844 });
     await page.goto('/');
     const intro = page.locator('dialog[data-presentation]');
-    if (await intro.isVisible()) await intro.getByRole('button', { name: 'Pular apresentação' }).click();
+    if (await intro.isVisible()) await dismissPresentation(page);
     await expect(intro).toHaveCount(0);
     const section = page.locator('#cta-final');
     await section.scrollIntoViewIfNeeded();
@@ -31,7 +32,7 @@ for (const width of [390, 1366]) {
 test('desktop mascot responds to the cursor', async ({ page }) => {
   await page.goto('/');
   const intro = page.locator('dialog[data-presentation]');
-  if (await intro.isVisible()) await intro.getByRole('button', { name: 'Pular apresentação' }).click();
+  if (await intro.isVisible()) await dismissPresentation(page);
   await expect(intro).toHaveCount(0);
   const visual = page.locator('#cta-final [data-cta-visual]');
   await visual.scrollIntoViewIfNeeded();
@@ -45,7 +46,7 @@ test('reduced motion leaves the mascot still', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
   const intro = page.locator('dialog[data-presentation]');
-  if (await intro.isVisible()) await intro.getByRole('button', { name: 'Pular apresentação' }).click();
+  if (await intro.isVisible()) await dismissPresentation(page);
   await expect(intro).toHaveCount(0);
   const visual = page.locator('#cta-final [data-cta-visual]');
   await visual.scrollIntoViewIfNeeded();

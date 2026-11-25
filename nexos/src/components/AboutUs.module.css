@@ -118,5 +118,4 @@
   .servicesLink:hover svg { transform: none; }
 }
 
-.story { text-align: center; }
-.story .body { margin-inline: auto; }
+.story { text-align: start; }
