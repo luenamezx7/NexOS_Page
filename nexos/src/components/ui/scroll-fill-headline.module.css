@@ -1,7 +1,26 @@
 .section { position: relative; width: 100%; overflow: hidden; background: #f8f8fa; color: #000; padding: clamp(96px, 12vw, 176px) 24px; }
 .section .headline { position: relative; max-width: 1100px; margin: 0 auto; font: 550 clamp(38px, 5.4vw, 80px)/1.12 var(--font-display); letter-spacing: -.045em; text-align: center; text-wrap: balance; }
 .text, .line { display: block; }
-.word { display: inline-block; }
-.floater { position: absolute; pointer-events: none; mix-blend-mode: multiply; filter: brightness(1.07) contrast(1.06); mask-image: radial-gradient(closest-side, #000 72%, transparent 100%); }
-@media (max-width: 767px) { .floater { display: none; } }
-@media (prefers-reduced-motion: reduce) { .word { opacity: 1 !important; } }
+
+/* Each word maps its own slice of --fill-progress on the timeline root.
+   Without JS or timeline support the initial value of 1 keeps every word legible. */
+@property --fill-progress { syntax: '<number>'; inherits: true; initial-value: 1; }
+.word {
+  display: inline-block;
+  opacity: calc(.6 + .4 * clamp(0, (var(--fill-progress, 1) - var(--fill-a, 0)) / (var(--fill-b, 1) - var(--fill-a, 0)), 1));
+}
+
+/* Scroll-driven path: ONE animation per heading, of a number, not of each word's
+   opacity. Per-word opacity animations promoted every word to its own
+   compositor layer (~35 layers per frame); a custom property does not.
+   Offsets ['start 80%', 'end 45%'] of the root's own view timeline. */
+@supports (animation-timeline: view()) {
+  .timeline {
+    animation: scrollFillProgress linear both;
+    animation-timeline: view(block);
+    animation-range: cover 20vh cover calc(100% - 45vh);
+  }
+}
+@keyframes scrollFillProgress { from { --fill-progress: 0; } to { --fill-progress: 1; } }
+
+@media (prefers-reduced-motion: reduce) { .timeline { animation: none !important; } .word { opacity: 1 !important; } }

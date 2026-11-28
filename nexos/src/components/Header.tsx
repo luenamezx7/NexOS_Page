@@ -5,7 +5,6 @@ import { X, ArrowUpRight } from 'lucide-react';
 import { BrandMark } from './BrandMark';
 import { NavigationGlass } from './NavigationGlass';
 import { Button } from './ui/cnippet-button';
-import { ListViewIcon } from './ListViewIcon';
 import { HeaderAccount } from './HeaderAccount';
 import { LanguageSwitch } from './LanguageSwitch';
 import { useLocale } from '@/lib/locale';
@@ -26,7 +25,10 @@ const subscribeScrolled = (notify: () => void) => {
   window.addEventListener('scroll', notify, { passive: true });
   return () => window.removeEventListener('scroll', notify);
 };
-const getScrolled = () => window.scrollY > 24;
+// Small hysteresis: float as soon as the visitor starts down, settle back only
+// at the very top, so the bar never flickers between states near 0.
+let floating = false;
+const getScrolled = () => (floating = floating ? window.scrollY > 2 : window.scrollY > 8);
 const getServerScrolled = () => false;
 
 export function Header() {
@@ -45,27 +47,27 @@ export function Header() {
   const [dropdown, setDropdown] = useState<'language' | 'account' | null>(null);
   useScrollLock(mobileOpen);
 
+  // Current-section indicator. An IntersectionObserver replaces a per-frame
+  // elementFromPoint hit test (≈6 s of main-thread time per full scroll on a
+  // throttled phone).
   useEffect(() => {
-    let frame = 0;
-    const update = () => {
-      frame = 0;
-      const header = headerRef.current;
-      if (!header || dialogRef.current?.open) return;
-      const probe = document.elementFromPoint(innerWidth / 2, header.getBoundingClientRect().bottom + 8);
-      const section = probe?.closest('section[id]');
-      if (!section) return;
-      // The same dark glass material belongs to every section of this page.
-      header.dataset.navSurface = 'dark';
-      header.querySelectorAll<HTMLAnchorElement>('nav a[href]').forEach(link => {
-        if (link.hash === `#${section.id}`) link.setAttribute('aria-current', 'location');
+    const header = headerRef.current;
+    if (!header) return;
+    const links = [...header.querySelectorAll<HTMLAnchorElement>('nav a[href^="#"]')];
+    const targets = links.map(link => document.getElementById(link.hash.slice(1))).filter((el): el is HTMLElement => Boolean(el));
+    if (!targets.length) return;
+    const visible = new Set<string>();
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => { if (entry.isIntersecting) visible.add(entry.target.id); else visible.delete(entry.target.id); });
+      // The first target in document order that crosses the band under the header.
+      const current = targets.find(target => visible.has(target.id))?.id;
+      links.forEach(link => {
+        if (current && link.hash === `#${current}`) link.setAttribute('aria-current', 'location');
         else link.removeAttribute('aria-current');
       });
-    };
-    const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
-    schedule();
-    window.addEventListener('scroll', schedule, { passive: true });
-    window.addEventListener('resize', schedule);
-    return () => { cancelAnimationFrame(frame); window.removeEventListener('scroll', schedule); window.removeEventListener('resize', schedule); };
+    }, { rootMargin: '-96px 0px -55% 0px' });
+    targets.forEach(target => observer.observe(target));
+    return () => observer.disconnect();
   }, []);
 
   const closeMenu = useCallback(() => {
@@ -115,8 +117,8 @@ export function Header() {
   }, [closeMenu]);
 
   return <>
-    <header ref={headerRef} role="banner" className={styles.header} data-managed-section-links data-scrolled={scrolled} data-header-state="assembled">
-      <NavigationGlass />
+    <header ref={headerRef} role="banner" className={styles.header} data-managed-section-links data-scrolled={scrolled} data-header-state="assembled" data-nav-surface="dark">
+      <div className={styles.surface} aria-hidden="true" /><div className={styles.ring} aria-hidden="true" />
       <div className={styles.bar}>
         <a href="#hero" aria-label={t('ezway, início')} className={styles.brand} onClick={event => { event.preventDefault(); navigate('#hero'); }}><BrandMark registered /></a>
         <nav className={styles.desktopNav} aria-label={t('Navegação principal')}>
@@ -126,11 +128,11 @@ export function Header() {
           <HeaderAccount open={dropdown === 'account'} onOpenChange={open => setDropdown(open ? 'account' : null)} />
           <LanguageSwitch open={dropdown === 'language'} onOpenChange={open => setDropdown(open ? 'language' : null)} />
            <Button className={styles.contactAction} data-navigation-glass="control" render={<a href={commercialHref(t('Olá! Quero conversar sobre as soluções da ezway.'))} target="_blank" rel="noopener noreferrer" />}><NavigationGlass />{t('Conversar no WhatsApp')}</Button>
-           <button ref={triggerRef} type="button" className={styles.menuButton} data-navigation-glass="control" aria-label={t('Abrir menu')} aria-expanded={mobileOpen} aria-controls="mobile-navigation" onClick={() => { setDropdown(null); setMobileOpen(true); }}><NavigationGlass /><ListViewIcon isActive={mobileOpen} /></button>
+           <button ref={triggerRef} type="button" className={styles.menuButton} data-navigation-glass="control" aria-label={t('Abrir menu')} aria-expanded={mobileOpen} aria-controls="mobile-navigation" onClick={() => { setDropdown(null); setMobileOpen(true); }}><span className={styles.menuGlyph} aria-hidden="true"><span /><span /></span></button>
         </div>
       </div>
     </header>
-    <dialog ref={dialogRef} id="mobile-navigation" className={styles.mobileDialog} aria-labelledby="mobile-menu-title" data-lenis-prevent onCancel={event => { event.preventDefault(); closeMenu(); }} onClose={() => { closeMenu(); if (!destination.current) triggerRef.current?.focus(); }} onClick={event => { if (event.target === event.currentTarget) closeMenu(); }} onKeyDown={event => {
+    <dialog ref={dialogRef} id="mobile-navigation" className={styles.mobileDialog} data-floating={scrolled} aria-labelledby="mobile-menu-title" data-lenis-prevent onCancel={event => { event.preventDefault(); closeMenu(); }} onClose={() => { closeMenu(); if (!destination.current) triggerRef.current?.focus(); }} onClick={event => { if (event.target === event.currentTarget) closeMenu(); }} onKeyDown={event => {
        if (event.key !== 'Tab') return;
        const controls = [...event.currentTarget.querySelectorAll<HTMLElement>('a[href],button:not([disabled]),summary,[tabindex="0"]')].filter(element => element.getClientRects().length > 0 && !element.closest('[inert]'));
       const first = controls[0], last = controls[controls.length - 1];

@@ -27,7 +27,7 @@
 }
 .screen:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
 .screenshot { display: block; width: 100%; height: auto; aspect-ratio: 8 / 5; }
-.action { display: flex; justify-content: center; margin-top: 28px; }
+.action { display: flex; justify-content: center; margin-top: 32px; }
 @media (max-width: 767px) {
   .screen { border-radius: 16px; }
   .header > p:last-child { font-size: 16px; }

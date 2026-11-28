@@ -1129,7 +1129,6 @@ select.field-input option {
 .landing-page footer { background: var(--color-canvas); }
 .landing-page .btn-primary-nex, .landing-page .btn-primary-glow { font-family: var(--font-sans); letter-spacing: 0; font-weight: 600; }
 .landing-page:has(input:focus-visible, textarea:focus-visible, select:focus-visible) :is(.landing-edge-blur, .landing-header-blur) { opacity: 0; }
-.landing-page:has(#services[data-artwork-focus='true']) :is(.landing-edge-blur, .landing-header-blur) { opacity: 0; pointer-events: none; }
 /* The two Oceanic Shimmer surfaces have local contrast tokens in either theme. */
 .oceanic-surface {
   --color-canvas: #ffffff;
@@ -1706,7 +1705,7 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
 }
 
 /* Night glass confines translucency and refraction to navigation. */
-.site-shell :is([data-header-state], [data-page-header]) {
+.site-shell [data-page-header] {
   --night-glass-tint: rgb(5 7 13 / 38%);
   background: #080a10;
   border-color: rgb(220 230 255 / 16%);
@@ -1716,19 +1715,19 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
 }
 
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .site-shell :is([data-header-state], [data-page-header]) {
+  .site-shell [data-page-header] {
     background: linear-gradient(130deg, rgb(183 201 243 / 5%), transparent 46%), var(--night-glass-tint);
     -webkit-backdrop-filter: blur(18px) saturate(115%);
     backdrop-filter: blur(18px) saturate(115%);
   }
 }
 
-.site-shell :is([data-header-state][data-scrolled='true'], [data-page-header]) {
+.site-shell [data-page-header] {
   --night-glass-tint: rgb(5 7 13 / 62%);
 }
 
 @media (prefers-reduced-transparency: reduce) {
-  .site-shell :is([data-header-state], [data-page-header]) {
+  .site-shell [data-page-header] {
     background: #080a10;
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
@@ -1738,7 +1737,7 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
 .page-narrow :where(p, li) { text-wrap: pretty; }
 
 @media (forced-colors: active) {
-  .site-shell :is([data-header-state], [data-page-header]) {
+  .site-shell [data-page-header] {
     background: Canvas;
     border-color: CanvasText;
     box-shadow: none;
@@ -1761,7 +1760,7 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
 }
 
 /* The optical layer stays below the live controls and never intercepts input. */
-.site-shell :is([data-header-state], [data-page-header]) {
+.site-shell [data-page-header] {
   isolation: isolate;
   background: transparent;
   -webkit-backdrop-filter: none;
@@ -1785,8 +1784,18 @@ html.dark .site-shell :where(input, textarea, select) { color-scheme: only dark;
 }
 @media (prefers-reduced-transparency: reduce), (forced-colors: active) {
   .navigation-glass { display: none; }
-  .site-shell :is([data-header-state], [data-page-header]) { background: #080a10; box-shadow: none; }
+  .site-shell [data-page-header] { background: #080a10; box-shadow: none; }
 }
 @media (forced-colors: active) {
-  .site-shell :is([data-header-state], [data-page-header]) { background: Canvas; border-color: CanvasText; }
+  .site-shell [data-page-header] { background: Canvas; border-color: CanvasText; }
 }
+
+/* 320–359 px: the hero CTA label must stay on one line inside its pill. */
+@media (max-width: 359px) {
+  .landing-hero .hero-actions > :first-child { --btn-padding-x: 16px; --btn-font-size: 13px; }
+}
+
+/* Comparison → "De ponta a ponta": two dark blocks separated by a light gap,
+   each with its own rounded edge, instead of touching borders. */
+.landing-page #comparacao { border-radius: 0 0 var(--dark-section-radius) var(--dark-section-radius); }
+.landing-page .comparison-frame + .chapter-surface-frame { padding-top: clamp(14px, 2vw, 24px); }

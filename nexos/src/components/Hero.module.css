@@ -20,12 +20,36 @@
 }
 
 .eyebrowBadge {
-  border: 1px solid var(--palette-highlight);
-  background: var(--palette-bg);
-  color: var(--palette-ink);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid rgb(255 255 255 / 90%);
+  background: #fff;
+  color: #10140c;
   font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .02em;
   line-height: 1.4;
+  box-shadow: 0 0 0 4px rgb(255 255 255 / 10%), 0 8px 28px -10px rgb(255 63 159 / 55%);
 }
+/* A slow light sweep across the white pill: transform-only, so it stays on the
+   compositor and costs nothing on the main thread. */
+.eyebrowBadge::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0 auto 0 0;
+  width: 45%;
+  background: linear-gradient(100deg, transparent, rgb(255 63 159 / 22%) 45%, rgb(217 254 154 / 38%) 55%, transparent);
+  transform: translateX(-120%);
+  animation: eyebrowSweep 4.2s cubic-bezier(.45, 0, .2, 1) 1.2s infinite;
+  pointer-events: none;
+}
+@keyframes eyebrowSweep {
+  0% { transform: translateX(-120%); }
+  55%, 100% { transform: translateX(340%); }
+}
+@media (prefers-reduced-motion: reduce) { .eyebrowBadge::after { animation: none; opacity: 0; } }
 
 @media (max-width: 767px) {
   .hero:global(.landing-hero) :global(.hero-container) {

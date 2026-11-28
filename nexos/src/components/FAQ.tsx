@@ -36,24 +36,39 @@ const FAQ_ITEMS: FAQItem[] = [
   },
   {
     id: '05',
+    question: 'Quais modelos de placa existem?',
+    answer: 'Há modelos para avaliações no Google, Instagram e WhatsApp, além das placas “Conecte-se com a gente” em azul, roxo e laranja, que reúnem seus canais. Cor, texto e destino são personalizados com você.',
+  },
+  {
+    id: '06',
+    question: 'Posso trocar o link da placa depois?',
+    answer: 'Sim, fale com a ezway pelo WhatsApp: a equipe confere as opções disponíveis para atualizar o destino da sua placa.',
+  },
+  {
+    id: '07',
+    question: 'O que é um Mini-Site?',
+    answer: 'É uma página simples para a bio do Instagram: reúne seus links (WhatsApp, agenda, redes, rotas), um catálogo de produtos ou serviços e, se fizer sentido, suas avaliações do Google e o mapa até você.',
+  },
+  {
+    id: '08',
     question: 'Como faço para contratar ou adquirir uma placa?',
     answer: 'Os botões da placa e do Desenvolvimento ezway abrem uma conversa com nosso comercial no WhatsApp. Alinhamos sua necessidade, personalização ou escopo, prazos e condições para fechar a venda diretamente com você.',
   },
   {
-    id: '06',
+    id: '09',
     question: 'Preciso ter CNPJ para comprar?',
     answer:
       'Atendemos pessoas físicas e empresas. Nosso comercial orienta quais dados são necessários para a contratação e esclarece as condições de faturamento durante a conversa.',
   },
   {
-    id: '07',
+    id: '10',
     question: 'O que é o EasyChat?',
      answer: 'O EasyChat é um projeto de assistente administrativo com IA, em desenvolvimento. A conversa exibida no site é uma prévia conceitual de funcionalidades previstas. Fale com a equipe sobre as soluções disponíveis hoje.',
   },
   {
-    id: '08',
+    id: '11',
     question: `O que a ${config.brand.name} oferece?`,
-    answer: `A ${config.brand.name} apresenta Controle & Gestão, sites, portfólios, landing pages, cardápios digitais e placas NFC com QR Code. O diagnóstico ajuda a definir o escopo e a disponibilidade para sua necessidade.`,
+    answer: `A ${config.brand.name} oferece Controle & Gestão (clientes, vendas e financeiro), sites, portfólios, landing pages, cardápios digitais, Mini-Sites e placas NFC com QR Code. O diagnóstico ajuda a definir o escopo e a disponibilidade para sua necessidade.`,
   },
 ];
 

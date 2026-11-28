@@ -29,21 +29,22 @@
 .utilityBackground { background: revert-layer; }
 .label { position: relative; z-index: 1; }
 .fill, .fillLabel, .circle { position: absolute; pointer-events: none; }
-.fill { z-index: 2; inset: var(--af-top) var(--af-right) var(--af-top) var(--af-left); border-radius: inherit; background: var(--btn-fill-bg); transition: inset var(--btn-duration) var(--af-ease), background-color var(--btn-duration) var(--af-ease); }
+/* The fill grows by clip-path, not inset: same shape, no layout shift on hover. */
+.fill { z-index: 2; inset: 0; border-radius: inherit; background: var(--btn-fill-bg); clip-path: inset(var(--af-top) var(--af-right) var(--af-top) var(--af-left) round 999px); transition: clip-path var(--btn-duration) var(--af-ease), background-color var(--btn-duration) var(--af-ease); }
 .fillLabel { z-index: 2; inset: 0; display: flex; justify-content: center; align-items: center; padding: 12px var(--af-text-right) 12px var(--af-pad); color: var(--btn-fill-text); clip-path: inset(var(--af-top) var(--af-right) var(--af-top) var(--af-left)); transition: clip-path var(--btn-duration) var(--af-ease), color var(--btn-duration) var(--af-ease); }
 .circle { z-index: 3; top: 50%; right: var(--af-right); display: grid; place-items: center; width: var(--af-circle); height: var(--af-circle); overflow: hidden; border-radius: 50%; transform: translateY(-50%); background: var(--btn-fill-bg); color: var(--btn-arrow); transition: background-color var(--btn-duration) var(--af-ease), color var(--btn-duration) var(--af-ease); }
 .circle svg { position: absolute; width: 18px; height: 18px; transition: transform var(--btn-duration) var(--af-ease); }
 .enteringArrow { transform: translateX(-170%) scale(0); }
 .leavingArrow { transform: translateX(0) scale(1); }
 .button[data-ready='false'] *, .button[data-ready='false'] { transition: none; }
-.button[data-pressed='true'] .fill, .button[data-fill-on-hover='true']:focus-visible .fill { inset: 0; background: var(--btn-fill-bg-hover); }
+.button[data-pressed='true'] .fill, .button[data-fill-on-hover='true']:focus-visible .fill { clip-path: inset(0 round 999px); background: var(--btn-fill-bg-hover); }
 .button[data-pressed='true'] .fillLabel, .button[data-fill-on-hover='true']:focus-visible .fillLabel { clip-path: inset(0); color: var(--btn-fill-text-hover); }
 .button[data-pressed='true'] .circle, .button[data-fill-on-hover='true']:focus-visible .circle { background: var(--btn-fill-bg-hover); color: var(--btn-arrow-hover); }
 .button[data-pressed='true'] .enteringArrow, .button[data-fill-on-hover='true']:focus-visible .enteringArrow { transform: translateX(0) scale(1); }
 .button[data-pressed='true'] .leavingArrow, .button[data-fill-on-hover='true']:focus-visible .leavingArrow { transform: translateX(170%) scale(0); }
 .button:focus-visible { outline: 2px solid var(--palette-highlight, #ff74bd); outline-offset: 4px; }
 @media (hover: hover) {
-  .button[data-fill-on-hover='true']:hover .fill { inset: 0; background: var(--btn-fill-bg-hover); }
+  .button[data-fill-on-hover='true']:hover .fill { clip-path: inset(0 round 999px); background: var(--btn-fill-bg-hover); }
   .button[data-fill-on-hover='true']:hover .fillLabel { clip-path: inset(0); color: var(--btn-fill-text-hover); }
   .button[data-fill-on-hover='true']:hover .circle { background: var(--btn-fill-bg-hover); color: var(--btn-arrow-hover); }
   .button[data-fill-on-hover='true']:hover .enteringArrow { transform: translateX(0) scale(1); }

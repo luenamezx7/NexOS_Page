@@ -26,6 +26,9 @@ export default function BrandEntrance({ onComplete, nonce }: BrandEntranceProps)
   const completeRef = useRef<(() => void) | null>(null);
   const [phase, setPhase] = useState<'pending' | 'entering' | 'leaving'>('pending');
   const { lenis } = useScrollContext();
+  const lenisRef = useRef(lenis);
+  useEffect(() => { lenisRef.current = lenis; }, [lenis]);
+  const releasedRef = useRef(false);
 
   useLayoutEffect(() => {
     const dialog = dialogRef.current;
@@ -50,8 +53,15 @@ export default function BrandEntrance({ onComplete, nonce }: BrandEntranceProps)
       if (!Number.isFinite(amount) || amount <= 0) return fallback;
       return value.endsWith('ms') ? amount : value.endsWith('s') ? amount * 1000 : fallback;
     };
-    const duration = durationInMs('--entry-duration', 5000);
-    const exitDuration = durationInMs('--exit-duration', 1100);
+    const duration = durationInMs('--entry-duration', 4000);
+    const exitDuration = durationInMs('--exit-duration', 900);
+    // Wall-clock origin: the first paint of the cover, never the GPU-ready time.
+    // A slow worker shortens the animated part instead of extending the wait.
+    const openedAt = runtime?.startedAt ?? performance.now();
+    // A late renderer still gets enough time to finish the reveal + blink…
+    const minimumAfterReady = 2600;
+    // …but the cover never outlives this hard ceiling.
+    const ceiling = duration + 1200;
     const htmlOverflow = document.documentElement.style.overflow;
     const bodyOverflow = document.body.style.overflow;
     const notify = () => document.dispatchEvent(new Event('nexos-entry-change'));
@@ -68,10 +78,24 @@ export default function BrandEntrance({ onComplete, nonce }: BrandEntranceProps)
       notify();
       onComplete(true);
     };
+    let released = false;
+    const releaseScroll = () => {
+      if (released) return;
+      released = true;
+      releasedRef.current = true;
+      document.documentElement.style.overflow = htmlOverflow;
+      document.body.style.overflow = bodyOverflow;
+      lenisRef.current?.start();
+    };
     const beginExit = () => {
       if (disposed || completed || leaving) return;
       leaving = true;
+      warm();
       recordMotion('presentation', 'leaving');
+      // Hand the page back as the fade starts: a modal dialog makes the document
+      // inert, so reopen it non-modally and release the scroll lock right away.
+      if (dialog.open) { dialog.close(); dialog.show(); }
+      releaseScroll();
       later(complete, exitDuration + 500);
       // Give the hero two paints to settle before the opaque cover starts fading.
       dialog.dataset.revealing = 'true';
@@ -85,9 +109,21 @@ export default function BrandEntrance({ onComplete, nonce }: BrandEntranceProps)
       });
     };
     let entryTimer: ReturnType<typeof setTimeout> | undefined;
+    let warmTimer: ReturnType<typeof setTimeout> | undefined;
+    const warm = () => {
+      if (disposed || dialog.dataset.warm) return;
+      dialog.dataset.warm = 'true';
+      notify();
+    };
     const scheduleEnd = () => {
       if (entryTimer) { clearTimeout(entryTimer); timers.delete(entryTimer); }
-      entryTimer = later(beginExit, Math.max(0, duration - (runtime ? performance.now() - runtime.startedAt : 0)));
+      if (warmTimer) { clearTimeout(warmTimer); timers.delete(warmTimer); }
+      const now = performance.now();
+      const readyAt = runtime && runtime.startedAt > openedAt ? runtime.startedAt : openedAt;
+      const deadline = Math.min(openedAt + ceiling, Math.max(openedAt + duration, readyAt + minimumAfterReady));
+      entryTimer = later(beginExit, Math.max(0, deadline - now));
+      // Let deferred scenes set up behind the opaque cover, never during the fade.
+      warmTimer = later(warm, Math.max(1200 - (now - openedAt), deadline - now - 1400));
     };
     dialog.addEventListener('nexos-presentation-ready', scheduleEnd);
     const start = () => {
@@ -125,14 +161,13 @@ export default function BrandEntrance({ onComplete, nonce }: BrandEntranceProps)
       // running renderer; dispose only when the dialog actually leaves the tree.
       queueMicrotask(() => { if (!dialog.isConnected) runtime?.dispose(); });
       dialog.close();
-      document.documentElement.style.overflow = htmlOverflow;
-      document.body.style.overflow = bodyOverflow;
+      releaseScroll();
       notify();
     };
   }, [onComplete]);
 
   useEffect(() => {
-    if (!lenis) return;
+    if (!lenis || releasedRef.current) return;
     lenis.stop();
     lenis.scrollTo(0, { immediate: true, force: true });
     return () => { lenis.start(); };

@@ -1,0 +1,8 @@
+/* Compositor-only pulse: replaces an infinite JS-driven Motion loop that kept
+   the main-thread frame loop awake while the hero was off-screen. */
+.pulse { animation: glowingBadgePulse 2s cubic-bezier(.42, 0, .58, 1) infinite; transform-origin: center; }
+@keyframes glowingBadgePulse {
+  0%, 100% { transform: scale(1); opacity: .75; }
+  50% { transform: scale(2.5); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .pulse { animation: none; } }

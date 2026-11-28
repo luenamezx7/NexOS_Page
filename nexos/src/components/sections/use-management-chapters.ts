@@ -3,11 +3,11 @@
 import { useEffect, type RefObject } from 'react';
 import { cinematicDesktopQuery } from '@/lib/motion-presets';
 import { motionError, recordMotion } from '@/lib/motion-diagnostics';
-import { usePresentationActive } from '@/lib/use-presentation-active';
+import { usePresentationGate } from '@/lib/use-presentation-active';
 
 /** Chapter boundaries own automatic selection; manual choices last until the next boundary. */
 export function useManagementChapters(stageRef: RefObject<HTMLDivElement | null>, onChapter: (index: number) => void) {
-  const presenting = usePresentationActive();
+  const presenting = usePresentationGate();
   useEffect(() => {
     const stage = stageRef.current;
     if (!stage || presenting) return;

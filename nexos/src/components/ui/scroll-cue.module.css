@@ -1,0 +1,15 @@
+.cue {
+  --cue: rgb(255 255 255 / 62%);
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: clamp(40px, 6vw, 72px);
+  pointer-events: none;
+}
+.cue[data-tone='dark'] { --cue: rgb(18 13 16 / 48%); }
+.cue svg { overflow: visible; animation: cueBob 2.2s cubic-bezier(.45, 0, .55, 1) infinite; animation-play-state: paused; }
+.cue[data-active='true'] svg { animation-play-state: running; }
+.cue path { stroke: var(--cue); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+@keyframes cueBob { 0%, 100% { transform: translateY(0); opacity: .45; } 50% { transform: translateY(8px); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .cue svg { animation: none; } }
+@media (forced-colors: active) { .cue path { stroke: CanvasText; } }

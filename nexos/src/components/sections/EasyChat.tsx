@@ -9,6 +9,7 @@ import { ScrollFillText } from '../ui/scroll-fill-headline';
 import { Iphone15Pro } from '../ui/iphone-15-pro';
 import { PhoneScrollHero } from '../ui/phone-scroll-hero';
 import { GlowingBadge } from '../unlumen-ui/primitives/glowing-badge';
+import { BenefitNote, Scribble } from '../ui/scribble';
 import { ArrowLeft, Bell, CheckCheck, FileText, Files, Mic, MoreVertical, Paperclip, PenLine, Phone, ReceiptText, Smile } from 'lucide-react';
 import styles from './EasyChat.module.css';
 import { useLocale } from '@/lib/locale';
@@ -68,6 +69,7 @@ export function EasyChat() {
           <figcaption>{t('Funcionalidades previstas · em desenvolvimento')}</figcaption>
         </figure>
       </PhoneScrollHero>
+      <BenefitNote className={styles.benefit}>{t('Você pede pelo WhatsApp, a IA prepara e você só revisa: sua rotina administrativa')} <Scribble>{t('cabe numa conversa')}</Scribble>.</BenefitNote>
       <div className={styles.details}><div><p className={styles.capabilityTitle}>{t('Funcionalidades previstas')}</p><ul className={styles.capabilities}>{capabilities.map(({ icon: Icon, label }) => <li key={label}><Icon size={18} aria-hidden="true" />{t(label)}</li>)}</ul></div></div>
     </div>
   </section>;

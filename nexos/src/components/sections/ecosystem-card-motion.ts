@@ -26,10 +26,9 @@ export function createCardStory(gsap: typeof GSAP, card: HTMLElement, id: string
     reveal('[data-web-mobile]', .72, .35);
   } else if (id === 'menu') {
     reveal('[data-menu-photo]', .15, .4);
-    reveal('[data-menu-auto] [data-menu-product]', .3, .3, .1);
-    story.to(elements('[data-menu-caret]'), { xPercent: 100, duration: .3, ease: 'power2.inOut' }, .7);
-    story.to(elements('[data-menu-panel="cafes"]'), { opacity: 0, duration: .2 }, .7);
-    story.fromTo(elements('[data-menu-panel="doces"]'), { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: .3 }, .74);
+    reveal('[data-menu-product]', .3, .3, .1);
+    reveal('[data-menu-cart]', .62, .3);
+    story.fromTo(elements('[data-menu-toast]'), { opacity: 0, x: 18 }, { opacity: 1, x: 0, duration: .32, ease: 'power2.out' }, .8);
   } else if (id === 'nfc') {
     story.fromTo(elements('[data-nfc-phone]'), { x: 42, y: 24, rotation: 7 }, {
       x: 0, y: 0, rotation: 0, duration: .6, ease: 'power2.inOut',

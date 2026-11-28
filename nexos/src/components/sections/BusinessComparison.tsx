@@ -2,7 +2,8 @@
 
 import { useRef } from 'react';
 import { useInView } from 'motion/react';
-import { ArrowRight, ArrowUpRight, Check, ContactRound, FileText, Globe, Link2, MessageCircle, Nfc, Wallet } from 'lucide-react';
+import Image from 'next/image';
+import { ArrowUpRight, Check, ContactRound, FileText, Globe, Link2, MessageCircle, Nfc, Sparkles, Wallet, X } from 'lucide-react';
 import { useLocale } from '@/lib/locale';
 import { commercialHref } from '@/lib/commercial';
 import { diagnosticMessage } from '@/config/solutions';
@@ -19,26 +20,38 @@ export function BusinessComparison() {
   const { t } = useLocale();
   const root = useRef<HTMLElement>(null);
   const visible = useInView(root, { once: true, amount: .12 });
-  return <section ref={root} id="comparacao" data-comparison-ready={visible} className={styles.section} aria-labelledby="comparison-title">
+  const onScreen = useInView(root);
+  return <section ref={root} id="comparacao" data-comparison-ready={visible} data-onscreen={onScreen || undefined} className={styles.section} aria-labelledby="comparison-title">
     <div className={styles.container}>
       <header className={styles.header}><h2 id="comparison-title" data-heading-static>{t('Seu negócio,')}<br />{t('sem e com a EZWAY.')}</h2><p>{t('Da operação à presença digital. Veja o que cada solução pode organizar no seu negócio.')}</p></header>
-      <div className={styles.comparison}>
-        <div className={styles.labels} aria-hidden="true"><span>{t('Sem EZWAY')}<small>{t('Mais tarefas manuais')}</small></span><span>{t('Com EZWAY')}<small>{t('Caminhos mais simples')}</small></span></div>
-        {comparisons.map(({ id, category, before, after, detail, icon: Icon }, index) => <article className={styles.pair} key={id} style={{ '--pair-delay': `${index * 100}ms` } as React.CSSProperties} aria-labelledby={`comparison-${id}`}>
-          <div className={styles.before}>
-            <span className={styles.mobileLabel}>{t('Sem EZWAY')}</span><p className={styles.category}>{t(category)}</p><h3 id={`comparison-${id}`} data-heading-static>{t(before)}</h3>
-            <div className={styles.scattered} aria-hidden="true">
-              {id === 'routine' ? <><span><ContactRound />{t('Contatos')}</span><span><FileText />{t('Planilhas')}</span><span><Wallet />{t('Anotações')}</span></> : id === 'presence' ? <><span><FileText />PDF</span><span><MessageCircle />{t('Mensagem')}</span><span><Link2 />{t('Links soltos')}</span></> : <><span><MessageCircle />{t('Pedir o contato')}</span><span><FileText />{t('Digitar o endereço')}</span></>}
+      <div className={styles.versus}>
+        <div className={styles.without} aria-labelledby="comparison-without">
+          <p className={styles.sideLabel} id="comparison-without"><X size={16} aria-hidden="true" />{t('Sem EZWAY')}</p>
+          <p className={styles.sideHint}>{t('Mais tarefas manuais')}</p>
+          <ul className={styles.withoutList}>{comparisons.map(({ id, category, before }) => <li key={id}>
+            <small>{t(category)}</small>
+            <span>{t(before)}</span>
+            <span className={styles.scattered} aria-hidden="true">
+              {id === 'routine' ? <><i><ContactRound />{t('Contatos')}</i><i><FileText />{t('Planilhas')}</i><i><Wallet />{t('Anotações')}</i></> : id === 'presence' ? <><i><FileText />PDF</i><i><MessageCircle />{t('Mensagem')}</i><i><Link2 />{t('Links soltos')}</i></> : <><i><MessageCircle />{t('Pedir o contato')}</i><i><FileText />{t('Digitar o endereço')}</i></>}
+            </span>
+          </li>)}</ul>
+        </div>
+
+        <div className={styles.withSide}>
+          <div className={styles.withCard} data-comparison-result aria-labelledby="comparison-with">
+            <p className={styles.sideLabel} id="comparison-with"><Sparkles size={16} aria-hidden="true" />{t('Com EZWAY')}</p>
+            <p className={styles.sideHint}>{t('Caminhos mais simples')}</p>
+            <ul className={styles.withList}>{comparisons.map(({ id, after, detail, icon: Icon }, index) => <li key={id} style={{ '--pair-delay': `${index * 120}ms` } as React.CSSProperties}>
+              <span className={styles.withIcon} data-tone={index}><Icon size={20} aria-hidden="true" /></span>
+              <span><strong id={`comparison-${id}`}>{t(after)}</strong><small>{t(detail)}</small></span>
+              <Check className={styles.withCheck} size={18} aria-hidden="true" />
+            </li>)}</ul>
+            <div className={styles.wins} aria-label={t('Vantagens')}>
+              {['Tudo em um só lugar', 'Atendimento mais rápido', 'Presença profissional'].map(win => <span key={win}><Check size={13} aria-hidden="true" />{t(win)}</span>)}
             </div>
           </div>
-          <span className={styles.bridge} aria-hidden="true"><ArrowRight size={18} /></span>
-          <div className={styles.after} data-comparison-result>
-            <span className={styles.mobileLabel}>{t('Com EZWAY')}</span><div className={styles.resultTitle}><Icon size={22} aria-hidden="true" /><h3 data-heading-static>{t(after)}</h3></div><p>{t(detail)}</p>
-            <div className={styles.organized} aria-hidden="true">
-              {id === 'routine' ? <><span><Check />{t('Clientes')}</span><i /><span><Check />{t('Vendas')}</span><i /><span><Check />{t('Financeiro')}</span></> : id === 'presence' ? <><span className={styles.address}>sua-marca</span><i /><span>{t('Site')}</span><span>{t('Catálogo')}</span><span>{t('Contato')}</span></> : <><Nfc size={24} /><i /><span>{t('Seu destino digital')}</span><ArrowUpRight size={18} /></>}
-            </div>
-          </div>
-        </article>)}
+          <div className={styles.hand} aria-hidden="true"><Image src="/media/maos-extend.png" alt="" fill sizes="(max-width: 767px) 90vw, 620px" /></div>
+        </div>
       </div>
       <div className={styles.future}><MessageCircle size={22} aria-hidden="true" /><div><h3 data-heading-static>{t('E a rotina com apoio de IA?')}</h3><p>{t('O EasyChat está em desenvolvimento. Conheça a prévia do assistente administrativo e suas funcionalidades previstas.')}</p></div><a href="#easychat">{t('Ver a prévia')}<ArrowUpRight size={17} aria-hidden="true" /></a></div>
       <div className={styles.close}><p>{t('Você escolhe as soluções. A gente alinha o escopo e acompanha a implementação.')}</p><Button size="xl" variant="secondary" render={<a href={commercialHref(t(diagnosticMessage))} target="_blank" rel="noopener noreferrer" />} data-cta-section="comparacao" data-cta-solution="diagnostico">{t('Conversar sobre meu negócio')}<ArrowUpRight size={18} aria-hidden="true" /></Button></div>

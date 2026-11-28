@@ -7,7 +7,6 @@ import { Header } from '@/components/Header';
 import { Hero } from '@/components/Hero';
 import { HeroToolsMarquee } from '@/components/HeroToolsMarquee';
 import { Management } from '@/components/sections/Management';
-import { BusinessExamples } from '@/components/sections/BusinessExamples';
 import { Ecosystem } from '@/components/sections/Ecosystem';
 import { HeroBrandStrip } from '@/components/HeroBrandStrip';
 import { SectionBackground } from '@/components/sections/SectionBackground';
@@ -58,7 +57,9 @@ export default function HomeClient({ nonce }: { nonce?: string }) {
     // Reduced motion bypasses BrandEntrance's scroll reset. Land before
     // releasing the cover, including browser reload restores.
     // Explicit deep links still belong to the section-navigation controller.
-    if (entered && (entrance.key > 0 || !location.hash || location.hash === '#hero')) {
+    // With full motion the cover already reset the scroll when it opened and
+    // released it as the fade began; the visitor may be scrolling by now.
+    if (entered && reduce && (entrance.key > 0 || !location.hash || location.hash === '#hero')) {
       window.scrollTo({ top: 0, behavior: 'instant' });
     }
     setEntrance({ visible: false, key: entrance.key });
@@ -71,7 +72,7 @@ export default function HomeClient({ nonce }: { nonce?: string }) {
         heroRef.current?.focus({ preventScroll: true });
       }
     });
-  }, [entrance.key]);
+  }, [entrance.key, reduce]);
 
   useEffect(() => () => cancelAnimationFrame(focusRaf.current), []);
 
@@ -104,9 +105,8 @@ export default function HomeClient({ nonce }: { nonce?: string }) {
                   <PlateManagement />
                </SectionBackground>
                </div>
-               <BusinessComparison />
+               <div className="chapter-surface-frame comparison-frame"><BusinessComparison /></div>
 
-             <details className="business-examples-disclosure"><summary>{t('Soluções para cada negócio')}</summary><BusinessExamples /></details>
              <div className="chapter-surface-frame">
              <SectionBackground index={4} scene="waves" experience="process">
                <DeliveryProcess />

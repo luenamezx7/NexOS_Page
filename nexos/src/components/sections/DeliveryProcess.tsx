@@ -2,8 +2,7 @@
 
 import { motionMedia } from '@/lib/motion-policy';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useMotionValueEvent, useScroll } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
 import { ScrollReveal } from '../ScrollReveal';
 import { ArrowUpRight, Check } from 'lucide-react';
 import { FieldGroup, FieldLegend, FieldSet } from '../ui/field';
@@ -19,8 +18,6 @@ export function DeliveryProcess() {
   const [activeStep, setActiveStep] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
   const timelineRef = useRef<HTMLOListElement>(null);
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end end'] });
-  const { scrollYProgress: timelineProgress } = useScroll({ target: timelineRef, offset: ['start center', 'end center'] });
   useEffect(() => {
     const media = motionMedia('(min-width: 768px) and (min-height: 700px) and (prefers-reduced-motion: no-preference)');
     const update = () => setPinned(media.matches);
@@ -28,16 +25,38 @@ export function DeliveryProcess() {
     media.addEventListener('change', update);
     return () => media.removeEventListener('change', update);
   }, []);
-  const updateStep = useCallback((progress: number) => {
-    const next = Math.max(0, Math.min(DELIVERY_STEPS[kind].length - 1, Math.floor(progress * DELIVERY_STEPS[kind].length)));
-    setActiveStep(previous => previous === next ? previous : next);
-  }, [kind]);
-  useMotionValueEvent(scrollYProgress, 'change', progress => { if (pinned) updateStep(progress); });
-  useMotionValueEvent(timelineProgress, 'change', progress => { if (!pinned) updateStep(progress); });
+  // One rect read per frame, only while the section intersects the viewport.
+  // (Replaces two Motion useScroll trackers that walked the offsetParent chain
+  // on every scroll frame, visible or not.)
   useEffect(() => {
-    const frame = requestAnimationFrame(() => updateStep((pinned ? scrollYProgress : timelineProgress).get()));
-    return () => cancelAnimationFrame(frame);
-  }, [pinned, scrollYProgress, timelineProgress, updateStep]);
+    const section = sectionRef.current, timeline = timelineRef.current;
+    if (!section || !timeline) return;
+    const steps = DELIVERY_STEPS[kind].length;
+    let frame = 0, visible = false;
+    const measure = () => {
+      frame = 0;
+      const vh = innerHeight;
+      let progress: number;
+      if (pinned) {
+        // offset ['start start', 'end end'] of the section
+        const r = section.getBoundingClientRect();
+        progress = r.height > vh ? -r.top / (r.height - vh) : r.top <= 0 ? 1 : 0;
+      } else {
+        // offset ['start center', 'end center'] of the timeline
+        const r = timeline.getBoundingClientRect();
+        progress = (vh / 2 - r.top) / Math.max(1, r.height);
+      }
+      const next = Math.max(0, Math.min(steps - 1, Math.floor(Math.max(0, Math.min(1, progress)) * steps)));
+      setActiveStep(previous => previous === next ? previous : next);
+    };
+    const schedule = () => { if (visible && !frame) frame = requestAnimationFrame(measure); };
+    const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; schedule(); });
+    observer.observe(section);
+    addEventListener('scroll', schedule, { passive: true });
+    addEventListener('resize', schedule);
+    visible = true; schedule();
+    return () => { observer.disconnect(); removeEventListener('scroll', schedule); removeEventListener('resize', schedule); cancelAnimationFrame(frame); };
+  }, [kind, pinned]);
   return <section ref={sectionRef} id="delivery-process" aria-labelledby="delivery-title" className={`${styles.section} ${styles.processSection}`}>
     <div className={`${styles.container} ${styles.processContainer}`}>
       <div className={styles.processStage}>

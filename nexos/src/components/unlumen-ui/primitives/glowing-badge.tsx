@@ -1,8 +1,7 @@
 'use client';
 
 import type { HTMLAttributes } from 'react';
-import { motion } from 'motion/react';
-import { usePrefersReducedMotion as useReducedMotion } from '@/lib/use-prefers-reduced-motion';
+import css from './glowing-badge.module.css';
 import { cn } from '@/lib/utils';
 
 export type GlowingBadgeVariant = 'default' | 'success' | 'warning' | 'error' | 'info' | 'neutral';
@@ -27,7 +26,6 @@ const variantStyles: Record<GlowingBadgeVariant, { badge: string; glow: string; 
 };
 
 export function GlowingBadge({ variant = 'default', pulse = true, dot = true, dotColor, glowColor, children, className, ...props }: GlowingBadgeProps) {
-  const reduceMotion = useReducedMotion();
   const styles = variantStyles[variant];
   const dotStyle = dotColor ? { backgroundColor: dotColor } : undefined;
   const glowStyle = glowColor ? { backgroundColor: glowColor } : undefined;
@@ -36,12 +34,7 @@ export function GlowingBadge({ variant = 'default', pulse = true, dot = true, do
     <span aria-hidden="true" className={cn('pointer-events-none absolute inset-0 rounded-full opacity-60 blur-md', styles.glow)} style={glowStyle} />
     <span className={cn('relative inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium', styles.badge, className)} {...props}>
       {dot && <span aria-hidden="true" className="relative flex size-1.5 shrink-0">
-        {pulse && <motion.span
-          className={cn('absolute inline-flex size-full rounded-full opacity-75', styles.dot)}
-          style={dotStyle}
-          animate={reduceMotion ? undefined : { scale: [1, 2.5, 1], opacity: [0.75, 0, 0.75] }}
-          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-        />}
+        {pulse && <span className={cn('absolute inline-flex size-full rounded-full opacity-75', styles.dot, css.pulse)} style={dotStyle} />}
         <span className={cn('relative inline-flex size-1.5 rounded-full', styles.dot)} style={dotStyle} />
       </span>}
       {children}

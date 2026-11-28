@@ -13,10 +13,12 @@
 .capabilities li { display: flex; align-items: center; gap: 12px; min-height: 36px; color: var(--text-secondary); font-size: 15px; line-height: 1.5; }
 .capabilities svg { flex: 0 0 auto; color: var(--visor-violet); }
 .disclaimer { max-width: 48ch; margin-top: 28px; color: var(--text-tertiary); font-size: 12px; line-height: 1.7; }
-.mockup { display: flex; flex-direction: column; align-items: center; gap: 24px; min-width: 0; margin: 0; }
-.device { width: min(100%, 326px); height: auto; }
+/* The figure spans its column so the device size never depends on the length of
+   the translated caption (it used to shrink-wrap: 278px PT vs 196px EN). */
+.mockup { display: flex; flex-direction: column; align-items: center; gap: 24px; width: 100%; min-width: 0; margin: 0; }
+.device { width: 100%; height: auto; }
 .device :global(svg) { filter: drop-shadow(0 24px 28px rgb(0 0 0 / 22%)); }
-.phonePreview { position: relative; width: min(100%, 326px); }
+.phonePreview { position: relative; flex: none; width: min(100%, 300px); }
 .phonePreview :global([data-iphone15pro]) {
   border-radius: 16% / 7.7%;
   box-shadow: 0 5px 12px -2px rgb(0 0 0 / 22%), 0 30px 56px -14px rgb(0 0 0 / 36%);
@@ -54,7 +56,7 @@
 .details { display: grid; grid-template-columns: 1fr 1fr; align-items: start; gap: clamp(24px, 6vw, 90px); max-width: 980px; margin: 0 auto; }
 .details .description { margin-top: 0; font-size: 18px; }
 .details .capabilityTitle { margin-top: 0; }
-@media (max-width: 767px) { .container { padding: 64px 24px; } .top { margin-bottom: 28px; flex-direction: column; align-items: center; } .layout { grid-template-columns: 1fr; gap: 40px; } .device { width: min(100%, 320px); } .name { margin-bottom: 28px; } .phonePreview { width: min(100%, 320px); } .intro { width: 100%; text-align: center; } .intro .heading { margin-inline: auto; } }
+@media (max-width: 767px) { .container { padding: 64px 24px; } .top { margin-bottom: 28px; flex-direction: column; align-items: center; } .layout { grid-template-columns: 1fr; gap: 40px; } .name { margin-bottom: 28px; } .phonePreview { width: min(100%, 290px); } .intro { width: 100%; text-align: center; } .intro .heading { margin-inline: auto; } }
 @media (max-width: 767px) { .intro .heading { font-size: clamp(30px, 8vw, 44px); } .details { grid-template-columns: 1fr; } }
 @media (forced-colors: active) { .device :global(svg) { filter: none; } .phonePreview :global([data-iphone15pro]) { box-shadow: none; } }
 @media (prefers-reduced-motion: reduce) { .message { transition: none; transform: none !important; opacity: 1 !important; } }
@@ -90,3 +92,5 @@
 .typingIndicator[data-typing='true'] { opacity: 1; }.typingIndicator i { width: 4px; height: 4px; border-radius: 50%; background: #bac9ce; }
 @media (prefers-reduced-motion: no-preference) { .typingIndicator[data-typing='true'] i { animation: chat-typing 700ms ease-in-out infinite alternate; }.typingIndicator i:nth-child(2) { animation-delay: 120ms !important; }.typingIndicator i:nth-child(3) { animation-delay: 240ms !important; } @keyframes chat-typing { to { translate: 0 -3px; opacity: .45; } } }
 @media (prefers-reduced-motion: reduce) { .typingIndicator { display: none; } }
+
+.benefit { margin-bottom: clamp(48px, 6vw, 80px); }

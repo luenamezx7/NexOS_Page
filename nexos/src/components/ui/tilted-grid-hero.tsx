@@ -130,6 +130,8 @@ export type TiltedGridHeroProps = {
   paused?: boolean;
   /** Signed user navigation; one increment advances exactly one tile. */
   manualStep?: number;
+  /** Let the row be dragged with mouse or finger (vertical page scroll stays native). @default true */
+  draggable?: boolean;
   className?: string;
 };
 
@@ -146,6 +148,7 @@ export function TiltedGridHero({
   className,
   paused = false,
   manualStep = 0,
+  draggable = true,
   ...props
 }: React.ComponentProps<"div"> & TiltedGridHeroProps) {
   const ref = React.useRef<HTMLDivElement>(null);
@@ -154,7 +157,8 @@ export function TiltedGridHero({
   const documentVisible = useDocumentVisible();
   const reduce = usePrefersReducedMotion();
   const [compact, setCompact] = React.useState(false);
-  const running = !paused && visible && documentVisible && !reduce;
+  const [dragging, setDragging] = React.useState(false);
+  const running = !paused && !dragging && visible && documentVisible && !reduce;
   const slices = compact ? 6 : DESKTOP_SLICES;
   const id = React.useId().replace(/[^a-zA-Z0-9]/g, "");
   const orbit = `tgh-o-${id}`;
@@ -241,6 +245,38 @@ export function TiltedGridHero({
     frame = requestAnimationFrame(paint);
     return () => cancelAnimationFrame(frame);
   }, [manualStep, orbit, speed, duration, reduce]);
+  // Drag scrubs every tile's animation clock together: one tile width of
+  // pointer travel equals one tile of advance, so the row follows the finger.
+  const drag = React.useRef<{ x: number; y: number; id: number; moved: boolean; tileW: number; from: { animation: Animation; time: number }[] } | null>(null);
+  const onDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!draggable || (event.pointerType === "mouse" && event.button !== 0) || !ref.current) return;
+    const animations = ref.current.getAnimations({ subtree: true }).filter(a => a instanceof CSSAnimation && a.animationName === orbit);
+    const tileEl = ref.current.querySelector<HTMLElement>(`.${tile}`);
+    drag.current = { x: event.clientX, y: event.clientY, id: event.pointerId, moved: false, tileW: (tileEl?.offsetWidth ?? 300) * (1 + gap / 100 / aspectRatio), from: animations.map(animation => ({ animation, time: Number(animation.currentTime ?? 0) })) };
+  };
+  const onMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const d = drag.current;
+    if (!d) return;
+    const dx = event.clientX - d.x, dy = event.clientY - d.y;
+    if (!d.moved) {
+      if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 8) { drag.current = null; return; }
+      if (Math.abs(dx) < 6) return;
+      d.moved = true;
+      setDragging(true);
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
+    const loop = duration * 1000;
+    d.from.forEach(({ animation, time }) => {
+      let next = (time - (dx / d.tileW) * speed * 1000) % loop;
+      if (next < 0) next += loop;
+      animation.currentTime = next;
+    });
+  };
+  const onUp = () => {
+    if (!drag.current) return;
+    drag.current = null;
+    setDragging(false);
+  };
   const mask = `linear-gradient(90deg,transparent,#000 ${fade}%,#000 ${
     100 - fade
   }%,transparent)`;
@@ -252,7 +288,13 @@ export function TiltedGridHero({
       {...props}
       data-tilted-grid
       data-running={running}
-      style={{ containerType: "size", ...props.style }}
+      data-dragging={dragging || undefined}
+      onPointerDown={event => { onDown(event); props.onPointerDown?.(event); }}
+      onPointerMove={onMove}
+      onPointerUp={event => { onUp(); props.onPointerUp?.(event); }}
+      onPointerCancel={event => { onUp(); props.onPointerCancel?.(event); }}
+      onDragStart={event => event.preventDefault()}
+      style={{ containerType: "size", touchAction: draggable ? "pan-y" : undefined, cursor: draggable ? (dragging ? "grabbing" : "grab") : undefined, userSelect: draggable ? "none" : undefined, ...props.style }}
     >
       <style>{css}</style>
 

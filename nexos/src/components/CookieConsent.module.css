@@ -39,3 +39,10 @@
     margin-inline-end: auto;
   }
 }
+
+/* Phones: one row of actions and tighter padding keep the banner under ~25% of the screen. */
+@media (max-width: 639px) {
+  .banner { padding-inline: max(10px, env(safe-area-inset-left)) max(10px, env(safe-area-inset-right)); padding-bottom: max(10px, env(safe-area-inset-bottom)); }
+  .bannerPanel { gap: 12px; padding: 14px 14px 12px; }
+  .bannerPanel p { font-size: 12.5px; line-height: 1.5; }
+}

@@ -5,7 +5,7 @@ import { scheduleScrollRefresh } from '@/lib/schedule-scroll-refresh';
 import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion';
 import { useEffect } from 'react';
 import { useLocale } from '@/lib/locale';
-import { usePresentationActive } from '@/lib/use-presentation-active';
+import { usePresentationGate } from '@/lib/use-presentation-active';
 import { motionError, recordMotion } from '@/lib/motion-diagnostics';
 
 const HEADINGS = 'h1, h2, h3, h4, h5, h6';
@@ -14,7 +14,7 @@ const hasOwnMotion = (heading: Element) => heading.hasAttribute('data-heading-st
 /** One scroll animation per heading, including headings mounted by lazy sections. */
 export function HeadingScrollMotion() {
   const reduce = usePrefersReducedMotion();
-  const presenting = usePresentationActive();
+  const presenting = usePresentationGate();
   const { locale } = useLocale();
 
   useEffect(() => {

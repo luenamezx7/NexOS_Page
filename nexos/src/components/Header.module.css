@@ -1,5 +1,58 @@
-.header { position: fixed; top: max(16px, env(safe-area-inset-top)); left: calc((100vw - min(100vw - 40px, var(--page-width))) / 2); width: min(calc(100vw - 40px), var(--page-width)); z-index: 50; max-width: var(--page-width); margin-inline: auto; border: 1px solid var(--header-glass-border); border-radius: 30px; background: var(--header-glass-background); color: var(--color-ink); box-shadow: var(--header-glass-shadow); -webkit-backdrop-filter: var(--header-glass-filter); backdrop-filter: var(--header-glass-filter); }
-.bar { display: grid; grid-template-columns: minmax(0, 1fr) 360px minmax(0, 1fr); align-items: center; gap: 16px; min-height: 64px; padding: 8px 20px; }
+/* ---------- Shell: rectangular at the top, floating capsule after the first scroll ----------
+   The <header> is a transparent, edge-to-edge fixed box. Its glass lives on .surface,
+   whose geometry never changes: the rectangle-to-capsule morph is a clip-path
+   transition, so it causes no reflow and no layout shift. The capsule rim and
+   elevation sit on .ring, a static layer that only fades. The controls keep the
+   same column in both states and travel down with a transform. */
+.header {
+  --float-gap: 10px;
+  --gutter: max(20px, calc((100% - var(--page-width)) / 2));
+  --morph: 520ms cubic-bezier(.22, 1, .36, 1);
+  --glass-tint: rgb(8 12 10 / 34%);
+  --capsule-radius: 24px;
+  position: fixed; inset: 0 0 auto; z-index: 50;
+  padding-top: env(safe-area-inset-top);
+  color: var(--color-ink);
+  pointer-events: none;
+}
+.surface {
+  position: absolute; z-index: -1; inset: 0 0 calc(var(--float-gap) * -1);
+  pointer-events: none;
+  background: linear-gradient(135deg, #d4efd00f, #ffffff03 55%, #b7d4b20a), var(--glass-tint);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+  /* Geometry never changes: the clip morphs (no layout shift, no reflow). */
+  clip-path: inset(0 0 var(--float-gap) 0 round 0);
+  transition: clip-path var(--morph), background-color var(--morph);
+}
+/* Edge-to-edge state: a single hairline under the bar. */
+.surface::after { content: ''; position: absolute; inset: auto 0 var(--float-gap); height: 1px; background: rgb(220 236 216 / 12%); transition: opacity 200ms; }
+.header[data-scrolled='true'] { --glass-tint: rgb(8 11 9 / 80%); }
+.header[data-scrolled='true'] .surface { clip-path: inset(calc(env(safe-area-inset-top) + var(--float-gap)) var(--gutter) 0 var(--gutter) round var(--capsule-radius)); }
+.header[data-scrolled='true'] .surface::after { opacity: 0; }
+/* Capsule rim and elevation: static geometry, fades in as the clip lands. */
+.ring {
+  position: absolute; z-index: -1; pointer-events: none;
+  inset: calc(env(safe-area-inset-top) + var(--float-gap)) var(--gutter) calc(var(--float-gap) * -1);
+  border: 1px solid rgb(220 236 216 / 20%); border-radius: var(--capsule-radius);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 12%), 0 18px 40px -22px rgb(0 0 0 / 70%), 0 2px 6px -2px rgb(0 0 0 / 30%);
+  opacity: 0; transition: opacity 160ms;
+}
+.header[data-scrolled='true'] .ring { opacity: 1; transition: opacity 280ms 200ms; }
+.bar {
+  position: relative;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 16px;
+  width: min(calc(100% - 40px), var(--page-width)); min-height: 64px; margin-inline: auto; padding: 8px 12px 8px 20px;
+  pointer-events: auto;
+  transition: transform var(--morph);
+}
+.header[data-scrolled='true'] .bar { transform: translateY(var(--float-gap)); }
+/* Controls sit on the header's own glass: no nested backdrop pass per control. */
+.header .bar [data-navigation-glass][data-navigation-glass='control'] {
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  background: rgb(255 255 255 / 5%); border-color: rgb(220 236 216 / 16%); box-shadow: none;
+}
+.header .bar [data-navigation-glass][data-navigation-glass='control']:is(:hover, [aria-expanded='true']) { background: rgb(255 255 255 / 10%); }
 .brand { min-height: 44px; display: flex; align-items: center; width: fit-content; }
 .desktopNav { display: flex; align-items: center; justify-content: center; gap: 6px; min-width: 0; }
 .navLink { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 8px; font: 500 13px/1 var(--font-sans); color: var(--text-secondary); white-space: nowrap; transition: color 200ms; }
@@ -21,23 +74,42 @@
 .avatarButton:hover { border-color: var(--glass-line-hover); }
 .avatar { width: 34px; height: 34px; }
 .header :is(button, a):focus-visible, .popup :is(button, a):focus-visible, .mobileDialog :is(button, a, summary):focus-visible { outline: 2px solid var(--ring); outline-offset: 4px; border-radius: 6px; }
-.menuButton { display: none; width: 44px; height: 44px; place-items: center; border-radius: 8px; }
+.menuButton { display: none; width: 44px; height: 44px; place-items: center; border-radius: 14px; transition: transform 160ms cubic-bezier(.22, 1, .36, 1), background-color 160ms; -webkit-tap-highlight-color: transparent; }
+.menuButton:active { transform: scale(.92); }
+/* Two refined strokes (long + short) that fold into an X. Transform-only. */
+.menuGlyph { position: relative; width: 20px; height: 12px; }
+.menuGlyph > span { position: absolute; left: 0; width: 20px; height: 1.5px; border-radius: 2px; background: currentColor; transition: transform 340ms cubic-bezier(.22, 1, .36, 1); }
+.menuGlyph > span:first-child { top: 2px; }
+/* The short stroke stays right-aligned: scaled about its centre, then shifted. */
+.menuGlyph > span:last-child { bottom: 2px; transform: translateX(3.8px) scaleX(.62); }
+@media (hover: hover) { .menuButton:hover .menuGlyph > span:last-child { transform: none; } }
+.menuButton[aria-expanded='true'] .menuGlyph > span:first-child { transform: translateY(3.25px) rotate(45deg) scaleX(.8); }
+.menuButton[aria-expanded='true'] .menuGlyph > span:last-child { transform: translateY(-3.25px) rotate(-45deg) scaleX(.8); }
 .popup { width: 244px; padding: 8px; border: 1px solid var(--border); background: var(--popover); color: var(--popover-foreground); font-family: var(--font-sans); box-shadow: 0 20px 60px -24px #00000099; }
 .menuItem { display: flex; justify-content: flex-start; gap: 10px; min-height: 44px; padding: 10px 12px; cursor: pointer; }
 .menuItem[data-highlighted] { background: var(--detail-accent); color: var(--detail-ink); }
 .menuItem > svg:last-child:not(:first-child) { margin-left: auto; }
 .userName { padding: 10px 12px 14px; color: var(--muted-foreground); font-size: 12px; overflow-wrap: anywhere; }
 .accountError { padding: 10px 12px; font-size: 12px; color: var(--foreground); }
-.mobileDialog { position: fixed; inset: 0; width: 100%; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: calc(max(16px, env(safe-area-inset-top)) + 78px) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); border: 0; background: transparent; color: var(--foreground); }
+/* The panel opens over the header: its close control lands exactly where the
+   trigger was, so the two-stroke glyph reads as turning into the panel's X.
+   --menu-top / --menu-row mirror the bar geometry in each header state. */
+.mobileDialog { --menu-top: 4px; --menu-row: 52px; --menu-side: 10px; --trigger-inset: 6px; position: fixed; inset: 0; width: 100%; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: calc(env(safe-area-inset-top) + var(--menu-top)) max(var(--menu-side), env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(var(--menu-side), env(safe-area-inset-left)); border: 0; background: transparent; color: var(--foreground); }
+.mobileDialog[data-floating='true'] { --menu-top: 8px; --menu-row: 60px; }
+@media (min-width: 768px) {
+  .mobileDialog { --menu-top: 4px; --menu-row: 56px; --menu-side: 20px; --trigger-inset: 8px; }
+  .mobileDialog[data-floating='true'] { --menu-top: 10px; --menu-row: 64px; }
+}
 .mobileDialog::backdrop { background: #05070d66; opacity: 1; transition: opacity var(--panel-open-dur) var(--panel-ease); }
 .mobileDialog:has(.mobilePanel[data-open='false'])::backdrop { opacity: 0; transition-duration: var(--panel-close-dur); }
 @starting-style { .mobileDialog[open]::backdrop { opacity: 0; } }
 /* The surface itself owns the backdrop; no animated filtered ancestor. */
-.mobilePanel { opacity: 0; transform: translateY(-6px); pointer-events: none; transition: opacity 160ms cubic-bezier(.22, 1, .36, 1), transform 160ms cubic-bezier(.22, 1, .36, 1); --panel-open-dur: 200ms; --panel-close-dur: 160ms; --panel-ease: cubic-bezier(.22, 1, .36, 1); display: flex; flex-direction: column; width: min(100%, 360px); max-height: 100%; overflow: hidden; margin-left: auto; border-radius: 28px; border: 1px solid var(--border); background: var(--popover); box-shadow: 0 24px 80px #00000055; }
-.mobilePanel[data-open="true"] { opacity: 1; transform: translateY(0); pointer-events: auto; transition-duration: 200ms; }
+.mobilePanel { opacity: 0; transform: scale(.94); transform-origin: calc(100% - var(--trigger-inset) - 22px) calc(var(--menu-row) / 2); pointer-events: none; transition: opacity 150ms cubic-bezier(.4, 0, 1, 1), transform 170ms cubic-bezier(.4, 0, 1, 1); --panel-open-dur: 240ms; --panel-close-dur: 160ms; --panel-ease: cubic-bezier(.22, 1, .36, 1); display: flex; flex-direction: column; width: min(100%, 380px); max-height: 100%; overflow: hidden; margin-left: auto; border-radius: 22px; border: 1px solid var(--border); background: var(--popover); box-shadow: 0 24px 80px #00000055; }
+.mobilePanel[data-open="true"] { opacity: 1; transform: none; pointer-events: auto; transition: opacity 200ms cubic-bezier(.22, 1, .36, 1), transform 340ms cubic-bezier(.22, 1, .36, 1); }
 .mobileContent { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 8px 18px 16px; }
-.mobileHeading { position: relative; flex-shrink: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 8px 18px 0; padding: 4px 0 12px; border-bottom: 1px solid var(--border); background: transparent; font: 600 11px/1.4 var(--font-sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted-foreground); }
-.closeButton { display: grid; place-items: center; width: 44px; height: 44px; color: var(--foreground); }
+.mobileHeading { position: relative; flex-shrink: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: var(--menu-row); margin: 0 18px; padding: 0; border-bottom: 1px solid var(--border); background: transparent; font: 600 11px/1.4 var(--font-sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted-foreground); }
+.closeButton { display: grid; place-items: center; width: 44px; height: 44px; margin-right: calc(var(--trigger-inset) - 18px); border-radius: 14px; color: var(--foreground); transition: transform 160ms cubic-bezier(.22, 1, .36, 1); }
+.closeButton:active { transform: scale(.92); }
 .mobileNav { display: flex; flex-direction: column; padding-top: 8px; }
 .mobileNav > a:not(.mobileContactAction) { display: flex; align-items: center; min-height: 44px; padding-inline: 8px; border-radius: 8px; font: 550 16px/1.25 var(--font-sans); }
 .mobileNav > a:not(.mobileContactAction):hover { background: color-mix(in srgb, var(--color-ink) 7%, transparent); }
@@ -50,8 +122,7 @@
 .expandedAccount .accountLabel { position: static; width: auto; height: auto; margin: 0; overflow: visible; clip-path: none; white-space: normal; }
 .userRow { display: flex; align-items: center; gap: 12px; padding-bottom: 12px; }
 @media (max-width: 1279px) {
-  .header { left: 12px; width: calc(100vw - 24px); }
-  .bar { grid-template-columns: 1fr auto; padding-inline: 12px; gap: 12px; }
+  .bar { grid-template-columns: 1fr auto; padding-inline: 16px 8px; gap: 12px; }
   .desktopNav { display: none; }
   .menuButton { display: grid; }
   .contactAction { display: none; }
@@ -59,14 +130,16 @@
   .actions { gap: 4px; }
 }
 @media (max-width: 767px) {
-  .header { left: 12px; width: calc(100vw - 24px); border-radius: 26px; }
-  .bar { min-height: 60px; padding: 6px 12px; }
+  .header { --float-gap: 8px; --gutter: 10px; }
+  .header { --capsule-radius: 22px; }
+  .bar { width: calc(100% - 20px); min-height: 60px; padding: 6px 6px 6px 14px; }
   .actions .accountSlot { display: none; }
   .mobileContent { padding: 8px 16px 16px; }
 }
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .header { background: var(--popover); } }
-@media (prefers-reduced-transparency: reduce) { .header { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: var(--popover); } .mobileDialog::backdrop { backdrop-filter: none; background: var(--popover); } }
-@media (prefers-reduced-motion: reduce) { .header, .avatar, .mobileDialog::backdrop { transition: none; } .mobilePanel, .mobilePanel[data-open="true"] { animation: none; transition: none !important; transform: none; } }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .surface { background: #0d120f; } }
+@media (prefers-reduced-transparency: reduce) { .surface { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: #0d120f; } .mobileDialog::backdrop { backdrop-filter: none; background: var(--popover); } }
+@media (forced-colors: active) { .surface { background: Canvas; backdrop-filter: none; -webkit-backdrop-filter: none; } .ring { border-color: CanvasText; box-shadow: none; } }
+@media (prefers-reduced-motion: reduce) { .surface, .ring, .header[data-scrolled='true'] .ring, .bar, .menuButton, .menuGlyph > span, .avatar, .mobileDialog::backdrop { transition: none; } .mobilePanel, .mobilePanel[data-open="true"] { animation: none; transition: none !important; transform: none; } }
 
 
 .accountSlot[data-account-state="error"] .guestActions { gap: 0; }

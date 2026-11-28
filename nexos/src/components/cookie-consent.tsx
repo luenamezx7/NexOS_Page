@@ -284,7 +284,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
             >
               <div className="flex min-w-0 flex-1 items-start gap-3">
                 <span
-                  className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[var(--brand-choice)]/30 bg-[var(--brand-choice)]/10 text-[color:var(--brand-choice)]"
+                  className="hidden h-10 w-10 shrink-0 place-items-center rounded-xl border border-[var(--brand-choice)]/30 bg-[var(--brand-choice)]/10 text-[color:var(--brand-choice)] sm:grid"
                   aria-hidden="true"
                 >
                   <Cookie size={17} strokeWidth={2} />
@@ -301,11 +301,11 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                   </p>
                 </div>
               </div>
-              <div className="flex shrink-0 flex-col gap-2 sm:flex-row md:flex-col lg:flex-row">
+              <div className="grid shrink-0 grid-cols-3 gap-2 sm:flex sm:flex-row md:flex-col lg:flex-row">
                 <button
                   type="button"
                   onClick={rejectAll}
-                  className={`min-h-11 rounded-xl border px-4 py-2.5 text-xs font-semibold transition ${
+                  className={`min-h-11 rounded-xl border px-2 py-2.5 text-xs font-semibold transition sm:px-4 ${
                     isDark
                       ? 'border-white/15 bg-white/[0.08] text-white/80 hover:bg-white/15 hover:text-white'
                       : 'border-ink/15 bg-ink/[0.06] text-ink/70 hover:bg-ink/12 hover:text-ink'
@@ -316,7 +316,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                 <button
                   type="button"
                   onClick={openPreferences}
-                  className={`min-h-11 rounded-xl border px-4 py-2.5 text-xs font-semibold transition ${
+                  className={`min-h-11 rounded-xl border px-2 py-2.5 text-xs font-semibold transition sm:px-4 ${
                     isDark
                       ? 'border-white/15 bg-white/[0.08] text-white/80 hover:bg-white/15 hover:text-white'
                       : 'border-ink/15 bg-ink/[0.06] text-ink/70 hover:bg-ink/12 hover:text-ink'
@@ -327,7 +327,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
                 <MetallicButton
                   type="button"
                   onClick={acceptAll}
-                  className="min-h-11 px-4 py-2.5 text-xs"
+                  className="min-h-11 px-2 py-2.5 text-xs sm:px-4"
                 >
                   {t("Aceitar tudo")}
                 </MetallicButton>

@@ -1,7 +1,7 @@
 .dialog {
-  --entry-duration: 5000ms;
-  --entry-fade-duration: 700ms;
-  --exit-duration: 1100ms;
+  --entry-duration: 4000ms;
+  --entry-fade-duration: 600ms;
+  --exit-duration: 900ms;
   position: fixed;
   inset: 0;
   z-index: 60;
@@ -14,7 +14,14 @@
   border: 0;
   overflow: hidden;
   overscroll-behavior: contain;
-  background: #030503;
+  /* Painted with the HTML: a static stand-in for the silk shader (under the 60%
+     shade) so the first frames are never a flat black cover while the GPU
+     worker spins up. The canvas draws over it once ready. */
+  background:
+    radial-gradient(ellipse 34% 62% at 44% 30%, #c9e78f 0%, #7d9a52 30%, transparent 72%),
+    radial-gradient(ellipse 46% 30% at 74% 62%, #b6d47e 0%, #66813f 36%, transparent 74%),
+    radial-gradient(ellipse 40% 34% at 18% 86%, #4f6a31 0%, transparent 70%),
+    linear-gradient(150deg, #0b1607 0%, #102309 46%, #071004 100%);
   color: #fff;
   opacity: 1;
   transition: opacity var(--exit-duration) cubic-bezier(.4, 0, .2, 1);

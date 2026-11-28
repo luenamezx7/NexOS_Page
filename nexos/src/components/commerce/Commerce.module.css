@@ -184,3 +184,13 @@
 }
 
 .productDetailsContainer { padding-bottom: 24px; }
+
+/* Plate advantages under the carousel. */
+.advantages { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; width: min(100%, 1040px); margin: clamp(36px, 5vw, 56px) auto 0; padding: 0; list-style: none; }
+.advantages li { display: grid; gap: 6px; padding: 20px; border: 1px solid var(--surface-line); border-radius: 18px; background: color-mix(in srgb, var(--surface-raised) 55%, transparent); text-align: left; }
+.advantages svg { margin-bottom: 6px; color: #ff3f9f; }
+.advantages strong { font-size: 16px; font-weight: 650; letter-spacing: -.01em; }
+.advantages span { color: var(--text-secondary); font-size: 14px; line-height: 1.5; }
+.plateDisclaimer { margin: 20px auto 0; max-width: 60ch; color: var(--text-tertiary); font-size: 12px; line-height: 1.6; text-align: center; }
+@media (max-width: 1023px) { .advantages { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 599px) { .advantages { gap: 10px; } .advantages li { padding: 14px; border-radius: 14px; } .advantages strong { font-size: 14px; } .advantages span { font-size: 12.5px; } .advantages svg { width: 18px; margin-bottom: 2px; } }

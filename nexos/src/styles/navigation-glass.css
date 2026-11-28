@@ -7,7 +7,7 @@
   --night-material-filter: blur(18px) saturate(135%);
   --night-material-background: linear-gradient(135deg, #d4efd00e, #ffffff03 55%, #b7d4b209), var(--night-glass-tint);
 }
-:root .site-shell :is([data-header-state], [data-page-header]),
+:root .site-shell [data-page-header],
 :root [data-navigation-glass]:is([data-navigation-glass='control'], [data-navigation-glass='panel']) {
   --color-ink: #f1f6ef;
   --foreground: #f1f6ef;
@@ -25,7 +25,7 @@
   -webkit-backdrop-filter: var(--night-material-filter);
   backdrop-filter: var(--night-material-filter);
 }
-:root .site-shell :is([data-header-state][data-scrolled='true'], [data-page-header]) {
+:root .site-shell [data-page-header] {
   --night-glass-tint: rgb(9 16 12 / 52%);
 }
 :root [data-navigation-glass]:is([data-navigation-glass='control'], [data-navigation-glass='panel']) { position: relative; }
@@ -75,11 +75,11 @@
   filter: none;
 }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  :root .site-shell :is([data-header-state], [data-page-header]),
+  :root .site-shell [data-page-header],
   :root [data-navigation-glass] { background: #101912; }
 }
 @media (prefers-reduced-transparency: reduce) {
-  :root .site-shell :is([data-header-state], [data-page-header]),
+  :root .site-shell [data-page-header],
   :root [data-navigation-glass] {
     background: #101912;
     -webkit-backdrop-filter: none;
@@ -92,7 +92,7 @@
   :root [data-navigation-glass='control'] { transition: none; transform: none; }
 }
 @media (forced-colors: active) {
-  :root .site-shell :is([data-header-state], [data-page-header]),
+  :root .site-shell [data-page-header],
   :root [data-navigation-glass]:is([data-navigation-glass='control'], [data-navigation-glass='panel']) {
     --color-ink: CanvasText;
     --ring: Highlight;
@@ -107,6 +107,18 @@
   :root [data-navigation-glass='panel'] [role='menuitem'][data-highlighted] { background: Highlight; color: HighlightText; }
 }
 
-/* Stable dark glass on every section. Navigation feedback never changes geometry. */
-:root .landing-page [data-header-state] { transition: border-color 200ms ease, color 200ms ease; }
-@media (prefers-reduced-motion: reduce) { :root .landing-page [data-header-state] { transition: color 150ms; } }
+/* Landing header: ink tokens only. Its glass lives on Header.module.css .surface,
+   a childless layer that morphs from edge-to-edge bar to floating capsule. */
+:root .site-shell [data-header-state] {
+  --color-ink: #f1f6ef;
+  --foreground: #f1f6ef;
+  --text-secondary: #d0ddcd;
+  --muted-foreground: #b5c2b3;
+  --detail-text: #fff;
+  --ring: #c4dec1;
+  --border: var(--night-material-border);
+  color: var(--color-ink);
+}
+@media (forced-colors: active) {
+  :root .site-shell [data-header-state] { --color-ink: CanvasText; --ring: Highlight; color: CanvasText; }
+}

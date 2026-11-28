@@ -257,7 +257,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .t-skel-bar { animation: none; }
-  #services [data-macbook-slide] { transform: none !important; filter: none !important; }
 }
 
 /* GSAP samples the same page recipe against scroll distance in both directions. */
